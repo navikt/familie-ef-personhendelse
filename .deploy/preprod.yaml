@@ -1,0 +1,50 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: familie-ef-personhendelse
+  namespace: teamfamilie
+  labels:
+    team: teamfamilie
+spec:
+  image: {{ image }}
+  ingresses:
+    - https://familie-ef-personhendelse.dev.intern.nav.no
+  livenstatusess:
+    path: /internal/isAlive
+    initialDelay: 30
+    failureThreshold: 10
+  readiness:
+    path: /internal/isAlive
+    initialDelay: 30
+    failureThreshold: 10
+  prometheus:
+    enabled: false
+  replicas:
+    min: 1
+    max: 2
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      memory: 1024Mi
+      cpu: 1500m
+    requests:
+      memory: 512Mi
+      cpu: 500m
+  secureLogs:
+    enabled: true
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: dev
+  envFrom:
+    - secret: familie
+    - secret: familie-ef-personhendelse
+  azure:
+    application:
+      enabled: true
+  accessPolicy:
+    outbound:
+      rules:
+        - application: familie-ef-sak
+        - application: familie-ef-sak-lokal
+  kafka:
+    pool: nav-dev
