@@ -10,9 +10,9 @@ spring:
     allow-bean-definition-overriding: true
   kafka:
     client-id: familie-ef-personhendelse
-    bootstrap-servers: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     properties:
-      schema.registry.url: http://kafka-schema-registry.tpa:8081
+      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL}
       security.protocol: SASL_SSL
       sasl:
         mechanism: PLAIN
@@ -58,6 +58,9 @@ management:
     base-path: "/internal"
     path-mapping:
       info: "isAlive"
+
+KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
+KAFKA_SCHEMA_REGISTRY_URL: http://kafka-schema-registry.tpa:8081
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
 EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no

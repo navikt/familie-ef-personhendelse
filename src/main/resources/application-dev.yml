@@ -1,2 +1,5 @@
+KAFKA_BOOTSTRAP_SERVERS: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
+KAFKA_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais-q.adeo.no/
+
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
 EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no
