@@ -32,14 +32,23 @@ no.nav.security.jwt:
       accepted_audience: ${AZURE_APP_CLIENT_ID}
   client:
     registration:
-      familie-oppdrag:
-        resource-url: ${FAMILIE_OPPDRAG_API_URL}
-        token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+      integrasjoner-client-credentials:
+        resource-url: ${FAMILIE_INTEGRASJONER_API_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
         grant-type: client_credentials
-        scope: ${FAMILIE_OPPDRAG_SCOPE}
+        scope: ${FAMILIE_INTEGRASJONER_SCOPE}
         authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      ef-sak:
+        resource-url: ${EF_SAK_URL}
+        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://dev-gcp.teamfamilie.familie-ef-sak/.default
+        authentication:
+          client-id: ${CLIENT_ID}
+          client-secret: ${CLIENT_SECRET}
           client-auth-method: client_secret_basic
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
