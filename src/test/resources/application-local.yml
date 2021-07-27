@@ -3,3 +3,12 @@ server:
 
 logging:
   config: "classpath:logback-local.xml"
+
+no.nav.security.jwt:
+  issuer:
+    azuread:
+      discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+      accepted_audience: ${AZURE_APP_CLIENT_ID}
+
+FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
+EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no
