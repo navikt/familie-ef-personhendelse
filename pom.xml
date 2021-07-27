@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.familie.ef</groupId>
-    <artifactId>personhendelse</artifactId>
+    <artifactId>familie-ef-personhendelse</artifactId>
     <version>${revision}${sha1}${changelist}</version>
     <name>ef-personhendelse</name>
     <description>Lytter på personhendelser fra PDL og oppretter oppgaver for relevante hendelser</description>
