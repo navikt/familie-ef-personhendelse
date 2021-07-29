@@ -3,12 +3,12 @@ package no.nav.familie.ef.personhendelse.kafka
 import no.nav.familie.ef.personhendelse.dodsfall.DodsfallHandler
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.avro.generic.GenericRecord
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.annotation.PartitionOffset
 import org.springframework.kafka.annotation.TopicPartition
 import org.springframework.kafka.support.Acknowledgment
+import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 
 
@@ -20,14 +20,9 @@ private const val OPPLYSNINGSTYPE_UTFLYTTING = "UTFLYTTING_V1"
  */
 @Component
 class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) {
-    private val logger = LoggerFactory.getLogger(javaClass)
-    init {
-        logger.info("Test infologger")
-        println("Println")
-    }
 
-    private var lestPersonhendelse = false
-    private var lestDodsfall = false
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @KafkaListener(
         id = "familie-ef-personhendelse",
         topics = ["aapen-person-pdl-leesah-v1"],
@@ -38,20 +33,17 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) {
             )]
         )]
     )
-    fun listen(consumerRecord: ConsumerRecord<String, Personhendelse>, ack: Acknowledgment) {
+    fun listen(@Payload personhendelse: Personhendelse, ack: Acknowledgment) {
         try {
-            val personhendelse = consumerRecord.value()
-            if (!lestPersonhendelse) logger.info("Leser personhendelse")
-            println("Leser personhendelse")
+
+            logger.info("Leser personhendelse")
             //logikk her
             if (personhendelse.opplysningstype.erDodsfall()) {
-                if (!lestDodsfall) logger.info("Personhendelse med opplysningstype dødsfall")
-                lestDodsfall = true
+                logger.info("Personhendelse med opplysningstype dødsfall")
                 //dodsfallHandler.handleDodsfallHendelse(personhendelse)
             }
 
             ack.acknowledge()
-            lestPersonhendelse = true
         } catch (e: Exception) {
             //Legg til log
             throw e
