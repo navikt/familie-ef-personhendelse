@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.annotation.PartitionOffset
 import org.springframework.kafka.annotation.TopicPartition
+import org.springframework.kafka.listener.ConsumerSeekAware
+import org.springframework.kafka.listener.ConsumerSeekAware.ConsumerSeekCallback
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
@@ -19,35 +21,41 @@ private const val OPPLYSNINGSTYPE_UTFLYTTING = "UTFLYTTING_V1"
  * Leesah: Livet er en strøm av hendelser
  */
 @Component
-class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) {
+class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
+    private var lestPersonhendelse = false
+    private var lestDodsfall = false
 
-    @KafkaListener(
-        id = "familie-ef-personhendelse",
-        topics = ["aapen-person-pdl-leesah-v1"],
-        topicPartitions = [TopicPartition(
-            topic = "aapen-person-pdl-leesah-v1",
-            partitionOffsets = [PartitionOffset(
-                initialOffset = "4582464", partition = "0"
-            )]
-        )]
-    )
+    @KafkaListener(id = "familie-ef-personhendelse", topics = ["aapen-person-pdl-leesah-v1"])
     fun listen(@Payload personhendelse: Personhendelse, ack: Acknowledgment) {
         try {
 
-            logger.info("Leser personhendelse")
+            if (!lestPersonhendelse) logger.info("Leser personhendelse")
             //logikk her
             if (personhendelse.opplysningstype.erDodsfall()) {
-                logger.info("Personhendelse med opplysningstype dødsfall")
+                if (!lestDodsfall) logger.info("Personhendelse med opplysningstype dødsfall")
                 //dodsfallHandler.handleDodsfallHendelse(personhendelse)
             }
 
             ack.acknowledge()
+            lestPersonhendelse = true
         } catch (e: Exception) {
             //Legg til log
             throw e
         }
+    }
+
+    override fun onPartitionsAssigned(
+        assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
+        callback: ConsumerSeekCallback
+    ) {
+        logger.info("overrided onPartitionsAssigned seekToBeginning")
+        assignments.keys.stream()
+            .filter { it.topic() == "aapen-person-pdl-leesah-v1" }
+            .forEach {
+                callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
+            }
     }
 
     private fun GenericRecord.hentOpplysningstype() =
