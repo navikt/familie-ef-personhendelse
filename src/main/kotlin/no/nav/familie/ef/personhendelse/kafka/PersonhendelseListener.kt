@@ -28,7 +28,7 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
     private var lestDodsfall = false
 
     @KafkaListener(id = "familie-ef-personhendelse", topics = ["aapen-person-pdl-leesah-v1"])
-    fun listen(@Payload personhendelse: Personhendelse, ack: Acknowledgment) {
+    fun listen(@Payload personhendelse: Personhendelse) {
         try {
 
             if (!lestPersonhendelse) logger.info("Leser personhendelse")
@@ -38,7 +38,6 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
                 //dodsfallHandler.handleDodsfallHendelse(personhendelse)
             }
 
-            ack.acknowledge()
             lestPersonhendelse = true
         } catch (e: Exception) {
             //Legg til log
