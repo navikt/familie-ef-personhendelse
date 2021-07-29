@@ -53,7 +53,7 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
         assignments.keys.stream()
             .filter { it.topic() == "aapen-person-pdl-leesah-v1" }
             .forEach {
-                callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
+                callback.seekRelative("aapen-person-pdl-leesah-v1", it.partition(), -10, false)
             }
     }
 
