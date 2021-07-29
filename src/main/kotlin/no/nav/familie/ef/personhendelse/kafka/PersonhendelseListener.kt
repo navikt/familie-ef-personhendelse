@@ -20,8 +20,12 @@ private const val OPPLYSNINGSTYPE_UTFLYTTING = "UTFLYTTING_V1"
  */
 @Component
 class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) {
-
     private val logger = LoggerFactory.getLogger(javaClass)
+    init {
+        logger.info("Test infologger")
+        println("Println")
+    }
+
     private var lestPersonhendelse = false
     private var lestDodsfall = false
     @KafkaListener(
@@ -38,6 +42,7 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) {
         try {
             val personhendelse = consumerRecord.value()
             if (!lestPersonhendelse) logger.info("Leser personhendelse")
+            println("Leser personhendelse")
             //logikk her
             if (personhendelse.opplysningstype.erDodsfall()) {
                 if (!lestDodsfall) logger.info("Personhendelse med opplysningstype dødsfall")
