@@ -30,7 +30,7 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) {
         topicPartitions = [TopicPartition(
             topic = "aapen-person-pdl-leesah-v1",
             partitionOffsets = [PartitionOffset(
-                initialOffset = "0", partition = "0"
+                initialOffset = "4582464", partition = "0"
             )]
         )]
     )
