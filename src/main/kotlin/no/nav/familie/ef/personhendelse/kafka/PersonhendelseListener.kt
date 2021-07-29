@@ -6,6 +6,8 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.annotation.PartitionOffset
+import org.springframework.kafka.annotation.TopicPartition
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 
@@ -20,20 +22,31 @@ private const val OPPLYSNINGSTYPE_UTFLYTTING = "UTFLYTTING_V1"
 class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-
-    @KafkaListener(id = "familie-ef-personhendelse",
-                   topics = ["aapen-person-pdl-leesah-v1"] )
+    private var lestPersonhendelse = false
+    private var lestDodsfall = false
+    @KafkaListener(
+        id = "familie-ef-personhendelse",
+        topics = ["aapen-person-pdl-leesah-v1"],
+        topicPartitions = [TopicPartition(
+            topic = "aapen-person-pdl-leesah-v1",
+            partitionOffsets = [PartitionOffset(
+                initialOffset = "0", partition = "1"
+            )]
+        )]
+    )
     fun listen(consumerRecord: ConsumerRecord<String, Personhendelse>, ack: Acknowledgment) {
         try {
             val personhendelse = consumerRecord.value()
-            logger.info("Leser personhendelse")
+            if (!lestPersonhendelse) logger.info("Leser personhendelse")
             //logikk her
             if (personhendelse.opplysningstype.erDodsfall()) {
-                logger.info("Personhendelse med opplysningstype dødsfall")
+                if (!lestDodsfall) logger.info("Personhendelse med opplysningstype dødsfall")
+                lestDodsfall = true
                 //dodsfallHandler.handleDodsfallHendelse(personhendelse)
             }
 
             ack.acknowledge()
+            lestPersonhendelse = true
         } catch (e: Exception) {
             //Legg til log
             throw e
