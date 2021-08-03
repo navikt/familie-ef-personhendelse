@@ -1,9 +1,14 @@
 package no.nav.familie.ef.personhendelse.configuration
 
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient
+import io.confluent.kafka.serializers.KafkaAvroDeserializer
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import no.nav.familie.http.config.RestTemplateAzure
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -14,6 +19,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate
 import java.time.Duration
 import java.time.temporal.ChronoUnit
+
 
 @SpringBootConfiguration
 @ConfigurationPropertiesScan("no.nav.familie.ef.personhendelse")
@@ -35,4 +41,19 @@ class ApplicationConfig {
             .messageConverters(listOf(jackson2HttpMessageConverter) + RestTemplate().messageConverters)
     }
 
+    @Bean
+    fun schemaRegistryClient(@Value("\${KAFKA_SCHEMA_REGISTRY_URL}") url: String?): SchemaRegistryClient? {
+        return CachedSchemaRegistryClient(url, 20)
+    }
+
+    @Bean
+    fun kafkaAvroDeserializer(
+        schemaRegistryClient: SchemaRegistryClient?,
+        @Value("\${KAFKA_SCHEMA_REGISTRY_URL}") url: String?
+    ): KafkaAvroDeserializer? {
+        val config: MutableMap<String, Any?> = HashMap()
+        config[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = true
+        config[KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG] = url
+        return KafkaAvroDeserializer(schemaRegistryClient, config)
+    }
 }
