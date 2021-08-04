@@ -64,4 +64,4 @@ KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01
 KAFKA_SCHEMA_REGISTRY_URL: http://kafka-schema-registry.tpa:8081
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
-EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no
+EF_SAK_URL: http://familie-ef-sak
