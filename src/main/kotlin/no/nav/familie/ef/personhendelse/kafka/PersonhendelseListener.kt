@@ -63,7 +63,7 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
         get("opplysningstype").toString()
 
     private fun CharSequence.erDodsfall() =
-        this == OPPLYSNINGSTYPE_DODSFALL
+        this.toString() == OPPLYSNINGSTYPE_DODSFALL
 
     private fun GenericRecord.erUtflytting() =
         hentOpplysningstype() == OPPLYSNINGSTYPE_DODSFALL
