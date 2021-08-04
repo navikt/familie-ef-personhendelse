@@ -6,9 +6,31 @@ logging:
 
 no.nav.security.jwt:
   issuer:
-    azuread:
+    azure:
       discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
-      accepted_audience: ${AZURE_APP_CLIENT_ID}
+
+spring:
+  application:
+    name: familie-ef-personhendelse
+  main:
+    allow-bean-definition-overriding: true
+  kafka:
+    client-id: familie-ef-personhendelse
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    properties:
+      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL}
+      security.protocol: SASL_SSL
+      sasl:
+        mechanism: PLAIN
+        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${SRV_CREDENTIAL_USERNAME}" password="${SRV_CREDENTIAL_PASSWORD}";
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      group-id: srvfamilie-ef-person
+      max-poll-records: 1
+      auto-offset-reset: latest
+      enable-auto-commit: false
+
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
 EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no
