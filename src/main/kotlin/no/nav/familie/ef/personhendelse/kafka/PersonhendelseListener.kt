@@ -34,7 +34,7 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
             if (!lestPersonhendelse) logger.info("Leser personhendelse")
             //logikk her
             if (personhendelse.opplysningstype.erDodsfall()) {
-                if (!lestDodsfall) logger.info("Personhendelse med opplysningstype dødsfall")
+                if (!lestDodsfall) logger.info("Personhendelse med opplysningstype dødsfall ${personhendelse.hendelseId}")
                 //dodsfallHandler.handleDodsfallHendelse(personhendelse)
             }
 
@@ -53,7 +53,7 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
         assignments.keys.stream()
             .filter { it.topic() == "aapen-person-pdl-leesah-v1" }
             .forEach {
-                callback.seekRelative("aapen-person-pdl-leesah-v1", it.partition(), -10, false)
+                callback.seekRelative("aapen-person-pdl-leesah-v1", it.partition(), -100000, false)
             }
     }
 
