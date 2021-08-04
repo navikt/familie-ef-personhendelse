@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
+
 @SpringBootConfiguration
 @ConfigurationPropertiesScan("no.nav.familie.ef.personhendelse")
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger"])
@@ -34,5 +35,4 @@ class ApplicationConfig {
             .setReadTimeout(Duration.of(30, ChronoUnit.SECONDS))
             .messageConverters(listOf(jackson2HttpMessageConverter) + RestTemplate().messageConverters)
     }
-
 }
