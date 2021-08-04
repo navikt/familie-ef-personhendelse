@@ -36,7 +36,7 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
             if (personhendelse.opplysningstype.erDodsfall()) {
                 if (!lestDodsfall) logger.info("Personhendelse med opplysningstype dødsfall ${personhendelse.hendelseId}")
                 lestDodsfall = true
-                //dodsfallHandler.handleDodsfallHendelse(personhendelse)
+                dodsfallHandler.handleDodsfallHendelse(personhendelse)
             }
 
             lestPersonhendelse = true

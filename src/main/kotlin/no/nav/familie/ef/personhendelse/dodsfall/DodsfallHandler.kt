@@ -10,18 +10,23 @@ import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.person.pdl.leesah.Personhendelse
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
 class DodsfallHandler(val sakClient: SakClient, val oppgaveClient: OppgaveClient) {
 
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     fun handleDodsfallHendelse(personhendelse: Personhendelse) {
         val personIdent = personhendelse.personidenter.map { it.toString() }.first()
 
         //TODO: Lag PDL-client og hent foreldre (for å sjekke om de mottar stønad)
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
-
+        secureLogger.info("Finnes behandling for person: $finnesBehandlingForPerson")
+        logger.info("Finnes behandling for person: $finnesBehandlingForPerson")
         if (finnesBehandlingForPerson) {
             val opprettOppgaveRequest =
                 OpprettOppgaveRequest(
