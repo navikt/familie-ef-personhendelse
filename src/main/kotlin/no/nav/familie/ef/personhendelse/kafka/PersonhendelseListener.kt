@@ -34,7 +34,8 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
             if (!lestPersonhendelse) logger.info("Leser personhendelse")
             //logikk her
             if (personhendelse.opplysningstype.erDodsfall()) {
-                if (!lestDodsfall) logger.info("Personhendelse med opplysningstype dødsfall")
+                if (!lestDodsfall) logger.info("Personhendelse med opplysningstype dødsfall ${personhendelse.hendelseId}")
+                lestDodsfall = true
                 //dodsfallHandler.handleDodsfallHendelse(personhendelse)
             }
 
@@ -53,7 +54,8 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
         assignments.keys.stream()
             .filter { it.topic() == "aapen-person-pdl-leesah-v1" }
             .forEach {
-                callback.seekRelative("aapen-person-pdl-leesah-v1", it.partition(), -10, false)
+                //callback.seekRelative("aapen-person-pdl-leesah-v1", it.partition(), -100000, false)
+                callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
             }
     }
 
@@ -61,7 +63,7 @@ class PersonhendelseListener(val dodsfallHandler: DodsfallHandler) : ConsumerSee
         get("opplysningstype").toString()
 
     private fun CharSequence.erDodsfall() =
-        this == OPPLYSNINGSTYPE_DODSFALL
+        this.toString() == OPPLYSNINGSTYPE_DODSFALL
 
     private fun GenericRecord.erUtflytting() =
         hentOpplysningstype() == OPPLYSNINGSTYPE_DODSFALL
