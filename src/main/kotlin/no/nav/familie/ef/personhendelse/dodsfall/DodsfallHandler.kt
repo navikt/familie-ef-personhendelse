@@ -12,6 +12,7 @@ import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @Component
@@ -20,6 +21,7 @@ class DodsfallHandler(val sakClient: SakClient, val oppgaveClient: OppgaveClient
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    @Transactional
     fun handleDodsfallHendelse(personhendelse: Personhendelse) {
         val personIdent = personhendelse.personidenter.map { it.toString() }.first()
 

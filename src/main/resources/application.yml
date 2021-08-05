@@ -6,6 +6,15 @@ server:
 spring:
   application:
     name: familie-ef-personhendelse
+  jackson:
+    mapper:
+      accept-case-insensitive-properties: true
+    deserialization:
+      accept-single-value-as-array: true
+      fail-on-unknown-properties: true
+    serialization:
+      write-empty-json-arrays: false
+      fail-on-empty-beans: false
   main:
     allow-bean-definition-overriding: true
   kafka:
