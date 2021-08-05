@@ -6,19 +6,19 @@ import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 
-@Service
+@Component
 class SakClient(
     @Value("\${EF_SAK_URL}")
     private val uri: URI,
     @Qualifier("azure")
     restOperations: RestOperations
-) : AbstractPingableRestClient(restOperations, "saksbehandling") {
+) : AbstractPingableRestClient(restOperations, "familie.ef.personhendelse.finnes.sak") {
 
     override val pingUri: URI = UriComponentsBuilder.fromUri(uri).pathSegment("api/ping").build().toUri()
 
