@@ -53,6 +53,10 @@ class ApplicationConfig {
         return filterRegistration
     }
 
+    @Bean
+    @Primary
+    fun objectMapper() = objectMapper
+
     /**
      * Overskrever felles sin som bruker proxy, som ikke skal brukes på gcp
      */
@@ -74,8 +78,10 @@ class ApplicationConfig {
     @Bean
     @Primary
     fun oAuth2HttpClient(): OAuth2HttpClient {
-        return DefaultOAuth2HttpClient(RestTemplateBuilder()
-            .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)))
+        return DefaultOAuth2HttpClient(
+            RestTemplateBuilder()
+                .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS))
+        )
     }
 }
