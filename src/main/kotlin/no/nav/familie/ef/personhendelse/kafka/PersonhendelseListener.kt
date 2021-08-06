@@ -30,7 +30,7 @@ class PersonhendelseListener(
     @KafkaListener(id = "familie-ef-personhendelse", topics = ["aapen-person-pdl-leesah-v1"])
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
-            if (!personhendelse.personidenter.isNullOrEmpty()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
+            if (!personhendelse.personidenter.isNullOrEmpty() && !personhendelse.personidenter.first().isNullOrBlank()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
                 if (personhendelse.opplysningstype.erDodsfall()) {
                     dodsfallHandler.handleDodsfallHendelse(personhendelse)
                 }
