@@ -18,7 +18,8 @@ spec:
     initialDelay: 30
     failureThreshold: 10
   prometheus:
-    enabled: false
+    enabled: true
+    path: /internal/prometheus
   replicas:
     min: 1
     max: 2

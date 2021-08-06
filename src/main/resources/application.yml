@@ -6,6 +6,15 @@ server:
 spring:
   application:
     name: familie-ef-personhendelse
+  jackson:
+    mapper:
+      accept-case-insensitive-properties: true
+    deserialization:
+      accept-single-value-as-array: true
+      fail-on-unknown-properties: true
+    serialization:
+      write-empty-json-arrays: false
+      fail-on-empty-beans: false
   main:
     allow-bean-definition-overriding: true
   kafka:
@@ -28,7 +37,7 @@ spring:
 
 no.nav.security.jwt:
   issuer:
-    azure:
+    azuread:
       discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
       accepted_audience: ${AZURE_APP_CLIENT_ID}
   client:
@@ -39,17 +48,17 @@ no.nav.security.jwt:
         grant-type: client_credentials
         scope: ${FAMILIE_INTEGRASJONER_SCOPE}
         authentication:
-          client-id: ${CLIENT_ID}
-          client-secret: ${CLIENT_SECRET}
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
       ef-sak:
         resource-url: ${EF_SAK_URL}
-        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
-        grant-type: client_credentials
-        scope: api://dev-gcp.teamfamilie.familie-ef-sak/.default
+        token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: ${EF_SAK_SCOPE}
         authentication:
-          client-id: ${CLIENT_ID}
-          client-secret: ${CLIENT_SECRET}
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
 
 management:
@@ -59,6 +68,8 @@ management:
     base-path: "/internal"
     path-mapping:
       info: "isAlive"
+  metrics.export.prometheus.enabled: true
+  metrics.web.server.auto-time-requests: true
 
 KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
 KAFKA_SCHEMA_REGISTRY_URL: http://kafka-schema-registry.tpa:8081
