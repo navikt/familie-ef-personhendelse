@@ -17,19 +17,17 @@ class AzureClient(
     private val url: String,
     @Value("\${AZURE_APP_CLIENT_ID}")
     private val clientId: String,
-    @Value("\${EF_SAK_SCOPE}")
-    private val efSakScope: String,
     @Value("\${AZURE_APP_CLIENT_SECRET}")
     private val clientSecret: String,
 ) {
 
-    fun hentToken(): String {
+    fun hentToken(scope: String): String {
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
 
         val map: MultiValueMap<String, String> = LinkedMultiValueMap()
         map.add("client_id", clientId)
-        map.add("scope", efSakScope)
+        map.add("scope", scope)
         map.add("client_secret", clientSecret)
         map.add("grant_type", "client_credentials")
 

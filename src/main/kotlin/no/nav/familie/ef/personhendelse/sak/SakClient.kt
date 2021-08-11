@@ -25,6 +25,8 @@ import java.util.*
 class SakClient(
     @Value("\${EF_SAK_URL}")
     private val uri: URI,
+    @Value("\${EF_SAK_SCOPE}")
+    private val scope: String,
     private val azureClient: AzureClient
 ) {
 
@@ -37,7 +39,7 @@ class SakClient(
             uriComponentsBuilder.queryParam("type", stønadType.name)
         }
         logger.info("henter token")
-        val token = azureClient.hentToken()
+        val token = azureClient.hentToken(scope)
         logger.info("Antall chars for uthentet token fra azure: ${token.length}" )
         val headers = HttpHeaders()
         headers.setBearerAuth(token)

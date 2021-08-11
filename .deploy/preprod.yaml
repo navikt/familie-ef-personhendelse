@@ -49,5 +49,6 @@ spec:
         - application: familie-ef-sak-lokal
       external:
         - host: kafka-schema-registry.nais-q.adeo.no
+        - host: pdl-api.dev-fss-pub.nais.io
   kafka:
     pool: nav-dev
