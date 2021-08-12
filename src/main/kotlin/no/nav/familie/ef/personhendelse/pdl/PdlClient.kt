@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import java.util.function.Consumer
 
 @Component
 class PdlClient(
@@ -28,11 +29,12 @@ class PdlClient(
         val hentPersonQuery = HentPerson(variables)
 
         val token = azureClient.hentToken(scope)
-        secureLogger.info("Uthentet token med scope mot pdl: $token" )
+        secureLogger.info("Uthentet token med scope mot pdl: $token")
         val client = GraphQLWebClient(
             url = url,
-            builder = WebClient.builder().defaultRequest {
-                it.header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+            builder = WebClient.builder().defaultHeaders {
+                it.setBearerAuth(token)
+                it.add("Tema", "ENF")
             }
         )
         return runBlocking { client.execute(hentPersonQuery) }
