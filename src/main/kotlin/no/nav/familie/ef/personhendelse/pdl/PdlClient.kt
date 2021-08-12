@@ -5,6 +5,7 @@ import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import kotlinx.coroutines.runBlocking
 import no.nav.familie.ef.personhendelse.common.AzureClient
 import no.nav.familie.ef.personhendelse.generated.HentPerson
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
@@ -19,14 +20,20 @@ class PdlClient(
     val scope: String
 ) {
 
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
+
     fun hentPerson(fnr: String, callId: String): GraphQLClientResponse<HentPerson.Result> {
 
         val variables = HentPerson.Variables(fnr, true, true)
         val hentPersonQuery = HentPerson(variables)
 
+        val token = azureClient.hentToken(scope)
+        secureLogger.info("Uthentet token med scope mot pdl: $token" )
         val client = GraphQLWebClient(
             url = url,
-            builder = WebClient.builder().defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer ${azureClient.hentToken(scope)}")
+            builder = WebClient.builder().defaultRequest {
+                it.header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+            }
         )
         return runBlocking { client.execute(hentPersonQuery) }
     }
