@@ -26,7 +26,7 @@ class PdlClient(
 
         val client = GraphQLWebClient(
             url = url,
-            builder = WebClient.builder().defaultHeader(HttpHeaders.AUTHORIZATION, azureClient.hentToken(scope))
+            builder = WebClient.builder().defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer ${azureClient.hentToken(scope)}")
         )
         return runBlocking { client.execute(hentPersonQuery) }
     }
