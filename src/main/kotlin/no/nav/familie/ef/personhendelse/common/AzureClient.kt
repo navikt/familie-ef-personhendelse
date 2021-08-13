@@ -24,27 +24,26 @@ class AzureClient(
     private var cachedToken: Token? = null
 
     fun hentToken(scope: String): String {
-        if (!cachedToken.shouldBeRenewed()) {
-            return cachedToken!!.token
+        if (cachedToken.shouldBeRenewed()) {
+            val headers = HttpHeaders()
+            headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
+
+            val map: MultiValueMap<String, String> = LinkedMultiValueMap()
+            map.add("client_id", clientId)
+            map.add("scope", scope)
+            map.add("client_secret", clientSecret)
+            map.add("grant_type", "client_credentials")
+
+
+            val request = HttpEntity<MultiValueMap<String, String>>(map, headers)
+
+            val restTemplate = RestTemplate()
+            val response = restTemplate.postForEntity<Token>(url, request)
+            if (response.body == null) {
+                throw Exception("Fikk ikke hentet ut token")
+            }
+            cachedToken = response.body
         }
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
-
-        val map: MultiValueMap<String, String> = LinkedMultiValueMap()
-        map.add("client_id", clientId)
-        map.add("scope", scope)
-        map.add("client_secret", clientSecret)
-        map.add("grant_type", "client_credentials")
-
-
-        val request = HttpEntity<MultiValueMap<String, String>>(map, headers)
-
-        val restTemplate = RestTemplate()
-        val response = restTemplate.postForEntity<Token>(url, request)
-        if (response.body == null) {
-            throw Exception("Fikk ikke hentet ut token")
-        }
-        cachedToken = response.body
         return cachedToken!!.token
     }
 
