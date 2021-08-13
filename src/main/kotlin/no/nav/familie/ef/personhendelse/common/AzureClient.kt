@@ -24,7 +24,7 @@ class AzureClient(
     private var cachedToken: Token? = null
 
     fun hentToken(scope: String): String {
-        if (cachedToken.shouldBeRenewed()) {
+        //if (cachedToken.shouldBeRenewed()) {
             val headers = HttpHeaders()
             headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
 
@@ -43,7 +43,7 @@ class AzureClient(
                 throw Exception("Fikk ikke hentet ut token")
             }
             cachedToken = response.body
-        }
+        //}
         return cachedToken!!.token
     }
 
