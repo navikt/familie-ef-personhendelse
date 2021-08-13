@@ -29,7 +29,6 @@ class PdlClient(
         val hentPersonQuery = HentPerson(variables)
 
         val token = azureClient.hentToken(scope)
-        secureLogger.info("Uthentet token med scope mot pdl: $token")
         val client = GraphQLWebClient(
             url = url,
             builder = WebClient.builder().defaultHeaders {

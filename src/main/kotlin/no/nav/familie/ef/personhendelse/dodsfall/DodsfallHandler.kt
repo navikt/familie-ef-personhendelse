@@ -39,7 +39,7 @@ class DodsfallHandler(
         secureLogger.info("Person hentet: ${person.data?.hentPerson?.forelderBarnRelasjon}")
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
         logger.info("Finnes behandling for person: $finnesBehandlingForPerson")
-        if (finnesBehandlingForPerson) {
+        //if (finnesBehandlingForPerson) {
             secureLogger.info("Oppgave opprettes for person: $personIdent")
             if (!lagdOppgave) {
                 val opprettOppgaveRequest =
@@ -59,7 +59,7 @@ class DodsfallHandler(
                 secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
                 lagdOppgave = true
             }
-        }
+        //}
         // er personen stønadsmottaker: opprett oppgave
         // sjekk om foreldre er stønadsmottaker: Opprett oppgave
     }
