@@ -24,8 +24,8 @@ class SivilstandHandler(
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun handleSivilstand(personhendelse: Personhendelse) {
-        logger.info("Mottatt hendelse av type sivilstand med ${personhendelse.sivilstand.relatertVedSivilstand}")
-        if (personhendelse.sivilstand.relatertVedSivilstand.toString() != "GIFT") {
+        logger.info("Mottatt hendelse av type sivilstand med ${personhendelse.sivilstand.type}")
+        if (personhendelse.sivilstand.type.toString() != "GIFT") {
             return
         }
         logger.info("Mottatt sivilstand hendelse med relatertVedSivilstand = GIFT")

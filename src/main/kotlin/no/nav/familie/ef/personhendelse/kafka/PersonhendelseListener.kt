@@ -40,7 +40,7 @@ class PersonhendelseListener(
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
             }
         } catch (e: Exception) {
-            logger.error("Feil ved håndtering av personhendelse med hendelseId: $personhendelse.hendelseId: ${e.message}")
+            logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}: ${e.message}")
             throw e
         }
     }
