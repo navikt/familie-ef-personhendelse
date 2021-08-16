@@ -1,7 +1,6 @@
 package no.nav.familie.ef.personhendelse.dodsfall
 
 import no.nav.familie.ef.personhendelse.oppgave.OppgaveClient
-import no.nav.familie.ef.personhendelse.pdl.PdlClient
 import no.nav.familie.ef.personhendelse.sak.SakClient
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.Behandlingstema
@@ -15,13 +14,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import java.util.*
 
 @Component
 class DodsfallHandler(
     val sakClient: SakClient,
-    val oppgaveClient: OppgaveClient,
-    val pdlClient: PdlClient
+    val oppgaveClient: OppgaveClient
 ) {
 
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
@@ -33,13 +30,9 @@ class DodsfallHandler(
     fun handleDodsfallHendelse(personhendelse: Personhendelse) {
         val personIdent = personhendelse.personidenter.map { it.toString() }.first()
 
-        //TODO: Lag PDL-client og hent foreldre (for å sjekke om de mottar stønad)
-        logger.info("Henter person fra PDL (hent familierelasjon)")
-        val person = pdlClient.hentPerson(personIdent, UUID.randomUUID().toString())
-        secureLogger.info("Person hentet: ${person.data?.hentPerson?.forelderBarnRelasjon}")
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
         logger.info("Finnes behandling for person: $finnesBehandlingForPerson")
-        //if (finnesBehandlingForPerson) {
+        if (finnesBehandlingForPerson) {
             secureLogger.info("Oppgave opprettes for person: $personIdent")
             if (!lagdOppgave) {
                 val opprettOppgaveRequest =
@@ -47,9 +40,9 @@ class DodsfallHandler(
                         ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
                         saksId = null,
                         tema = Tema.ENF,
-                        oppgavetype = Oppgavetype.VurderHenvendelse,
+                        oppgavetype = Oppgavetype.VurderLivshendelse,
                         fristFerdigstillelse = LocalDate.now(),
-                        beskrivelse = "Saken ligger i ny løsning. Opprettet som følge av personhendelse",
+                        beskrivelse = "Opprettet som følge av personhendelse av type dødsfall",
                         enhetsnummer = null,
                         behandlingstema = Behandlingstema.Overgangsstønad.value,
                         tilordnetRessurs = null,
@@ -59,8 +52,6 @@ class DodsfallHandler(
                 secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
                 lagdOppgave = true
             }
-        //}
-        // er personen stønadsmottaker: opprett oppgave
-        // sjekk om foreldre er stønadsmottaker: Opprett oppgave
+        }
     }
 }

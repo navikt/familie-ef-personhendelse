@@ -38,9 +38,7 @@ class SakClient(
         if (stønadType != null) {
             uriComponentsBuilder.queryParam("type", stønadType.name)
         }
-        logger.info("henter token")
         val token = azureClient.hentToken(scope)
-        logger.info("Antall chars for uthentet token fra azure: ${token.length}" )
         val headers = HttpHeaders()
         headers.setBearerAuth(token)
         headers.add("Nav-Call-Id", UUID.randomUUID().toString())
@@ -48,7 +46,6 @@ class SakClient(
 
         val request = HttpEntity(PersonIdent(personIdent), headers)
         val response = RestTemplate().postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), request)
-        logger.info("response kode ${response.statusCode} for finnesBehandling request mot ef-sak")
         return response.body?.data ?: error("Kall mot ef-sak feilet. Statuskode=${response.statusCode} - ${response.body?.melding}")
     }
 
