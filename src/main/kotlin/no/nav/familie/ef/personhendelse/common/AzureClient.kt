@@ -17,30 +17,35 @@ class AzureClient(
     private val url: String,
     @Value("\${AZURE_APP_CLIENT_ID}")
     private val clientId: String,
-    @Value("\${EF_SAK_SCOPE}")
-    private val efSakScope: String,
     @Value("\${AZURE_APP_CLIENT_SECRET}")
     private val clientSecret: String,
 ) {
 
-    fun hentToken(): String {
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
+    private var cachedToken: Token? = null
 
-        val map: MultiValueMap<String, String> = LinkedMultiValueMap()
-        map.add("client_id", clientId)
-        map.add("scope", efSakScope)
-        map.add("client_secret", clientSecret)
-        map.add("grant_type", "client_credentials")
+    fun hentToken(scope: String): String {
+        //if (cachedToken.shouldBeRenewed()) {
+            val headers = HttpHeaders()
+            headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
+
+            val map: MultiValueMap<String, String> = LinkedMultiValueMap()
+            map.add("client_id", clientId)
+            map.add("scope", scope)
+            map.add("client_secret", clientSecret)
+            map.add("grant_type", "client_credentials")
 
 
-        val request = HttpEntity<MultiValueMap<String, String>>(map, headers)
+            val request = HttpEntity<MultiValueMap<String, String>>(map, headers)
 
-        val restTemplate = RestTemplate()
-        val response = restTemplate.postForEntity<Token>(url, request)
-        if (response.body == null) {
-            throw Exception("Fikk ikke hentet ut token")
-        }
-        return response.body!!.token
+            val restTemplate = RestTemplate()
+            val response = restTemplate.postForEntity<Token>(url, request)
+            if (response.body == null) {
+                throw Exception("Fikk ikke hentet ut token")
+            }
+            cachedToken = response.body
+        //}
+        return cachedToken!!.token
     }
+
+    fun Token?.shouldBeRenewed(): Boolean = this?.hasExpired() ?: true
 }

@@ -32,6 +32,8 @@
         <kotlin.version>1.5.20</kotlin.version>
         <confluent.version>6.2.0</confluent.version>
         <avro.version>1.10.2</avro.version>
+        <graphql-client.version>4.1.1</graphql-client.version>
+        <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
         <kontrakter.version>2.0_20210625133148_3b67468</kontrakter.version>
         <felles.version>1.20210712123123_4ab21f1</felles.version>
@@ -111,6 +113,11 @@
             <version>${confluent.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.expediagroup</groupId>
+            <artifactId>graphql-kotlin-spring-client</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+        <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
@@ -131,8 +138,33 @@
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>com.expediagroup</groupId>
+                <artifactId>graphql-kotlin-maven-plugin</artifactId>
+                <version>4.1.1</version>
+                <executions>
+                    <execution>
+                        <id>download schema from github</id>
+                        <goals>
+                            <goal>download-sdl</goal>
+                        </goals>
+                        <configuration>
+                            <endpoint>https://navikt.github.io/pdl/pdl-api-sdl.graphqls</endpoint>
+                            <outputDirectory>src/main/resources/pdl</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate kotlin classes from schema + queries</id>
+                        <goals>
+                            <goal>generate-client</goal>
+                        </goals>
+                        <configuration>
+                            <schemaFile>src/main/resources/pdl/schema.graphql</schemaFile>
+                            <packageName>no.nav.familie.ef.personhendelse.generated</packageName>
+                            <queryFileDirectory>src/main/resources/pdl/queries</queryFileDirectory>
+                            <clientType>WEBCLIENT</clientType>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
