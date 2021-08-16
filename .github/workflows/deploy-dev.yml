@@ -1,5 +1,7 @@
 name: Build-Deploy dev
-on: [pull_request, workflow_dispatch]
+on:
+  workflow_dispatch:
+  pull_request:
 
 env:
   IMAGE: ghcr.io/navikt/familie-ef-personhendelse:${{ github.sha }}
