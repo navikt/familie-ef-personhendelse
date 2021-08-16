@@ -1,7 +1,7 @@
 @namespace("no.nav.person.pdl.leesah")
 protocol PersonhendelseProto {
-  import idl "adressebeskyttelse/Adressebeskyttelse.avdl";
   import idl "doedsfall/Doedsfall.avdl";
+  import idl "sivilstand/Sivilstand.avdl";
   import idl "utflytting/Utflytting.avdl";
 
   enum Endringstype {
@@ -22,7 +22,7 @@ protocol PersonhendelseProto {
     Endringstype endringstype;
     union { null, string } tidligereHendelseId = null; // Peker til tidligere hendelse ved korrigering og annullering.
 
-    union { null, no.nav.person.pdl.leesah.adressebeskyttelse.Adressebeskyttelse } adressebeskyttelse = null;
+    union { null, no.nav.person.pdl.leesah.sivilstand.Sivilstand } sivilstand = null;
     union { null, no.nav.person.pdl.leesah.doedsfall.Doedsfall } doedsfall = null;
     union { null, no.nav.person.pdl.leesah.utflytting.UtflyttingFraNorge } utflyttingFraNorge = null;
   }
