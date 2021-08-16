@@ -1,19 +1,13 @@
-package no.nav.familie.ef.personhendelse.sak
+package no.nav.familie.ef.personhendelse.client
 
-import no.nav.familie.ef.personhendelse.common.AzureClient
-import no.nav.familie.http.client.AbstractPingableRestClient
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
-import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.util.MultiValueMap
-import org.springframework.web.client.RestOperations
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForEntity
 import org.springframework.web.util.UriComponentsBuilder
@@ -29,8 +23,6 @@ class SakClient(
     private val scope: String,
     private val azureClient: AzureClient
 ) {
-
-    private val logger = LoggerFactory.getLogger(javaClass)
 
     fun finnesBehandlingForPerson(personIdent: String, stønadType: StønadType? = null): Boolean {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
