@@ -38,11 +38,12 @@ class PersonhendelseListener(
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
             }
         } catch (e: Exception) {
-            //Legg til log
+            logger.error("Feil ved håndtering av personhendelse med hendelseId: $personhendelse.hendelseId: ${e.message}")
             throw e
         }
     }
 
+    /* -- Behold denne utkommenterte koden! Kjekt å kunne lese fra start ved behov for debugging i preprod
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
         callback: ConsumerSeekCallback
@@ -55,6 +56,7 @@ class PersonhendelseListener(
                 callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
             }
     }
+     */
 
     private fun GenericRecord.hentOpplysningstype() =
         get("opplysningstype").toString()

@@ -22,36 +22,29 @@ class DodsfallHandler(
 ) {
 
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
-    private val logger = LoggerFactory.getLogger(javaClass)
-
-    private var lagdOppgave = false
 
     @Transactional
     fun handleDodsfallHendelse(personhendelse: Personhendelse) {
         val personIdent = personhendelse.personidenter.map { it.toString() }.first()
 
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
-        logger.info("Finnes behandling for person: $finnesBehandlingForPerson")
+        secureLogger.info("Finnes behandling med personIdent: $personIdent : $finnesBehandlingForPerson")
         if (finnesBehandlingForPerson) {
-            secureLogger.info("Oppgave opprettes for person: $personIdent")
-            if (!lagdOppgave) {
-                val opprettOppgaveRequest =
-                    OpprettOppgaveRequest(
-                        ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
-                        saksId = null,
-                        tema = Tema.ENF,
-                        oppgavetype = Oppgavetype.VurderLivshendelse,
-                        fristFerdigstillelse = LocalDate.now(),
-                        beskrivelse = "Opprettet som følge av personhendelse av type dødsfall",
-                        enhetsnummer = null,
-                        behandlingstema = Behandlingstema.Overgangsstønad.value,
-                        tilordnetRessurs = null,
-                        behandlesAvApplikasjon = "familie-ef-sak"
-                    )
-                val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
-                secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
-                lagdOppgave = true
-            }
+            val opprettOppgaveRequest =
+                OpprettOppgaveRequest(
+                    ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
+                    saksId = null,
+                    tema = Tema.ENF,
+                    oppgavetype = Oppgavetype.VurderLivshendelse,
+                    fristFerdigstillelse = LocalDate.now(),
+                    beskrivelse = "Opprettet som følge av personhendelse av type dødsfall",
+                    enhetsnummer = null,
+                    behandlingstema = Behandlingstema.Overgangsstønad.value,
+                    tilordnetRessurs = null,
+                    behandlesAvApplikasjon = "familie-ef-sak"
+                )
+            val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
+            secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
         }
     }
 }
