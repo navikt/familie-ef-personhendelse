@@ -1,19 +1,16 @@
 package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
+import no.nav.familie.ef.personhendelse.client.PdlClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
+import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
 import no.nav.familie.kontrakter.ef.felles.StønadType
-import no.nav.familie.kontrakter.felles.Behandlingstema
-import no.nav.familie.kontrakter.felles.Tema
-import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
-import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
-import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.time.LocalDate
+import java.util.*
 
 @Component
 class SivilstandHandler(
@@ -25,7 +22,7 @@ class SivilstandHandler(
 
     fun handleSivilstand(personhendelse: Personhendelse) {
         logger.info("Mottatt hendelse av type sivilstand med ${personhendelse.sivilstand.type}")
-        if (personhendelse.sivilstand.type.toString() != "GIFT") {
+        if (personhendelse.skalSivilstandIgnoreres()) {
             return
         }
         logger.info("Mottatt sivilstand hendelse med relatertVedSivilstand = GIFT")
@@ -39,4 +36,9 @@ class SivilstandHandler(
             secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
         }
     }
+}
+
+fun Personhendelse.skalSivilstandIgnoreres(): Boolean {
+    return (this.sivilstand.type.toString() != "GIFT" && this.sivilstand.type.toString() != "REGISTRERT_PARTNER")
+            && (this.endringstype == Endringstype.ANNULLERT || this.endringstype == Endringstype.OPPHOERT)
 }

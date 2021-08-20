@@ -38,31 +38,11 @@ query($ident: ID!, $bostedHistorikk: Boolean!, $statsborgerskapHistorikk: Boolea
                 historisk
             }
         },
-    	doedsfall{
-    			doedsdato
+    	doedsfall {
+            doedsdato
   		},
-        kontaktadresse(historikk: true) {
-            gyldigFraOgMed
-            gyldigTilOgMed
-            utenlandskAdresse {
-                landkode
-            }
-            utenlandskAdresseIFrittFormat {
-                landkode
-            },
-            metadata {
-                historisk
-            }
-        },
-        oppholdsadresse(historikk: true) {
-            gyldigFraOgMed
-            gyldigTilOgMed
-            utenlandskAdresse {
-                landkode
-            },
-            metadata {
-                historisk
-            }
-        }
+  		foedsel {
+            foedselsdato
+  		}
     }
 }
