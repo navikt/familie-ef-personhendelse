@@ -21,11 +21,11 @@ class SivilstandHandler(
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun handleSivilstand(personhendelse: Personhendelse) {
-        logger.info("Mottatt hendelse av type sivilstand med ${personhendelse.sivilstand.type}")
-        if (personhendelse.skalSivilstandIgnoreres()) {
+
+        if (personhendelse.sivilstandNotNull()) logger.info("Mottatt sivilstand hendelse med verdi ${personhendelse.sivilstand.type}")
+        if (!personhendelse.skalSivilstandHåndteres()) {
             return
         }
-        logger.info("Mottatt sivilstand hendelse med relatertVedSivilstand = GIFT")
 
         val personIdent = personhendelse.personidenter.map { it.toString() }.first()
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
@@ -38,7 +38,14 @@ class SivilstandHandler(
     }
 }
 
-fun Personhendelse.skalSivilstandIgnoreres(): Boolean {
-    return (this.sivilstand.type.toString() != "GIFT" && this.sivilstand.type.toString() != "REGISTRERT_PARTNER")
-            && (this.endringstype == Endringstype.ANNULLERT || this.endringstype == Endringstype.OPPHOERT)
+fun Personhendelse.skalSivilstandHåndteres(): Boolean {
+    return this.sivilstandNotNull() ||
+            (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type.toString()))
+            && (endringstyperSomSkalHåndteres.contains(this.endringstype))
 }
+
+private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this.sivilstand.type != null
+
+private val sivilstandTyperSomSkalHåndteres = listOf("GIFT", "REGISTRERT_PARTNER")
+
+private val endringstyperSomSkalHåndteres = listOf(Endringstype.OPPRETTET, Endringstype.KORRIGERT)
