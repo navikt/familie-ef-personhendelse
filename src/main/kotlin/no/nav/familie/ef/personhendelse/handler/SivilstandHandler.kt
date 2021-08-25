@@ -10,6 +10,8 @@ import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Component
@@ -31,7 +33,9 @@ class SivilstandHandler(
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
         if (finnesBehandlingForPerson) {
             secureLogger.info("Finnes behandling med personIdent: $personIdent : $finnesBehandlingForPerson")
-            val request = defaultOpprettOppgaveRequest(personIdent, "sivilstand gyldig fra og med ${personhendelse.sivilstand.gyldigFraOgMed}")
+            val beskrivelse = "Personhendelse: ${personhendelse.sivilstand.type.toString().enumToReadable()} " +
+                    "gyldig fra og med ${personhendelse.sivilstand.gyldigFraOgMed.toReadable()}"
+            val request = defaultOpprettOppgaveRequest(personIdent, beskrivelse)
             val oppgaveId = oppgaveClient.opprettOppgave(request)
             secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
         }
@@ -49,3 +53,11 @@ private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this
 private val sivilstandTyperSomSkalHåndteres = listOf("GIFT", "REGISTRERT_PARTNER")
 
 private val endringstyperSomSkalHåndteres = listOf(Endringstype.OPPRETTET, Endringstype.KORRIGERT)
+
+fun String.enumToReadable(): String {
+    return this.replace("_", " ").substring(1).lowercase()
+}
+
+fun LocalDate.toReadable(): String {
+    return this.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+}

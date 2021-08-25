@@ -11,7 +11,10 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import java.net.URI
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
 
 @Component
 class OppgaveClient(
@@ -35,14 +38,14 @@ class OppgaveClient(
 
 }
 
-fun defaultOpprettOppgaveRequest(personIdent: String, opplysningstypeBeskrivelse: String) =
+fun defaultOpprettOppgaveRequest(personIdent: String, beskrivelse: String) =
     OpprettOppgaveRequest(
         ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
         saksId = null,
         tema = Tema.ENF,
         oppgavetype = Oppgavetype.VurderLivshendelse,
-        fristFerdigstillelse = LocalDate.now(),
-        beskrivelse = "Opprettet som følge av personhendelse av type $opplysningstypeBeskrivelse",
+        fristFerdigstillelse = fristFerdigstillelse(),
+        beskrivelse = beskrivelse,
         enhetsnummer = null,
         behandlingstema = Behandlingstema.Overgangsstønad.value,
         tilordnetRessurs = null,
@@ -53,4 +56,32 @@ fun HttpHeaders.medContentTypeJsonUTF8(): HttpHeaders {
     this.add("Content-Type", "application/json;charset=UTF-8")
     this.acceptCharset = listOf(Charsets.UTF_8)
     return this
+}
+
+fun fristFerdigstillelse(daysToAdd: Long = 0): LocalDate {
+    var date = LocalDateTime.now().plusDays(daysToAdd)
+
+    if (date.hour >= 14) {
+        date = date.plusDays(1)
+    }
+
+    when (date.dayOfWeek) {
+        DayOfWeek.SATURDAY -> date = date.plusDays(2)
+        DayOfWeek.SUNDAY -> date = date.plusDays(1)
+    }
+
+    when {
+        date.dayOfMonth == 1 && date.month == Month.JANUARY -> date = date.plusDays(1)
+        date.dayOfMonth == 1 && date.month == Month.MAY -> date = date.plusDays(1)
+        date.dayOfMonth == 17 && date.month == Month.MAY -> date = date.plusDays(1)
+        date.dayOfMonth == 25 && date.month == Month.DECEMBER -> date = date.plusDays(2)
+        date.dayOfMonth == 26 && date.month == Month.DECEMBER -> date = date.plusDays(1)
+    }
+
+    when (date.dayOfWeek) {
+        DayOfWeek.SATURDAY -> date = date.plusDays(2)
+        DayOfWeek.SUNDAY -> date = date.plusDays(1)
+    }
+
+    return date.toLocalDate()
 }
