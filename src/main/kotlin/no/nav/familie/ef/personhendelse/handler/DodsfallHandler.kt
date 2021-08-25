@@ -28,7 +28,7 @@ class DodsfallHandler(
             secureLogger.info("Finnes behandling med personIdent: $it : $finnesBehandlingForPerson")
             if (finnesBehandlingForPerson) {
                 val opprettOppgaveRequest =
-                    defaultOpprettOppgaveRequest(it, "dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato}")
+                    defaultOpprettOppgaveRequest(it, "Personhendelse: Dødsfall med dødsdato ${personhendelse.doedsfall.doedsdato.toReadable()}")
                 val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
                 secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
             }
