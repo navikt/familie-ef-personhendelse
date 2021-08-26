@@ -27,8 +27,8 @@ class DodsfallHandler(
             val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(it, StønadType.OVERGANGSSTØNAD)
             secureLogger.info("Finnes behandling med personIdent: $it : $finnesBehandlingForPerson")
             if (finnesBehandlingForPerson) {
-                val opprettOppgaveRequest =
-                    defaultOpprettOppgaveRequest(it, "Personhendelse: Dødsfall med dødsdato ${personhendelse.doedsfall.doedsdato.toReadable()}")
+                val beskrivelse = "Personhendelse: Dødsfall med dødsdato ${personhendelse.doedsfall.doedsdato.toReadable()}"
+                val opprettOppgaveRequest = defaultOpprettOppgaveRequest(it, beskrivelse)
                 val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
                 secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
             }
@@ -36,16 +36,13 @@ class DodsfallHandler(
     }
 
     private fun identerTilSøk(personhendelse: Personhendelse): List<String> {
-        val identerTilSøk = mutableListOf<String>()
+        val identerTilSøk = mutableListOf(personhendelse.personidenter.first().toString())
         val personIdent = personhendelse.personidenter.map { it.toString() }.first()
 
         val callId = UUID.randomUUID().toString()
         val pdlPersonData = pdlClient.hentPerson(personIdent, callId).data
 
         val familierelasjoner = pdlPersonData?.hentPerson?.forelderBarnRelasjon
-        val listeMedBarn = familierelasjoner?.filter { it.minRolleForPerson != ForelderBarnRelasjonRolle.BARN }
-            ?.map { it.relatertPersonsIdent } ?: emptyList()
-        identerTilSøk.addAll(listeMedBarn)
 
         val fødselsdatoList = pdlPersonData?.hentPerson?.foedsel?.map { LocalDate.parse(it.foedselsdato.toString()) }
         if (fødselsdatoList.isNullOrEmpty() ||
