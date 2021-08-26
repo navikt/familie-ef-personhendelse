@@ -55,7 +55,7 @@ private val sivilstandTyperSomSkalHåndteres = listOf("GIFT", "REGISTRERT_PARTNE
 private val endringstyperSomSkalHåndteres = listOf(Endringstype.OPPRETTET, Endringstype.KORRIGERT)
 
 fun String.enumToReadable(): String {
-    return this.replace("_", " ").substring(1).lowercase()
+    return this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
 }
 
 fun LocalDate.toReadable(): String {
