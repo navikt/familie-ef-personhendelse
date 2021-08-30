@@ -31,12 +31,7 @@ class SakClient(
         if (stønadType != null) {
             uriComponentsBuilder.queryParam("type", stønadType.name)
         }
-
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.APPLICATION_JSON
-
-        val request = HttpEntity(PersonIdent(personIdent), headers)
-        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), request)
+        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), PersonIdent(personIdent))
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
 
