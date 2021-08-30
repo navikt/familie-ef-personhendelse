@@ -58,6 +58,7 @@ class SivilstandHandlerTest {
             LocalDate.of(2021, 8, 26)
         )
         personhendelse.personidenter = listOf(personIdent)
+        personhendelse.endringstype = Endringstype.OPPRETTET
 
         every { sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD) } returns true
 
