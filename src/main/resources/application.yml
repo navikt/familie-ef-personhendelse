@@ -44,7 +44,7 @@ no.nav.security.jwt:
     registration:
       integrasjoner-client-credentials:
         resource-url: ${FAMILIE_INTEGRASJONER_API_URL}
-        token-endpoint-url: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+        token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
         grant-type: client_credentials
         scope: ${FAMILIE_INTEGRASJONER_SCOPE}
         authentication:
@@ -53,7 +53,7 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
       ef-sak-clientcredentials:
         resource-url: ${EF_SAK_URL}
-        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
         grant-type: client_credentials
         scope: ${EF_SAK_SCOPE}
         authentication:
