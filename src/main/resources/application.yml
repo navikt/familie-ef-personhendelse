@@ -51,6 +51,15 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
+      ef-sak-clientcredentials:
+        resource-url: ${EF_SAK_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: client_credentials
+        scope: ${EF_SAK_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
       ef-sak:
         resource-url: ${EF_SAK_URL}
         token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
@@ -78,4 +87,4 @@ FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
 STS_URL: https://api-gw.oera.no/security-token-service
 PDL_URL: https://pdl-api.prod-fss-pub.nais.io/graphql
 PDL_SCOPE: api://prod-fss.pdl.pdl-api/.default
-EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no
+EF_SAK_URL: http://familie-ef-sak
