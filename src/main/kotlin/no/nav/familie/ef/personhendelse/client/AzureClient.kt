@@ -1,6 +1,8 @@
 package no.nav.familie.ef.personhendelse.client
 
 import no.nav.familie.ef.personhendelse.common.Token
+import no.nav.familie.http.client.AbstractRestClient
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -8,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
+import org.springframework.web.client.RestOperations
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForEntity
 

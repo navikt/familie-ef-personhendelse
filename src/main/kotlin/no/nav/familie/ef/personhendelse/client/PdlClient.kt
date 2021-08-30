@@ -4,21 +4,22 @@ import com.expediagroup.graphql.client.spring.GraphQLWebClient
 import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import kotlinx.coroutines.runBlocking
 import no.nav.familie.ef.personhendelse.generated.HentPerson
-import org.slf4j.LoggerFactory
+import no.nav.familie.http.client.AbstractRestClient
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import org.springframework.web.client.RestOperations
 import org.springframework.web.reactive.function.client.WebClient
 
 @Component
 class PdlClient(
+    @Qualifier("azure") restOperations: RestOperations,
     val azureClient: AzureClient,
     @Value("\${PDL_URL}")
     val url: String,
     @Value("\${PDL_SCOPE}")
     val scope: String
-) {
-
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
+) : AbstractRestClient(restOperations, "pdl") {
 
     fun hentPerson(fnr: String, callId: String): GraphQLClientResponse<HentPerson.Result> {
 
