@@ -17,14 +17,13 @@ import org.springframework.web.client.postForEntity
 
 @Component
 class AzureClient(
-    @Qualifier("azure") restOperations: RestOperations,
     @Value("\${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}")
     private val url: String,
     @Value("\${AZURE_APP_CLIENT_ID}")
     private val clientId: String,
     @Value("\${AZURE_APP_CLIENT_SECRET}")
     private val clientSecret: String,
-) : AbstractRestClient(restOperations, "azure") {
+) {
 
     private var cachedToken: Token? = null
 

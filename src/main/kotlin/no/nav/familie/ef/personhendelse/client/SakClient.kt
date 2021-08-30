@@ -22,10 +22,7 @@ import java.util.*
 class SakClient(
     @Qualifier("azure") restOperations: RestOperations,
     @Value("\${EF_SAK_URL}")
-    private val uri: URI,
-    @Value("\${EF_SAK_SCOPE}")
-    private val scope: String,
-    private val azureClient: AzureClient
+    private val uri: URI
 ) : AbstractRestClient(restOperations, "familie.ef-sak") {
 
     fun finnesBehandlingForPerson(personIdent: String, stønadType: StønadType? = null): Boolean {
@@ -34,9 +31,8 @@ class SakClient(
         if (stønadType != null) {
             uriComponentsBuilder.queryParam("type", stønadType.name)
         }
-        val token = azureClient.hentToken(scope)
+
         val headers = HttpHeaders()
-        headers.setBearerAuth(token)
         headers.contentType = MediaType.APPLICATION_JSON
 
         val request = HttpEntity(PersonIdent(personIdent), headers)
