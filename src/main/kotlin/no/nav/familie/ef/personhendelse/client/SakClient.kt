@@ -40,8 +40,8 @@ class SakClient(
         headers.contentType = MediaType.APPLICATION_JSON
 
         val request = HttpEntity(PersonIdent(personIdent), headers)
-        val response = RestTemplate().postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), request)
-        return response.body?.data ?: error("Kall mot ef-sak feilet. Statuskode=${response.statusCode} - ${response.body?.melding}")
+        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), request)
+        return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
 
 }
