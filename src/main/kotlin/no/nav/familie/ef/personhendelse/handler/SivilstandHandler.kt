@@ -43,7 +43,7 @@ class SivilstandHandler(
 }
 
 fun Personhendelse.skalSivilstandHåndteres(): Boolean {
-    return this.sivilstandNotNull() ||
+    return this.sivilstandNotNull() &&
             (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type.toString()))
             && (endringstyperSomSkalHåndteres.contains(this.endringstype))
 }
