@@ -22,11 +22,8 @@ import java.net.URI
 @Component
 class PdlClient(
     @Qualifier("azure") restOperations: RestOperations,
-    val azureClient: AzureClient,
     @Value("\${PDL_URL}")
-    val url: URI,
-    @Value("\${PDL_SCOPE}")
-    val scope: String
+    val url: URI
 ) : AbstractRestClient(restOperations, "pdl") {
 
     val pathGraphql = "graphql"
@@ -42,22 +39,6 @@ class PdlClient(
 
         val pdlResponse: PdlResponse<HentPerson.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
         return feilsjekkOgReturnerData(fnr, pdlResponse) { it.hentPerson }
-    }
-
-    fun hentPerson(fnr: String, callId: String): GraphQLClientResponse<HentPerson.Result> {
-
-        val variables = HentPerson.Variables(fnr, true, true)
-        val hentPersonQuery = HentPerson(variables)
-
-        val token = azureClient.hentToken(scope)
-        val client = GraphQLWebClient(
-            url = url.toString(),
-            builder = WebClient.builder().defaultHeaders {
-                it.setBearerAuth(token)
-                it.add("Tema", "ENF")
-            }
-        )
-        return runBlocking { client.execute(hentPersonQuery) }
     }
 }
 
