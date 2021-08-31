@@ -67,13 +67,3 @@ private fun httpHeadersPdl(): HttpHeaders {
         add("Tema", "ENF")
     }
 }
-
-data class PdlError(
-    val message: String,
-    val extensions: PdlExtensions?
-)
-
-data class PdlExtensions(val code: String?) {
-
-    fun notFound() = code == "not_found"
-}
