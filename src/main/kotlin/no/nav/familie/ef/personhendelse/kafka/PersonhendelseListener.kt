@@ -27,8 +27,9 @@ class PersonhendelseListener(
 ) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
+    private val securelogger = LoggerFactory.getLogger("secureLogger")
 
-    @KafkaListener(id = "familie-ef-personhendelse", topics = ["aapen-person-pdl-leesah-v1"])
+    @KafkaListener(id = "familie-ef-personhendelse", topics = ["aapen-person-pdl-leesah-v1"], errorHandler = "KafkaErrorHandler")
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
             if (!personhendelse.personidenter.isNullOrEmpty() && !personhendelse.personidenter.first().isNullOrBlank()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
@@ -40,7 +41,8 @@ class PersonhendelseListener(
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
             }
         } catch (e: Exception) {
-            logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}: ${e.message}")
+            logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}")
+            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}")
             throw e
         }
     }
