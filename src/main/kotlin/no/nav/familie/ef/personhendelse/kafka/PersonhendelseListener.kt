@@ -29,7 +29,7 @@ class PersonhendelseListener(
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
-    @KafkaListener(id = "familie-ef-personhendelse", topics = ["aapen-person-pdl-leesah-v1"], errorHandler = "KafkaErrorHandler")
+    @KafkaListener(id = "familie-ef-personhendelse", topics = ["aapen-person-pdl-leesah-v1"])
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
             if (!personhendelse.personidenter.isNullOrEmpty() && !personhendelse.personidenter.first().isNullOrBlank()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
