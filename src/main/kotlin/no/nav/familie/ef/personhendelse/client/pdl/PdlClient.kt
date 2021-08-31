@@ -26,8 +26,7 @@ class PdlClient(
     val url: URI
 ) : AbstractRestClient(restOperations, "pdl") {
 
-    val pathGraphql = "graphql"
-    val pdlUri: URI = UriComponentsBuilder.fromUri(url).pathSegment(pathGraphql).build().toUri()
+    val pdlUri: URI = UriComponentsBuilder.fromUri(url).build().toUri()
 
     fun hentPerson(fnr: String): Person {
 
