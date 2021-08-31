@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.kafka.listener.MessageListenerContainer
+import org.springframework.scheduling.TaskScheduler
+import org.springframework.scheduling.concurrent.DefaultManagedTaskScheduler
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class KafkaErrorHandlerTest {
@@ -21,8 +23,9 @@ class KafkaErrorHandlerTest {
     @MockK(relaxed = true)
     lateinit var consumer: Consumer<*, *>
 
-    @InjectMockKs
-    lateinit var errorHandler: KafkaErrorHandler
+    private val taskScheduler: TaskScheduler = DefaultManagedTaskScheduler()
+
+    private val errorHandler: KafkaErrorHandler = KafkaErrorHandler(taskScheduler)
 
     @BeforeEach
     internal fun setUp() {
