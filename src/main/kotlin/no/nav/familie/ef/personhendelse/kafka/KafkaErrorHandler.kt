@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.task.SimpleAsyncTaskExecutor
 import org.springframework.kafka.listener.ContainerStoppingErrorHandler
 import org.springframework.kafka.listener.MessageListenerContainer
+import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Component
 import java.time.Duration
+import java.time.Instant
 import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
@@ -18,10 +20,10 @@ import java.util.concurrent.atomic.AtomicLong
  * Hindrer spam i loggene ved gjentakende feil
  */
 @Component
-class KafkaErrorHandler : ContainerStoppingErrorHandler() {
+class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerStoppingErrorHandler() {
 
-    val LOGGER: Logger = LoggerFactory.getLogger(KafkaErrorHandler::class.java)
-    val SECURE_LOGGER: Logger = LoggerFactory.getLogger("secureLogger")
+    val logger: Logger = LoggerFactory.getLogger(KafkaErrorHandler::class.java)
+    val securelogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     private val executor: Executor
     private val counter = AtomicInteger(0)
@@ -32,30 +34,17 @@ class KafkaErrorHandler : ContainerStoppingErrorHandler() {
                         consumer: Consumer<*, *>,
                         container: MessageListenerContainer
     ) {
-        Thread.sleep(1000)
         if (records.isEmpty()) {
-            LOGGER.error("Feil ved konsumering av melding. Ingen records. ${consumer.subscription()}", e)
-            scheduleRestart(
-                e,
-                records,
-                consumer,
-                container,
-                "Ukjent topic"
-            )
+            logger.error("Feil ved konsumering av melding. Ingen records. ${consumer.subscription()}", e)
+            scheduleRestart(e, records, consumer, container, "Ukjent topic")
         } else {
             records.first().run {
-                LOGGER.error(
+                logger.error(
                     "Feil ved konsumering av melding fra ${this.topic()}. id ${this.key()}, " +
                             "offset: ${this.offset()}, partition: ${this.partition()}"
                 )
-                SECURE_LOGGER.error("${this.topic()} - Problemer med prosessering av $records", e)
-                scheduleRestart(
-                    e,
-                    records,
-                    consumer,
-                    container,
-                    this.topic()
-                )
+                securelogger.error("${this.topic()} - Problemer med prosessering av $records", e)
+                scheduleRestart(e, records, consumer, container, this.topic())
             }
         }
     }
@@ -70,18 +59,17 @@ class KafkaErrorHandler : ContainerStoppingErrorHandler() {
             counter.set(0)
         }
         val numErrors = counter.incrementAndGet()
-        val stopTime =
-            if (numErrors > SLOW_ERROR_COUNT) LONG else SHORT * numErrors
-        executor.execute {
+        val stopTime = if (numErrors > SLOW_ERROR_COUNT) LONG else SHORT * numErrors
+        taskScheduler.schedule( {
             try {
-                Thread.sleep(stopTime)
-                LOGGER.warn("Starter kafka container for {}", topic)
+                logger.warn("Starter kafka container for {}", topic)
                 container.start()
             } catch (exception: Exception) {
-                LOGGER.error("Feil oppstod ved venting og oppstart av kafka container", exception)
+                logger.error("Feil oppstod ved venting og oppstart av kafka container", exception)
             }
-        }
-        LOGGER.warn("Stopper kafka container for {} i {}", topic, Duration.ofMillis(stopTime).toString())
+        },
+        Instant.ofEpochMilli(now + stopTime ))
+        logger.warn("Stopper kafka container for {} i {}", topic, Duration.ofMillis(stopTime).toString())
         super.handle(e, records, consumer, container)
     }
 
