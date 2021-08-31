@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestTemplate
 import java.net.URI
 import java.time.Duration
@@ -32,6 +33,7 @@ import java.time.temporal.ChronoUnit
 @SpringBootConfiguration
 @ConfigurationPropertiesScan("no.nav.familie.ef.personhendelse")
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger"])
+@EnableScheduling
 @Import(RestTemplateAzure::class)
 @EnableOAuth2Client(cacheEnabled = true)
 class ApplicationConfig {
