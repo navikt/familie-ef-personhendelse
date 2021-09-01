@@ -9,8 +9,10 @@ import no.nav.familie.ef.personhendelse.generated.HentPerson
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.objectMapper
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.ResourceLoader
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
@@ -26,12 +28,13 @@ class PdlClient(
 
     val pdlUri: URI = UriComponentsBuilder.fromUri(url).build().toUri()
 
+    val hentPersonQuery = javaClass.getResource("/pdl/queries/hentPerson.graphql").readText().graphqlCompatible()
+
     fun hentPerson(fnr: String): Person {
 
-        val variables = HentPerson.Variables(fnr, true, true)
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlPersonRequestVariables(fnr),
-            query = HentPerson(variables).query
+            query = hentPersonQuery
         )
 
         val pdlResponse: String = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
@@ -46,4 +49,8 @@ private fun httpHeadersPdl(): HttpHeaders {
     return HttpHeaders().apply {
         add("Tema", "ENF")
     }
+}
+
+private fun String.graphqlCompatible(): String {
+    return StringUtils.normalizeSpace(this.replace("\n", ""))
 }
