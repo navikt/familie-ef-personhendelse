@@ -1,4 +1,4 @@
-query($ident: ID!, $bostedHistorikk: Boolean!, $statsborgerskapHistorikk: Boolean!){
+query($ident: ID!, $bostedHistorikk: Boolean = true, $statsborgerskapHistorikk: Boolean = true){
     hentPerson(ident: $ident) {
         forelderBarnRelasjon {
             relatertPersonsIdent
