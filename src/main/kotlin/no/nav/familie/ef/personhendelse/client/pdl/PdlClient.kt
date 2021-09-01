@@ -37,10 +37,8 @@ class PdlClient(
             query = hentPersonQuery
         )
 
-        val pdlResponse: String = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
-        secureLogger.info("pdlResponse: $pdlResponse")
-        val mappedResponse: PdlResponse<HentPerson.Result> = objectMapper.readValue(pdlResponse)
-        return feilsjekkOgReturnerData(fnr, mappedResponse) { it.hentPerson }
+        val pdlResponse: PdlResponse<HentPerson.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
+        return feilsjekkOgReturnerData(fnr, pdlResponse) { it.hentPerson }
     }
 }
 
