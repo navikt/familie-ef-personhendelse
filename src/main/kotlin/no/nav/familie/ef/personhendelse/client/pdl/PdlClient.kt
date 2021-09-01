@@ -1,8 +1,6 @@
 package no.nav.familie.ef.personhendelse.client
 
-import com.expediagroup.graphql.client.spring.GraphQLWebClient
-import com.expediagroup.graphql.client.types.GraphQLClientResponse
-import kotlinx.coroutines.runBlocking
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.personhendelse.client.pdl.PdlPersonRequest
 import no.nav.familie.ef.personhendelse.client.pdl.PdlPersonRequestVariables
 import no.nav.familie.ef.personhendelse.client.pdl.PdlResponse
@@ -10,12 +8,12 @@ import no.nav.familie.ef.personhendelse.client.pdl.feilsjekkOgReturnerData
 import no.nav.familie.ef.personhendelse.generated.HentPerson
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
-import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
@@ -36,8 +34,10 @@ class PdlClient(
             query = HentPerson(variables).query
         )
 
-        val pdlResponse: PdlResponse<HentPerson.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
-        return feilsjekkOgReturnerData(fnr, pdlResponse) { it.hentPerson }
+        val pdlResponse: String = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
+        secureLogger.info("pdlResponse: $pdlResponse")
+        val mappedResponse: PdlResponse<HentPerson.Result> = objectMapper.readValue(pdlResponse)
+        return feilsjekkOgReturnerData(fnr, mappedResponse) { it.hentPerson }
     }
 }
 
