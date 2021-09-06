@@ -92,7 +92,7 @@ management:
 KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
 KAFKA_SCHEMA_REGISTRY_URL: http://kafka-schema-registry.tpa:8081
 
-FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
+FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.prod-fss-pub.nais.io
 STS_URL: https://api-gw.oera.no/security-token-service
 PDL_URL: https://pdl-api.prod-fss-pub.nais.io/graphql
 PDL_SCOPE: api://prod-fss.pdl.pdl-api/.default
