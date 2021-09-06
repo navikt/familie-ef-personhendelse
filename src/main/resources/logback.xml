@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT_JSON" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-    </appender>
-
-    <appender name="httpTraceLogAppender" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-    </appender>
+    <property name="ROOT_LOG_LEVEL" value="INFO"/>
 
     <!-- Logger for sensitive data -->
     <appender name="secureLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -26,16 +20,19 @@
         <appender-ref ref="secureLog"/>
     </logger>
 
-    <logger name="HttpTraceLog" level="INFO" additivity="false">
-        <appender-ref ref="httpTraceLogAppender"/>
-    </logger>
+    <!-- Spesiell håndtering av loggeren no.nav.log.LogFilter for å forhindre logging av isAlive-sjekker o.l. -->
+    <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+
+    <root level="${ROOT_LOG_LEVEL:-INFO}">
+        <!-- nais+local -->
+        <appender-ref ref="stdout_json"/>
+        <!-- <appender-ref ref="Sentry" /> -->
+    </root>
 
     <logger name="org.apache.cxf" level="WARN"/>
     <logger name="org.apache.cxf.phase.PhaseInterceptorChain" level="ERROR"/>
     <logger name="org.apache.cxf.ws.addressing.ContextUtils" level="ERROR"/>
     <logger name="org.apache.cxf.ws.addressing.soap.MAPCodec" level="ERROR"/>
-
-    <root level="INFO">
-        <appender-ref ref="STDOUT_JSON"/>
-    </root>
 </configuration>
