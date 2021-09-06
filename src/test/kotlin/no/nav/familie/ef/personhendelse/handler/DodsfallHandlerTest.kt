@@ -52,7 +52,7 @@ class DodsfallHandlerTest {
 
     @BeforeEach
     fun setup() {
-        every { pdlClient.hentPerson(any(), any()).data } returns HentPerson.Result(personUtenRelasjoner)
+        every { pdlClient.hentPerson(any()) } returns personUtenRelasjoner
         every { sakClient.finnesBehandlingForPerson(personIdentUtenRelasjoner, StønadType.OVERGANGSSTØNAD) } returns true
 
     }
@@ -79,7 +79,7 @@ class DodsfallHandlerTest {
         personhendelse.doedsfall = Doedsfall(LocalDate.of(2021, 8, 1))
         personhendelse.personidenter = listOf(personIdentBarn)
 
-        every { pdlClient.hentPerson(personIdentBarn, any()).data } returns HentPerson.Result(personUnder19MedForeldreRelasjoner)
+        every { pdlClient.hentPerson(personIdentBarn) } returns personUnder19MedForeldreRelasjoner
         every { sakClient.finnesBehandlingForPerson(personIdentBarn, StønadType.OVERGANGSSTØNAD) } returns false
         every { sakClient.finnesBehandlingForPerson(personIdentMor, StønadType.OVERGANGSSTØNAD) } returns true
 
