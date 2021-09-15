@@ -9,7 +9,7 @@ spec:
   image: {{ image }}
   ingresses:
     - https://familie-ef-personhendelse.intern.nav.no
-  livenstatusess:
+  liveness:
     path: /internal/isAlive
     initialDelay: 30
     failureThreshold: 10
