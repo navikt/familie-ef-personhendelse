@@ -69,7 +69,7 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
             }
         },
         Instant.ofEpochMilli(now + stopTime ))
-        logger.warn("Stopper kafka container for {} i {}", topic, Duration.ofMillis(stopTime).toString())
+        logger.warn("Stopper kafka container for {} i {}", topic, Duration.ofMillis(stopTime))
         super.handle(e, records, consumer, container)
     }
 

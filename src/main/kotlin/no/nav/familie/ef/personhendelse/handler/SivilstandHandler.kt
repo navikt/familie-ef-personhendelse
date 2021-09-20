@@ -29,11 +29,11 @@ class SivilstandHandler(
             return
         }
 
-        val personIdent = personhendelse.personidenter.map { it.toString() }.first()
+        val personIdent = personhendelse.personidenter.first()
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
         if (finnesBehandlingForPerson) {
             secureLogger.info("Finnes behandling med personIdent: $personIdent : $finnesBehandlingForPerson")
-            val beskrivelse = "Personhendelse: ${personhendelse.sivilstand.type.toString().enumToReadable()} " +
+            val beskrivelse = "Personhendelse: ${personhendelse.sivilstand.type.enumToReadable()} " +
                     "gyldig fra og med ${personhendelse.sivilstand.gyldigFraOgMed.toReadable()}"
             val request = defaultOpprettOppgaveRequest(personIdent, beskrivelse)
             val oppgaveId = oppgaveClient.opprettOppgave(request)
@@ -44,7 +44,7 @@ class SivilstandHandler(
 
 fun Personhendelse.skalSivilstandHåndteres(): Boolean {
     return this.sivilstandNotNull() &&
-            (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type.toString()))
+            (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type))
             && (endringstyperSomSkalHåndteres.contains(this.endringstype))
 }
 
