@@ -36,17 +36,15 @@ class DodsfallHandler(
     }
 
     private fun identerTilSøk(personhendelse: Personhendelse): List<String> {
-        val identerTilSøk = mutableListOf(personhendelse.personidenter.first().toString())
-        val personIdent = personhendelse.personidenter.map { it.toString() }.first()
+        val personIdent = personhendelse.personidenter.first().toString()
+        val identerTilSøk = mutableListOf(personIdent)
 
         val pdlPersonData = pdlClient.hentPerson(personIdent)
 
         val familierelasjoner = pdlPersonData.forelderBarnRelasjon
 
-        val fødselsdatoList = pdlPersonData.foedsel.map { LocalDate.parse(it.foedselsdato.toString()) }
-        if (fødselsdatoList.isEmpty() ||
-            fødselsdatoList.first().isAfter(LocalDate.now().minusYears(19))
-        ) {
+        val fødselsdatoList = pdlPersonData.foedsel.mapNotNull { it.foedselsdato?.value }
+        if (fødselsdatoList.isEmpty() || fødselsdatoList.first().isAfter(LocalDate.now().minusYears(19))) {
             val listeMedForeldreForBarn =
                 familierelasjoner.filter { it.minRolleForPerson == ForelderBarnRelasjonRolle.BARN }
                     .map { it.relatertPersonsIdent }

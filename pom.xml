@@ -163,7 +163,18 @@
                             <schemaFile>src/main/resources/pdl/schema.graphql</schemaFile>
                             <packageName>no.nav.familie.ef.personhendelse.generated</packageName>
                             <queryFileDirectory>src/main/resources/pdl/queries</queryFileDirectory>
-                            <clientType>WEBCLIENT</clientType>
+                            <customScalars>
+                                <customScalar>
+                                    <scalar>Date</scalar>
+                                    <type>java.time.LocalDate</type>
+                                    <converter>no.nav.familie.ef.personhendelse.kafka.converter.LocalDateConverter</converter>
+                                </customScalar>
+                                <customScalar>
+                                    <scalar>DateTime</scalar>
+                                    <type>java.time.LocalDateTime</type>
+                                    <converter>no.nav.familie.ef.personhendelse.kafka.converter.LocalDateTimeConverter</converter>
+                                </customScalar>
+                            </customScalars>
                         </configuration>
                     </execution>
                 </executions>
