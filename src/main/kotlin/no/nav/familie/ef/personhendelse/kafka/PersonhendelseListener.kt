@@ -33,7 +33,7 @@ class PersonhendelseListener(
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
             if (!personhendelse.personidenter.isNullOrEmpty() && !personhendelse.personidenter.first().isNullOrBlank()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
-                when (personhendelse.opplysningstype.toString()) {
+                when (personhendelse.opplysningstype) {
                     OPPLYSNINGSTYPE_DODSFALL -> dodsfallHandler.handleDodsfall(personhendelse)
                     OPPLYSNINGSTYPE_SIVILSTAND -> sivilstandHandler.handleSivilstand(personhendelse)
                 }

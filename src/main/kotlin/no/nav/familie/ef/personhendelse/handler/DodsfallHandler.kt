@@ -36,7 +36,7 @@ class DodsfallHandler(
     }
 
     private fun identerTilSøk(personhendelse: Personhendelse): List<String> {
-        val personIdent = personhendelse.personidenter.first().toString()
+        val personIdent = personhendelse.personidenter.first()
         val identerTilSøk = mutableListOf(personIdent)
 
         val pdlPersonData = pdlClient.hentPerson(personIdent)
