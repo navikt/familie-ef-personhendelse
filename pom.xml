@@ -151,7 +151,7 @@
                         </goals>
                         <configuration>
                             <endpoint>https://navikt.github.io/pdl/pdl-api-sdl.graphqls</endpoint>
-                            <outputDirectory>src/main/resources/pdl</outputDirectory>
+                            <schemaFile>src/main/resources/pdl/schema.graphql</schemaFile>
                         </configuration>
                     </execution>
                     <execution>
@@ -163,7 +163,18 @@
                             <schemaFile>src/main/resources/pdl/schema.graphql</schemaFile>
                             <packageName>no.nav.familie.ef.personhendelse.generated</packageName>
                             <queryFileDirectory>src/main/resources/pdl/queries</queryFileDirectory>
-                            <clientType>WEBCLIENT</clientType>
+                            <customScalars>
+                                <customScalar>
+                                    <scalar>Date</scalar>
+                                    <type>java.time.LocalDate</type>
+                                    <converter>no.nav.familie.ef.personhendelse.kafka.converter.LocalDateConverter</converter>
+                                </customScalar>
+                                <customScalar>
+                                    <scalar>DateTime</scalar>
+                                    <type>java.time.LocalDateTime</type>
+                                    <converter>no.nav.familie.ef.personhendelse.kafka.converter.LocalDateTimeConverter</converter>
+                                </customScalar>
+                            </customScalars>
                         </configuration>
                     </execution>
                 </executions>
@@ -201,6 +212,7 @@
                         <configuration>
                             <sourceDirectory>src/main/resources/avro</sourceDirectory>
                             <outputDirectory>${project.build.directory}/generated-sources/pdl-leesah</outputDirectory>
+                            <stringType>String</stringType>
                         </configuration>
                     </execution>
                 </executions>

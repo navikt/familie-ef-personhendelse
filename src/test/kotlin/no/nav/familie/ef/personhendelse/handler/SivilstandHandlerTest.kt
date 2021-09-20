@@ -30,7 +30,7 @@ class SivilstandHandlerTest {
     fun `Ikke opprett oppgave for sivilstand hendelse registrert partner dersom person ikke har løpende ef-sak`() {
         val personhendelse = Personhendelse()
         personhendelse.sivilstand = Sivilstand(
-            Sivilstandstype.REGISTRERT_PARTNER.toString(),
+            Sivilstandstype.REGISTRERT_PARTNER.name,
             LocalDate.of(2021, 8, 26),
             partnerPersonIdent,
             LocalDate.of(2021, 8, 26)
@@ -52,7 +52,7 @@ class SivilstandHandlerTest {
     fun `Opprett oppgave for sivilstand hendelse registrert partner dersom person har løpende ef-sak`() {
         val personhendelse = Personhendelse()
         personhendelse.sivilstand = Sivilstand(
-            Sivilstandstype.REGISTRERT_PARTNER.toString(),
+            Sivilstandstype.REGISTRERT_PARTNER.name,
             LocalDate.of(2021, 8, 26),
             partnerPersonIdent,
             LocalDate.of(2021, 8, 26)
