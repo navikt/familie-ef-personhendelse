@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.kafka
 
 import no.nav.familie.ef.personhendelse.handler.DodsfallHandler
 import no.nav.familie.ef.personhendelse.handler.SivilstandHandler
+import no.nav.familie.ef.personhendelse.handler.UtflyttingHandler
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.avro.generic.GenericRecord
 import org.slf4j.LoggerFactory
@@ -14,16 +15,19 @@ import org.springframework.stereotype.Component
 
 private const val OPPLYSNINGSTYPE_DODSFALL = "DOEDSFALL_V1"
 private const val OPPLYSNINGSTYPE_SIVILSTAND = "SIVILSTAND_V1"
+private const val UTFLYTTING_FRA_NORGE = "UTFLYTTING_FRA_NORGE"
+
 
 /**
  * Leesah: Livet er en strøm av hendelser
  */
 @Component
 class PersonhendelseListener(
-    val dodsfallHandler: DodsfallHandler,
-    val sivilstandHandler: SivilstandHandler,
-    @Value("\${SPRING_PROFILES_ACTIVE}")
-    private val env: String
+        val dodsfallHandler: DodsfallHandler,
+        val sivilstandHandler: SivilstandHandler,
+        val utflyttingHandler: UtflyttingHandler,
+        @Value("\${SPRING_PROFILES_ACTIVE}")
+        private val env: String
 ) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -36,6 +40,7 @@ class PersonhendelseListener(
                 when (personhendelse.opplysningstype) {
                     OPPLYSNINGSTYPE_DODSFALL -> dodsfallHandler.handleDodsfall(personhendelse)
                     OPPLYSNINGSTYPE_SIVILSTAND -> sivilstandHandler.handleSivilstand(personhendelse)
+                    UTFLYTTING_FRA_NORGE -> utflyttingHandler.handleUtflytting(personhendelse)
                 }
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
