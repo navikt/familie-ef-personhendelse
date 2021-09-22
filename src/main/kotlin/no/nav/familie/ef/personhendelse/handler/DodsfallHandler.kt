@@ -22,7 +22,6 @@ class DodsfallHandler(
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun handleDodsfall(personhendelse: Personhendelse) {
-
         identerTilSøk(personhendelse).forEach {
             val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(it, StønadType.OVERGANGSSTØNAD)
             secureLogger.info("Finnes behandling med personIdent: $it : $finnesBehandlingForPerson")

@@ -1,16 +1,16 @@
 package no.nav.familie.ef.personhendelse.kafka
 
-import no.nav.familie.ef.personhendelse.handler.DodsfallHandler
-import no.nav.familie.ef.personhendelse.handler.SivilstandHandler
-import no.nav.familie.ef.personhendelse.handler.UtflyttingHandler
+import no.nav.familie.ef.personhendelse.handler.PersonhendelseHandler
+import no.nav.familie.log.mdc.MDCConstants
 import no.nav.person.pdl.leesah.Personhendelse
-import org.apache.avro.generic.GenericRecord
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 
 private const val OPPLYSNINGSTYPE_DODSFALL = "DOEDSFALL_V1"
@@ -23,9 +23,7 @@ private const val UTFLYTTING_FRA_NORGE = "UTFLYTTING_FRA_NORGE"
  */
 @Component
 class PersonhendelseListener(
-        val dodsfallHandler: DodsfallHandler,
-        val sivilstandHandler: SivilstandHandler,
-        val utflyttingHandler: UtflyttingHandler,
+        private val personhendelseHandlers: List<PersonhendelseHandler>,
         @Value("\${SPRING_PROFILES_ACTIVE}")
         private val env: String
 ) : ConsumerSeekAware {
@@ -33,22 +31,27 @@ class PersonhendelseListener(
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
+    private val handlers = personhendelseHandlers.associateBy(PersonhendelseHandler::type)
+
+    init {
+        logger.info("Legger til handlers: {}", personhendelseHandlers)
+    }
+
     @KafkaListener(id = "familie-ef-personhendelse", topics = ["aapen-person-pdl-leesah-v1"], containerFactory = "kafkaPersonhendelseListenerContainerFactory")
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
+            MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
             if (!personhendelse.personidenter.isNullOrEmpty() && !personhendelse.personidenter.first().isNullOrBlank()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
-                when (personhendelse.opplysningstype) {
-                    OPPLYSNINGSTYPE_DODSFALL -> dodsfallHandler.handleDodsfall(personhendelse)
-                    OPPLYSNINGSTYPE_SIVILSTAND -> sivilstandHandler.handleSivilstand(personhendelse)
-                    UTFLYTTING_FRA_NORGE -> utflyttingHandler.handleUtflytting(personhendelse)
-                }
+                handlers[personhendelse.opplysningstype]?.handle(personhendelse)
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
             }
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}")
-            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}")
+            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}", e)
             throw e
+        } finally {
+            MDC.remove(MDCConstants.MDC_CALL_ID)
         }
     }
 
@@ -67,12 +70,4 @@ class PersonhendelseListener(
     }
      */
 
-    private fun GenericRecord.hentOpplysningstype() =
-        get("opplysningstype").toString()
-
-    private fun CharSequence.erDodsfall() =
-        this.toString() == OPPLYSNINGSTYPE_DODSFALL
-
-    private fun CharSequence.erSivilstand() =
-        this.toString() == OPPLYSNINGSTYPE_SIVILSTAND
 }
