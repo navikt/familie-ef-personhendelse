@@ -21,7 +21,7 @@ class UtflyttingHandler(val sakClient: SakClient,
             logger.info("Mottatt utflyttingshendelse")
         } ?: throw Exception("Ingen utflyttingFraNorge tilordning i personhendelse : ${personhendelse}")
 
-        val personIdent = personhendelse.personidenter.map { it.toString() }.first()
+        val personIdent = personhendelse.personidenter.first()
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
 
         if (finnesBehandlingForPerson) {
