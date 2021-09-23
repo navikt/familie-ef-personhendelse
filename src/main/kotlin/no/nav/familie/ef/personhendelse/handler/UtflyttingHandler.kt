@@ -3,10 +3,12 @@ package no.nav.familie.ef.personhendelse.handler
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
+import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import no.nav.person.pdl.leesah.Endringstype
 
 @Component
 class UtflyttingHandler(val sakClient: SakClient,
@@ -16,6 +18,10 @@ class UtflyttingHandler(val sakClient: SakClient,
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     fun handleUtflytting(personhendelse: Personhendelse) {
+
+        if (personhendelse.ignorerHendelse()) {
+            return
+        }
 
         personhendelse.utflyttingFraNorge?.let {
             logger.info("Mottatt utflyttingshendelse")
@@ -37,3 +43,7 @@ class UtflyttingHandler(val sakClient: SakClient,
 private fun Personhendelse.utflyttingsBeskrivelse() = "Utflyttingshendelse til ${this.utflyttingFraNorge.tilflyttingsstedIUtlandet}, " +
                                                       "{${this.utflyttingFraNorge.tilflyttingsland}. " +
                                                       "Utflyttingsdato : ${this.utflyttingFraNorge.utflyttingsdato}"
+
+private val ignorteEndringstyper = listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT)
+
+private fun Personhendelse.ignorerHendelse() = ignorteEndringstyper.contains(this.endringstype)
