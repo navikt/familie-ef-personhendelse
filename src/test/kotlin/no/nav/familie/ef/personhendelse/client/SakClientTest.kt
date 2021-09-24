@@ -50,7 +50,7 @@ internal class SakClientTest {
     }
 
     @Test
-    fun `hentSaksnummer skal returnere fagsakId`() {
+    fun `Finnes behandling i ef-sak for person og returner true`() {
 
         wiremockServerItem.stubFor(
             post(urlMatching("/api/ekstern/behandling/finnes"))

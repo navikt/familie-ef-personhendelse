@@ -52,7 +52,7 @@ class OppgaveClientTest {
     }
 
     @Test
-    fun `hentSaksnummer skal returnere fagsakId`() {
+    fun `Opprett oppgave og returnert oppgaveId`() {
         wiremockServerItem.stubFor(
             post(urlMatching("/api/oppgave/opprett"))
                 .willReturn(
