@@ -31,7 +31,7 @@ class DodsfallHandlerTest {
     private val oppgaveClient = mockk<OppgaveClient>()
 
 
-    private val dodsfallHandler = DodsfallHandler(sakClient, pdlClient, oppgaveClient)
+    private val dodsfallHandler = DodsfallHandler(pdlClient, sakClient, oppgaveClient)
 
     private val personIdentUtenRelasjoner = "12345612344"
     private val personIdentMor = "12345612345"
@@ -54,7 +54,7 @@ class DodsfallHandlerTest {
     @BeforeEach
     fun setup() {
         every { pdlClient.hentPerson(any()) } returns personUtenRelasjoner
-        every { sakClient.finnesBehandlingForPerson(personIdentUtenRelasjoner, StønadType.OVERGANGSSTØNAD) } returns true
+        every { sakClient.finnesBehandlingForPerson(any(), StønadType.OVERGANGSSTØNAD) } returns true
 
     }
 
@@ -67,7 +67,7 @@ class DodsfallHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        dodsfallHandler.handleDodsfall(personhendelse)
+        dodsfallHandler.handle(personhendelse)
 
         assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
         assertThat(oppgaveRequestSlot.captured.beskrivelse).isEqualTo("Personhendelse: Dødsfall med dødsdato 01.08.2021")
@@ -87,7 +87,7 @@ class DodsfallHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        dodsfallHandler.handleDodsfall(personhendelse)
+        dodsfallHandler.handle(personhendelse)
 
         assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
         assertThat(oppgaveRequestSlot.captured.beskrivelse).isEqualTo("Personhendelse: Dødsfall med dødsdato 01.08.2021")

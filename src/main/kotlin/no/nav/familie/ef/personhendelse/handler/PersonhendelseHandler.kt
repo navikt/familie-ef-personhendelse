@@ -3,32 +3,35 @@ package no.nav.familie.ef.personhendelse.handler
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
+import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.person.pdl.leesah.Personhendelse
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 
-@Component
 abstract class PersonhendelseHandler(
         val sakClient: SakClient,
         val oppgaveClient: OppgaveClient
 ) {
 
-    final val logger = LoggerFactory.getLogger(this::class.java)
-    final val secureLogger = LoggerFactory.getLogger("secureLogger")
+    val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    abstract val type: String
+    @Suppress("MemberVisibilityCanBePrivate")
+    val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
-    fun handle(personhendelse: Personhendelse) {
+    abstract val type: PersonhendelseType
+
+    open fun handle(personhendelse: Personhendelse) {
         val personIdent = personhendelse.personidenter.first() // todo endre til att sakClient kan ta emot en liste med identer
-        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent)
+        // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
+        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
 
         if (finnesBehandlingForPerson) {
             handlePersonhendelse(personhendelse, personIdent)
         }
     }
 
-    final fun handlePersonhendelse(personhendelse: Personhendelse, personIdent: String) {
-        val skalOppretteOppgave = skalOppretteOppgave()
+    fun handlePersonhendelse(personhendelse: Personhendelse, personIdent: String) {
+        val skalOppretteOppgave = skalOppretteOppgave(personhendelse)
         logHendelse(personhendelse, skalOppretteOppgave, personIdent)
 
         if (!skalOppretteOppgave) {
@@ -50,12 +53,12 @@ abstract class PersonhendelseHandler(
 
     private fun opprettOppgave(personhendelse: Personhendelse, personIdent: String) {
         val oppgaveBeskrivelse = lagOppgaveBeskrivelse(personhendelse)
-        val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, oppgaveBeskrivelse)
+        val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
         logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
     }
 
-    abstract fun skalOppretteOppgave(): Boolean
+    open fun skalOppretteOppgave(personhendelse: Personhendelse) = true
 
     abstract fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String
 

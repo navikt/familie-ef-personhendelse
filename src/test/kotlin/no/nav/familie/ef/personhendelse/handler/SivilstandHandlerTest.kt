@@ -13,6 +13,7 @@ import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import no.nav.person.pdl.leesah.sivilstand.Sivilstand
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -43,9 +44,9 @@ class SivilstandHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        sivilstandHandler.handleSivilstand(personhendelse)
+        sivilstandHandler.handle(personhendelse)
 
-        Assertions.assertThat(oppgaveRequestSlot.isCaptured).isFalse
+        assertThat(oppgaveRequestSlot.isCaptured).isFalse
     }
 
     @Test
@@ -65,12 +66,12 @@ class SivilstandHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        sivilstandHandler.handleSivilstand(personhendelse)
+        sivilstandHandler.handle(personhendelse)
 
-        Assertions.assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
-        Assertions.assertThat(oppgaveRequestSlot.captured.beskrivelse)
-            .isEqualTo("Personhendelse: Registrert partner gyldig fra og med 26.08.2021")
-        Assertions.assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
+        assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
+        assertThat(oppgaveRequestSlot.captured.beskrivelse)
+            .isEqualTo("Personhendelse: Sivilstand endret til \"Registrert partner\", gyldig fra og med 26.08.2021")
+        assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
     }
 
 }

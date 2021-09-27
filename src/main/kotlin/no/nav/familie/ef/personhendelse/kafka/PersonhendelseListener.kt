@@ -13,17 +13,12 @@ import org.springframework.stereotype.Component
 import java.util.UUID
 
 
-private const val OPPLYSNINGSTYPE_DODSFALL = "DOEDSFALL_V1"
-private const val OPPLYSNINGSTYPE_SIVILSTAND = "SIVILSTAND_V1"
-private const val UTFLYTTING_FRA_NORGE = "UTFLYTTING_FRA_NORGE"
-
-
 /**
  * Leesah: Livet er en strøm av hendelser
  */
 @Component
 class PersonhendelseListener(
-        private val personhendelseHandlers: List<PersonhendelseHandler>,
+        personhendelseHandlers: List<PersonhendelseHandler>,
         @Value("\${SPRING_PROFILES_ACTIVE}")
         private val env: String
 ) : ConsumerSeekAware {
@@ -31,24 +26,31 @@ class PersonhendelseListener(
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
-    private val handlers = personhendelseHandlers.associateBy(PersonhendelseHandler::type)
+    private val handlers: Map<String, PersonhendelseHandler> = personhendelseHandlers.associateBy { it.type.name }
 
     init {
         logger.info("Legger til handlers: {}", personhendelseHandlers)
+        if (personhendelseHandlers.isEmpty()) {
+            error("Finner ikke handlers for personhendelse")
+        }
     }
 
-    @KafkaListener(id = "familie-ef-personhendelse", topics = ["aapen-person-pdl-leesah-v1"], containerFactory = "kafkaPersonhendelseListenerContainerFactory")
+    @KafkaListener(id = "familie-ef-personhendelse",
+                   topics = ["aapen-person-pdl-leesah-v1"],
+                   containerFactory = "kafkaPersonhendelseListenerContainerFactory")
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
             MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
-            if (!personhendelse.personidenter.isNullOrEmpty() && !personhendelse.personidenter.first().isNullOrBlank()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
+            if (!personhendelse.personidenter.isNullOrEmpty() && !personhendelse.personidenter.first()
+                            .isNullOrBlank()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
                 handlers[personhendelse.opplysningstype]?.handle(personhendelse)
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
             }
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}")
-            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}", e)
+            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}",
+                               e)
             throw e
         } finally {
             MDC.remove(MDCConstants.MDC_CALL_ID)

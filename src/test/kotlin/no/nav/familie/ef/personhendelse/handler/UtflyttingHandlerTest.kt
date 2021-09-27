@@ -39,7 +39,7 @@ class UtflyttingHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        utflyttingHandler.handleUtflytting(personhendelse)
+        utflyttingHandler.handle(personhendelse)
         assertThat(oppgaveRequestSlot.isCaptured).isFalse
     }
 
@@ -55,7 +55,7 @@ class UtflyttingHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        utflyttingHandler.handleUtflytting(personhendelse)
+        utflyttingHandler.handle(personhendelse)
 
         assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
         assertThat(oppgaveRequestSlot.captured.beskrivelse).contains("Finland")
