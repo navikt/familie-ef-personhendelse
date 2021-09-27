@@ -1,6 +1,5 @@
 package no.nav.familie.ef.personhendelse.client
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.personhendelse.client.pdl.PdlPersonRequest
 import no.nav.familie.ef.personhendelse.client.pdl.PdlPersonRequestVariables
 import no.nav.familie.ef.personhendelse.client.pdl.PdlResponse
@@ -8,11 +7,9 @@ import no.nav.familie.ef.personhendelse.client.pdl.feilsjekkOgReturnerData
 import no.nav.familie.ef.personhendelse.generated.HentPerson
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.http.client.AbstractRestClient
-import no.nav.familie.kontrakter.felles.objectMapper
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.ResourceLoader
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
@@ -49,6 +46,6 @@ private fun httpHeadersPdl(): HttpHeaders {
     }
 }
 
-private fun String.graphqlCompatible(): String {
+fun String.graphqlCompatible(): String {
     return StringUtils.normalizeSpace(this.replace("\n", ""))
 }
