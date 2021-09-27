@@ -10,7 +10,7 @@ import no.nav.familie.ef.personhendelse.generated.enums.Sivilstandstype
 import no.nav.familie.ef.personhendelse.generated.scalars.Date
 import no.nav.familie.ef.personhendelse.generated.scalars.DateTime
 import no.nav.familie.kontrakter.felles.objectMapper
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -70,60 +70,62 @@ class PdlClientTest {
                 ))
 
         val response = pdlClient.hentPerson(personIdent)
-        Assertions.assertThat(response.statsborgerskap.first().land).isEqualTo("NOR")
-        Assertions.assertThat(response.sivilstand.first().type).isEqualTo(Sivilstandstype.UGIFT)
-        Assertions.assertThat(response.bostedsadresse.first().angittFlyttedato).isEqualTo(Date(LocalDate.of(1997,1,1)))
-        Assertions.assertThat(response.bostedsadresse.first().gyldigFraOgMed).isEqualTo(DateTime(LocalDateTime.of(1997,1,1,0,0)))
-        Assertions.assertThat(response.doedsfall.isEmpty()).isTrue
+        assertThat(response.statsborgerskap.first().land).isEqualTo("NOR")
+        assertThat(response.sivilstand.first().type).isEqualTo(Sivilstandstype.UGIFT)
+        assertThat(response.bostedsadresse.first().angittFlyttedato).isEqualTo(Date(LocalDate.of(1997,1,1)))
+        assertThat(response.bostedsadresse.first().gyldigFraOgMed).isEqualTo(DateTime(LocalDateTime.of(1997,1,1,0,0)))
+        assertThat(response.doedsfall.isEmpty()).isTrue
     }
 
     private fun pdlResponse(): String =
-        "{\n" +
-                "  \"data\": {\n" +
-                "    \"hentPerson\": {\n" +
-                "      \"forelderBarnRelasjon\": [],\n" +
-                "      \"statsborgerskap\": [\n" +
-                "        {\n" +
-                "          \"land\": \"NOR\",\n" +
-                "          \"gyldigFraOgMed\": \"1999-01-01\",\n" +
-                "          \"gyldigTilOgMed\": null,\n" +
-                "          \"metadata\": {\n" +
-                "            \"historisk\": false\n" +
-                "          }\n" +
-                "        }\n" +
-                "      ],\n" +
-                "      \"sivilstand\": [\n" +
-                "        {\n" +
-                "          \"type\": \"UGIFT\",\n" +
-                "          \"gyldigFraOgMed\": null,\n" +
-                "          \"bekreftelsesdato\": null,\n" +
-                "          \"relatertVedSivilstand\": null\n" +
-                "        }\n" +
-                "      ],\n" +
-                "      \"adressebeskyttelse\": [],\n" +
-                "      \"bostedsadresse\": [\n" +
-                "        {\n" +
-                "          \"angittFlyttedato\": \"1997-01-01\",\n" +
-                "          \"gyldigFraOgMed\": \"1997-01-01T00:00\",\n" +
-                "          \"gyldigTilOgMed\": null,\n" +
-                "          \"vegadresse\": {\n" +
-                "            \"postnummer\": \"0557\"\n" +
-                "          },\n" +
-                "          \"matrikkeladresse\": null,\n" +
-                "          \"ukjentBosted\": null,\n" +
-                "          \"utenlandskAdresse\": null,\n" +
-                "          \"metadata\": {\n" +
-                "            \"historisk\": false\n" +
-                "          }\n" +
-                "        }\n" +
-                "      ],\n" +
-                "      \"doedsfall\": [],\n" +
-                "      \"foedsel\": [\n" +
-                "        {\n" +
-                "          \"foedselsdato\": \"1980-03-22\"\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  }\n" +
-                "}"
+        """
+            {
+              "data": {
+                "hentPerson": {
+                  "forelderBarnRelasjon": [],
+                  "statsborgerskap": [
+                    {
+                      "land": "NOR",
+                      "gyldigFraOgMed": "1999-01-01",
+                      "gyldigTilOgMed": null,
+                      "metadata": {
+                        "historisk": false
+                      }
+                    }
+                  ],
+                  "sivilstand": [
+                    {
+                      "type": "UGIFT",
+                      "gyldigFraOgMed": null,
+                      "bekreftelsesdato": null,
+                      "relatertVedSivilstand": null
+                    }
+                  ],
+                  "adressebeskyttelse": [],
+                  "bostedsadresse": [
+                    {
+                      "angittFlyttedato": "1997-01-01",
+                      "gyldigFraOgMed": "1997-01-01T00:00",
+                      "gyldigTilOgMed": null,
+                      "vegadresse": {
+                        "postnummer": "0557"
+                      },
+                      "matrikkeladresse": null,
+                      "ukjentBosted": null,
+                      "utenlandskAdresse": null,
+                      "metadata": {
+                        "historisk": false
+                      }
+                    }
+                  ],
+                  "doedsfall": [],
+                  "foedsel": [
+                    {
+                      "foedselsdato": "1980-03-22"
+                    }
+                  ]
+                }
+              }
+            }
+        """.trimIndent()
 }
