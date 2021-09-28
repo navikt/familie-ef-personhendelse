@@ -49,8 +49,7 @@ class PersonhendelseListener(
             }
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}")
-            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}",
-                               e)
+            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}")
             throw e
         } finally {
             MDC.remove(MDCConstants.MDC_CALL_ID)
