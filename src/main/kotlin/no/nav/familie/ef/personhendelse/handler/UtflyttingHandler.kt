@@ -2,48 +2,35 @@ package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
-import no.nav.familie.ef.personhendelse.generated.hentperson.Person
-import no.nav.familie.kontrakter.ef.felles.StønadType
-import no.nav.person.pdl.leesah.Personhendelse
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 import no.nav.person.pdl.leesah.Endringstype
+import no.nav.person.pdl.leesah.Personhendelse
+import org.springframework.stereotype.Component
 
 @Component
-class UtflyttingHandler(val sakClient: SakClient,
-                        val oppgaveClient: OppgaveClient) {
+class UtflyttingHandler(
+        sakClient: SakClient,
+        oppgaveClient: OppgaveClient
+) : PersonhendelseHandler(sakClient, oppgaveClient) {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
+    override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
 
-    fun handleUtflytting(personhendelse: Personhendelse) {
-
-        if (personhendelse.ignorerHendelse()) {
-            return
+    override fun skalOppretteOppgave(personhendelse: Personhendelse): Boolean {
+        if (personhendelse.ignorerHendelse()) { // TODO håndter denne
+            return false
         }
 
-        personhendelse.utflyttingFraNorge?.let {
-            logger.info("Mottatt utflyttingshendelse")
-        } ?: throw Exception("Ingen utflyttingFraNorge tilordning i personhendelse : ${personhendelse}")
-
-        val personIdent = personhendelse.personidenter.first()
-        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
-
-        if (finnesBehandlingForPerson) {
-            secureLogger.info("Behandling med personIdent finnes : $personIdent : $finnesBehandlingForPerson")
-            val beskrivelse = personhendelse.utflyttingsBeskrivelse()
-            val request = defaultOpprettOppgaveRequest(personIdent, beskrivelse)
-            val oppgaveId = oppgaveClient.opprettOppgave(request)
-            secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
-        }
+        personhendelse.utflyttingFraNorge
+        ?: throw Exception("Ingen utflyttingFraNorge tilordning i personhendelse=${personhendelse.hendelseId}")
+        return true
     }
+
+    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
+        return "Utflyttingshendelse til ${personhendelse.utflyttingFraNorge.tilflyttingsstedIUtlandet}, " +
+               "{${personhendelse.utflyttingFraNorge.tilflyttingsland}. " +
+               "Utflyttingsdato: ${personhendelse.utflyttingFraNorge.utflyttingsdato}"
+    }
+
+    private val ignorteEndringstyper = listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT)
+
+    private fun Personhendelse.ignorerHendelse() = ignorteEndringstyper.contains(this.endringstype)
 }
-
-private fun Personhendelse.utflyttingsBeskrivelse() = "Utflyttingshendelse til ${this.utflyttingFraNorge.tilflyttingsstedIUtlandet}, " +
-                                                      "{${this.utflyttingFraNorge.tilflyttingsland}. " +
-                                                      "Utflyttingsdato : ${this.utflyttingFraNorge.utflyttingsdato}"
-
-private val ignorteEndringstyper = listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT)
-
-private fun Personhendelse.ignorerHendelse() = ignorteEndringstyper.contains(this.endringstype)

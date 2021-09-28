@@ -1,51 +1,39 @@
 package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
-import no.nav.familie.ef.personhendelse.client.PdlClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
-import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Component
 class SivilstandHandler(
-    val sakClient: SakClient,
-    val oppgaveClient: OppgaveClient
-) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
+        sakClient: SakClient,
+        oppgaveClient: OppgaveClient
+) : PersonhendelseHandler(sakClient, oppgaveClient) {
 
-    fun handleSivilstand(personhendelse: Personhendelse) {
+    override val type = PersonhendelseType.SIVILSTAND
 
-        if (personhendelse.sivilstandNotNull()) logger.info("Mottatt sivilstand hendelse med verdi ${personhendelse.sivilstand.type}")
-        if (!personhendelse.skalSivilstandHåndteres()) {
-            return
+    override fun skalOppretteOppgave(personhendelse: Personhendelse): Boolean {
+        if (personhendelse.sivilstandNotNull()) {
+            logger.info("Mottatt sivilstand hendelse med verdi ${personhendelse.sivilstand.type}")
         }
-
-        val personIdent = personhendelse.personidenter.first()
-        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
-        if (finnesBehandlingForPerson) {
-            secureLogger.info("Finnes behandling med personIdent: $personIdent : $finnesBehandlingForPerson")
-            val beskrivelse = "Personhendelse: ${personhendelse.sivilstand.type.enumToReadable()} " +
-                    "gyldig fra og med ${personhendelse.sivilstand.gyldigFraOgMed.toReadable()}"
-            val request = defaultOpprettOppgaveRequest(personIdent, beskrivelse)
-            val oppgaveId = oppgaveClient.opprettOppgave(request)
-            secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
-        }
+        return personhendelse.skalSivilstandHåndteres()
     }
+
+    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
+        return "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
+               "gyldig fra og med ${personhendelse.sivilstand.gyldigFraOgMed.toReadable()}"
+    }
+
 }
 
 fun Personhendelse.skalSivilstandHåndteres(): Boolean {
     return this.sivilstandNotNull() &&
-            (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type))
-            && (endringstyperSomSkalHåndteres.contains(this.endringstype))
+           (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type))
+           && (endringstyperSomSkalHåndteres.contains(this.endringstype))
 }
 
 private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this.sivilstand.type != null

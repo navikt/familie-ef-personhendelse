@@ -18,7 +18,7 @@ import java.time.Month
 
 @Component
 class OppgaveClient(
-    @Value("\${FAMILIE_INTEGRASJONER_API_URL}") val integrasjonUrl: String,
+    @Value("\${FAMILIE_INTEGRASJONER_API_URL}") private val integrasjonUrl: String,
     @Qualifier("azure") restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "familie.integrasjoner") {
 
@@ -68,6 +68,7 @@ fun fristFerdigstillelse(daysToAdd: Long = 0): LocalDate {
     when (date.dayOfWeek) {
         DayOfWeek.SATURDAY -> date = date.plusDays(2)
         DayOfWeek.SUNDAY -> date = date.plusDays(1)
+        else -> {}
     }
 
     when {
@@ -81,6 +82,7 @@ fun fristFerdigstillelse(daysToAdd: Long = 0): LocalDate {
     when (date.dayOfWeek) {
         DayOfWeek.SATURDAY -> date = date.plusDays(2)
         DayOfWeek.SUNDAY -> date = date.plusDays(1)
+        else -> {}
     }
 
     return date.toLocalDate()
