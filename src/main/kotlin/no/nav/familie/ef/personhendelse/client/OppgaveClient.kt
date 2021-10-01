@@ -4,7 +4,12 @@ import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Tema
-import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -35,6 +40,28 @@ class OppgaveClient(
             )
         return response.data?.oppgaveId
     }
+
+    fun finnOppgaveMedId(oppgaveId: Long): Oppgave? {
+        val response = getForEntity<Ressurs<Oppgave>>(
+            URI.create("$oppgaveUrl/".plus(oppgaveId)),
+            HttpHeaders().medContentTypeJsonUTF8()
+        )
+        return response.data
+    }
+
+    fun oppdaterOppgave(oppgave: Oppgave): Oppgave {
+        return Result.runCatching {
+            patchForEntity<Oppgave>(
+                URI.create("$oppgaveUrl".plus("/oppgave/oppdater")),
+                oppgave,
+                HttpHeaders().medContentTypeJsonUTF8()
+            )
+        }.fold(
+            onSuccess = { it },
+            onFailure = { error("Feil ved oppdatering av oppgave for oppgaveId ${oppgave.id}") }
+        )
+    }
+
 
 }
 
