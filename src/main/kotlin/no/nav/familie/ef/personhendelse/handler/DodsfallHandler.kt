@@ -3,36 +3,36 @@ package no.nav.familie.ef.personhendelse.handler
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.PdlClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
+import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.person.pdl.leesah.Personhendelse
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.LocalDate
-import java.util.*
 
 @Component
 class DodsfallHandler(
-    val sakClient: SakClient,
-    val pdlClient: PdlClient,
-    val oppgaveClient: OppgaveClient
-) {
+        val pdlClient: PdlClient,
+        sakClient: SakClient,
+        oppgaveClient: OppgaveClient,
+        personhendelseRepository: PersonhendelseRepository
+) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
 
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
+    override val type = PersonhendelseType.DØDSFALL
 
-    fun handleDodsfall(personhendelse: Personhendelse) {
+    override fun handle(personhendelse: Personhendelse) {
+        identerTilSøk(personhendelse).forEach { personIdent ->
+            // TODO fjern stønadType som i PersonhendelseHandler
+            val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
 
-        identerTilSøk(personhendelse).forEach {
-            val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(it, StønadType.OVERGANGSSTØNAD)
-            secureLogger.info("Finnes behandling med personIdent: $it : $finnesBehandlingForPerson")
             if (finnesBehandlingForPerson) {
-                val beskrivelse = "Personhendelse: Dødsfall med dødsdato ${personhendelse.doedsfall.doedsdato.toReadable()}"
-                val opprettOppgaveRequest = defaultOpprettOppgaveRequest(it, beskrivelse)
-                val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
-                secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
+                handlePersonhendelse(personhendelse, personIdent)
             }
         }
+    }
+
+    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
+        return "Dødsfall med dødsdato ${personhendelse.doedsfall.doedsdato.toReadable()}"
     }
 
     private fun identerTilSøk(personhendelse: Personhendelse): List<String> {
@@ -46,8 +46,8 @@ class DodsfallHandler(
         val fødselsdatoList = pdlPersonData.foedsel.mapNotNull { it.foedselsdato?.value }
         if (fødselsdatoList.isEmpty() || fødselsdatoList.first().isAfter(LocalDate.now().minusYears(19))) {
             val listeMedForeldreForBarn =
-                familierelasjoner.filter { it.minRolleForPerson == ForelderBarnRelasjonRolle.BARN }
-                    .map { it.relatertPersonsIdent }
+                    familierelasjoner.filter { it.minRolleForPerson == ForelderBarnRelasjonRolle.BARN }
+                            .map { it.relatertPersonsIdent }
             identerTilSøk.addAll(listeMedForeldreForBarn)
         }
         return identerTilSøk

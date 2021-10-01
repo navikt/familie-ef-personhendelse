@@ -1,9 +1,7 @@
 package no.nav.familie.ef.personhendelse.configuration
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.http.config.RestTemplateAzure
-import no.nav.familie.http.sts.StsRestClient
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
@@ -12,8 +10,6 @@ import no.nav.security.token.support.client.spring.oauth2.DefaultOAuth2HttpClien
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -21,11 +17,9 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
-import org.springframework.context.annotation.Profile
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestTemplate
-import java.net.URI
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
@@ -59,19 +53,6 @@ class ApplicationConfig {
         filterRegistration.filter = RequestTimeFilter()
         filterRegistration.order = 2
         return filterRegistration
-    }
-
-    @Bean
-    @Autowired
-    @Profile("!mock-sts")
-    fun stsRestClient(
-        objectMapper: ObjectMapper?,
-        @Value("\${STS_URL}") stsUrl: URI,
-        @Value("\${SRV_CREDENTIAL_USERNAME}") stsUsername: String?,
-        @Value("\${SRV_CREDENTIAL_PASSWORD}") stsPassword: String?
-    ): StsRestClient? {
-        val stsFullUrl = URI.create("$stsUrl?grant_type=client_credentials&scope=openid")
-        return StsRestClient(objectMapper!!, stsFullUrl, stsUsername!!, stsPassword!!, null)
     }
 
     @Bean

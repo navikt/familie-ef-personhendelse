@@ -8,4 +8,5 @@
 
 
     <logger name="no" level="INFO"/>
+    <logger name="no.nav.familie.ef.sak" level="DEBUG"/>
 </configuration>

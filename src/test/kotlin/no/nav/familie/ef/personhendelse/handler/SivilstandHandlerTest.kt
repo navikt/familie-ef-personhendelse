@@ -1,11 +1,15 @@
 package no.nav.familie.ef.personhendelse.handler
 
+import io.mockk.InternalPlatformDsl.toStr
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.slot
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.generated.enums.Sivilstandstype
+import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
@@ -13,15 +17,17 @@ import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import no.nav.person.pdl.leesah.sivilstand.Sivilstand
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.util.UUID
 
 class SivilstandHandlerTest {
 
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
-
-    private val sivilstandHandler = SivilstandHandler(sakClient, oppgaveClient)
+    private val personhendelseRepository = mockk<PersonhendelseRepository>()
+    private val sivilstandHandler = SivilstandHandler(sakClient, oppgaveClient, personhendelseRepository)
 
     private val personIdent = "12345612344"
     private val partnerPersonIdent = "12345612345"
@@ -43,9 +49,9 @@ class SivilstandHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        sivilstandHandler.handleSivilstand(personhendelse)
+        sivilstandHandler.handle(personhendelse)
 
-        Assertions.assertThat(oppgaveRequestSlot.isCaptured).isFalse
+        assertThat(oppgaveRequestSlot.isCaptured).isFalse
     }
 
     @Test
@@ -59,18 +65,21 @@ class SivilstandHandlerTest {
         )
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.endringstype = Endringstype.OPPRETTET
+        personhendelse.hendelseId = UUID.randomUUID().toString()
 
         every { sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD) } returns true
+        every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
+        every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
 
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        sivilstandHandler.handleSivilstand(personhendelse)
+        sivilstandHandler.handle(personhendelse)
 
-        Assertions.assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
-        Assertions.assertThat(oppgaveRequestSlot.captured.beskrivelse)
-            .isEqualTo("Personhendelse: Registrert partner gyldig fra og med 26.08.2021")
-        Assertions.assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
+        assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
+        assertThat(oppgaveRequestSlot.captured.beskrivelse)
+            .isEqualTo("Personhendelse: Sivilstand endret til \"Registrert partner\", gyldig fra og med 26.08.2021")
+        assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
     }
 
 }

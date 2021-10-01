@@ -4,50 +4,36 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
 class UtflyttingHandler(
-    val sakClient: SakClient,
-    val oppgaveClient: OppgaveClient,
-    val personhendelseRepository: PersonhendelseRepository
-) {
+    sakClient: SakClient,
+    oppgaveClient: OppgaveClient,
+    personhendelseRepository: PersonhendelseRepository
+) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
-    private val secureLogger = LoggerFactory.getLogger("secureLogger")
+    override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
 
-    fun handleUtflytting(personhendelse: Personhendelse) {
+    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
+        return personhendelse.utflyttingsBeskrivelse()
+    }
 
+    override fun skalOppretteOppgave(personhendelse: Personhendelse): Boolean {
         if (personhendelse.erAnnulleringEllerKorreksjon()) {
             handleAnnulleringEllerKorreksjon(personhendelse)
-            return
+            return false
         }
-
         personhendelse.utflyttingFraNorge?.let {
             logger.info("Mottatt utflyttingshendelse")
         } ?: throw Exception("Ingen utflyttingFraNorge tilordning i personhendelse : ${personhendelse}")
 
-        val personIdent = personhendelse.personidenter.first()
-        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
-
-        if (finnesBehandlingForPerson) {
-            secureLogger.info("Behandling med personIdent finnes : $personIdent : $finnesBehandlingForPerson")
-            val beskrivelse = personhendelse.utflyttingsBeskrivelse()
-            val request = defaultOpprettOppgaveRequest(personIdent, beskrivelse)
-            val oppgaveId = oppgaveClient.opprettOppgave(request)
-            oppgaveId?.let {
-                personhendelseRepository.lagrePersonhendelse(personhendelse.hendelseId, oppgaveId, personhendelse.endringstype)
-            }
-            secureLogger.info("Oppgave opprettet med oppgaveId: $oppgaveId")
-        }
-
+        return true
     }
 
     private fun handleAnnulleringEllerKorreksjon(personhendelse: Personhendelse) {
