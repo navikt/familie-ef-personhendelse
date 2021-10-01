@@ -39,6 +39,7 @@
         <felles.version>1.20210712123123_4ab21f1</felles.version>
         <wiremock.version>2.30.1</wiremock.version>
         <mockk.version>1.11.0</mockk.version>
+        <testcontainers.version>1.16.0</testcontainers.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
     </properties>
     <dependencies>
@@ -139,6 +140,25 @@
             <artifactId>mockk</artifactId>
             <version>${mockk.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+        </dependency>
+
+        <!-- Database -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
         </dependency>
     </dependencies>
 
