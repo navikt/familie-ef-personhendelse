@@ -1,27 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT_JSON" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-    </appender>
 
-    <appender name="httpTraceLogAppender" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-    </appender>
+    <!-- override spring base logging pattern -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d [%-5level] [%thread] %logger{5} %replace(- [%X{consumerId}, %X{callId}, %X{userId}] ){'- \[, , \] ',''}- %m%n"/>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-    <logger name="secureLogger" level="INFO" additivity="false">
-        <appender-ref ref="secureLog"/>
-    </logger>
 
-    <logger name="HttpTraceLog" level="INFO" additivity="false">
-        <appender-ref ref="httpTraceLogAppender"/>
-    </logger>
-
-    <logger name="org.apache.cxf" level="WARN"/>
-    <logger name="org.apache.cxf.phase.PhaseInterceptorChain" level="ERROR"/>
-    <logger name="org.apache.cxf.ws.addressing.ContextUtils" level="ERROR"/>
-    <logger name="org.apache.cxf.ws.addressing.soap.MAPCodec" level="ERROR"/>
-
-    <root level="INFO">
-        <appender-ref ref="STDOUT_JSON"/>
-    </root>
+    <logger name="no" level="INFO"/>
 </configuration>
