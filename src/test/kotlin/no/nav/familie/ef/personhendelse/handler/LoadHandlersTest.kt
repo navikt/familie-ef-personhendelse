@@ -11,7 +11,6 @@ class LoadHandlersTest : IntegrasjonSpringRunnerTest() {
     @Autowired
     private lateinit var handlers: List<PersonhendelseHandler>
 
-    @Ignore
     @Test
     internal fun `skal laste inn handlers`() {
         assertThat(handlers).isNotEmpty

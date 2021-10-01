@@ -5,14 +5,18 @@ import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.ef.felles.StønadType
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
+import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.UUID
 
 abstract class PersonhendelseHandler(
-        val sakClient: SakClient,
-        val oppgaveClient: OppgaveClient,
-        val personhendelseRepository: PersonhendelseRepository
+    val sakClient: SakClient,
+    val oppgaveClient: OppgaveClient,
+    val personhendelseRepository: PersonhendelseRepository
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -22,7 +26,14 @@ abstract class PersonhendelseHandler(
 
     abstract val type: PersonhendelseType
 
+    open fun skalOppretteOppgave(personhendelse: Personhendelse) = true
+
+    abstract fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String
+
     open fun handle(personhendelse: Personhendelse) {
+        if (personhendelse.erAnnulleringEllerKorreksjon()) {
+            handleAnnulleringEllerKorreksjon(personhendelse)
+        }
         val personIdent = personhendelse.personidenter.first() // todo endre til att sakClient kan ta emot en liste med identer
         // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
@@ -42,13 +53,15 @@ abstract class PersonhendelseHandler(
         opprettOppgave(personhendelse, personIdent)
     }
 
-    private fun logHendelse(personhendelse: Personhendelse,
-                            skalOppretteOppgave: Boolean,
-                            personIdent: String?) {
+    private fun logHendelse(
+        personhendelse: Personhendelse,
+        skalOppretteOppgave: Boolean,
+        personIdent: String?
+    ) {
         val logMessage = "Finnes sak for opplysningstype=${personhendelse.opplysningstype}" +
-                         " hendelseId=${personhendelse.hendelseId}" +
-                         " endringstype=${personhendelse.endringstype}" +
-                         " skalOppretteOppgave=$skalOppretteOppgave"
+                " hendelseId=${personhendelse.hendelseId}" +
+                " endringstype=${personhendelse.endringstype}" +
+                " skalOppretteOppgave=$skalOppretteOppgave"
         logger.info(logMessage)
         secureLogger.info("$logMessage personIdent=${personIdent}")
     }
@@ -63,8 +76,37 @@ abstract class PersonhendelseHandler(
         logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
     }
 
-    open fun skalOppretteOppgave(personhendelse: Personhendelse) = true
+    private fun handleAnnulleringEllerKorreksjon(personhendelse: Personhendelse) {
+        val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.hendelseId))?.let { it } ?: return
+        val oppgave = oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId)?.let { it } ?: return
+        if (oppgave.erOppgaveÅpen()) {
+            ferdigstillOppgave(oppgave)
+        } else {
+            oppgaveClient.opprettOppgave(
+                defaultOpprettOppgaveRequest(
+                    personhendelse.personidenter.first(),
+                    personhendelse.ferdigstiltBeskrivelse()
+                )
+            )
+        }
+    }
 
-    abstract fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String
+    private fun ferdigstillOppgave(oppgave: Oppgave): Oppgave {
+        val nyOppgave = oppgave.copy(
+            beskrivelse = oppgave.beskrivelse.plus(oppgave.annullertEllerKorrigertBeskrivelse()),
+            status = StatusEnum.FEILREGISTRERT
+        )
+        return oppgaveClient.oppdaterOppgave(nyOppgave)
+    }
 
 }
+
+private fun Personhendelse.ferdigstiltBeskrivelse() =
+    "En hendelse av typen ${this.endringstype.name} har oppstått for en ferdigstilt oppgave"
+
+private fun Oppgave.erOppgaveÅpen() = !listOf(StatusEnum.FERDIGSTILT, StatusEnum.FEILREGISTRERT).contains(this.status)
+
+private fun Oppgave.annullertEllerKorrigertBeskrivelse() = "\n\nDenne oppgaven har blitt annullert eller korrigert."
+
+private fun Personhendelse.erAnnulleringEllerKorreksjon() =
+    listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT).contains(this.endringstype)
