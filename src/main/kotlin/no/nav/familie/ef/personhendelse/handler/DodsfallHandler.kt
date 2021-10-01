@@ -4,6 +4,7 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.PdlClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
+import no.nav.familie.ef.personhendelse.util.tilNorskDatoformat
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
@@ -30,7 +31,7 @@ class DodsfallHandler(
     }
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
-        return "Dødsfall med dødsdato ${personhendelse.doedsfall.doedsdato.toReadable()}"
+        return "Dødsfall med dødsdato ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}"
     }
 
     private fun identerTilSøk(personhendelse: Personhendelse): List<String> {

@@ -2,11 +2,10 @@ package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.util.tilNorskDatoformat
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Component
 class SivilstandHandler(
@@ -25,7 +24,7 @@ class SivilstandHandler(
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
-               "gyldig fra og med ${personhendelse.sivilstand.gyldigFraOgMed.toReadable()}"
+               "gyldig fra og med ${personhendelse.sivilstand.gyldigFraOgMed.tilNorskDatoformat()}"
     }
 
 }
@@ -44,8 +43,4 @@ private val endringstyperSomSkalHåndteres = listOf(Endringstype.OPPRETTET, Endr
 
 fun String.enumToReadable(): String {
     return this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
-}
-
-fun LocalDate.toReadable(): String {
-    return this.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 }
