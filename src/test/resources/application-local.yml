@@ -1,14 +1,6 @@
 server:
   port: 8095
 
-logging:
-  config: "classpath:logback-local.xml"
-
-no.nav.security.jwt:
-  issuer:
-    azure:
-      discoveryurl: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
-
 spring:
   application:
     name: familie-ef-personhendelse
@@ -34,3 +26,10 @@ spring:
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
 EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no
+
+
+AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth/v2.0/token
+KAFKA_BOOTSTRAP_SERVERS: http://localhost:9092
+KAFKA_SCHEMA_REGISTRY_URL: http://localhost:8081
+SPRING_PROFILES_ACTIVE: local
