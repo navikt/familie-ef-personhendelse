@@ -33,6 +33,7 @@ abstract class PersonhendelseHandler(
     open fun handle(personhendelse: Personhendelse) {
         if (personhendelse.erAnnulleringEllerKorreksjon()) {
             handleAnnulleringEllerKorreksjon(personhendelse)
+            return
         }
         val personIdent = personhendelse.personidenter.first() // todo endre til att sakClient kan ta emot en liste med identer
         // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
