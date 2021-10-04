@@ -80,7 +80,7 @@ abstract class PersonhendelseHandler(
 
     private fun hentOppgave(personhendelse: Personhendelse): Oppgave {
         val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.tidligereHendelseId))
-        return oppgaveClient.finnOppgaveMedId(hendelse!!.oppgaveId)
+        return oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId)
     }
 
     private fun annullerEllerKorrigerOppgave(personhendelse: Personhendelse) {
