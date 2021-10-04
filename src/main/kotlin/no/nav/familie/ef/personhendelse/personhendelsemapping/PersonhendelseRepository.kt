@@ -24,9 +24,7 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
                       "endringsType" to endringstype.name,
                       "timestamp" to LocalDate.now())
         )
-        namedParameterJdbcTemplate.update(sql, params).takeIf { it == 1 }
-        ?: error("Feil ved insetting av hendelsesId : ${hendelsesId}, oppgaveId : ${oppgaveId}, " +
-                 "endringstype : ${endringstype.name}")
+        namedParameterJdbcTemplate.update(sql, params)
     }
 
     fun hentHendelse(hendelsesId: UUID): Hendelse? {
