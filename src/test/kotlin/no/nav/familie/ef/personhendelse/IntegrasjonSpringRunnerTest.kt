@@ -4,6 +4,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.familie.ef.personhendelse.configuration.DbContainerInitializer
+import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,6 +16,8 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -33,13 +36,20 @@ abstract class IntegrasjonSpringRunnerTest {
 
     @Autowired private lateinit var applicationContext: ApplicationContext
 
+    @Autowired private lateinit var namedParameterJdbcTemplate: NamedParameterJdbcTemplate
+
     @LocalServerPort
     private var port: Int? = 0
 
     @AfterEach
     fun reset() {
         loggingEvents.clear()
+        resetDatabase()
         resetWiremockServers()
+    }
+
+    private fun resetDatabase() {
+        namedParameterJdbcTemplate.update("TRUNCATE TABLE hendelse CASCADE", MapSqlParameterSource())
     }
 
     private fun resetWiremockServers() {
