@@ -43,10 +43,10 @@ class OppgaveClient(
 
     fun finnOppgaveMedId(oppgaveId: Long): Oppgave? {
         val response = getForEntity<Ressurs<Oppgave>>(
-            URI.create("$oppgaveUrl/".plus(oppgaveId)),
+            URI.create("$oppgaveUrl/$oppgaveId"),
             HttpHeaders().medContentTypeJsonUTF8()
         )
-        return response.data
+        return response..getDataOrThrow()
     }
 
     fun oppdaterOppgave(oppgave: Oppgave): Oppgave {

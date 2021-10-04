@@ -71,15 +71,13 @@ abstract class PersonhendelseHandler(
         val oppgaveBeskrivelse = lagOppgaveBeskrivelse(personhendelse)
         val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
-        oppgaveId?.let {
-            personhendelseRepository.lagrePersonhendelse(personhendelse.hendelseId, oppgaveId, personhendelse.endringstype)
-        }
+        personhendelseRepository.lagrePersonhendelse(personhendelse.hendelseId, oppgaveId, personhendelse.endringstype)
         logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
     }
 
     private fun handleAnnulleringEllerKorreksjon(personhendelse: Personhendelse) {
-        val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.hendelseId))?.let { it } ?: return
-        val oppgave = oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId)?.let { it } ?: return
+        val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.hendelseId)) ?: return
+        val oppgave = oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId) ?: return
         if (oppgave.erOppgaveÅpen()) {
             ferdigstillOppgave(oppgave)
         } else {
