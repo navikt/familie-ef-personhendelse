@@ -31,10 +31,12 @@ abstract class PersonhendelseHandler(
     abstract fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String
 
     open fun handle(personhendelse: Personhendelse) {
-        if (personhendelse.erAnnulleringEllerKorreksjon()) {
-            handleAnnulleringEllerKorreksjon(personhendelse)
+
+        if (personhendelse.erAnnulleringEllerKorrigering()) {
+            annullerEllerKorrigerOppgave(personhendelse)
             return
         }
+
         val personIdent = personhendelse.personidenter.first() // todo endre til att sakClient kan ta emot en liste med identer
         // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
@@ -42,6 +44,7 @@ abstract class PersonhendelseHandler(
         if (finnesBehandlingForPerson) {
             handlePersonhendelse(personhendelse, personIdent)
         }
+
     }
 
     fun handlePersonhendelse(personhendelse: Personhendelse, personIdent: String) {
@@ -75,27 +78,41 @@ abstract class PersonhendelseHandler(
         logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
     }
 
-    private fun handleAnnulleringEllerKorreksjon(personhendelse: Personhendelse) {
-        val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.hendelseId)) ?: return
-        val oppgave = oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId)
-        if (oppgave.erOppgaveÅpen()) {
-            ferdigstillOppgave(oppgave)
+    private fun hentOppgave(personhendelse: Personhendelse): Oppgave {
+        val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.hendelseId))
+        return oppgaveClient.finnOppgaveMedId(hendelse!!.oppgaveId)
+    }
+
+    private fun annullerEllerKorrigerOppgave(personhendelse: Personhendelse) {
+        val oppgave = hentOppgave(personhendelse)
+        if (oppgave.erÅpen()) {
+            val oppgave = when (personhendelse.endringstype) {
+                Endringstype.ANNULLERT -> annuller(oppgave)
+                Endringstype.KORRIGERT -> korriger(oppgave)
+                else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
+            }
+            logger.info("Oppgave oppdatert med oppgaveId=${oppgave.id}")
         } else {
-            oppgaveClient.opprettOppgave(
+            val oppgaveId = oppgaveClient.opprettOppgave(
                 defaultOpprettOppgaveRequest(
                     personhendelse.personidenter.first(),
                     personhendelse.ferdigstiltBeskrivelse()
                 )
             )
+            logger.info("Oppgave for en allerede lukket oppgave opprettet med oppgaveId=${oppgaveId}")
         }
     }
 
-    private fun ferdigstillOppgave(oppgave: Oppgave): Oppgave {
+    private fun annuller(oppgave: Oppgave): Oppgave {
         val nyOppgave = oppgave.copy(
-            beskrivelse = oppgave.beskrivelse.plus(oppgave.annullertEllerKorrigertBeskrivelse()),
+            beskrivelse = oppgave.beskrivelse.plus(oppgave.annullertBeskrivelse()),
             status = StatusEnum.FEILREGISTRERT
         )
         return oppgaveClient.oppdaterOppgave(nyOppgave)
+    }
+
+    private fun korriger(oppgave: Oppgave): Oppgave {
+        return oppgaveClient.oppdaterOppgave(oppgave.copy(beskrivelse = oppgave.beskrivelse.plus(oppgave.korrigertBeskrivelse())))
     }
 
 }
@@ -103,9 +120,11 @@ abstract class PersonhendelseHandler(
 private fun Personhendelse.ferdigstiltBeskrivelse() =
     "En hendelse av typen ${this.endringstype.name} har oppstått for en ferdigstilt oppgave"
 
-private fun Oppgave.erOppgaveÅpen() = !listOf(StatusEnum.FERDIGSTILT, StatusEnum.FEILREGISTRERT).contains(this.status)
+private fun Oppgave.erÅpen() = !listOf(StatusEnum.FERDIGSTILT, StatusEnum.FEILREGISTRERT).contains(this.status)
 
-private fun Oppgave.annullertEllerKorrigertBeskrivelse() = "\n\nDenne oppgaven har blitt annullert eller korrigert."
+private fun Oppgave.annullertBeskrivelse() = "\n\nDenne oppgaven har blitt annullert."
 
-private fun Personhendelse.erAnnulleringEllerKorreksjon() =
+private fun Oppgave.korrigertBeskrivelse() = "\n\nDenne oppgaven har blitt korrigert."
+
+private fun Personhendelse.erAnnulleringEllerKorrigering() =
     listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT).contains(this.endringstype)
