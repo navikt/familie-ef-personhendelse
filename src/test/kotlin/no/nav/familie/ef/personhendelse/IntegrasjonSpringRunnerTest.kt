@@ -3,6 +3,7 @@ package no.nav.familie.ef.personhendelse
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.github.tomakehurst.wiremock.WireMockServer
+import no.nav.familie.ef.personhendelse.configuration.DbContainerInitializer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,11 +16,13 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [ApplicationLocal::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(initializers = [DbContainerInitializer::class])
 @ActiveProfiles("integrasjonstest")
 abstract class IntegrasjonSpringRunnerTest {
 
