@@ -18,13 +18,6 @@ class UtflyttingHandler(
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return personhendelse.utflyttingsBeskrivelse()
     }
-
-    override fun skalOppretteOppgave(personhendelse: Personhendelse): Boolean {
-        personhendelse.utflyttingFraNorge?.let {
-            logger.info("Mottatt utflyttingshendelse")
-        } ?: throw Exception("Ingen utflyttingFraNorge tilordning i personhendelse : ${personhendelse}")
-        return true
-    }
 }
 
 private fun Personhendelse.utflyttingsBeskrivelse() =
