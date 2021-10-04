@@ -74,24 +74,24 @@ abstract class PersonhendelseHandler(
         val oppgaveBeskrivelse = lagOppgaveBeskrivelse(personhendelse)
         val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
-        personhendelseRepository.lagrePersonhendelse(personhendelse.hendelseId, oppgaveId, personhendelse.endringstype)
+        personhendelseRepository.lagrePersonhendelse(UUID.fromString(personhendelse.hendelseId), oppgaveId, personhendelse.endringstype)
         logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
     }
 
     private fun hentOppgave(personhendelse: Personhendelse): Oppgave {
-        val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.hendelseId))
+        val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.tidligereHendelseId))
         return oppgaveClient.finnOppgaveMedId(hendelse!!.oppgaveId)
     }
 
     private fun annullerEllerKorrigerOppgave(personhendelse: Personhendelse) {
         val oppgave = hentOppgave(personhendelse)
         if (oppgave.erÅpen()) {
-            val oppgave = when (personhendelse.endringstype) {
+            val nyOppgave = when (personhendelse.endringstype) {
                 Endringstype.ANNULLERT -> annuller(oppgave)
                 Endringstype.KORRIGERT -> korriger(oppgave)
                 else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
             }
-            logger.info("Oppgave oppdatert med oppgaveId=${oppgave.id}")
+            logger.info("Oppgave oppdatert med oppgaveId=${nyOppgave.id}")
         } else {
             val oppgaveId = oppgaveClient.opprettOppgave(
                 defaultOpprettOppgaveRequest(
@@ -101,6 +101,7 @@ abstract class PersonhendelseHandler(
             )
             logger.info("Oppgave for en allerede lukket oppgave opprettet med oppgaveId=${oppgaveId}")
         }
+        personhendelseRepository.lagrePersonhendelse(UUID.fromString(personhendelse.hendelseId), oppgave.id!!, personhendelse.endringstype)
     }
 
     private fun annuller(oppgave: Oppgave): Oppgave {

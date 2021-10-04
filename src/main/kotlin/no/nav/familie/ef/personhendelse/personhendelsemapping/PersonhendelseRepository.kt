@@ -16,7 +16,7 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
 
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    fun lagrePersonhendelse(hendelsesId: String, oppgaveId: Long, endringstype: Endringstype) {
+    fun lagrePersonhendelse(hendelsesId: UUID, oppgaveId: Long, endringstype: Endringstype) {
         val sql = "INSERT INTO hendelse VALUES(:hendelsesId, :oppgaveId, :endringsType, :timestamp)"
         val params = MapSqlParameterSource(
                 mapOf("hendelsesId" to hendelsesId,
