@@ -21,9 +21,9 @@ import java.util.UUID
 
 internal class UtflyttingHandlerTest {
 
-    val sakClient: SakClient = mockk<SakClient>()
-    val oppgaveClient: OppgaveClient = mockk<OppgaveClient>()
-    val personhendelseRepository: PersonhendelseRepository = mockk<PersonhendelseRepository>()
+    val sakClient = mockk<SakClient>()
+    val oppgaveClient = mockk<OppgaveClient>()
+    val personhendelseRepository = mockk<PersonhendelseRepository>()
 
     private val utflyttingHandler = UtflyttingHandler(sakClient, oppgaveClient, personhendelseRepository)
 

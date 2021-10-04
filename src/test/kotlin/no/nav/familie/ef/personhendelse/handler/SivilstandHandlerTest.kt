@@ -1,6 +1,5 @@
 package no.nav.familie.ef.personhendelse.handler
 
-import io.mockk.InternalPlatformDsl.toStr
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -16,7 +15,6 @@ import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import no.nav.person.pdl.leesah.sivilstand.Sivilstand
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

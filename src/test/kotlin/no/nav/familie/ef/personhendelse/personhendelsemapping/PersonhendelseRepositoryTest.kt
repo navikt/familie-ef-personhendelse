@@ -18,7 +18,7 @@ internal class PersonhendelseRepositoryTest : IntegrasjonSpringRunnerTest() {
         hendelsesId = UUID.randomUUID(),
         oppgaveId = 1L,
         endringstype = Endringstype.OPPRETTET,
-        timestamp = LocalDateTime.now()
+        opprettetTid = LocalDateTime.now()
     )
 
     @BeforeEach
