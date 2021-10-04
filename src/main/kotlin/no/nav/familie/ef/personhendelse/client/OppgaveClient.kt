@@ -50,18 +50,12 @@ class OppgaveClient(
     }
 
     fun oppdaterOppgave(oppgave: Oppgave): Oppgave {
-        return Result.runCatching {
-            patchForEntity<Oppgave>(
-                URI.create("$oppgaveUrl".plus("/oppgave/oppdater")),
-                oppgave,
-                HttpHeaders().medContentTypeJsonUTF8()
-            )
-        }.fold(
-            onSuccess = { it },
-            onFailure = { error("Feil ved oppdatering av oppgave for oppgaveId ${oppgave.id}") }
+        return patchForEntity<Oppgave>(
+            URI.create("$oppgaveUrl".plus("/oppgave/oppdater")),
+            oppgave,
+            HttpHeaders().medContentTypeJsonUTF8()
         )
     }
-
 
 }
 
@@ -95,7 +89,8 @@ fun fristFerdigstillelse(daysToAdd: Long = 0): LocalDate {
     when (date.dayOfWeek) {
         DayOfWeek.SATURDAY -> date = date.plusDays(2)
         DayOfWeek.SUNDAY -> date = date.plusDays(1)
-        else -> {}
+        else -> {
+        }
     }
 
     when {
@@ -109,7 +104,8 @@ fun fristFerdigstillelse(daysToAdd: Long = 0): LocalDate {
     when (date.dayOfWeek) {
         DayOfWeek.SATURDAY -> date = date.plusDays(2)
         DayOfWeek.SUNDAY -> date = date.plusDays(1)
-        else -> {}
+        else -> {
+        }
     }
 
     return date.toLocalDate()
