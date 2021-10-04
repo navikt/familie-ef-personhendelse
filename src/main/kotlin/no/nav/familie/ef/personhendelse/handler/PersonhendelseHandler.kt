@@ -71,9 +71,7 @@ abstract class PersonhendelseHandler(
         val oppgaveBeskrivelse = lagOppgaveBeskrivelse(personhendelse)
         val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
-        oppgaveId?.let {
-            personhendelseRepository.lagrePersonhendelse(personhendelse.hendelseId, oppgaveId, personhendelse.endringstype)
-        }
+        personhendelseRepository.lagrePersonhendelse(personhendelse.hendelseId, oppgaveId, personhendelse.endringstype)
         logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
     }
 
