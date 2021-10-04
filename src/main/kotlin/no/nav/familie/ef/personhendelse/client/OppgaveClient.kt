@@ -4,6 +4,7 @@ import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -29,7 +30,7 @@ class OppgaveClient(
 
     val oppgaveUrl = "$integrasjonUrl/api/oppgave"
 
-    fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long? {
+    fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long {
 
         val opprettOppgaveUri = URI.create("$oppgaveUrl/opprett")
         val response =
@@ -38,15 +39,15 @@ class OppgaveClient(
                 opprettOppgaveRequest,
                 HttpHeaders().medContentTypeJsonUTF8()
             )
-        return response.data?.oppgaveId
+        return response.data!!.oppgaveId
     }
 
-    fun finnOppgaveMedId(oppgaveId: Long): Oppgave? {
+    fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
         val response = getForEntity<Ressurs<Oppgave>>(
             URI.create("$oppgaveUrl/$oppgaveId"),
             HttpHeaders().medContentTypeJsonUTF8()
         )
-        return response..getDataOrThrow()
+        return response.getDataOrThrow()
     }
 
     fun oppdaterOppgave(oppgave: Oppgave): Oppgave {
