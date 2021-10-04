@@ -39,7 +39,7 @@ class OppgaveClient(
                 opprettOppgaveRequest,
                 HttpHeaders().medContentTypeJsonUTF8()
             )
-        return response.data!!.oppgaveId
+        return response.getDataOrThrow().oppgaveId
     }
 
     fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
