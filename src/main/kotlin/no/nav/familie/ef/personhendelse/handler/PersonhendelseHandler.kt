@@ -76,8 +76,8 @@ abstract class PersonhendelseHandler(
     }
 
     private fun handleAnnulleringEllerKorreksjon(personhendelse: Personhendelse) {
-        val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.hendelseId))?.let { it } ?: return
-        val oppgave = oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId)?.let { it } ?: return
+        val hendelse = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.hendelseId)) ?: return
+        val oppgave = oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId) ?: return
         if (oppgave.erOppgaveÅpen()) {
             ferdigstillOppgave(oppgave)
         } else {
