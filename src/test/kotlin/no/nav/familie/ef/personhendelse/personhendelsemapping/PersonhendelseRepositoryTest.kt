@@ -28,7 +28,7 @@ internal class PersonhendelseRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `Hent lagret personhendelse for UUID, forvent likhet`() {
-        val hentetHendelse = personhendelseRepository.hentHendelse(hendelse.hendelsesId)
+        val hentetHendelse = personhendelseRepository.hentHendelse(hendelse.hendelsesId)!!
         Assertions.assertThat(hendelse.oppgaveId).isEqualTo(hentetHendelse.oppgaveId)
         Assertions.assertThat(hendelse.hendelsesId).isEqualTo(hentetHendelse.hendelsesId)
         Assertions.assertThat(hendelse.endringstype).isEqualTo(hentetHendelse.endringstype)

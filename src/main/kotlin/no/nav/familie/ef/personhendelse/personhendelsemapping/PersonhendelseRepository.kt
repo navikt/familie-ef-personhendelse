@@ -29,7 +29,7 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
         namedParameterJdbcTemplate.update(sql, params)
     }
 
-    fun hentHendelse(hendelsesId: UUID): Hendelse {
+    fun hentHendelse(hendelsesId: UUID): Hendelse? {
         val sql = "SELECT * FROM hendelse WHERE hendelse_id = :hendelsesId"
         val mapSqlParameterSource = MapSqlParameterSource("hendelsesId", hendelsesId)
         return namedParameterJdbcTemplate.queryForObject(sql, mapSqlParameterSource) { rs: ResultSet, _: Int ->
@@ -39,7 +39,7 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
                 Endringstype.valueOf(rs.getString("endringstype")),
                 rs.getTimestamp("opprettet_tid").toLocalDateTime()
             )
-        }!!
+        }
     }
 
 }
