@@ -82,8 +82,9 @@ abstract class PersonhendelseHandler(
     private fun opphørEllerKorrigerOppgave(personhendelse: Personhendelse) {
         val hendelse = hentHendelse(personhendelse)
         if (hendelse == null) {
+            logger.info("Tidligere hendelse for personhendelse : ${personhendelse.hendelseId} ble ikke funnet")
             val oppgaveId = opprettOppgaveMedBeskrivelse(personhendelse, personhendelse.finnesIngenHendelseBeskrivelse())
-            logger.info("Oppgave oppdatert med oppgaveId=${oppgaveId}")
+            logger.info("Oppgave for at det ikke finnes hendelse opprettet med oppgaveId=${oppgaveId}")
             return
         }
         val oppgave = hentOppgave(hendelse)
