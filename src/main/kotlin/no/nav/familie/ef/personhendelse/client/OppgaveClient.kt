@@ -50,12 +50,13 @@ class OppgaveClient(
         return response.getDataOrThrow()
     }
 
-    fun oppdaterOppgave(oppgave: Oppgave): Oppgave {
-        return patchForEntity<Oppgave>(
+    fun oppdaterOppgave(oppgave: Oppgave) : Long {
+        val response = patchForEntity<Ressurs<OppgaveResponse>>(
             URI.create("$oppgaveUrl".plus("/oppgave/oppdater")),
             oppgave,
             HttpHeaders().medContentTypeJsonUTF8()
         )
+        return response.getDataOrThrow().oppgaveId
     }
 
 }

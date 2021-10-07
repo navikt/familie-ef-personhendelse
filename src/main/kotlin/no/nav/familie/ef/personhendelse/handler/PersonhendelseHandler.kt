@@ -95,7 +95,7 @@ abstract class PersonhendelseHandler(
                 Endringstype.KORRIGERT -> oppdater(oppgave, oppgave.korrigertBeskrivelse(), oppgave.status)
                 else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
             }
-            logger.info("Oppgave oppdatert med oppgaveId=${nyOppgave.id} for endringstype : ${personhendelse.endringstype.name}")
+            logger.info("Oppgave oppdatert med oppgaveId=${nyOppgave} for endringstype : ${personhendelse.endringstype.name}")
         } else {
             opprettOppgaveMedBeskrivelse(personhendelse, personhendelse.ferdigstiltBeskrivelse())
             logger.info("Ny oppgave ifm en allerede lukket oppgave er opprettet med oppgaveId=${oppgave.id}")
@@ -103,7 +103,7 @@ abstract class PersonhendelseHandler(
         lagreHendelse(personhendelse, oppgave.id!!)
     }
 
-    private fun oppdater(oppgave: Oppgave, beskrivelse: String, status: StatusEnum?): Oppgave {
+    private fun oppdater(oppgave: Oppgave, beskrivelse: String, status: StatusEnum?): Long {
         val nyOppgave = oppgave.copy(beskrivelse = oppgave.beskrivelse.plus(beskrivelse), status = status)
         return oppgaveClient.oppdaterOppgave(nyOppgave)
     }
