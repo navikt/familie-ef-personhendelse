@@ -34,4 +34,9 @@ internal class PersonhendelseRepositoryTest : IntegrasjonSpringRunnerTest() {
         Assertions.assertThat(hendelse.endringstype).isEqualTo(hentetHendelse.endringstype)
     }
 
+    @Test
+    fun `Henter hendelse som ikke er lagret`() {
+        val hentetHendelse = personhendelseRepository.hentHendelse(UUID.randomUUID())
+        Assertions.assertThat(hentetHendelse).isNull()
+    }
 }
