@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
@@ -11,8 +12,9 @@ import java.time.format.DateTimeFormatter
 @Component
 class SivilstandHandler(
         sakClient: SakClient,
-        oppgaveClient: OppgaveClient
-) : PersonhendelseHandler(sakClient, oppgaveClient) {
+        oppgaveClient: OppgaveClient,
+        personhendelseRepository: PersonhendelseRepository
+) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
 
     override val type = PersonhendelseType.SIVILSTAND
 

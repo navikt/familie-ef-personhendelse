@@ -4,6 +4,7 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.PdlClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
+import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
@@ -13,8 +14,9 @@ import java.time.LocalDate
 class DodsfallHandler(
         val pdlClient: PdlClient,
         sakClient: SakClient,
-        oppgaveClient: OppgaveClient
-) : PersonhendelseHandler(sakClient, oppgaveClient) {
+        oppgaveClient: OppgaveClient,
+        personhendelseRepository: PersonhendelseRepository
+) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
 
     override val type = PersonhendelseType.DØDSFALL
 
