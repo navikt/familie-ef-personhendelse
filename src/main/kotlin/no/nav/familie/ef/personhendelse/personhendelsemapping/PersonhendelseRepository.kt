@@ -4,6 +4,7 @@ import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.person.pdl.leesah.Endringstype
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
@@ -32,13 +33,17 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
     fun hentHendelse(hendelsesId: UUID): Hendelse? {
         val sql = "SELECT * FROM hendelse WHERE hendelse_id = :hendelsesId"
         val mapSqlParameterSource = MapSqlParameterSource("hendelsesId", hendelsesId)
-        return namedParameterJdbcTemplate.queryForObject(sql, mapSqlParameterSource) { rs: ResultSet, _: Int ->
-            Hendelse(
-                UUID.fromString(rs.getString("hendelse_id")),
-                rs.getLong("oppgave_id"),
-                Endringstype.valueOf(rs.getString("endringstype")),
-                rs.getTimestamp("opprettet_tid").toLocalDateTime()
-            )
+        return try {
+            namedParameterJdbcTemplate.queryForObject(sql, mapSqlParameterSource) { rs: ResultSet, _: Int ->
+                Hendelse(
+                    UUID.fromString(rs.getString("hendelse_id")),
+                    rs.getLong("oppgave_id"),
+                    Endringstype.valueOf(rs.getString("endringstype")),
+                    rs.getTimestamp("opprettet_tid").toLocalDateTime()
+                )
+            }
+        } catch (e: EmptyResultDataAccessException) {
+            null
         }
     }
 
