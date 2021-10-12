@@ -36,7 +36,7 @@ abstract class PersonhendelseHandler(
         val personIdent = personhendelse.personidenter.first() // todo endre til att sakClient kan ta emot en liste med identer
         // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
-
+        secureLogger.info("Fant ikke behandling for person : ${personIdent}")
         if (!finnesBehandlingForPerson) {
             return
         }
