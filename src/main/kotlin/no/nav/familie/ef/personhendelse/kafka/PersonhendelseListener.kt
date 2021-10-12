@@ -40,6 +40,7 @@ class PersonhendelseListener(
                    containerFactory = "kafkaPersonhendelseListenerContainerFactory")
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
+            securelogger.info("Personhendelse logget : ${personhendelse}")
             MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
             if (!personhendelse.personidenter.isNullOrEmpty() && !personhendelse.personidenter.first()
                             .isNullOrBlank()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
