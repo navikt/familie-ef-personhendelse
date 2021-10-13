@@ -7,8 +7,6 @@ import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepo
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Component
 class SivilstandHandler(
@@ -28,7 +26,7 @@ class SivilstandHandler(
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
-               "gyldig fra og med dato: ${personhendelse.sivilstand.gyldigFraOgMed.tilNorskDatoformat()}"
+               "gyldig fra og med dato: ${(personhendelse.sivilstand.bekreftelsesdato ?: personhendelse.sivilstand.gyldigFraOgMed).tilNorskDatoformat()}"
     }
 
 }
