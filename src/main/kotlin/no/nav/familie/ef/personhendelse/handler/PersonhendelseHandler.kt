@@ -36,19 +36,18 @@ abstract class PersonhendelseHandler(
         val personIdent = personhendelse.personidenter.first() // todo endre til att sakClient kan ta emot en liste med identer
         // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
-        secureLogger.info("Fant ikke behandling for person : ${personIdent}")
-        if (!finnesBehandlingForPerson) {
-            return
+
+        if (finnesBehandlingForPerson) {
+            handlePersonhendelse(personhendelse, personIdent)
         }
-        if (personhendelse.skalOpphøreEllerKorrigeres()) {
-            opphørEllerKorrigerOppgave(personhendelse)
-            return
-        }
-        handlePersonhendelse(personhendelse, personIdent)
 
     }
 
     fun handlePersonhendelse(personhendelse: Personhendelse, personIdent: String) {
+        if (personhendelse.skalOpphøreEllerKorrigeres()) {
+            opphørEllerKorrigerOppgave(personhendelse)
+            return
+        }
         val skalOppretteOppgave = skalOppretteOppgave(personhendelse)
         logHendelse(personhendelse, skalOppretteOppgave, personIdent)
 
