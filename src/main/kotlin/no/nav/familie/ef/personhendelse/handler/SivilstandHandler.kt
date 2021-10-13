@@ -2,12 +2,11 @@ package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Component
 class SivilstandHandler(
@@ -26,9 +25,8 @@ class SivilstandHandler(
     }
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
-        val gyldigFom = personhendelse.sivilstand.gyldigFraOgMed
         return "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
-                "${gyldigFom?.let { "gyldig fra og med ${gyldigFom.toReadable()}" } ?: "Ingen gyldig fra og med dato angitt"}"
+                "gyldig fra og med dato: ${personhendelse.sivilstand.gyldigFraOgMed.tilNorskDatoformat()}"
     }
 
 }
@@ -47,8 +45,4 @@ private val endringstyperSomSkalHåndteres = listOf(Endringstype.OPPRETTET, Endr
 
 fun String.enumToReadable(): String {
     return this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
-}
-
-fun LocalDate.toReadable(): String {
-    return this.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
 }

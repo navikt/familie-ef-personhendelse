@@ -8,23 +8,16 @@ import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
 
 @Component
-class UtflyttingHandler(
-    sakClient: SakClient,
-    oppgaveClient: OppgaveClient,
-    personhendelseRepository: PersonhendelseRepository
+class DøfødtBarnHandler(
+        sakClient: SakClient,
+        oppgaveClient: OppgaveClient,
+        personhendelseRepository: PersonhendelseRepository
 ) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
 
-    override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
+    override val type = PersonhendelseType.DØDFØDT_BARN
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
-        return personhendelse.utflyttingsBeskrivelse()
+        return "Døfødt barn ${personhendelse.doedfoedtBarn.dato.tilNorskDatoformat()}"
     }
+
 }
-
-private fun Personhendelse.utflyttingsBeskrivelse() =
-    "Utflyttingshendelse til ${this.utflyttingFraNorge.tilflyttingsstedIUtlandet}, " +
-            "{${this.utflyttingFraNorge.tilflyttingsland}. " +
-            "Utflyttingsdato: ${this.utflyttingFraNorge.utflyttingsdato.tilNorskDatoformat()}"
-
-
-
