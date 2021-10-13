@@ -76,7 +76,7 @@ class DodsfallHandlerTest {
         dodsfallHandler.handle(personhendelse)
 
         assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
-        assertThat(oppgaveRequestSlot.captured.beskrivelse).isEqualTo("Personhendelse: Dødsfall med dødsdato 01.08.2021")
+        assertThat(oppgaveRequestSlot.captured.beskrivelse).isEqualTo("Personhendelse: Dødsfall med dødsdato: 01.08.2021")
         assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdentUtenRelasjoner)
     }
 
@@ -99,7 +99,7 @@ class DodsfallHandlerTest {
         dodsfallHandler.handle(personhendelse)
 
         assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
-        assertThat(oppgaveRequestSlot.captured.beskrivelse).isEqualTo("Personhendelse: Dødsfall med dødsdato 01.08.2021")
+        assertThat(oppgaveRequestSlot.captured.beskrivelse).isEqualTo("Personhendelse: Dødsfall med dødsdato: 01.08.2021")
         assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdentMor)
     }
 }

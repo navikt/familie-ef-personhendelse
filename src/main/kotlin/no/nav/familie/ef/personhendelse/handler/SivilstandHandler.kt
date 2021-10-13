@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
@@ -27,7 +28,7 @@ class SivilstandHandler(
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
-               "gyldig fra og med ${personhendelse.sivilstand.gyldigFraOgMed.toReadable()}"
+               "gyldig fra og med dato: ${personhendelse.sivilstand.gyldigFraOgMed.tilNorskDatoformat()}"
     }
 
 }

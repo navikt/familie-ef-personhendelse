@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
@@ -23,7 +24,7 @@ class UtflyttingHandler(
 private fun Personhendelse.utflyttingsBeskrivelse() =
     "Utflyttingshendelse til ${this.utflyttingFraNorge.tilflyttingsstedIUtlandet}, " +
             "{${this.utflyttingFraNorge.tilflyttingsland}. " +
-            "Utflyttingsdato : ${this.utflyttingFraNorge.utflyttingsdato}"
+            "Utflyttingsdato: ${this.utflyttingFraNorge.utflyttingsdato.tilNorskDatoformat()}"
 
 
 
