@@ -33,7 +33,7 @@ class DodsfallHandler(
     }
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
-        return "Dødsfall med dødsdato : ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}"
+        return "Dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}"
     }
 
     private fun identerTilSøk(personhendelse: Personhendelse): List<String> {

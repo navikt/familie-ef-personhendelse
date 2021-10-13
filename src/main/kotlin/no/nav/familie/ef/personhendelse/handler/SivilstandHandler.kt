@@ -28,7 +28,7 @@ class SivilstandHandler(
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
-               "gyldig fra og med dato : ${personhendelse.sivilstand.gyldigFraOgMed.tilNorskDatoformat()}"
+               "gyldig fra og med dato: ${personhendelse.sivilstand.gyldigFraOgMed.tilNorskDatoformat()}"
     }
 
 }
