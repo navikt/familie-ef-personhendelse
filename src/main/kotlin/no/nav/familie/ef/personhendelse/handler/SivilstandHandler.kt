@@ -48,7 +48,3 @@ private val endringstyperSomSkalHåndteres = listOf(Endringstype.OPPRETTET, Endr
 fun String.enumToReadable(): String {
     return this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
 }
-
-fun LocalDate.toReadable(): String {
-    return this.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-}
