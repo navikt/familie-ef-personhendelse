@@ -1,6 +1,5 @@
 package no.nav.familie.ef.personhendelse.handler
 
-import io.mockk.CapturingSlot
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -8,6 +7,7 @@ import io.mockk.verify
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import no.nav.person.pdl.leesah.doedfoedtbarn.DoedfoedtBarn
 import org.assertj.core.api.Assertions.assertThat
@@ -21,7 +21,7 @@ internal class DøfødtBarnHandlerTest {
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
 
-    private val handler = DøfødtBarnHandler(sakClient, oppgaveClient)
+    private val handler = DøfødtBarnHandler(sakClient, oppgaveClient, mockk(relaxed = true))
 
     private val personIdent = "12345612344"
 
@@ -45,7 +45,7 @@ internal class DøfødtBarnHandlerTest {
 
     @Test
     internal fun `skal behandle døfødt barn med dato`() {
-        val personhendelse = dødfødtBarn(LocalDate.now())
+        val personhendelse = dødfødtBarn(LocalDate.of(2021,10,1))
 
         handler.handle(personhendelse)
 
@@ -58,6 +58,7 @@ internal class DøfødtBarnHandlerTest {
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.hendelseId = UUID.randomUUID().toString()
         personhendelse.doedfoedtBarn = DoedfoedtBarn(dato)
+        personhendelse.endringstype = Endringstype.OPPRETTET
         return personhendelse
     }
 }
