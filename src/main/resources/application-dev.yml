@@ -4,4 +4,3 @@ KAFKA_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais-q.adeo.no/
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
 PDL_URL: https://pdl-api.dev-fss-pub.nais.io/graphql
 PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
-STS_URL: https://api-gw-q1.oera.no/security-token-servic

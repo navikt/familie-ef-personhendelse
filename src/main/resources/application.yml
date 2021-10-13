@@ -17,6 +17,17 @@ spring:
       fail-on-empty-beans: false
   main:
     allow-bean-definition-overriding: true
+  flyway:
+    enabled: true
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+      connection-test-query: "select 1"
+      max-lifetime: 30000
+      minimum-idle: 1
   kafka:
     client-id: familie-ef-personhendelse
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
@@ -93,7 +104,6 @@ KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01
 KAFKA_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais.adeo.no/
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.prod-fss-pub.nais.io
-STS_URL: https://api-gw.oera.no/security-token-service
 PDL_URL: https://pdl-api.prod-fss-pub.nais.io/graphql
 PDL_SCOPE: api://prod-fss.pdl.pdl-api/.default
 EF_SAK_URL: http://familie-ef-sak

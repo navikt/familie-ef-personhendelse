@@ -2,15 +2,17 @@ package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.util.tilNorskDatoformat
+import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
+import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
 
 @Component
 class DøfødtBarnHandler(
         sakClient: SakClient,
-        oppgaveClient: OppgaveClient
-) : PersonhendelseHandler(sakClient, oppgaveClient) {
+        oppgaveClient: OppgaveClient,
+        personhendelseRepository: PersonhendelseRepository
+) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
 
     override val type = PersonhendelseType.DØDFØDT_BARN
 

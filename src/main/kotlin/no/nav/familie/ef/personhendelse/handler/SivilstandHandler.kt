@@ -2,16 +2,20 @@ package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.util.tilNorskDatoformat
+import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
+import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Component
 class SivilstandHandler(
         sakClient: SakClient,
-        oppgaveClient: OppgaveClient
-) : PersonhendelseHandler(sakClient, oppgaveClient) {
+        oppgaveClient: OppgaveClient,
+        personhendelseRepository: PersonhendelseRepository
+) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
 
     override val type = PersonhendelseType.SIVILSTAND
 
@@ -24,7 +28,7 @@ class SivilstandHandler(
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
-               "gyldig fra og med ${personhendelse.sivilstand.gyldigFraOgMed.tilNorskDatoformat()}"
+               "gyldig fra og med dato: ${personhendelse.sivilstand.gyldigFraOgMed.tilNorskDatoformat()}"
     }
 
 }

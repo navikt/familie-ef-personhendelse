@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.util
+package no.nav.familie.ef.personhendelse.datoutil
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

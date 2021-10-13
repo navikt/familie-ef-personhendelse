@@ -4,7 +4,13 @@ import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Tema
-import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.getDataOrThrow
+import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -24,7 +30,7 @@ class OppgaveClient(
 
     val oppgaveUrl = "$integrasjonUrl/api/oppgave"
 
-    fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long? {
+    fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long {
 
         val opprettOppgaveUri = URI.create("$oppgaveUrl/opprett")
         val response =
@@ -33,7 +39,24 @@ class OppgaveClient(
                 opprettOppgaveRequest,
                 HttpHeaders().medContentTypeJsonUTF8()
             )
-        return response.data?.oppgaveId
+        return response.getDataOrThrow().oppgaveId
+    }
+
+    fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
+        val response = getForEntity<Ressurs<Oppgave>>(
+            URI.create("$oppgaveUrl/$oppgaveId"),
+            HttpHeaders().medContentTypeJsonUTF8()
+        )
+        return response.getDataOrThrow()
+    }
+
+    fun oppdaterOppgave(oppgave: Oppgave) : Long {
+        val response = patchForEntity<Ressurs<OppgaveResponse>>(
+            URI.create("$oppgaveUrl".plus("/oppdater")),
+            oppgave,
+            HttpHeaders().medContentTypeJsonUTF8()
+        )
+        return response.getDataOrThrow().oppgaveId
     }
 
 }
@@ -68,7 +91,8 @@ fun fristFerdigstillelse(daysToAdd: Long = 0): LocalDate {
     when (date.dayOfWeek) {
         DayOfWeek.SATURDAY -> date = date.plusDays(2)
         DayOfWeek.SUNDAY -> date = date.plusDays(1)
-        else -> {}
+        else -> {
+        }
     }
 
     when {
@@ -82,7 +106,8 @@ fun fristFerdigstillelse(daysToAdd: Long = 0): LocalDate {
     when (date.dayOfWeek) {
         DayOfWeek.SATURDAY -> date = date.plusDays(2)
         DayOfWeek.SUNDAY -> date = date.plusDays(1)
-        else -> {}
+        else -> {
+        }
     }
 
     return date.toLocalDate()

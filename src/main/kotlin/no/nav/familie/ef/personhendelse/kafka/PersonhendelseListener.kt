@@ -26,7 +26,7 @@ class PersonhendelseListener(
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
-    private val handlers: Map<String, PersonhendelseHandler> = personhendelseHandlers.associateBy { it.type.name }
+    private val handlers: Map<String, PersonhendelseHandler> = personhendelseHandlers.associateBy { it.type.hendelsetype }
 
     init {
         logger.info("Legger til handlers: {}", personhendelseHandlers)

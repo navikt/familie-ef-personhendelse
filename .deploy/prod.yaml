@@ -52,3 +52,12 @@ spec:
         - host: familie-integrasjoner.prod-fss-pub.nais.io
   kafka:
     pool: nav-prod
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_12 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
+        databases:
+          - name: familie-ef-personhendelse
+            envVarPrefix: DB
+            diskAutoresize: true
+            tier: db-g1-small
+            cascadingDelete: false
