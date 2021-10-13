@@ -76,7 +76,7 @@ class SivilstandHandlerTest {
 
         assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
         assertThat(oppgaveRequestSlot.captured.beskrivelse)
-            .isEqualTo("Personhendelse: Sivilstand endret til \"Registrert partner\", gyldig fra og med 26.08.2021")
+            .isEqualTo("Personhendelse: Sivilstand endret til \"Registrert partner\", gyldig fra og med dato: 26.08.2021")
         assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
     }
 
