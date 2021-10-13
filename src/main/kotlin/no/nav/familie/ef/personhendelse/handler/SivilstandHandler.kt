@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component
 
 @Component
 class SivilstandHandler(
-    sakClient: SakClient,
-    oppgaveClient: OppgaveClient,
-    personhendelseRepository: PersonhendelseRepository
+        sakClient: SakClient,
+        oppgaveClient: OppgaveClient,
+        personhendelseRepository: PersonhendelseRepository
 ) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
 
     override val type = PersonhendelseType.SIVILSTAND
@@ -26,15 +26,15 @@ class SivilstandHandler(
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
-                "gyldig fra og med dato: ${(personhendelse.sivilstand.bekreftelsesdato ?: personhendelse.sivilstand.gyldigFraOgMed).tilNorskDatoformat()}"
+               "gyldig fra og med dato: ${(personhendelse.sivilstand.bekreftelsesdato ?: personhendelse.sivilstand.gyldigFraOgMed).tilNorskDatoformat()}"
     }
 
 }
 
 fun Personhendelse.skalSivilstandHåndteres(): Boolean {
     return this.sivilstandNotNull() &&
-            (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type))
-            && (endringstyperSomSkalHåndteres.contains(this.endringstype))
+           (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type))
+           && (endringstyperSomSkalHåndteres.contains(this.endringstype))
 }
 
 private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this.sivilstand.type != null
