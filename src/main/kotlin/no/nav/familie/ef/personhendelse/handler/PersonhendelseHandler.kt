@@ -37,18 +37,17 @@ abstract class PersonhendelseHandler(
         // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
 
-        if (!finnesBehandlingForPerson) {
-            return
+        if (finnesBehandlingForPerson) {
+            handlePersonhendelse(personhendelse, personIdent)
         }
-        if (personhendelse.skalOpphøreEllerKorrigeres()) {
-            opphørEllerKorrigerOppgave(personhendelse)
-            return
-        }
-        handlePersonhendelse(personhendelse, personIdent)
 
     }
 
     fun handlePersonhendelse(personhendelse: Personhendelse, personIdent: String) {
+        if (personhendelse.skalOpphøreEllerKorrigeres()) {
+            opphørEllerKorrigerOppgave(personhendelse)
+            return
+        }
         val skalOppretteOppgave = skalOppretteOppgave(personhendelse)
         logHendelse(personhendelse, skalOppretteOppgave, personIdent)
 
