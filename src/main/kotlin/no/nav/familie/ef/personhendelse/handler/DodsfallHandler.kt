@@ -32,7 +32,8 @@ class DodsfallHandler(
     }
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
-        return "Dødsfall med dødsdato ${personhendelse.doedsfall.doedsdato.toReadable()}"
+        val dødsdato = personhendelse.doedsfall.doedsdato
+        return "Dødsfall ${dødsdato?.let {"med dødsdato ${dødsdato.toReadable()}"} ?: "uten angitt dødsdato"}"
     }
 
     private fun identerTilSøk(personhendelse: Personhendelse): List<String> {
