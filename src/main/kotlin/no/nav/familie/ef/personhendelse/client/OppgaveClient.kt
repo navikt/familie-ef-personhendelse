@@ -51,8 +51,8 @@ class OppgaveClient(
     }
 
     fun oppdaterOppgave(oppgave: Oppgave) : Long {
-        val response = postForEntity<Ressurs<OppgaveResponse>>(
-            URI.create("$oppgaveUrl".plus("/oppdater")),
+        val response = patchForEntity<Ressurs<OppgaveResponse>>(
+            URI.create("$oppgaveUrl".plus("/${oppgave.id!!}/oppdater")),
             oppgave,
             HttpHeaders().medContentTypeJsonUTF8()
         )
