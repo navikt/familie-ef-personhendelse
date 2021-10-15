@@ -6,6 +6,7 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
@@ -20,8 +21,10 @@ internal class DøfødtBarnHandlerTest {
 
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
+    private val personhendelseRepository = mockk<PersonhendelseRepository>(relaxed = true)
 
-    private val handler = DøfødtBarnHandler(sakClient, oppgaveClient, mockk(relaxed = true))
+    private val handler = DøfødtBarnHandler()
+    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository)
 
     private val personIdent = "12345612344"
 
@@ -37,7 +40,7 @@ internal class DøfødtBarnHandlerTest {
     internal fun `skal behandle døfødt barn uten dato`() {
         val personhendelse = dødfødtBarn(null)
 
-        handler.handle(personhendelse)
+        service.håndterPersonhendelse(personhendelse)
 
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
         assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Døfødt barn ukjent dato")
@@ -45,9 +48,9 @@ internal class DøfødtBarnHandlerTest {
 
     @Test
     internal fun `skal behandle døfødt barn med dato`() {
-        val personhendelse = dødfødtBarn(LocalDate.of(2021,10,1))
+        val personhendelse = dødfødtBarn(LocalDate.of(2021, 10, 1))
 
-        handler.handle(personhendelse)
+        service.håndterPersonhendelse(personhendelse)
 
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
         assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Døfødt barn 01.10.2021")
@@ -56,6 +59,7 @@ internal class DøfødtBarnHandlerTest {
     private fun dødfødtBarn(dato: LocalDate?): Personhendelse {
         val personhendelse = Personhendelse()
         personhendelse.personidenter = listOf(personIdent)
+        personhendelse.opplysningstype = PersonhendelseType.DØDFØDT_BARN.hendelsetype
         personhendelse.hendelseId = UUID.randomUUID().toString()
         personhendelse.doedfoedtBarn = DoedfoedtBarn(dato)
         personhendelse.endringstype = Endringstype.OPPRETTET

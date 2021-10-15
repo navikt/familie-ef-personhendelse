@@ -9,7 +9,6 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.generated.enums.Sivilstandstype
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.person.pdl.leesah.Endringstype
@@ -25,7 +24,8 @@ class SivilstandHandlerTest {
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
-    private val sivilstandHandler = SivilstandHandler(sakClient, oppgaveClient, personhendelseRepository)
+    private val handler = SivilstandHandler()
+    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository)
 
     private val personIdent = "12345612344"
     private val partnerPersonIdent = "12345612345"
@@ -34,11 +34,12 @@ class SivilstandHandlerTest {
     fun `Ikke opprett oppgave for sivilstand hendelse registrert partner dersom person ikke har løpende ef-sak`() {
         val personhendelse = Personhendelse()
         personhendelse.sivilstand = Sivilstand(
-            Sivilstandstype.REGISTRERT_PARTNER.name,
-            LocalDate.of(2021, 8, 26),
-            partnerPersonIdent,
-            LocalDate.of(2021, 8, 26)
+                Sivilstandstype.REGISTRERT_PARTNER.name,
+                LocalDate.of(2021, 8, 26),
+                partnerPersonIdent,
+                LocalDate.of(2021, 8, 26)
         )
+        personhendelse.opplysningstype = PersonhendelseType.SIVILSTAND.hendelsetype
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.endringstype = Endringstype.OPPRETTET
 
@@ -47,7 +48,7 @@ class SivilstandHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        sivilstandHandler.handle(personhendelse)
+        service.håndterPersonhendelse(personhendelse)
 
         assertThat(oppgaveRequestSlot.isCaptured).isFalse
     }
@@ -56,11 +57,12 @@ class SivilstandHandlerTest {
     fun `Opprett oppgave for sivilstand hendelse registrert partner dersom person har løpende ef-sak`() {
         val personhendelse = Personhendelse()
         personhendelse.sivilstand = Sivilstand(
-            Sivilstandstype.REGISTRERT_PARTNER.name,
-            LocalDate.of(2021, 8, 26),
-            partnerPersonIdent,
-            LocalDate.of(2021, 8, 26)
+                Sivilstandstype.REGISTRERT_PARTNER.name,
+                LocalDate.of(2021, 8, 26),
+                partnerPersonIdent,
+                LocalDate.of(2021, 8, 26)
         )
+        personhendelse.opplysningstype = PersonhendelseType.SIVILSTAND.hendelsetype
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.endringstype = Endringstype.OPPRETTET
         personhendelse.hendelseId = UUID.randomUUID().toString()
@@ -72,11 +74,11 @@ class SivilstandHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        sivilstandHandler.handle(personhendelse)
+        service.håndterPersonhendelse(personhendelse)
 
         assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
         assertThat(oppgaveRequestSlot.captured.beskrivelse)
-            .isEqualTo("Personhendelse: Sivilstand endret til \"Registrert partner\", gyldig fra og med dato: 26.08.2021")
+                .isEqualTo("Personhendelse: Sivilstand endret til \"Registrert partner\", gyldig fra og med dato: 26.08.2021")
         assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
     }
 

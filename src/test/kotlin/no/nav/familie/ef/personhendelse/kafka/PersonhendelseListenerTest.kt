@@ -2,25 +2,21 @@ package no.nav.familie.ef.personhendelse.kafka
 
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.spyk
 import io.mockk.verify
-import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.handler.PersonhendelseHandler
+import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseType
-import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class PersonhendelseListenerTest {
 
     private val sakClient = mockk<SakClient>()
-    private val oppgaveClient = mockk<OppgaveClient>()
-    private val personhendelseRepository = mockk<PersonhendelseRepository>()
+    private val personhendelseService = mockk<PersonhendelseService>(relaxed = true)
 
-    private lateinit var handler: PersonhendelseHandler
     private lateinit var listener: PersonhendelseListener
 
     private val personMedSak = "11111111111"
@@ -28,33 +24,30 @@ internal class PersonhendelseListenerTest {
 
     @BeforeEach
     internal fun setUp() {
-        handler = lagHandler()
-        listener = PersonhendelseListener(listOf(handler), "")
+        listener = PersonhendelseListener("", personhendelseService)
         every { sakClient.finnesBehandlingForPerson(setOf(personMedSak)) } returns true
         every { sakClient.finnesBehandlingForPerson(setOf(personUtenSak)) } returns false
     }
 
     @Test
-    internal fun `skal kalle på handler for hendelse som har handler`() {
+    internal fun `skal kalle på personhendelseService for hendelse`() {
         listener.listen(lagPersonhendelse(personIdent = personUtenSak))
 
-        verify(exactly = 1) { handler.handle(any()) }
+        verify(exactly = 1) { personhendelseService.håndterPersonhendelse(any()) }
     }
 
     @Test
-    internal fun `skal ikke kalle på handler for hendelse som ikke er mappet med handler`() {
-        val personhendelse = lagPersonhendelse()
-        personhendelse.opplysningstype = "IKKE_MAPPET"
+    internal fun `skal kaste feil når hendelse mangler personidenter`() {
+        val personhendelse = lagPersonhendelse(personIdent = "")
+        assertThatThrownBy { listener.listen(personhendelse) }.hasMessageContaining("Hendelse uten personIdent")
 
-        listener.listen(personhendelse)
-
-        verify(exactly = 0) { handler.handle(any()) }
+        verify(exactly = 0) { personhendelseService.håndterPersonhendelse(any()) }
     }
 
     private fun lagPersonhendelse(
-        endringstype: Endringstype = Endringstype.OPPRETTET,
-        personIdent: String = this.personMedSak,
-        opplysningstype: PersonhendelseType = PersonhendelseType.SIVILSTAND
+            endringstype: Endringstype = Endringstype.OPPRETTET,
+            personIdent: String = this.personMedSak,
+            opplysningstype: PersonhendelseType = PersonhendelseType.SIVILSTAND
     ): Personhendelse {
         val personhendelse = Personhendelse()
         personhendelse.personidenter = listOf(personIdent)
@@ -63,13 +56,4 @@ internal class PersonhendelseListenerTest {
         return personhendelse
     }
 
-    private fun lagHandler() =
-        spyk<PersonhendelseHandler>(object : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
-            override val type: PersonhendelseType = PersonhendelseType.SIVILSTAND
-
-            override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
-                return "beskrivelse"
-            }
-
-        })
 }
