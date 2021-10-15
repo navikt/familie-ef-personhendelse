@@ -17,7 +17,8 @@ class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHåndterer {
         return "Dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}"
     }
 
-    private fun identerTilSøk(personhendelse: Personhendelse): List<Set<String>> {
+
+    override fun personidenterPerPersonSomSkalKontrolleres(personhendelse: Personhendelse): List<Set<String>> {
         val personIdenter = personhendelse.identerUtenAktørId()
         val identerTilSøk = mutableListOf(personIdenter)
 
