@@ -1,6 +1,6 @@
 package no.nav.familie.ef.personhendelse.kafka
 
-import no.nav.familie.ef.personhendelse.handler.PersonhendelseHandler
+import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.log.mdc.MDCConstants
@@ -22,7 +22,7 @@ import java.util.UUID
 class PersonhendelseListener(
         @Value("\${SPRING_PROFILES_ACTIVE}")
         private val env: String,
-        private val personhendelseHandler: PersonhendelseHandler
+        private val personhendelseService: PersonhendelseService
 ) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -37,7 +37,7 @@ class PersonhendelseListener(
             val personidenter = personhendelse.identerUtenAktørId()
             //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
             if (!personidenter.firstOrNull().isNullOrBlank()) {
-                personhendelseHandler.håndterPersonhendelse(personhendelse)
+                personhendelseService.håndterPersonhendelse(personhendelse)
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
             }
