@@ -27,7 +27,7 @@ internal class SakClientTest {
         lateinit var sakClient: SakClient
         lateinit var wiremockServerItem: WireMockServer
 
-        private val personIdent = "12345678910"
+        private val personidenter = setOf("12345678910")
 
         @BeforeAll
         @JvmStatic
@@ -53,15 +53,15 @@ internal class SakClientTest {
     fun `Finnes behandling i ef-sak for person og returner true`() {
 
         wiremockServerItem.stubFor(
-            post(urlMatching("/api/ekstern/behandling/finnes"))
-                .withRequestBody(equalToJson(objectMapper.writeValueAsString(PersonIdent(personIdent))))
+            post(urlMatching("/api/ekstern/behandling/finnes/flere-identer"))
+                .withRequestBody(equalToJson(objectMapper.writeValueAsString(personidenter)))
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(gyldigResponse())
                 ))
 
-        val response = sakClient.finnesBehandlingForPerson(personIdent)
+        val response = sakClient.finnesBehandlingForPerson(personidenter)
         Assertions.assertThat(response).isEqualTo(true)
     }
 
