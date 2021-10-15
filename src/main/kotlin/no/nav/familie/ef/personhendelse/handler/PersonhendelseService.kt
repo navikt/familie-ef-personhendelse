@@ -16,7 +16,7 @@ import java.util.UUID
 
 @Service
 class PersonhendelseService(
-        personhendelseHandlers: List<PersonhendelseHåndterer>,
+        personhendelseHandlers: List<PersonhendelseHandler>,
         private val sakClient: SakClient,
         private val oppgaveClient: OppgaveClient,
         private val personhendelseRepository: PersonhendelseRepository
@@ -25,7 +25,7 @@ class PersonhendelseService(
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
-    private val handlers: Map<String, PersonhendelseHåndterer> = personhendelseHandlers.associateBy { it.type.hendelsetype }
+    private val handlers: Map<String, PersonhendelseHandler> = personhendelseHandlers.associateBy { it.type.hendelsetype }
 
     init {
         logger.info("Legger til handlers: {}", personhendelseHandlers)
@@ -45,7 +45,7 @@ class PersonhendelseService(
         }
     }
 
-    private fun handle(handler: PersonhendelseHåndterer, personhendelse: Personhendelse, personidenter: Set<String>) {
+    private fun handle(handler: PersonhendelseHandler, personhendelse: Personhendelse, personidenter: Set<String>) {
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personidenter)
 
         if (finnesBehandlingForPerson) {
@@ -53,7 +53,7 @@ class PersonhendelseService(
         }
     }
 
-    private fun handlePersonhendelse(handler: PersonhendelseHåndterer, personhendelse: Personhendelse, personIdent: String) {
+    private fun handlePersonhendelse(handler: PersonhendelseHandler, personhendelse: Personhendelse, personIdent: String) {
         if (personhendelse.skalOpphøreEllerKorrigeres()) {
             opphørEllerKorrigerOppgave(personhendelse)
             return
@@ -80,7 +80,7 @@ class PersonhendelseService(
         secureLogger.info("$logMessage personIdent=${personIdent}")
     }
 
-    private fun opprettOppgave(handler: PersonhendelseHåndterer, personhendelse: Personhendelse, personIdent: String) {
+    private fun opprettOppgave(handler: PersonhendelseHandler, personhendelse: Personhendelse, personIdent: String) {
         val oppgaveBeskrivelse = handler.lagOppgaveBeskrivelse(personhendelse)
         val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)

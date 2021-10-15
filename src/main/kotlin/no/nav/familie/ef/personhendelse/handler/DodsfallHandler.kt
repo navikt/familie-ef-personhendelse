@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
-class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHåndterer {
+class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHandler {
 
     override val type = PersonhendelseType.DØDSFALL
 

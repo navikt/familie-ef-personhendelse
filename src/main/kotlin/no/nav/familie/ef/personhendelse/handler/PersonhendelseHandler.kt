@@ -2,7 +2,7 @@ package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.person.pdl.leesah.Personhendelse
 
-interface PersonhendelseHåndterer {
+interface PersonhendelseHandler {
 
     val type: PersonhendelseType
 
