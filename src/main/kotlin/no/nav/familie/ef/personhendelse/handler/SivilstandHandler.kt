@@ -1,19 +1,16 @@
 package no.nav.familie.ef.personhendelse.handler
 
-import no.nav.familie.ef.personhendelse.client.OppgaveClient
-import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
-import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class SivilstandHandler(
-        sakClient: SakClient,
-        oppgaveClient: OppgaveClient,
-        personhendelseRepository: PersonhendelseRepository
-) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
+class SivilstandHandler: PersonhendelseHåndterer {
+
+    private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     override val type = PersonhendelseType.SIVILSTAND
 

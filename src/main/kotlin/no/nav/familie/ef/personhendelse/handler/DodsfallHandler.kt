@@ -1,41 +1,23 @@
 package no.nav.familie.ef.personhendelse.handler
 
-import no.nav.familie.ef.personhendelse.client.OppgaveClient
-import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
-import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
-class DodsfallHandler(
-        val pdlClient: PdlClient,
-        sakClient: SakClient,
-        oppgaveClient: OppgaveClient,
-        personhendelseRepository: PersonhendelseRepository
-) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
+class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHåndterer {
 
     override val type = PersonhendelseType.DØDSFALL
-
-    override fun handle(personhendelse: Personhendelse) {
-        identerTilSøk(personhendelse).forEach { personIdenter ->
-            val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdenter)
-
-            if (finnesBehandlingForPerson) {
-                handlePersonhendelse(personhendelse, personIdenter.first())
-            }
-        }
-    }
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return "Dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}"
     }
 
-    private fun identerTilSøk(personhendelse: Personhendelse): List<Set<String>> {
+    override fun personidenterPerPersonSomSkalKontrolleres(personhendelse: Personhendelse): List<Set<String>> {
         val personIdenter = personhendelse.identerUtenAktørId()
         val identerTilSøk = mutableListOf(personIdenter)
 
