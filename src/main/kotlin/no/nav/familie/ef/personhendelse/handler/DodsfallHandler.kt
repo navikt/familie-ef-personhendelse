@@ -17,22 +17,24 @@ class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHåndterer {
         return "Dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}"
     }
 
-    override fun personidenterPerPersonSomSkalKontrolleres(personhendelse: Personhendelse): List<Set<String>> {
+    private fun identerTilSøk(personhendelse: Personhendelse): List<Set<String>> {
+        val personIdenter = personhendelse.identerUtenAktørId()
+        val identerTilSøk = mutableListOf(personIdenter)
 
-        val identer = personhendelse.identerUtenAktørId()
-
-        val pdlPersonData = pdlClient.hentPerson(identer)
+        val pdlPersonData = pdlClient.hentPerson(personIdenter.first())
 
         val familierelasjoner = pdlPersonData.forelderBarnRelasjon
 
         val fødselsdatoList = pdlPersonData.foedsel.mapNotNull { it.foedselsdato?.value }
         if (fødselsdatoList.isEmpty() || fødselsdatoList.first().isAfter(LocalDate.now().minusYears(19))) {
-            val listeMedForeldreForBarn =
-                    familierelasjoner.filter { it.minRolleForPerson == ForelderBarnRelasjonRolle.BARN }
-                            .map { it.relatertPersonsIdent }
-            identerTilSøk.addAll(listeMedForeldreForBarn)
+            val identerTilForelderer = familierelasjoner
+                    .filter { it.minRolleForPerson == ForelderBarnRelasjonRolle.BARN }
+                    .map { it.relatertPersonsIdent }
+                    .map { pdlClient.hentIdenter(it) }
+                    .filterNot { it.isEmpty() }
+            identerTilSøk.addAll(identerTilForelderer)
         }
-        return identerTilSøk.toSet()
+        return identerTilSøk
     }
 
 }

@@ -5,7 +5,6 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.person.pdl.leesah.Endringstype
@@ -49,7 +48,7 @@ class PersonhendelseHandler(
 
     private fun handle(handler: PersonhendelseHåndterer, personhendelse: Personhendelse, personidenter: Set<String>) {
         // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
-        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personidenter, StønadType.OVERGANGSSTØNAD)
+        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personidenter)
 
         if (finnesBehandlingForPerson) {
             handlePersonhendelse(handler, personhendelse, personidenter.first())
