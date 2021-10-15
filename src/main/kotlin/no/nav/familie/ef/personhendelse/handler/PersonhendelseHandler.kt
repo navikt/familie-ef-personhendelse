@@ -36,8 +36,7 @@ class PersonhendelseHandler(
 
     fun håndterPersonhendelse(personhendelse: Personhendelse) {
         handlers[personhendelse.opplysningstype]?.let { handler ->
-            handler.personidenterPerPersonSomSkalKontrolleres(personhendelse).forEach { it ->
-                val personidenter = it.filter { it.length == 11 }.toSet()
+            handler.personidenterPerPersonSomSkalKontrolleres(personhendelse).forEach { personidenter ->
                 if (personidenter.isEmpty()) {
                     error("Savner personidenter til personhendelse=${personhendelse.hendelseId}")
                 }
@@ -47,7 +46,6 @@ class PersonhendelseHandler(
     }
 
     private fun handle(handler: PersonhendelseHåndterer, personhendelse: Personhendelse, personidenter: Set<String>) {
-        // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
         val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personidenter)
 
         if (finnesBehandlingForPerson) {

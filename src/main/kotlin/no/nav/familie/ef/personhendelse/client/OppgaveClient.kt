@@ -70,7 +70,7 @@ fun defaultOpprettOppgaveRequest(personIdent: String, beskrivelse: String) =
         fristFerdigstillelse = fristFerdigstillelse(),
         beskrivelse = beskrivelse,
         enhetsnummer = null,
-        behandlingstema = Behandlingstema.Overgangsstønad.value,
+        behandlingstema = Behandlingstema.Overgangsstønad.value, // TODO burde denne settes då det kan være skolepenger det gjelder?
         tilordnetRessurs = null,
         behandlesAvApplikasjon = "familie-ef-sak"
     )
