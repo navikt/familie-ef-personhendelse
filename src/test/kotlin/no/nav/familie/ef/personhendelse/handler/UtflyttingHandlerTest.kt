@@ -8,7 +8,6 @@ import io.mockk.slot
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
-import no.nav.familie.kontrakter.ef.felles.StønadType
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.person.pdl.leesah.Endringstype
@@ -25,14 +24,15 @@ internal class UtflyttingHandlerTest {
     val oppgaveClient = mockk<OppgaveClient>()
     val personhendelseRepository = mockk<PersonhendelseRepository>()
 
-    private val utflyttingHandler = UtflyttingHandler(sakClient, oppgaveClient, personhendelseRepository)
+    private val handler = UtflyttingHandler()
+    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository)
 
     private val personIdent = "12345612344"
 
     @Test
     fun `Ikke opprett oppgave for utflyttingshendelse dersom person ikke har løpende ef-sak`() {
         val personhendelse = Personhendelse()
-
+        personhendelse.opplysningstype = PersonhendelseType.UTFLYTTING_FRA_NORGE.hendelsetype
         personhendelse.utflyttingFraNorge = UtflyttingFraNorge("Finland", "Helsinki", LocalDate.now())
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.endringstype = Endringstype.OPPRETTET
@@ -44,13 +44,14 @@ internal class UtflyttingHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        utflyttingHandler.handle(personhendelse)
+        service.håndterPersonhendelse(personhendelse)
         assertThat(oppgaveRequestSlot.isCaptured).isFalse
     }
 
     @Test
     fun `Opprett oppgave for sivilstand hendelse registrert partner dersom person har løpende ef-sak`() {
         val personhendelse = Personhendelse()
+        personhendelse.opplysningstype = PersonhendelseType.UTFLYTTING_FRA_NORGE.hendelsetype
         personhendelse.utflyttingFraNorge = UtflyttingFraNorge("Finland", "Helsinki", LocalDate.now())
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.endringstype = Endringstype.OPPRETTET
@@ -62,7 +63,7 @@ internal class UtflyttingHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
-        utflyttingHandler.handle(personhendelse)
+        service.håndterPersonhendelse(personhendelse)
 
         assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
         assertThat(oppgaveRequestSlot.captured.beskrivelse).contains("Finland")
