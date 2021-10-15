@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 import java.util.UUID
 
 @Service
-class PersonhendelseHandler(
+class PersonhendelseService(
         personhendelseHandlers: List<PersonhendelseHåndterer>,
         private val sakClient: SakClient,
         private val oppgaveClient: OppgaveClient,
