@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.kafka
 
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseHandler
+import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.LoggerFactory
@@ -41,8 +42,9 @@ class PersonhendelseListener(
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
             MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
-            if (!personhendelse.personidenter.isNullOrEmpty() && !personhendelse.personidenter.first()
-                            .isNullOrBlank()) { //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
+            val personidenter = personhendelse.identerUtenAktørId()
+            //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
+            if (!personidenter.firstOrNull().isNullOrBlank()) {
                 handlers[personhendelse.opplysningstype]?.handle(personhendelse)
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")

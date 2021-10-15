@@ -5,7 +5,7 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
-import no.nav.familie.kontrakter.ef.felles.StønadType
+import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.person.pdl.leesah.Endringstype
@@ -32,13 +32,11 @@ abstract class PersonhendelseHandler(
     abstract fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String
 
     open fun handle(personhendelse: Personhendelse) {
-
-        val personIdent = personhendelse.personidenter.first() // todo endre til att sakClient kan ta emot en liste med identer
-        // TODO fjern stønadtype og returner stønadtype og resultat fra sakClient
-        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
+        val personidenter = personhendelse.identerUtenAktørId()
+        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personidenter)
 
         if (finnesBehandlingForPerson) {
-            handlePersonhendelse(personhendelse, personIdent)
+            handlePersonhendelse(personhendelse, personidenter.first())
         }
 
     }

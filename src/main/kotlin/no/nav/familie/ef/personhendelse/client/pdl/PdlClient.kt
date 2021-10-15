@@ -1,10 +1,8 @@
-package no.nav.familie.ef.personhendelse.client
+package no.nav.familie.ef.personhendelse.client.pdl
 
-import no.nav.familie.ef.personhendelse.client.pdl.PdlPersonRequest
-import no.nav.familie.ef.personhendelse.client.pdl.PdlPersonRequestVariables
-import no.nav.familie.ef.personhendelse.client.pdl.PdlResponse
-import no.nav.familie.ef.personhendelse.client.pdl.feilsjekkOgReturnerData
+import no.nav.familie.ef.personhendelse.generated.HentIdenter
 import no.nav.familie.ef.personhendelse.generated.HentPerson
+import no.nav.familie.ef.personhendelse.generated.hentidenter.IdentInformasjon
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.http.client.AbstractRestClient
 import org.apache.commons.lang3.StringUtils
@@ -26,6 +24,7 @@ class PdlClient(
     val pdlUri: URI = UriComponentsBuilder.fromUri(url).build().toUri()
 
     val hentPersonQuery = javaClass.getResource("/pdl/queries/hentPerson.graphql").readText().graphqlCompatible()
+    val hentIdenter = javaClass.getResource("/pdl/queries/hentIdenter.graphql").readText().graphqlCompatible()
 
     fun hentPerson(fnr: String): Person {
 
@@ -36,6 +35,16 @@ class PdlClient(
 
         val pdlResponse: PdlResponse<HentPerson.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
         return feilsjekkOgReturnerData(fnr, pdlResponse) { it.hentPerson }
+    }
+
+    fun hentIdenter(personIdent: String): Set<String> {
+        val pdlPersonRequest = PdlPersonRequest(
+                variables = PdlPersonRequestVariables(personIdent),
+                query = hentIdenter
+        )
+
+        val pdlResponse: PdlResponse<HentIdenter.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
+        return feilsjekkOgReturnerData(personIdent, pdlResponse) { it.hentIdenter }.identer.map(IdentInformasjon::ident).toSet()
     }
 }
 

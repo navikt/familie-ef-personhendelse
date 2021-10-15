@@ -23,15 +23,15 @@ internal class PersonhendelseListenerTest {
     private lateinit var handler: PersonhendelseHandler
     private lateinit var listener: PersonhendelseListener
 
-    private val personMedSak = "ident_med_sak"
-    private val personUtenSak = "ident_uten_sak"
+    private val personMedSak = "11111111111"
+    private val personUtenSak = "22222222222"
 
     @BeforeEach
     internal fun setUp() {
         handler = lagHandler()
         listener = PersonhendelseListener(listOf(handler), "")
-        every { sakClient.finnesBehandlingForPerson(personMedSak, any()) } returns true
-        every { sakClient.finnesBehandlingForPerson(personUtenSak, any()) } returns false
+        every { sakClient.finnesBehandlingForPerson(setOf(personMedSak)) } returns true
+        every { sakClient.finnesBehandlingForPerson(setOf(personUtenSak)) } returns false
     }
 
     @Test
