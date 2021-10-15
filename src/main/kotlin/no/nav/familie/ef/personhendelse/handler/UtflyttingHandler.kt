@@ -5,7 +5,7 @@ import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
 
 @Component
-class UtflyttingHandler : PersonhendelseHåndterer {
+class UtflyttingHandler : PersonhendelseHandler {
 
     override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
 
