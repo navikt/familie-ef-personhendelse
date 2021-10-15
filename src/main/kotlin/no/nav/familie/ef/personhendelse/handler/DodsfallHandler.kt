@@ -1,46 +1,27 @@
 package no.nav.familie.ef.personhendelse.handler
 
-import no.nav.familie.ef.personhendelse.client.OppgaveClient
-import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
-import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
-import no.nav.familie.kontrakter.ef.felles.StønadType
+import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
-class DodsfallHandler(
-        val pdlClient: PdlClient,
-        sakClient: SakClient,
-        oppgaveClient: OppgaveClient,
-        personhendelseRepository: PersonhendelseRepository
-) : PersonhendelseHandler(sakClient, oppgaveClient, personhendelseRepository) {
+class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHåndterer {
 
     override val type = PersonhendelseType.DØDSFALL
-
-    override fun handle(personhendelse: Personhendelse) {
-        identerTilSøk(personhendelse).forEach { personIdent ->
-            // TODO fjern stønadType som i PersonhendelseHandler
-            val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personIdent, StønadType.OVERGANGSSTØNAD)
-
-            if (finnesBehandlingForPerson) {
-                handlePersonhendelse(personhendelse, personIdent)
-            }
-        }
-    }
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return "Dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}"
     }
 
-    private fun identerTilSøk(personhendelse: Personhendelse): List<String> {
-        val personIdent = personhendelse.personidenter.first()
-        val identerTilSøk = mutableListOf(personIdent)
+    override fun personidenterPerPersonSomSkalKontrolleres(personhendelse: Personhendelse): List<Set<String>> {
 
-        val pdlPersonData = pdlClient.hentPerson(personIdent)
+        val identer = personhendelse.identerUtenAktørId()
+
+        val pdlPersonData = pdlClient.hentPerson(identer)
 
         val familierelasjoner = pdlPersonData.forelderBarnRelasjon
 
@@ -51,7 +32,7 @@ class DodsfallHandler(
                             .map { it.relatertPersonsIdent }
             identerTilSøk.addAll(listeMedForeldreForBarn)
         }
-        return identerTilSøk
+        return identerTilSøk.toSet()
     }
 
 }
