@@ -6,7 +6,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
-import no.nav.familie.ef.personhendelse.client.PdlClient
+import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
 import no.nav.familie.ef.personhendelse.generated.hentperson.Foedsel

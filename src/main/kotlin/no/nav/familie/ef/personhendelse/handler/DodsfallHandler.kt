@@ -1,8 +1,8 @@
 package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
-import no.nav.familie.ef.personhendelse.client.PdlClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
