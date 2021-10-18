@@ -39,7 +39,7 @@ class PdlClient(
 
     fun hentIdenter(personIdent: String): Set<String> {
         val pdlPersonRequest = PdlPersonRequest(
-                variables = PdlPersonRequestVariables(personIdent),
+                variables = PdlIdentRequestVariables(personIdent),
                 query = hentIdenter
         )
 
