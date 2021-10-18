@@ -2,7 +2,6 @@ package no.nav.familie.ef.personhendelse.kafka
 
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
-import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -36,15 +35,17 @@ class KafkaErrorHandlerTest {
     @Test
     fun `skal stoppe container hvis man mottar feil med en tom liste med records`() {
         assertThatThrownBy { errorHandler.handle(RuntimeException("Feil i test"), emptyList(), consumer, container) }
-            .hasMessageContaining("Feil i test")
-            .hasCauseExactlyInstanceOf(RuntimeException::class.java)
+                .hasMessageNotContaining("Feil i test")
+                .hasMessageContaining("Sjekk securelogs for mer info")
+                .hasCauseExactlyInstanceOf(Exception::class.java)
     }
 
     @Test
     fun `skal stoppe container hvis man mottar feil med en liste med records`() {
         val consumerRecord = ConsumerRecord("topic", 1, 1, 1, "record")
         assertThatThrownBy { errorHandler.handle(RuntimeException("Feil i test"), listOf(consumerRecord), consumer, container) }
-            .hasMessageContaining("Feil i test")
-            .hasCauseExactlyInstanceOf(RuntimeException::class.java)
+                .hasMessageNotContaining("Feil i test")
+                .hasMessageContaining("Sjekk securelogs for mer info")
+                .hasCauseExactlyInstanceOf(Exception::class.java)
     }
 }
