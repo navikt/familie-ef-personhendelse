@@ -70,7 +70,7 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
         },
         Instant.ofEpochMilli(now + stopTime ))
         logger.warn("Stopper kafka container for {} i {}", topic, Duration.ofMillis(stopTime))
-        super.handle(e, records, consumer, container)
+        super.handle(Exception("Sjekk securelogs for mer info - ${e::class.java.simpleName}"), records, consumer, container)
     }
 
     companion object {
