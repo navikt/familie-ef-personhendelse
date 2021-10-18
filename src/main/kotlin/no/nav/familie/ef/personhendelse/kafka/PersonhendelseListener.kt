@@ -1,7 +1,8 @@
 package no.nav.familie.ef.personhendelse.kafka
 
-import no.nav.familie.ef.personhendelse.handler.PersonhendelseHandler
+import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.LoggerFactory
@@ -19,22 +20,13 @@ import java.util.UUID
  */
 @Component
 class PersonhendelseListener(
-        personhendelseHandlers: List<PersonhendelseHandler>,
         @Value("\${SPRING_PROFILES_ACTIVE}")
-        private val env: String
+        private val env: String,
+        private val personhendelseService: PersonhendelseService
 ) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
-
-    private val handlers: Map<String, PersonhendelseHandler> = personhendelseHandlers.associateBy { it.type.hendelsetype }
-
-    init {
-        logger.info("Legger til handlers: {}", personhendelseHandlers)
-        if (personhendelseHandlers.isEmpty()) {
-            error("Finner ikke handlers for personhendelse")
-        }
-    }
 
     @KafkaListener(id = "familie-ef-personhendelse",
                    topics = ["aapen-person-pdl-leesah-v1"],
@@ -45,13 +37,15 @@ class PersonhendelseListener(
             val personidenter = personhendelse.identerUtenAktørId()
             //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
             if (!personidenter.firstOrNull().isNullOrBlank()) {
-                handlers[personhendelse.opplysningstype]?.handle(personhendelse)
+                personhendelseService.håndterPersonhendelse(personhendelse)
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
             }
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}")
-            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}")
+            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}" +
+                               " hendelse={}",
+                               objectMapper.writeValueAsString(personhendelse))
             throw e
         } finally {
             MDC.remove(MDCConstants.MDC_CALL_ID)
