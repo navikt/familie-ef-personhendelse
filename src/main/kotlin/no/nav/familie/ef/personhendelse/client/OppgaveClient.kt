@@ -5,6 +5,8 @@ import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.getDataOrThrow
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -45,6 +47,15 @@ class OppgaveClient(
     fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
         val response = getForEntity<Ressurs<Oppgave>>(
             URI.create("$oppgaveUrl/$oppgaveId"),
+            HttpHeaders().medContentTypeJsonUTF8()
+        )
+        return response.getDataOrThrow()
+    }
+
+    fun finnMapper(finnMappeRequest: FinnMappeRequest): FinnMappeResponseDto {
+        val response = postForEntity<Ressurs<FinnMappeResponseDto>>(
+            URI.create("$oppgaveUrl/mappe/sok"),
+            finnMappeRequest,
             HttpHeaders().medContentTypeJsonUTF8()
         )
         return response.getDataOrThrow()

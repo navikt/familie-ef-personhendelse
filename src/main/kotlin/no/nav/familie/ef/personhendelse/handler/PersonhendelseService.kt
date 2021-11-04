@@ -5,6 +5,7 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.person.pdl.leesah.Endringstype
@@ -24,7 +25,7 @@ class PersonhendelseService(
 
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
-
+    private val EF_ENHETNUMMER = "4489"
     private val handlers: Map<String, PersonhendelseHandler> = personhendelseHandlers.associateBy { it.type.hendelsetype }
 
     init {
@@ -84,6 +85,13 @@ class PersonhendelseService(
         val oppgaveBeskrivelse = handler.lagOppgaveBeskrivelse(personhendelse)
         val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
+        try {
+            leggOppgaveIMappe(oppgaveId)
+        } catch (e: Exception) {
+            logger.error("Feil under knytning av mappe til oppgave - se securelogs for stacktrace")
+            secureLogger.error("Feil under knytning av mappe til oppgave" ,e)
+        }
+
         lagreHendelse(personhendelse, oppgaveId)
         logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
     }
@@ -110,6 +118,22 @@ class PersonhendelseService(
             logger.info("Ny oppgave ifm en allerede lukket oppgave er opprettet med oppgaveId=${oppgave.id}")
         }
         lagreHendelse(personhendelse, oppgave.id!!)
+    }
+
+    private fun leggOppgaveIMappe(oppgaveId: Long) {
+        val oppgave = oppgaveClient.finnOppgaveMedId(oppgaveId)
+        if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { //Skjermede personer skal ikke puttes i mappe
+            val finnMappeRequest = FinnMappeRequest(
+                listOf(),
+                oppgave.tildeltEnhetsnr!!,
+                null,
+                1000
+            )
+            val mapperResponse = oppgaveClient.finnMapper(finnMappeRequest)
+            val mappe = mapperResponse.mapper.find { it.navn.contains("EF Sak", true) && it.navn.contains("01") }
+                ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
+            oppgaveClient.oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
+        }
     }
 
     private fun oppdater(oppgave: Oppgave, beskrivelse: String, status: StatusEnum?): Long {
