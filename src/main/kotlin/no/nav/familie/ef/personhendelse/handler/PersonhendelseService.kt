@@ -130,7 +130,11 @@ class PersonhendelseService(
                 1000
             )
             val mapperResponse = oppgaveClient.finnMapper(finnMappeRequest)
-            val mappe = mapperResponse.mapper.find { it.navn.contains("EF Sak", true) && it.navn.contains("01") }
+            val mappe = mapperResponse.mapper.find {
+                it.navn.contains("EF Sak", true) &&
+                it.navn.contains("Hendelser") &&
+                it.navn.contains("62")
+            }
                 ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
             oppgaveClient.oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
         }
