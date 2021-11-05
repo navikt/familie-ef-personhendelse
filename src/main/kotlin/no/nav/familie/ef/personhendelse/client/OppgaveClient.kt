@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
+import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -53,10 +54,11 @@ class OppgaveClient(
     }
 
     fun finnMapper(finnMappeRequest: FinnMappeRequest): FinnMappeResponseDto {
-        val response = postForEntity<Ressurs<FinnMappeResponseDto>>(
-            URI.create("$oppgaveUrl/mappe/sok"),
-            finnMappeRequest,
-            HttpHeaders().medContentTypeJsonUTF8()
+        val response = getForEntity<Ressurs<FinnMappeResponseDto>>(
+            UriComponentsBuilder.fromUri(URI.create("$oppgaveUrl/mappe/sok"))
+                .queryParams(finnMappeRequest.toQueryParams())
+                .build()
+                .toUri()
         )
         return response.getDataOrThrow()
     }
