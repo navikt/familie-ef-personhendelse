@@ -5,6 +5,8 @@ import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.getDataOrThrow
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
+import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
+import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -46,6 +49,16 @@ class OppgaveClient(
         val response = getForEntity<Ressurs<Oppgave>>(
             URI.create("$oppgaveUrl/$oppgaveId"),
             HttpHeaders().medContentTypeJsonUTF8()
+        )
+        return response.getDataOrThrow()
+    }
+
+    fun finnMapper(finnMappeRequest: FinnMappeRequest): FinnMappeResponseDto {
+        val response = getForEntity<Ressurs<FinnMappeResponseDto>>(
+            UriComponentsBuilder.fromUri(URI.create("$oppgaveUrl/mappe/sok"))
+                .queryParams(finnMappeRequest.toQueryParams())
+                .build()
+                .toUri()
         )
         return response.getDataOrThrow()
     }
