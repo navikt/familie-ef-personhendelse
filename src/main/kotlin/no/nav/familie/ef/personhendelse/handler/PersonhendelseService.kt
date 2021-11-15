@@ -47,7 +47,7 @@ class PersonhendelseService(
     }
 
     private fun handle(handler: PersonhendelseHandler, personhendelse: Personhendelse, personidenter: Set<String>) {
-        val finnesBehandlingForPerson = sakClient.finnesBehandlingForPerson(personidenter)
+        val finnesBehandlingForPerson = sakClient.harStønadSiste12MånederForPersonidenter(personidenter)
 
         if (finnesBehandlingForPerson) {
             handlePersonhendelse(handler, personhendelse, personidenter.first())
@@ -89,7 +89,7 @@ class PersonhendelseService(
             leggOppgaveIMappe(oppgaveId)
         } catch (e: Exception) {
             logger.error("Feil under knytning av mappe til oppgave - se securelogs for stacktrace")
-            secureLogger.error("Feil under knytning av mappe til oppgave" ,e)
+            secureLogger.error("Feil under knytning av mappe til oppgave", e)
         }
 
         lagreHendelse(personhendelse, oppgaveId)
@@ -124,10 +124,10 @@ class PersonhendelseService(
         val oppgave = oppgaveClient.finnOppgaveMedId(oppgaveId)
         if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { //Skjermede personer skal ikke puttes i mappe
             val finnMappeRequest = FinnMappeRequest(
-                listOf(),
-                oppgave.tildeltEnhetsnr!!,
-                null,
-                1000
+                    listOf(),
+                    oppgave.tildeltEnhetsnr!!,
+                    null,
+                    1000
             )
             val mapperResponse = oppgaveClient.finnMapper(finnMappeRequest)
             val mappe = mapperResponse.mapper.find {
@@ -135,7 +135,7 @@ class PersonhendelseService(
                 it.navn.contains("Hendelser") &&
                 it.navn.contains("62")
             }
-                ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
+                        ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
             oppgaveClient.oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
         }
     }
