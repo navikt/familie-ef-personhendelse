@@ -58,7 +58,7 @@ class DodsfallHandlerTest {
     fun setup() {
         every { pdlClient.hentPerson(any()) } returns personUtenRelasjoner
         every { pdlClient.hentIdenter(any()) } answers { setOf(firstArg()) }
-        every { sakClient.finnesBehandlingForPerson(any()) } returns true
+        every { sakClient.harStønadSiste12MånederForPersonidenter(any()) } returns true
     }
 
     @Test
@@ -91,8 +91,8 @@ class DodsfallHandlerTest {
         personhendelse.endringstype = Endringstype.OPPRETTET
 
         every { pdlClient.hentPerson(personIdentBarn) } returns personUnder19MedForeldreRelasjoner
-        every { sakClient.finnesBehandlingForPerson(setOf(personIdentBarn)) } returns false
-        every { sakClient.finnesBehandlingForPerson(setOf(personIdentMor)) } returns true
+        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personIdentBarn)) } returns false
+        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personIdentMor)) } returns true
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
 
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()

@@ -6,7 +6,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterAll
@@ -53,7 +52,7 @@ internal class SakClientTest {
     fun `Finnes behandling i ef-sak for person og returner true`() {
 
         wiremockServerItem.stubFor(
-            post(urlMatching("/api/ekstern/behandling/finnes/flere-identer"))
+            post(urlMatching("/api/ekstern/behandling/harstoenad/flere-identer"))
                 .withRequestBody(equalToJson(objectMapper.writeValueAsString(personidenter)))
                 .willReturn(
                     aResponse()
@@ -61,7 +60,7 @@ internal class SakClientTest {
                         .withBody(gyldigResponse())
                 ))
 
-        val response = sakClient.finnesBehandlingForPerson(personidenter)
+        val response = sakClient.harStønadSiste12MånederForPersonidenter(personidenter)
         Assertions.assertThat(response).isEqualTo(true)
     }
 

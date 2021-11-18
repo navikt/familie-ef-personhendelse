@@ -25,8 +25,8 @@ internal class PersonhendelseListenerTest {
     @BeforeEach
     internal fun setUp() {
         listener = PersonhendelseListener("", personhendelseService)
-        every { sakClient.finnesBehandlingForPerson(setOf(personMedSak)) } returns true
-        every { sakClient.finnesBehandlingForPerson(setOf(personUtenSak)) } returns false
+        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personMedSak)) } returns true
+        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personUtenSak)) } returns false
     }
 
     @Test

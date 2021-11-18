@@ -38,7 +38,7 @@ internal class UtflyttingHandlerTest {
         personhendelse.endringstype = Endringstype.OPPRETTET
         personhendelse.hendelseId = UUID.randomUUID().toString()
 
-        every { sakClient.finnesBehandlingForPerson(setOf(personIdent)) } returns false
+        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personIdent)) } returns false
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
 
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
@@ -57,7 +57,7 @@ internal class UtflyttingHandlerTest {
         personhendelse.endringstype = Endringstype.OPPRETTET
         personhendelse.hendelseId = UUID.randomUUID().toString()
 
-        every { sakClient.finnesBehandlingForPerson(setOf(personIdent)) } returns true
+        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personIdent)) } returns true
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
 
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
@@ -65,7 +65,7 @@ internal class UtflyttingHandlerTest {
 
         service.håndterPersonhendelse(personhendelse)
 
-        assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
+        assertThat(oppgaveRequestSlot.captured.oppgavetype) .isEqualTo(Oppgavetype.VurderLivshendelse)
         assertThat(oppgaveRequestSlot.captured.beskrivelse).contains("Finland")
         assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
     }
