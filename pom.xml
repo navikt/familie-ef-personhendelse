@@ -28,7 +28,7 @@
         <revision>1.0</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <jvmTarget>17</jvmTarget>
+        <java.version>17</java.version>
         <kotlin.version>1.6.0</kotlin.version>
         <confluent.version>6.2.0</confluent.version>
         <avro.version>1.10.2</avro.version>
@@ -217,7 +217,6 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <configuration>
-                    <jvmTarget>17</jvmTarget>
                     <args>
                         <arg>-Xjsr305=strict</arg>
                     </args>
