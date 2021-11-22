@@ -28,8 +28,8 @@
         <revision>1.0</revision>
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
-        <java.version>11</java.version>
-        <kotlin.version>1.5.20</kotlin.version>
+        <java.version>17</java.version>
+        <kotlin.version>1.6.0</kotlin.version>
         <confluent.version>6.2.0</confluent.version>
         <avro.version>1.10.2</avro.version>
         <graphql-client.version>4.1.1</graphql-client.version>
