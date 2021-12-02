@@ -5,8 +5,6 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.familie.ef.personhendelse.generated.enums.Sivilstandstype
-import no.nav.familie.ef.personhendelse.generated.scalars.Date
-import no.nav.familie.ef.personhendelse.generated.scalars.DateTime
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
@@ -70,8 +68,8 @@ class PdlClientTest {
         val response = pdlClient.hentPerson(personIdent)
         assertThat(response.statsborgerskap.first().land).isEqualTo("NOR")
         assertThat(response.sivilstand.first().type).isEqualTo(Sivilstandstype.UGIFT)
-        assertThat(response.bostedsadresse.first().angittFlyttedato).isEqualTo(Date(LocalDate.of(1997,1,1)))
-        assertThat(response.bostedsadresse.first().gyldigFraOgMed).isEqualTo(DateTime(LocalDateTime.of(1997,1,1,0,0)))
+        assertThat(response.bostedsadresse.first().angittFlyttedato).isEqualTo(LocalDate.of(1997,1,1))
+        assertThat(response.bostedsadresse.first().gyldigFraOgMed).isEqualTo(LocalDateTime.of(1997,1,1,0,0))
         assertThat(response.doedsfall.isEmpty()).isTrue
     }
 
