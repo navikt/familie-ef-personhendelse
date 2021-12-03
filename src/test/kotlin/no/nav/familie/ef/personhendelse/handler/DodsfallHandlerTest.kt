@@ -12,7 +12,6 @@ import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRoll
 import no.nav.familie.ef.personhendelse.generated.hentperson.Foedsel
 import no.nav.familie.ef.personhendelse.generated.hentperson.ForelderBarnRelasjon
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
-import no.nav.familie.ef.personhendelse.generated.scalars.Date
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
@@ -51,7 +50,7 @@ class DodsfallHandlerTest {
                     emptyList(),
                     emptyList(),
                     emptyList(),
-                    listOf(Foedsel(foedselsdato = Date(LocalDate.parse("2009-09-09"))))
+                    listOf(Foedsel(foedselsdato = LocalDate.parse("2009-09-09")))
             )
 
     @BeforeEach
