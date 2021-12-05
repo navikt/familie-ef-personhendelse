@@ -17,7 +17,6 @@ import org.springframework.web.client.RestOperations
 import java.io.IOException
 import java.net.URI
 
-
 internal class SakClientTest {
 
     companion object {
@@ -58,7 +57,8 @@ internal class SakClientTest {
                     aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(gyldigResponse())
-                ))
+                )
+        )
 
         val response = sakClient.harStønadSiste12MånederForPersonidenter(personidenter)
         Assertions.assertThat(response).isEqualTo(true)
@@ -67,10 +67,10 @@ internal class SakClientTest {
     @Throws(IOException::class)
     private fun gyldigResponse(): String {
         return "{\n" +
-                "    \"data\": true,\n" +
-                "    \"status\": \"SUKSESS\",\n" +
-                "    \"melding\": \"Innhenting av data var vellykket\",\n" +
-                "    \"stacktrace\": null\n" +
-                "}"
+            "    \"data\": true,\n" +
+            "    \"status\": \"SUKSESS\",\n" +
+            "    \"melding\": \"Innhenting av data var vellykket\",\n" +
+            "    \"stacktrace\": null\n" +
+            "}"
     }
 }

@@ -45,9 +45,9 @@ internal class PersonhendelseListenerTest {
     }
 
     private fun lagPersonhendelse(
-            endringstype: Endringstype = Endringstype.OPPRETTET,
-            personIdent: String = this.personMedSak,
-            opplysningstype: PersonhendelseType = PersonhendelseType.SIVILSTAND
+        endringstype: Endringstype = Endringstype.OPPRETTET,
+        personIdent: String = this.personMedSak,
+        opplysningstype: PersonhendelseType = PersonhendelseType.SIVILSTAND
     ): Personhendelse {
         val personhendelse = Personhendelse()
         personhendelse.personidenter = listOf(personIdent)
@@ -55,5 +55,4 @@ internal class PersonhendelseListenerTest {
         personhendelse.opplysningstype = opplysningstype.hendelsetype
         return personhendelse
     }
-
 }

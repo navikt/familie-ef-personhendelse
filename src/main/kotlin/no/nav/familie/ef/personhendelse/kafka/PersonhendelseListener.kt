@@ -14,28 +14,29 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 import java.util.UUID
 
-
 /**
  * Leesah: Livet er en strøm av hendelser
  */
 @Component
 class PersonhendelseListener(
-        @Value("\${SPRING_PROFILES_ACTIVE}")
-        private val env: String,
-        private val personhendelseService: PersonhendelseService
+    @Value("\${SPRING_PROFILES_ACTIVE}")
+    private val env: String,
+    private val personhendelseService: PersonhendelseService
 ) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
-    @KafkaListener(id = "familie-ef-personhendelse",
-                   topics = ["aapen-person-pdl-leesah-v1"],
-                   containerFactory = "kafkaPersonhendelseListenerContainerFactory")
+    @KafkaListener(
+        id = "familie-ef-personhendelse",
+        topics = ["aapen-person-pdl-leesah-v1"],
+        containerFactory = "kafkaPersonhendelseListenerContainerFactory"
+    )
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
             MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
             val personidenter = personhendelse.identerUtenAktørId()
-            //Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
+            // Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
             if (!personidenter.firstOrNull().isNullOrBlank()) {
                 personhendelseService.håndterPersonhendelse(personhendelse)
             } else {
@@ -43,9 +44,11 @@ class PersonhendelseListener(
             }
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}")
-            securelogger.error("Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}" +
-                               " hendelse={}",
-                               objectMapper.writeValueAsString(personhendelse))
+            securelogger.error(
+                "Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}" +
+                    " hendelse={}",
+                objectMapper.writeValueAsString(personhendelse)
+            )
             throw e
         } finally {
             MDC.remove(MDCConstants.MDC_CALL_ID)
@@ -66,5 +69,4 @@ class PersonhendelseListener(
             }
     }
      */
-
 }

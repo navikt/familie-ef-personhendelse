@@ -12,5 +12,4 @@ class DatabaseConfiguration {
     fun namedParameterJdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate {
         return NamedParameterJdbcTemplate(dataSource)
     }
-
 }

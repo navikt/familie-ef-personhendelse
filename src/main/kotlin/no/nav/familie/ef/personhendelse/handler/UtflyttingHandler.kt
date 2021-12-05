@@ -15,9 +15,6 @@ class UtflyttingHandler : PersonhendelseHandler {
 }
 
 private fun Personhendelse.utflyttingsBeskrivelse() =
-        "Utflyttingshendelse til ${this.utflyttingFraNorge.tilflyttingsstedIUtlandet}, " +
+    "Utflyttingshendelse til ${this.utflyttingFraNorge.tilflyttingsstedIUtlandet}, " +
         "{${this.utflyttingFraNorge.tilflyttingsland}. " +
         "Utflyttingsdato: ${this.utflyttingFraNorge.utflyttingsdato.tilNorskDatoformat()}"
-
-
-

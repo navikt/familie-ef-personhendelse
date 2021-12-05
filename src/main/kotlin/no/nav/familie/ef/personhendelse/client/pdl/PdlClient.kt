@@ -39,8 +39,8 @@ class PdlClient(
 
     fun hentIdenter(personIdent: String): Set<String> {
         val pdlPersonRequest = PdlPersonRequest(
-                variables = PdlIdentRequestVariables(personIdent),
-                query = hentIdenter
+            variables = PdlIdentRequestVariables(personIdent),
+            query = hentIdenter
         )
 
         val pdlResponse: PdlResponse<HentIdenter.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())

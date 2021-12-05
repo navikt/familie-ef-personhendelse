@@ -14,11 +14,11 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 class KafkaConfig {
 
     @Bean
-    fun kafkaPersonhendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler)
-            : ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
-        val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
-        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
-        factory.setErrorHandler(kafkaErrorHandler)
-        return factory
-    }
+    fun kafkaPersonhendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
+        ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
+            val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
+            factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
+            factory.setErrorHandler(kafkaErrorHandler)
+            return factory
+        }
 }

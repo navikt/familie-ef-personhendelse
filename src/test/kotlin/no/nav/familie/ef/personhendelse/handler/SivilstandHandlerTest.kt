@@ -34,10 +34,10 @@ class SivilstandHandlerTest {
     fun `Ikke opprett oppgave for sivilstand hendelse registrert partner dersom person ikke har løpende ef-sak`() {
         val personhendelse = Personhendelse()
         personhendelse.sivilstand = Sivilstand(
-                Sivilstandstype.REGISTRERT_PARTNER.name,
-                LocalDate.of(2021, 8, 26),
-                partnerPersonIdent,
-                LocalDate.of(2021, 8, 26)
+            Sivilstandstype.REGISTRERT_PARTNER.name,
+            LocalDate.of(2021, 8, 26),
+            partnerPersonIdent,
+            LocalDate.of(2021, 8, 26)
         )
         personhendelse.opplysningstype = PersonhendelseType.SIVILSTAND.hendelsetype
         personhendelse.personidenter = listOf(personIdent)
@@ -57,10 +57,10 @@ class SivilstandHandlerTest {
     fun `Opprett oppgave for sivilstand hendelse registrert partner dersom person har løpende ef-sak`() {
         val personhendelse = Personhendelse()
         personhendelse.sivilstand = Sivilstand(
-                Sivilstandstype.REGISTRERT_PARTNER.name,
-                LocalDate.of(2021, 8, 26),
-                partnerPersonIdent,
-                LocalDate.of(2021, 8, 26)
+            Sivilstandstype.REGISTRERT_PARTNER.name,
+            LocalDate.of(2021, 8, 26),
+            partnerPersonIdent,
+            LocalDate.of(2021, 8, 26)
         )
         personhendelse.opplysningstype = PersonhendelseType.SIVILSTAND.hendelsetype
         personhendelse.personidenter = listOf(personIdent)
@@ -78,8 +78,7 @@ class SivilstandHandlerTest {
 
         assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
         assertThat(oppgaveRequestSlot.captured.beskrivelse)
-                .isEqualTo("Personhendelse: Sivilstand endret til \"Registrert partner\", gyldig fra og med dato: 26.08.2021")
+            .isEqualTo("Personhendelse: Sivilstand endret til \"Registrert partner\", gyldig fra og med dato: 26.08.2021")
         assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
     }
-
 }

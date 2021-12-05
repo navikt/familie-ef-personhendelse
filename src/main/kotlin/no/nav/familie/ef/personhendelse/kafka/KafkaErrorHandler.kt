@@ -15,7 +15,6 @@ import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
-
 /**
  * Hindrer spam i loggene ved gjentakende feil
  */
@@ -29,10 +28,11 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
     private val counter = AtomicInteger(0)
     private val lastError = AtomicLong(0)
 
-    override fun handle(e: Exception,
-                        records: List<ConsumerRecord<*, *>>,
-                        consumer: Consumer<*, *>,
-                        container: MessageListenerContainer
+    override fun handle(
+        e: Exception,
+        records: List<ConsumerRecord<*, *>>,
+        consumer: Consumer<*, *>,
+        container: MessageListenerContainer
     ) {
         if (records.isEmpty()) {
             logger.error("Feil ved konsumering av melding. Ingen records. ${consumer.subscription()}", e)
@@ -41,7 +41,7 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
             records.first().run {
                 logger.error(
                     "Feil ved konsumering av melding fra ${this.topic()}. id ${this.key()}, " +
-                            "offset: ${this.offset()}, partition: ${this.partition()}"
+                        "offset: ${this.offset()}, partition: ${this.partition()}"
                 )
                 securelogger.error("${this.topic()} - Problemer med prosessering av $records", e)
                 scheduleRestart(e, records, consumer, container, this.topic())
@@ -49,26 +49,30 @@ class KafkaErrorHandler(private val taskScheduler: TaskScheduler) : ContainerSto
         }
     }
 
-    private fun scheduleRestart(e: Exception,
-                                records: List<ConsumerRecord<*, *>>,
-                                consumer: Consumer<*, *>,
-                                container: MessageListenerContainer,
-                                topic: String) {
+    private fun scheduleRestart(
+        e: Exception,
+        records: List<ConsumerRecord<*, *>>,
+        consumer: Consumer<*, *>,
+        container: MessageListenerContainer,
+        topic: String
+    ) {
         val now = System.currentTimeMillis()
         if (now - lastError.getAndSet(now) > COUNTER_RESET_TIME) {
             counter.set(0)
         }
         val numErrors = counter.incrementAndGet()
         val stopTime = if (numErrors > SLOW_ERROR_COUNT) LONG else SHORT * numErrors
-        taskScheduler.schedule( {
-            try {
-                logger.warn("Starter kafka container for {}", topic)
-                container.start()
-            } catch (exception: Exception) {
-                logger.error("Feil oppstod ved venting og oppstart av kafka container", exception)
-            }
-        },
-        Instant.ofEpochMilli(now + stopTime ))
+        taskScheduler.schedule(
+            {
+                try {
+                    logger.warn("Starter kafka container for {}", topic)
+                    container.start()
+                } catch (exception: Exception) {
+                    logger.error("Feil oppstod ved venting og oppstart av kafka container", exception)
+                }
+            },
+            Instant.ofEpochMilli(now + stopTime)
+        )
         logger.warn("Stopper kafka container for {} i {}", topic, Duration.ofMillis(stopTime))
         super.handle(Exception("Sjekk securelogs for mer info - ${e::class.java.simpleName}"), records, consumer, container)
     }

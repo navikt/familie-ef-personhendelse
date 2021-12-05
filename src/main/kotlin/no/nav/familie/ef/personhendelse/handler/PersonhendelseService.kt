@@ -17,10 +17,10 @@ import java.util.UUID
 
 @Service
 class PersonhendelseService(
-        personhendelseHandlers: List<PersonhendelseHandler>,
-        private val sakClient: SakClient,
-        private val oppgaveClient: OppgaveClient,
-        private val personhendelseRepository: PersonhendelseRepository
+    personhendelseHandlers: List<PersonhendelseHandler>,
+    private val sakClient: SakClient,
+    private val oppgaveClient: OppgaveClient,
+    private val personhendelseRepository: PersonhendelseRepository
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -69,16 +69,16 @@ class PersonhendelseService(
     }
 
     private fun logHendelse(
-            personhendelse: Personhendelse,
-            skalOppretteOppgave: Boolean,
-            personIdent: String?
+        personhendelse: Personhendelse,
+        skalOppretteOppgave: Boolean,
+        personIdent: String?
     ) {
         val logMessage = "Finnes sak for opplysningstype=${personhendelse.opplysningstype}" +
-                         " hendelseId=${personhendelse.hendelseId}" +
-                         " endringstype=${personhendelse.endringstype}" +
-                         " skalOppretteOppgave=$skalOppretteOppgave"
+            " hendelseId=${personhendelse.hendelseId}" +
+            " endringstype=${personhendelse.endringstype}" +
+            " skalOppretteOppgave=$skalOppretteOppgave"
         logger.info(logMessage)
-        secureLogger.info("$logMessage personIdent=${personIdent}")
+        secureLogger.info("$logMessage personIdent=$personIdent")
     }
 
     private fun opprettOppgave(handler: PersonhendelseHandler, personhendelse: Personhendelse, personIdent: String) {
@@ -101,7 +101,7 @@ class PersonhendelseService(
         if (hendelse == null) {
             logger.info("Tidligere hendelse for personhendelse : ${personhendelse.hendelseId} ble ikke funnet")
             val oppgaveId = opprettOppgaveMedBeskrivelse(personhendelse, personhendelse.finnesIngenHendelseBeskrivelse())
-            logger.info("Oppgave for at det ikke finnes hendelse opprettet med oppgaveId=${oppgaveId}")
+            logger.info("Oppgave for at det ikke finnes hendelse opprettet med oppgaveId=$oppgaveId")
             return
         }
         val oppgave = hentOppgave(hendelse)
@@ -112,7 +112,7 @@ class PersonhendelseService(
                 Endringstype.KORRIGERT -> oppdater(oppgave, oppgave.korrigertBeskrivelse(), oppgave.status)
                 else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
             }
-            logger.info("Oppgave oppdatert med oppgaveId=${nyOppgave} for endringstype : ${personhendelse.endringstype.name}")
+            logger.info("Oppgave oppdatert med oppgaveId=$nyOppgave for endringstype : ${personhendelse.endringstype.name}")
         } else {
             opprettOppgaveMedBeskrivelse(personhendelse, personhendelse.ferdigstiltBeskrivelse())
             logger.info("Ny oppgave ifm en allerede lukket oppgave er opprettet med oppgaveId=${oppgave.id}")
@@ -122,20 +122,20 @@ class PersonhendelseService(
 
     private fun leggOppgaveIMappe(oppgaveId: Long) {
         val oppgave = oppgaveClient.finnOppgaveMedId(oppgaveId)
-        if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { //Skjermede personer skal ikke puttes i mappe
+        if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { // Skjermede personer skal ikke puttes i mappe
             val finnMappeRequest = FinnMappeRequest(
-                    listOf(),
-                    oppgave.tildeltEnhetsnr!!,
-                    null,
-                    1000
+                listOf(),
+                oppgave.tildeltEnhetsnr!!,
+                null,
+                1000
             )
             val mapperResponse = oppgaveClient.finnMapper(finnMappeRequest)
             val mappe = mapperResponse.mapper.find {
                 it.navn.contains("EF Sak", true) &&
-                it.navn.contains("Hendelser") &&
-                it.navn.contains("62")
+                    it.navn.contains("Hendelser") &&
+                    it.navn.contains("62")
             }
-                        ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
+                ?: error("Fant ikke mappe for uplassert oppgave (EF Sak og 01)")
             oppgaveClient.oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
         }
     }
@@ -151,9 +151,9 @@ class PersonhendelseService(
 
     private fun lagreHendelse(personhendelse: Personhendelse, oppgaveId: Long) {
         personhendelseRepository.lagrePersonhendelse(
-                UUID.fromString(personhendelse.hendelseId),
-                oppgaveId,
-                personhendelse.endringstype
+            UUID.fromString(personhendelse.hendelseId),
+            oppgaveId,
+            personhendelse.endringstype
         )
     }
 
@@ -163,19 +163,19 @@ class PersonhendelseService(
 
     private fun opprettOppgaveMedBeskrivelse(personhendelse: Personhendelse, beskrivelse: String): Long {
         return oppgaveClient.opprettOppgave(
-                defaultOpprettOppgaveRequest(
-                        personhendelse.personidenter.first(),
-                        beskrivelse
-                )
+            defaultOpprettOppgaveRequest(
+                personhendelse.personidenter.first(),
+                beskrivelse
+            )
         )
     }
 }
 
 private fun Personhendelse.ferdigstiltBeskrivelse() =
-        "En hendelse av typen ${this.endringstype.name} har oppstått for en ferdigstilt oppgave"
+    "En hendelse av typen ${this.endringstype.name} har oppstått for en ferdigstilt oppgave"
 
 private fun Personhendelse.finnesIngenHendelseBeskrivelse() =
-        "Det har oppstått en personhendelse som det ikke finnes noen tidligere hendelse eller oppgave for. " +
+    "Det har oppstått en personhendelse som det ikke finnes noen tidligere hendelse eller oppgave for. " +
         "Personhendelse id : ${this.hendelseId}, ${this.endringstype.name}"
 
 private fun Oppgave.erÅpen() = !listOf(StatusEnum.FERDIGSTILT, StatusEnum.FEILREGISTRERT).contains(this.status)
@@ -185,4 +185,4 @@ private fun Oppgave.opphørtEllerAnnullertBeskrivelse() = "\n\nDenne oppgaven ha
 private fun Oppgave.korrigertBeskrivelse() = "\n\nDenne oppgaven har blitt korrigert."
 
 private fun Personhendelse.skalOpphøreEllerKorrigeres() =
-        listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT, Endringstype.OPPHOERT).contains(this.endringstype)
+    listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT, Endringstype.OPPHOERT).contains(this.endringstype)
