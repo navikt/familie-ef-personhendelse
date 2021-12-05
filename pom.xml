@@ -177,7 +177,7 @@
             <plugin>
                 <groupId>com.expediagroup</groupId>
                 <artifactId>graphql-kotlin-maven-plugin</artifactId>
-                <version>5.2.0</version>
+                <version>5.3.0</version>
                 <executions>
                     <execution>
                         <id>download schema from github</id>
