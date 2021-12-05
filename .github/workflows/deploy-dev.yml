@@ -39,7 +39,7 @@ jobs:
           docker build --tag ${IMAGE} .
           docker push ${IMAGE}
   deploy:
-    name: Deploy to GCP
+    name: Deploy to dev
     needs: build
     runs-on: ubuntu-latest
     steps:
