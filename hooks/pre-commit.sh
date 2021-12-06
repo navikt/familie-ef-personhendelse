@@ -1,0 +1,1 @@
+mvn antrun:run@ktlint-format
