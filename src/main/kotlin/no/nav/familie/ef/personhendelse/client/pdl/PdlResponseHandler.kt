@@ -22,10 +22,7 @@ inline fun <reified DATA : Any, reified T : Any> feilsjekkOgReturnerData(
     val data = dataMapper.invoke(pdlResponse.data)
     if (data == null) {
         val errorMelding = if (ident != null) "Feil ved oppslag på ident $ident. " else "Feil ved oppslag på person."
-        secureLogger.error(
-            errorMelding +
-                "PDL rapporterte ingen feil men returnerte tomt datafelt"
-        )
+        secureLogger.error("$errorMelding - PDL rapporterte ingen feil men returnerte tomt datafelt")
         throw PdlRequestException("Manglende ${T::class} ved feilfri respons fra PDL. Se secure logg for detaljer.")
     }
     return data
