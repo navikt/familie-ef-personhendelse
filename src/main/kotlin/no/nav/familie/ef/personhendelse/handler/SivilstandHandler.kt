@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class SivilstandHandler: PersonhendelseHandler {
+class SivilstandHandler : PersonhendelseHandler {
 
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
@@ -23,15 +23,14 @@ class SivilstandHandler: PersonhendelseHandler {
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
         return "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
-               "gyldig fra og med dato: ${(personhendelse.sivilstand.bekreftelsesdato ?: personhendelse.sivilstand.gyldigFraOgMed).tilNorskDatoformat()}"
+            "gyldig fra og med dato: ${(personhendelse.sivilstand.bekreftelsesdato ?: personhendelse.sivilstand.gyldigFraOgMed).tilNorskDatoformat()}"
     }
-
 }
 
 fun Personhendelse.skalSivilstandHåndteres(): Boolean {
     return this.sivilstandNotNull() &&
-           (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type))
-           && (endringstyperSomSkalHåndteres.contains(this.endringstype))
+        (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type)) &&
+        (endringstyperSomSkalHåndteres.contains(this.endringstype))
 }
 
 private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this.sivilstand.type != null

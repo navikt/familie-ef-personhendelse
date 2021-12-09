@@ -46,5 +46,4 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
             null
         }
     }
-
 }

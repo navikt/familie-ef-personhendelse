@@ -65,7 +65,7 @@ internal class UtflyttingHandlerTest {
 
         service.håndterPersonhendelse(personhendelse)
 
-        assertThat(oppgaveRequestSlot.captured.oppgavetype) .isEqualTo(Oppgavetype.VurderLivshendelse)
+        assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
         assertThat(oppgaveRequestSlot.captured.beskrivelse).contains("Finland")
         assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
     }

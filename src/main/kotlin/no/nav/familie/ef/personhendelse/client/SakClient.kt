@@ -9,19 +9,17 @@ import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
-
 @Component
 class SakClient(
-        @Qualifier("azure") restOperations: RestOperations,
-        @Value("\${EF_SAK_URL}")
-        private val uri: URI
+    @Qualifier("azure") restOperations: RestOperations,
+    @Value("\${EF_SAK_URL}")
+    private val uri: URI
 ) : AbstractRestClient(restOperations, "familie.ef-sak") {
 
     fun harStønadSiste12MånederForPersonidenter(personidenter: Set<String>): Boolean {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-                .pathSegment("api/ekstern/behandling/harstoenad/flere-identer")
+            .pathSegment("api/ekstern/behandling/harstoenad/flere-identer")
         val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), personidenter)
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
-
 }

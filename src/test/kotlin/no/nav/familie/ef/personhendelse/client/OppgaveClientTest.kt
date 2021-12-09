@@ -70,13 +70,13 @@ class OppgaveClientTest {
     @Throws(IOException::class)
     private fun gyldigResponse(): String {
         return "{\n" +
-                "    \"data\": {\n" +
-                "       \"oppgaveId\": \"123\"\n" +
-                "},\n" +
-                "    \"status\": \"SUKSESS\",\n" +
-                "    \"melding\": \"Innhenting av data var vellykket\",\n" +
-                "    \"stacktrace\": null\n" +
-                "}"
+            "    \"data\": {\n" +
+            "       \"oppgaveId\": \"123\"\n" +
+            "},\n" +
+            "    \"status\": \"SUKSESS\",\n" +
+            "    \"melding\": \"Innhenting av data var vellykket\",\n" +
+            "    \"stacktrace\": null\n" +
+            "}"
     }
 
     fun defaultOpprettOppgaveRequest(personIdent: String, beskrivelse: String) =
@@ -92,5 +92,4 @@ class OppgaveClientTest {
             tilordnetRessurs = null,
             behandlesAvApplikasjon = "familie-ef-sak"
         )
-
 }

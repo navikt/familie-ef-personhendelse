@@ -30,7 +30,7 @@ internal class PersonhendelseServiceTest {
     private val dummyHandler: DummyHandler = DummyHandler()
 
     private val personhendelseService =
-            PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository)
+        PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository)
 
     @BeforeEach
     internal fun setUp() {
@@ -64,9 +64,11 @@ internal class PersonhendelseServiceTest {
         val handlerSpyk = spyk(personhendelseService, recordPrivateCalls = true)
         handlerSpyk.håndterPersonhendelse(personhendelse)
         verify(exactly = 0) {
-            handlerSpyk["handlePersonhendelse"](any<PersonhendelseHandler>(),
-                                                any<Personhendelse>(),
-                                                any<String>())
+            handlerSpyk["handlePersonhendelse"](
+                any<PersonhendelseHandler>(),
+                any<Personhendelse>(),
+                any<String>()
+            )
         }
     }
 
@@ -75,7 +77,7 @@ internal class PersonhendelseServiceTest {
         val personhendelse = personhendelse(Endringstype.OPPRETTET)
         dummyHandler.skalOppretteOppgave = false
         val personhendelseService =
-                PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository)
+            PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository)
         personhendelseService.håndterPersonhendelse(personhendelse)
         verify(exactly = 0) { oppgaveClient.opprettOppgave(any()) }
     }

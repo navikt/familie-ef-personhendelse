@@ -63,13 +63,14 @@ class PdlClientTest {
                     WireMock.aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(pdlResponse())
-                ))
+                )
+        )
 
         val response = pdlClient.hentPerson(personIdent)
         assertThat(response.statsborgerskap.first().land).isEqualTo("NOR")
         assertThat(response.sivilstand.first().type).isEqualTo(Sivilstandstype.UGIFT)
-        assertThat(response.bostedsadresse.first().angittFlyttedato).isEqualTo(LocalDate.of(1997,1,1))
-        assertThat(response.bostedsadresse.first().gyldigFraOgMed).isEqualTo(LocalDateTime.of(1997,1,1,0,0))
+        assertThat(response.bostedsadresse.first().angittFlyttedato).isEqualTo(LocalDate.of(1997, 1, 1))
+        assertThat(response.bostedsadresse.first().gyldigFraOgMed).isEqualTo(LocalDateTime.of(1997, 1, 1, 0, 0))
         assertThat(response.doedsfall.isEmpty()).isTrue
     }
 

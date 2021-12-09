@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.UUID
 
-
 class DodsfallHandlerTest {
 
     private val sakClient = mockk<SakClient>()
@@ -40,18 +39,18 @@ class DodsfallHandlerTest {
     private val personIdentBarn = "01010912345"
 
     private val personUtenRelasjoner =
-            Person(emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
+        Person(emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
 
     private val personUnder19MedForeldreRelasjoner =
-            Person(
-                    listOf(ForelderBarnRelasjon(personIdentMor, ForelderBarnRelasjonRolle.MOR, ForelderBarnRelasjonRolle.BARN)),
-                    emptyList(),
-                    emptyList(),
-                    emptyList(),
-                    emptyList(),
-                    emptyList(),
-                    listOf(Foedsel(foedselsdato = LocalDate.parse("2009-09-09")))
-            )
+        Person(
+            listOf(ForelderBarnRelasjon(personIdentMor, ForelderBarnRelasjonRolle.MOR, ForelderBarnRelasjonRolle.BARN)),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            listOf(Foedsel(foedselsdato = LocalDate.parse("2009-09-09")))
+        )
 
     @BeforeEach
     fun setup() {

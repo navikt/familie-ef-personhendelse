@@ -63,7 +63,7 @@ class OppgaveClient(
         return response.getDataOrThrow()
     }
 
-    fun oppdaterOppgave(oppgave: Oppgave) : Long {
+    fun oppdaterOppgave(oppgave: Oppgave): Long {
         val response = patchForEntity<Ressurs<OppgaveResponse>>(
             URI.create("$oppgaveUrl".plus("/${oppgave.id!!}/oppdater")),
             oppgave,
@@ -71,7 +71,6 @@ class OppgaveClient(
         )
         return response.getDataOrThrow().oppgaveId
     }
-
 }
 
 fun defaultOpprettOppgaveRequest(personIdent: String, beskrivelse: String) =
