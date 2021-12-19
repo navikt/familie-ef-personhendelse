@@ -29,7 +29,7 @@
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <java.version>17</java.version>
-        <kotlin.version>1.6.0</kotlin.version>
+        <kotlin.version>1.6.10</kotlin.version>
         <confluent.version>7.0.0</confluent.version>
         <avro.version>1.11.0</avro.version>
         <graphql-kotlin-spring-client.version>5.3.0</graphql-kotlin-spring-client.version>
