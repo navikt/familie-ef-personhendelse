@@ -22,7 +22,7 @@ class EfVedtakListener(
     @KafkaListener(
         id = "familie-ef-vedtak",
         topics = ["\${FAMILIE_EF_VEDTAK_TOPIC}"],
-        containerFactory = "kafkaPersonhendelseListenerContainerFactory"
+        containerFactory = "kafkaEfVedtakListenerContainerFactory"
     )
     fun listen(@Payload vedtakHendelse: EnsligForsørgerVedtakhendelse) {
         try {

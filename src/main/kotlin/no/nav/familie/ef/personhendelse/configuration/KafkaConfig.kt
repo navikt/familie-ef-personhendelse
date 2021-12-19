@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.configuration
 
 import no.nav.familie.ef.personhendelse.kafka.KafkaErrorHandler
+import no.nav.familie.kontrakter.felles.ef.EnsligForsørgerVedtakhendelse
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
@@ -21,4 +22,14 @@ class KafkaConfig {
             factory.setErrorHandler(kafkaErrorHandler)
             return factory
         }
+
+    @Bean
+    fun kafkaEfVedtakListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
+            ConcurrentKafkaListenerContainerFactory<Long, EnsligForsørgerVedtakhendelse> {
+        val factory = ConcurrentKafkaListenerContainerFactory<Long, EnsligForsørgerVedtakhendelse>()
+        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
+        factory.setErrorHandler(kafkaErrorHandler)
+        return factory
+    }
+
 }
