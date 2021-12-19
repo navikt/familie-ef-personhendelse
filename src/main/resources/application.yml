@@ -104,6 +104,7 @@ KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01
 KAFKA_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais.adeo.no/
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.prod-fss-pub.nais.io
+FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.prod-fss-pub.nais.io
 PDL_URL: https://pdl-api.prod-fss-pub.nais.io/graphql
 PDL_SCOPE: api://prod-fss.pdl.pdl-api/.default
 EF_SAK_URL: http://familie-ef-sak
