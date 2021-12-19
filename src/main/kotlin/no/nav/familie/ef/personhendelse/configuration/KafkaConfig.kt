@@ -22,14 +22,4 @@ class KafkaConfig {
             factory.setErrorHandler(kafkaErrorHandler)
             return factory
         }
-
-    @Bean
-    fun kafkaEfVedtakListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
-            ConcurrentKafkaListenerContainerFactory<Long, EnsligForsørgerVedtakhendelse> {
-        val factory = ConcurrentKafkaListenerContainerFactory<Long, EnsligForsørgerVedtakhendelse>()
-        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
-        factory.setErrorHandler(kafkaErrorHandler)
-        return factory
-    }
-
 }
