@@ -84,16 +84,22 @@ class PersonhendelseService(
     private fun opprettOppgave(handler: PersonhendelseHandler, personhendelse: Personhendelse, personIdent: String) {
         val oppgaveBeskrivelse = handler.lagOppgaveBeskrivelse(personhendelse)
         val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
-        val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
-        try {
-            leggOppgaveIMappe(oppgaveId)
-        } catch (e: Exception) {
-            logger.error("Feil under knytning av mappe til oppgave - se securelogs for stacktrace")
-            secureLogger.error("Feil under knytning av mappe til oppgave", e)
-        }
 
-        lagreHendelse(personhendelse, oppgaveId)
-        logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
+        try {
+            val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
+
+            try {
+                leggOppgaveIMappe(oppgaveId)
+            } catch (e: Exception) {
+                logger.error("Feil under knytning av mappe til oppgave - se securelogs for stacktrace")
+                secureLogger.error("Feil under knytning av mappe til oppgave", e)
+            }
+
+            lagreHendelse(personhendelse, oppgaveId)
+            logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
+        } catch (e: Exception) {
+            logger.info("Ignorerer hendelse") // Ignore hendelser som ikke finnes i TPS (i preprod)
+        }
     }
 
     private fun opphørEllerKorrigerOppgave(personhendelse: Personhendelse) {
