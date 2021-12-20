@@ -5,7 +5,10 @@ import io.confluent.kafka.serializers.KafkaAvroSerializerConfig
 import no.nav.familie.ef.personhendelse.kafka.KafkaErrorHandler
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.clients.CommonClientConfigs
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
+import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.common.config.SaslConfigs
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
@@ -13,7 +16,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
+import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
+import org.springframework.kafka.core.DefaultKafkaProducerFactory
+import org.springframework.kafka.core.ProducerFactory
 
 @EnableKafka
 @Configuration
@@ -31,11 +37,10 @@ class KafkaConfig(
     @Bean
     fun consumerConfigs(): Map<String, Any> {
         val props: MutableMap<String, Any> = HashMap()
-        props[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
-        props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java
-        props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java
-        props[ProducerConfig.ACKS_CONFIG] = "all"
-        props[ProducerConfig.CLIENT_ID_CONFIG] = username
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
+        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java
+        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroSerializer::class.java
+        props[ConsumerConfig.CLIENT_ID_CONFIG] = username
         props[KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG] = schemaRegistryUrl
         props[SaslConfigs.SASL_JAAS_CONFIG] =
             "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$username\" password=\"$password\";"
@@ -49,7 +54,7 @@ class KafkaConfig(
     fun kafkaPersonhendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
         ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
             val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
-            factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
+            factory.consumerFactory = DefaultKafkaConsumerFactory(consumerConfigs())
             factory.setErrorHandler(kafkaErrorHandler)
             return factory
         }

@@ -31,9 +31,9 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BROKERS}
     properties:
-      schema.registry.url: ${KAFKA_ONPREM_SCHEMA_REGISTRY}
+      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY}
       basic.auth.credentials.source: USER_INFO
-      basic.auth.user.info: ${KAFKA_ONPREM_SCHEMA_REGISTRY_USER}:${KAFKA_ONPREM_SCHEMA_REGISTRY_PASSWORD}
+      basic.auth.user.info: ${KAFKA_SCHEMA_REGISTRY_USER}:${KAFKA_SCHEMA_REGISTRY_PASSWORD}
       security:
         protocol: SSL
       ssl:
