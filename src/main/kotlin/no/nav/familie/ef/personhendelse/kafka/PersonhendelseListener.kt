@@ -64,7 +64,7 @@ class PersonhendelseListener(
         assignments.keys.stream()
             .filter { it.topic() == "aapen-person-pdl-leesah-v1" }
             .forEach {
-                callback.seekRelative("aapen-person-pdl-leesah-v1", it.partition(), -1, false)
+                callback.seekToEnd("aapen-person-pdl-leesah-v1", it.partition())
                 // callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
             }
     }
