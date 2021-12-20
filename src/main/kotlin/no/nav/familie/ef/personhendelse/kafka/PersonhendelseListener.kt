@@ -55,7 +55,7 @@ class PersonhendelseListener(
         }
     }
 
-    // -- Behold denne utkommenterte koden! Kjekt å kunne lese fra start ved behov for debugging i preprod
+    /* -- Behold denne utkommenterte koden! Kjekt å kunne lese fra start ved behov for debugging i preprod
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
         callback: ConsumerSeekAware.ConsumerSeekCallback
@@ -68,4 +68,5 @@ class PersonhendelseListener(
                 // callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
             }
     }
+     */
 }
