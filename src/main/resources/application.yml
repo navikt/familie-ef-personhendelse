@@ -47,7 +47,7 @@ spring:
           password: ${KAFKA_CREDSTORE_PASSWORD}
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       group-id: srvfamilie-ef-person
       max-poll-records: 1
       auto-offset-reset: latest
