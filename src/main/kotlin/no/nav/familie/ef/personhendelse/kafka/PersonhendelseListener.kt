@@ -55,18 +55,17 @@ class PersonhendelseListener(
         }
     }
 
-    /* -- Behold denne utkommenterte koden! Kjekt å kunne lese fra start ved behov for debugging i preprod
+    // -- Behold denne utkommenterte koden! Kjekt å kunne lese fra start ved behov for debugging i preprod
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
-        callback: ConsumerSeekCallback
+        callback: ConsumerSeekAware.ConsumerSeekCallback
     ) {
         logger.info("overrided onPartitionsAssigned seekToBeginning")
         assignments.keys.stream()
             .filter { it.topic() == "aapen-person-pdl-leesah-v1" }
             .forEach {
-                //callback.seekRelative("aapen-person-pdl-leesah-v1", it.partition(), -100000, false)
-                callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
+                callback.seekRelative("aapen-person-pdl-leesah-v1", it.partition(), -1, false)
+                // callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
             }
     }
-     */
 }
