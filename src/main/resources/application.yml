@@ -29,15 +29,22 @@ spring:
       max-lifetime: 30000
       minimum-idle: 1
   kafka:
-    client-id: familie-ef-personhendelse
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: ${KAFKA_BROKERS}
     properties:
-      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL}
-      security.protocol: SASL_SSL
-      specific.avro.reader: true
-      sasl:
-        mechanism: PLAIN
-        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${SRV_CREDENTIAL_USERNAME}" password="${SRV_CREDENTIAL_PASSWORD}";
+      schema.registry.url: ${KAFKA_ONPREM_SCHEMA_REGISTRY}
+      basic.auth.credentials.source: USER_INFO
+      basic.auth.user.info: ${KAFKA_ONPREM_SCHEMA_REGISTRY_USER}:${KAFKA_ONPREM_SCHEMA_REGISTRY_PASSWORD}
+      security:
+        protocol: SSL
+      ssl:
+        keystore:
+          type: PKCS12
+          location: ${KAFKA_KEYSTORE_PATH}
+          password: ${KAFKA_CREDSTORE_PASSWORD}
+        truststore:
+          type: PKCS12
+          location: ${KAFKA_TRUSTSTORE_PATH}
+          password: ${KAFKA_CREDSTORE_PASSWORD}
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
@@ -100,8 +107,8 @@ management:
   metrics.export.prometheus.enabled: true
   metrics.web.server.auto-time-requests: true
 
-KAFKA_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
-KAFKA_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais.adeo.no/
+KAFKA_ONPREM_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
+KAFKA_ONPREM_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais.adeo.no/
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.prod-fss-pub.nais.io
 FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.prod-fss-pub.nais.io
