@@ -36,6 +36,7 @@ class KafkaConfig(
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroDeserializer::class.java
         props[ConsumerConfig.CLIENT_ID_CONFIG] = username
         props[KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG] = schemaRegistryUrl
+        props[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = true
         props[SaslConfigs.SASL_JAAS_CONFIG] =
             "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$username\" password=\"$password\";"
         props[SaslConfigs.SASL_MECHANISM] = "PLAIN"
