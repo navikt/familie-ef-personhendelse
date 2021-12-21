@@ -1,5 +1,4 @@
-CREATE TABLE hendelse
-(
+CREATE TABLE hendelse (
     hendelse_id   UUID PRIMARY KEY,
     oppgave_id    BIGINT       NOT NULL,
     endringstype  VARCHAR      NOT NULL,
