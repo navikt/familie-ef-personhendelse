@@ -7,19 +7,17 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
-import java.time.LocalDateTime
 
 @Repository
 class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
     fun lagreEfVedtakHendelse(vedtakHendelse: EnsligForsørgerVedtakhendelse) {
-        val sql = "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType, :timestamp)"
+        val sql = "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType)"
         val params = MapSqlParameterSource(
             mapOf(
                 "behandlingId" to vedtakHendelse.behandlingId,
                 "personIdent" to vedtakHendelse.personIdent,
-                "stønadType" to vedtakHendelse.stønadType,
-                "timestamp" to LocalDateTime.now()
+                "stønadType" to vedtakHendelse.stønadType.toString()
             )
         )
         namedParameterJdbcTemplate.update(sql, params)
