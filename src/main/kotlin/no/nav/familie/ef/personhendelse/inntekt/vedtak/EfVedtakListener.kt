@@ -1,7 +1,9 @@
 package no.nav.familie.ef.personhendelse.inntekt.vedtak
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.kontrakter.felles.ef.EnsligForsørgerVedtakhendelse
 import no.nav.familie.kontrakter.felles.objectMapper
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
@@ -20,18 +22,19 @@ class EfVedtakListener(
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
     @KafkaListener(
-        id = "familie-ef-vedtak",
+        id = "familie-ef-personhendelse-vedtak",
         topics = ["\${FAMILIE_EF_VEDTAK_TOPIC}"]
     )
-    fun listen(@Payload vedtakHendelse: EnsligForsørgerVedtakhendelse) {
+    fun listen(consumerRecord: ConsumerRecord<String, String>) {
+        val efVedtakHendelse = objectMapper.readValue<EnsligForsørgerVedtakhendelse>(consumerRecord.value())
         try {
-            efVedtakRepository.lagreEfVedtakHendelse(vedtakHendelse)
+            efVedtakRepository.lagreEfVedtakHendelse(efVedtakHendelse)
         } catch (e: Exception) {
-            logger.error("Feil ved håndtering av personhendelse med behandlingId: ${vedtakHendelse.behandlingId}")
+            logger.error("Feil ved håndtering av personhendelse med behandlingId: ${efVedtakHendelse.behandlingId}")
             securelogger.error(
-                "Feil ved håndtering av personhendelse med behandlingId ${vedtakHendelse.behandlingId}: ${e.message}" +
+                "Feil ved håndtering av personhendelse med behandlingId ${efVedtakHendelse.behandlingId}: ${e.message}" +
                     " hendelse={}",
-                objectMapper.writeValueAsString(vedtakHendelse)
+                objectMapper.writeValueAsString(efVedtakHendelse)
             )
             throw e
         }

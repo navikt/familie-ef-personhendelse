@@ -48,7 +48,7 @@ spring:
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      group-id: srvfamilie-ef-person
+      group-id: familie-ef-personhendelse-vedtak
       max-poll-records: 1
       auto-offset-reset: latest
       enable-auto-commit: false
