@@ -35,7 +35,7 @@
         <graphql-kotlin-spring-client.version>5.3.1</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>5.3.1</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
-        <ktlint-maven-plugin.version>1.7.0</ktlint-maven-plugin.version>
+        <ktlint-maven-plugin.version>1.11.2</ktlint-maven-plugin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
         <kontrakter.version>2.0_20211220104445_a348ae3</kontrakter.version>
         <felles.version>1.20211217154554_3bb883e</felles.version>
