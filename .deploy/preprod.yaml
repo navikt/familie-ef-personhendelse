@@ -47,10 +47,14 @@ spec:
       rules:
         - application: familie-ef-sak
         - application: familie-ef-sak-lokal
+        - application: familie-ef-personhendelse
+          namespace: teamfamilie
+          cluster: dev-fss
       external:
         - host: kafka-schema-registry.nais-q.adeo.no
         - host: pdl-api.dev-fss-pub.nais.io
         - host: familie-integrasjoner.dev-fss-pub.nais.io
+        - host: familie-ef-proxy.dev-fss-pub.nais.io
   kafka:
     pool: nav-dev
   gcp:
