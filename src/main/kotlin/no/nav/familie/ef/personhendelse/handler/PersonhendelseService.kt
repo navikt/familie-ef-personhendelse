@@ -85,6 +85,7 @@ class PersonhendelseService(
         val oppgaveBeskrivelse = handler.lagOppgaveBeskrivelse(personhendelse)
         val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
+
         try {
             leggOppgaveIMappe(oppgaveId)
         } catch (e: Exception) {

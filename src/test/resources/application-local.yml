@@ -8,9 +8,9 @@ spring:
     allow-bean-definition-overriding: true
   kafka:
     client-id: familie-ef-personhendelse
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: ${KAFKA_ONPREM_BOOTSTRAP_SERVERS}
     properties:
-      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY_URL}
+      schema.registry.url: ${KAFKA_ONPREM_SCHEMA_REGISTRY_URL}
       security.protocol: SASL_SSL
       sasl:
         mechanism: PLAIN
@@ -30,6 +30,6 @@ EF_SAK_URL: https://familie-ef-sak.dev.intern.nav.no
 
 AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth/v2.0/token
-KAFKA_BOOTSTRAP_SERVERS: http://localhost:9092
-KAFKA_SCHEMA_REGISTRY_URL: http://localhost:8081
+KAFKA_ONPREM_BOOTSTRAP_SERVERS: http://localhost:9092
+KAFKA_ONPREM_SCHEMA_REGISTRY_URL: http://localhost:8081
 SPRING_PROFILES_ACTIVE: local
