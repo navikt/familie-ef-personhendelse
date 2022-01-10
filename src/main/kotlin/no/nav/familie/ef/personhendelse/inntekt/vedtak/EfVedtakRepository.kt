@@ -11,20 +11,20 @@ import java.sql.ResultSet
 @Repository
 class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
-    fun lagreEfVedtakHendelse(vedtakHendelse: EnsligForsørgerVedtakhendelse) {
+    fun lagreEfVedtakshendelse(vedtakshendelse: EnsligForsørgerVedtakhendelse) {
         val sql = "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType)"
         val params = MapSqlParameterSource(
             mapOf(
-                "behandlingId" to vedtakHendelse.behandlingId,
-                "personIdent" to vedtakHendelse.personIdent,
-                "stønadType" to vedtakHendelse.stønadType.toString()
+                "behandlingId" to vedtakshendelse.behandlingId,
+                "personIdent" to vedtakshendelse.personIdent,
+                "stønadType" to vedtakshendelse.stønadType.toString()
             )
         )
         namedParameterJdbcTemplate.update(sql, params)
     }
 
     fun hentEfVedtakHendelse(personIdent: String): EnsligForsørgerVedtakhendelse? {
-        val sql = "SELECT * FROM efvedtakhendelse WHERE personIdent = :personIdent"
+        val sql = "SELECT * FROM efvedtakhendelse WHERE person_ident = :personIdent"
         val mapSqlParameterSource = MapSqlParameterSource("personIdent", personIdent)
         return try {
             namedParameterJdbcTemplate.queryForObject(sql, mapSqlParameterSource) { rs: ResultSet, _: Int ->

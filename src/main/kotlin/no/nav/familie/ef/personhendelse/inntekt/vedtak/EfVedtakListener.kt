@@ -25,15 +25,15 @@ class EfVedtakListener(
         topics = ["\${FAMILIE_EF_VEDTAK_TOPIC}"]
     )
     fun listen(consumerRecord: ConsumerRecord<String, String>) {
-        val efVedtakHendelse = objectMapper.readValue<EnsligForsørgerVedtakhendelse>(consumerRecord.value())
+        val efVedtakshendelse = objectMapper.readValue<EnsligForsørgerVedtakhendelse>(consumerRecord.value())
         try {
-            efVedtakRepository.lagreEfVedtakHendelse(efVedtakHendelse)
+            efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse)
         } catch (e: Exception) {
-            logger.error("Feil ved håndtering av personhendelse med behandlingId: ${efVedtakHendelse.behandlingId}")
+            logger.error("Feil ved håndtering av personhendelse med behandlingId: ${efVedtakshendelse.behandlingId}")
             securelogger.error(
-                "Feil ved håndtering av personhendelse med behandlingId ${efVedtakHendelse.behandlingId}: ${e.message}" +
+                "Feil ved håndtering av personhendelse med behandlingId ${efVedtakshendelse.behandlingId}: ${e.message}" +
                     " hendelse={}",
-                objectMapper.writeValueAsString(efVedtakHendelse)
+                objectMapper.writeValueAsString(efVedtakshendelse)
             )
             throw e
         }

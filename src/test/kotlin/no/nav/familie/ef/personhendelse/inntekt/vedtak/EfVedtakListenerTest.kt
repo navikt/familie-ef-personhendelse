@@ -36,13 +36,13 @@ class EfVedtakListenerTest {
     fun `send inn gyldig consumer record, forvent acknowledged`() {
 
         every {
-            efVedtakRepository.lagreEfVedtakHendelse(any())
+            efVedtakRepository.lagreEfVedtakshendelse(any())
         } just Runs
-        val efVedtakhendelse = EnsligForsørgerVedtakhendelse(1L, "personIdent", StønadType.OVERGANGSSTØNAD)
-        val hendelse = ConsumerRecord("topic", 1, 1, "key", objectMapper.writeValueAsString(efVedtakhendelse))
+        val efVedtakshendelse = EnsligForsørgerVedtakhendelse(1L, "personIdent", StønadType.OVERGANGSSTØNAD)
+        val hendelse = ConsumerRecord("topic", 1, 1, "key", objectMapper.writeValueAsString(efVedtakshendelse))
         efVedtakListener.listen(hendelse)
         verify(exactly = 1) {
-            efVedtakRepository.lagreEfVedtakHendelse(efVedtakhendelse)
+            efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse)
         }
     }
 }
