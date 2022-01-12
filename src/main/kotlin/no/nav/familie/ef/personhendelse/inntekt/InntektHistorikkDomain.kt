@@ -90,18 +90,3 @@ data class ArbeidsInntekthistorikkInformasjon(
 data class TilleggsinformasjonDetaljer(
     val ikkebeskrevet: String?
 )
-
-enum class Month {
-    JANUARY,
-    FEBRUARY,
-    MARCH,
-    APRIL,
-    MAY,
-    JUNE,
-    JULY,
-    AUGUST,
-    SEPTEMBER,
-    OCTOBER,
-    NOVEMBER,
-    DECEMBER
-}

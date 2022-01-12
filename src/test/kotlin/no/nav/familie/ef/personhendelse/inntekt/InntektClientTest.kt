@@ -111,11 +111,11 @@ class InntektClientTest {
                                 "skattemessigBosattLand": "NO",
                                 "utbetaltIMaaned": "2021-08",
                                 "opplysningspliktig": {
-                                    "identifikator": "928497704",
+                                    "identifikator": "123456789",
                                     "aktoerType": "ORGANISASJON"
                                 },
                                 "virksomhet": {
-                                    "identifikator": "947064649",
+                                    "identifikator": "123456788",
                                     "aktoerType": "ORGANISASJON"
                                 },
                                 "tilleggsinformasjon": {
@@ -145,11 +145,11 @@ class InntektClientTest {
         {
             "aarMaanedHistorikk": {
                 "2020-01": {
-                    "928497704": [
+                    "123456789": [
                         {
                             "versjon": 2,
-                            "opplysningspliktig": "928497704",
-                            "virksomhet": "947064649",
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
                             "innleveringstidspunkt": "2021-12-23T11:40:27.177",
                             "arbeidsInntektInformasjon": {
                                 "inntektListe": [
@@ -164,11 +164,11 @@ class InntektClientTest {
                                         "opptjeningsland": "NO",
                                         "utbetaltIMaaned": "2020-01",
                                         "opplysningspliktig": {
-                                            "identifikator": "928497704",
+                                            "identifikator": "123456789",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "virksomhet": {
-                                            "identifikator": "947064649",
+                                            "identifikator": "123456788",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "tilleggsinformasjon": {
@@ -190,11 +190,11 @@ class InntektClientTest {
                     ]
                 },
                 "2020-02": {
-                    "928497704": [
+                    "123456789": [
                         {
                             "versjon": 2,
-                            "opplysningspliktig": "928497704",
-                            "virksomhet": "947064649",
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
                             "innleveringstidspunkt": "2021-12-23T11:40:27.177",
                             "arbeidsInntektInformasjon": {
                                 "inntektListe": [
@@ -209,11 +209,11 @@ class InntektClientTest {
                                         "opptjeningsland": "NO",
                                         "utbetaltIMaaned": "2020-02",
                                         "opplysningspliktig": {
-                                            "identifikator": "928497704",
+                                            "identifikator": "123456789",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "virksomhet": {
-                                            "identifikator": "947064649",
+                                            "identifikator": "123456788",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "tilleggsinformasjon": {
@@ -235,11 +235,11 @@ class InntektClientTest {
                     ]
                 },
                 "2020-03": {
-                    "928497704": [
+                    "123456789": [
                         {
                             "versjon": 2,
-                            "opplysningspliktig": "928497704",
-                            "virksomhet": "947064649",
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
                             "innleveringstidspunkt": "2021-12-23T11:40:27.177",
                             "arbeidsInntektInformasjon": {
                                 "inntektListe": [
@@ -254,11 +254,11 @@ class InntektClientTest {
                                         "opptjeningsland": "NO",
                                         "utbetaltIMaaned": "2020-03",
                                         "opplysningspliktig": {
-                                            "identifikator": "928497704",
+                                            "identifikator": "123456789",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "virksomhet": {
-                                            "identifikator": "947064649",
+                                            "identifikator": "123456788",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "tilleggsinformasjon": {
@@ -280,11 +280,11 @@ class InntektClientTest {
                     ]
                 },
                 "2020-04": {
-                    "928497704": [
+                    "123456789": [
                         {
                             "versjon": 2,
-                            "opplysningspliktig": "928497704",
-                            "virksomhet": "947064649",
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
                             "innleveringstidspunkt": "2021-12-23T11:40:27.177",
                             "arbeidsInntektInformasjon": {
                                 "inntektListe": [
@@ -299,11 +299,11 @@ class InntektClientTest {
                                         "opptjeningsland": "NO",
                                         "utbetaltIMaaned": "2020-04",
                                         "opplysningspliktig": {
-                                            "identifikator": "928497704",
+                                            "identifikator": "123456789",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "virksomhet": {
-                                            "identifikator": "947064649",
+                                            "identifikator": "123456788",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "tilleggsinformasjon": {
@@ -325,11 +325,11 @@ class InntektClientTest {
                     ]
                 },
                 "2020-05": {
-                    "928497704": [
+                    "123456789": [
                         {
                             "versjon": 2,
-                            "opplysningspliktig": "928497704",
-                            "virksomhet": "947064649",
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
                             "innleveringstidspunkt": "2021-12-23T11:40:27.177",
                             "arbeidsInntektInformasjon": {
                                 "inntektListe": [
@@ -344,11 +344,11 @@ class InntektClientTest {
                                         "opptjeningsland": "NO",
                                         "utbetaltIMaaned": "2020-05",
                                         "opplysningspliktig": {
-                                            "identifikator": "928497704",
+                                            "identifikator": "123456789",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "virksomhet": {
-                                            "identifikator": "947064649",
+                                            "identifikator": "123456788",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "tilleggsinformasjon": {
@@ -370,11 +370,11 @@ class InntektClientTest {
                     ]
                 },
                 "2020-06": {
-                    "928497704": [
+                    "123456789": [
                         {
                             "versjon": 2,
-                            "opplysningspliktig": "928497704",
-                            "virksomhet": "947064649",
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
                             "innleveringstidspunkt": "2021-12-23T11:40:27.177",
                             "arbeidsInntektInformasjon": {
                                 "inntektListe": [
@@ -389,11 +389,11 @@ class InntektClientTest {
                                         "opptjeningsland": "NO",
                                         "utbetaltIMaaned": "2020-06",
                                         "opplysningspliktig": {
-                                            "identifikator": "928497704",
+                                            "identifikator": "123456789",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "virksomhet": {
-                                            "identifikator": "947064649",
+                                            "identifikator": "123456788",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "tilleggsinformasjon": {
@@ -415,11 +415,11 @@ class InntektClientTest {
                     ]
                 },
                 "2020-07": {
-                    "928497704": [
+                    "123456789": [
                         {
                             "versjon": 2,
-                            "opplysningspliktig": "928497704",
-                            "virksomhet": "947064649",
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
                             "innleveringstidspunkt": "2021-12-23T11:40:27.177",
                             "arbeidsInntektInformasjon": {
                                 "inntektListe": [
@@ -434,11 +434,11 @@ class InntektClientTest {
                                         "opptjeningsland": "NO",
                                         "utbetaltIMaaned": "2020-07",
                                         "opplysningspliktig": {
-                                            "identifikator": "928497704",
+                                            "identifikator": "123456789",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "virksomhet": {
-                                            "identifikator": "947064649",
+                                            "identifikator": "123456788",
                                             "aktoerType": "ORGANISASJON"
                                         },
                                         "tilleggsinformasjon": {
