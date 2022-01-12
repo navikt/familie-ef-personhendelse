@@ -68,13 +68,37 @@ class InntektClientTest {
         Assertions.assertEquals(40000, beløp)
     }
 
+    @Test
+    fun `tester inntektshistorikk response`() {
+
+        wiremockServerItem.stubFor(
+            WireMock.post(WireMock.urlEqualTo("/api/inntekt/historikk?fom=2020-01&tom=2020-07"))
+                .withRequestBody(equalToJson(objectMapper.writeValueAsString(PersonIdent(personIdent))))
+                .willReturn(
+                    WireMock.aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(gyldigInntekthistorikkResponse)
+                )
+        )
+
+        val response = runBlocking { inntektClient.hentInntektshistorikk(personIdent, YearMonth.of(2020, 1), YearMonth.of(2020, 7)) }
+
+        val inntektType = response.aarMaanedHistorikk.values.first().values.first().first().arbeidsInntektInformasjon.inntektListe?.first()?.inntektType
+        val beløp = response.aarMaanedHistorikk.values.first().values.first().first().arbeidsInntektInformasjon.inntektListe?.first()?.beløp
+        val inntektsversjon = response.aarMaanedHistorikk.values.first().values.first().first().versjon
+
+        Assertions.assertEquals(InntektType.LOENNSINNTEKT, inntektType)
+        Assertions.assertEquals(35000, beløp)
+        Assertions.assertEquals(2, inntektsversjon)
+    }
+
     private val gyldigResponse = """
         {
             "arbeidsInntektMaaned": [
                 {
                     "aarMaaned": "2021-08",
                     "arbeidsInntektInformasjon": {
-                        "inntektListe": [
+                            "inntektListe": [
                             {
                                 "inntektType": "LOENNSINNTEKT",
                                 "beloep": 40000,
@@ -87,11 +111,11 @@ class InntektClientTest {
                                 "skattemessigBosattLand": "NO",
                                 "utbetaltIMaaned": "2021-08",
                                 "opplysningspliktig": {
-                                    "identifikator": "928497704",
+                                    "identifikator": "123456789",
                                     "aktoerType": "ORGANISASJON"
                                 },
                                 "virksomhet": {
-                                    "identifikator": "947064649",
+                                    "identifikator": "123456788",
                                     "aktoerType": "ORGANISASJON"
                                 },
                                 "tilleggsinformasjon": {
@@ -113,6 +137,328 @@ class InntektClientTest {
             "ident": {
                 "identifikator": "03127725224",
                 "aktoerType": "NATURLIG_IDENT"
+            }
+        }
+    """.trimIndent()
+
+    private val gyldigInntekthistorikkResponse = """
+        {
+            "aarMaanedHistorikk": {
+                "2020-01": {
+                    "123456789": [
+                        {
+                            "versjon": 2,
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
+                            "innleveringstidspunkt": "2021-12-23T11:40:27.177",
+                            "arbeidsInntektInformasjon": {
+                                "inntektListe": [
+                                    {
+                                        "inntektType": "LOENNSINNTEKT",
+                                        "beloep": 35000,
+                                        "fordel": "kontantytelse",
+                                        "inntektskilde": "A-ordningen",
+                                        "inntektsperiodetype": "Maaned",
+                                        "inntektsstatus": "LoependeInnrapportert",
+                                        "leveringstidspunkt": "2022-01",
+                                        "opptjeningsland": "NO",
+                                        "utbetaltIMaaned": "2020-01",
+                                        "opplysningspliktig": {
+                                            "identifikator": "123456789",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "virksomhet": {
+                                            "identifikator": "123456788",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "tilleggsinformasjon": {
+                                            "kategori": "Nettoloennsordning"
+                                        },
+                                        "inntektsmottaker": {
+                                            "identifikator": "07097614819",
+                                            "aktoerType": "NATURLIG_IDENT"
+                                        },
+                                        "inngaarIGrunnlagForTrekk": true,
+                                        "utloeserArbeidsgiveravgift": true,
+                                        "informasjonsstatus": "InngaarAlltid",
+                                        "beskrivelse": "fastloenn",
+                                        "skatteOgAvgiftsregel": "nettoloenn"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "2020-02": {
+                    "123456789": [
+                        {
+                            "versjon": 2,
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
+                            "innleveringstidspunkt": "2021-12-23T11:40:27.177",
+                            "arbeidsInntektInformasjon": {
+                                "inntektListe": [
+                                    {
+                                        "inntektType": "LOENNSINNTEKT",
+                                        "beloep": 35000,
+                                        "fordel": "kontantytelse",
+                                        "inntektskilde": "A-ordningen",
+                                        "inntektsperiodetype": "Maaned",
+                                        "inntektsstatus": "LoependeInnrapportert",
+                                        "leveringstidspunkt": "2022-01",
+                                        "opptjeningsland": "NO",
+                                        "utbetaltIMaaned": "2020-02",
+                                        "opplysningspliktig": {
+                                            "identifikator": "123456789",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "virksomhet": {
+                                            "identifikator": "123456788",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "tilleggsinformasjon": {
+                                            "kategori": "Nettoloennsordning"
+                                        },
+                                        "inntektsmottaker": {
+                                            "identifikator": "07097614819",
+                                            "aktoerType": "NATURLIG_IDENT"
+                                        },
+                                        "inngaarIGrunnlagForTrekk": true,
+                                        "utloeserArbeidsgiveravgift": true,
+                                        "informasjonsstatus": "InngaarAlltid",
+                                        "beskrivelse": "fastloenn",
+                                        "skatteOgAvgiftsregel": "nettoloenn"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "2020-03": {
+                    "123456789": [
+                        {
+                            "versjon": 2,
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
+                            "innleveringstidspunkt": "2021-12-23T11:40:27.177",
+                            "arbeidsInntektInformasjon": {
+                                "inntektListe": [
+                                    {
+                                        "inntektType": "LOENNSINNTEKT",
+                                        "beloep": 35000,
+                                        "fordel": "kontantytelse",
+                                        "inntektskilde": "A-ordningen",
+                                        "inntektsperiodetype": "Maaned",
+                                        "inntektsstatus": "LoependeInnrapportert",
+                                        "leveringstidspunkt": "2022-01",
+                                        "opptjeningsland": "NO",
+                                        "utbetaltIMaaned": "2020-03",
+                                        "opplysningspliktig": {
+                                            "identifikator": "123456789",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "virksomhet": {
+                                            "identifikator": "123456788",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "tilleggsinformasjon": {
+                                            "kategori": "Nettoloennsordning"
+                                        },
+                                        "inntektsmottaker": {
+                                            "identifikator": "07097614819",
+                                            "aktoerType": "NATURLIG_IDENT"
+                                        },
+                                        "inngaarIGrunnlagForTrekk": true,
+                                        "utloeserArbeidsgiveravgift": true,
+                                        "informasjonsstatus": "InngaarAlltid",
+                                        "beskrivelse": "fastloenn",
+                                        "skatteOgAvgiftsregel": "nettoloenn"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "2020-04": {
+                    "123456789": [
+                        {
+                            "versjon": 2,
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
+                            "innleveringstidspunkt": "2021-12-23T11:40:27.177",
+                            "arbeidsInntektInformasjon": {
+                                "inntektListe": [
+                                    {
+                                        "inntektType": "LOENNSINNTEKT",
+                                        "beloep": 35000,
+                                        "fordel": "kontantytelse",
+                                        "inntektskilde": "A-ordningen",
+                                        "inntektsperiodetype": "Maaned",
+                                        "inntektsstatus": "LoependeInnrapportert",
+                                        "leveringstidspunkt": "2022-01",
+                                        "opptjeningsland": "NO",
+                                        "utbetaltIMaaned": "2020-04",
+                                        "opplysningspliktig": {
+                                            "identifikator": "123456789",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "virksomhet": {
+                                            "identifikator": "123456788",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "tilleggsinformasjon": {
+                                            "kategori": "Nettoloennsordning"
+                                        },
+                                        "inntektsmottaker": {
+                                            "identifikator": "07097614819",
+                                            "aktoerType": "NATURLIG_IDENT"
+                                        },
+                                        "inngaarIGrunnlagForTrekk": true,
+                                        "utloeserArbeidsgiveravgift": true,
+                                        "informasjonsstatus": "InngaarAlltid",
+                                        "beskrivelse": "fastloenn",
+                                        "skatteOgAvgiftsregel": "nettoloenn"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "2020-05": {
+                    "123456789": [
+                        {
+                            "versjon": 2,
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
+                            "innleveringstidspunkt": "2021-12-23T11:40:27.177",
+                            "arbeidsInntektInformasjon": {
+                                "inntektListe": [
+                                    {
+                                        "inntektType": "LOENNSINNTEKT",
+                                        "beloep": 35000,
+                                        "fordel": "kontantytelse",
+                                        "inntektskilde": "A-ordningen",
+                                        "inntektsperiodetype": "Maaned",
+                                        "inntektsstatus": "LoependeInnrapportert",
+                                        "leveringstidspunkt": "2022-01",
+                                        "opptjeningsland": "NO",
+                                        "utbetaltIMaaned": "2020-05",
+                                        "opplysningspliktig": {
+                                            "identifikator": "123456789",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "virksomhet": {
+                                            "identifikator": "123456788",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "tilleggsinformasjon": {
+                                            "kategori": "Nettoloennsordning"
+                                        },
+                                        "inntektsmottaker": {
+                                            "identifikator": "07097614819",
+                                            "aktoerType": "NATURLIG_IDENT"
+                                        },
+                                        "inngaarIGrunnlagForTrekk": true,
+                                        "utloeserArbeidsgiveravgift": true,
+                                        "informasjonsstatus": "InngaarAlltid",
+                                        "beskrivelse": "fastloenn",
+                                        "skatteOgAvgiftsregel": "nettoloenn"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "2020-06": {
+                    "123456789": [
+                        {
+                            "versjon": 2,
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
+                            "innleveringstidspunkt": "2021-12-23T11:40:27.177",
+                            "arbeidsInntektInformasjon": {
+                                "inntektListe": [
+                                    {
+                                        "inntektType": "LOENNSINNTEKT",
+                                        "beloep": 35000,
+                                        "fordel": "kontantytelse",
+                                        "inntektskilde": "A-ordningen",
+                                        "inntektsperiodetype": "Maaned",
+                                        "inntektsstatus": "LoependeInnrapportert",
+                                        "leveringstidspunkt": "2022-01",
+                                        "opptjeningsland": "NO",
+                                        "utbetaltIMaaned": "2020-06",
+                                        "opplysningspliktig": {
+                                            "identifikator": "123456789",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "virksomhet": {
+                                            "identifikator": "123456788",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "tilleggsinformasjon": {
+                                            "kategori": "Nettoloennsordning"
+                                        },
+                                        "inntektsmottaker": {
+                                            "identifikator": "07097614819",
+                                            "aktoerType": "NATURLIG_IDENT"
+                                        },
+                                        "inngaarIGrunnlagForTrekk": true,
+                                        "utloeserArbeidsgiveravgift": true,
+                                        "informasjonsstatus": "InngaarAlltid",
+                                        "beskrivelse": "fastloenn",
+                                        "skatteOgAvgiftsregel": "nettoloenn"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "2020-07": {
+                    "123456789": [
+                        {
+                            "versjon": 2,
+                            "opplysningspliktig": "123456789",
+                            "virksomhet": "123456788",
+                            "innleveringstidspunkt": "2021-12-23T11:40:27.177",
+                            "arbeidsInntektInformasjon": {
+                                "inntektListe": [
+                                    {
+                                        "inntektType": "LOENNSINNTEKT",
+                                        "beloep": 35000,
+                                        "fordel": "kontantytelse",
+                                        "inntektskilde": "A-ordningen",
+                                        "inntektsperiodetype": "Maaned",
+                                        "inntektsstatus": "LoependeInnrapportert",
+                                        "leveringstidspunkt": "2022-01",
+                                        "opptjeningsland": "NO",
+                                        "utbetaltIMaaned": "2020-07",
+                                        "opplysningspliktig": {
+                                            "identifikator": "123456789",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "virksomhet": {
+                                            "identifikator": "123456788",
+                                            "aktoerType": "ORGANISASJON"
+                                        },
+                                        "tilleggsinformasjon": {
+                                            "kategori": "Nettoloennsordning"
+                                        },
+                                        "inntektsmottaker": {
+                                            "identifikator": "07097614819",
+                                            "aktoerType": "NATURLIG_IDENT"
+                                        },
+                                        "inngaarIGrunnlagForTrekk": true,
+                                        "utloeserArbeidsgiveravgift": true,
+                                        "informasjonsstatus": "InngaarAlltid",
+                                        "beskrivelse": "fastloenn",
+                                        "skatteOgAvgiftsregel": "nettoloenn"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
             }
         }
     """.trimIndent()
