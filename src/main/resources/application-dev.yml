@@ -1,8 +1,14 @@
 KAFKA_ONPREM_BOOTSTRAP_SERVERS: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
 KAFKA_ONPREM_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais-q.adeo.no/
 
-FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
+FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner-q1.dev-fss-pub.nais.io
 FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.dev-fss-pub.nais.io
-PDL_URL: https://pdl-api.dev-fss-pub.nais.io/graphql
-PDL_SCOPE: api://dev-fss.pdl.pdl-api/.default
+PDL_URL: https://pdl-api-q1.dev-fss-pub.nais.io/graphql
+PDL_SCOPE: api://dev-fss.pdl.pdl-api-q1/.default
 FAMILIE_EF_VEDTAK_TOPIC: teamfamilie.aapen-ensligforsorger-iverksatt-vedtak
+
+no.nav.security.jwt:
+  client:
+    registration:
+      integrasjoner-client-credentials:
+        scope: api://dev-fss.teamfamilie.familie-integrasjoner-q1/.default
