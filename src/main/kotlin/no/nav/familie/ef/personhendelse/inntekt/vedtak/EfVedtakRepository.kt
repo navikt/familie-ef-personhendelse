@@ -12,7 +12,8 @@ import java.sql.ResultSet
 class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
     fun lagreEfVedtakshendelse(vedtakshendelse: EnsligForsørgerVedtakhendelse) {
-        val sql = "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType)"
+        val sql = "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType)" +
+            " ON CONFLICT DO NOTHING"
         val params = MapSqlParameterSource(
             mapOf(
                 "behandlingId" to vedtakshendelse.behandlingId,
