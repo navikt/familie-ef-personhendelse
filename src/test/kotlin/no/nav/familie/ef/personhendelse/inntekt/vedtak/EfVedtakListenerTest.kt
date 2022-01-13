@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.verify
+import no.nav.familie.ef.personhendelse.inntekt.Vedtakendringer
 import no.nav.familie.kontrakter.felles.ef.EnsligForsørgerVedtakhendelse
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -20,6 +21,9 @@ class EfVedtakListenerTest {
     @MockK
     lateinit var efVedtakRepository: EfVedtakRepository
 
+    @MockK
+    lateinit var vedtakendringer: Vedtakendringer
+
     @MockK(relaxed = true)
     lateinit var ack: Acknowledgment
 
@@ -28,15 +32,18 @@ class EfVedtakListenerTest {
     @BeforeEach
     internal fun setUp() {
         MockKAnnotations.init(this)
-        efVedtakListener = EfVedtakListener(efVedtakRepository)
+        efVedtakListener = EfVedtakListener(efVedtakRepository, vedtakendringer)
         clearAllMocks()
     }
 
     @Test
-    fun `send inn gyldig consumer record, forvent acknowledged`() {
+    fun `send inn gyldig consumer record, forvent lagring av efvedtakhendelse til db`() {
 
         every {
             efVedtakRepository.lagreEfVedtakshendelse(any())
+        } just Runs
+        every {
+            vedtakendringer.beregnNyeVedtakOgLagOppgave()
         } just Runs
         val efVedtakshendelse = EnsligForsørgerVedtakhendelse(1L, "personIdent", StønadType.OVERGANGSSTØNAD)
         val hendelse = ConsumerRecord("topic", 1, 1, "key", objectMapper.writeValueAsString(efVedtakshendelse))

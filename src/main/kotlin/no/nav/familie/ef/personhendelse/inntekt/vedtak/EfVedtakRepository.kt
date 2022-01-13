@@ -38,4 +38,21 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
             null
         }
     }
+
+    // Kommer til å bli endret til å ta alle som ikke er behandlet.
+    fun hentAllePersonerMedVedtak(): List<EnsligForsørgerVedtakhendelse> {
+        val sql = "SELECT * FROM efvedtakhendelse"
+        val mapSqlParameterSource = MapSqlParameterSource("stonadstype", StønadType.OVERGANGSSTØNAD.toString())
+        return try {
+            namedParameterJdbcTemplate.query(sql, mapSqlParameterSource) { rs: ResultSet, _: Int ->
+                EnsligForsørgerVedtakhendelse(
+                    rs.getLong("behandling_id"),
+                    rs.getString("person_ident"),
+                    StønadType.valueOf(rs.getString("stonadstype"))
+                )
+            }
+        } catch (e: EmptyResultDataAccessException) {
+            listOf()
+        }
+    }
 }

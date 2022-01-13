@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt.vedtak
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.personhendelse.inntekt.Vedtakendringer
 import no.nav.familie.kontrakter.felles.ef.EnsligForsørgerVedtakhendelse
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -14,7 +15,8 @@ import org.springframework.stereotype.Component
  */
 @Component
 class EfVedtakListener(
-    private val efVedtakRepository: EfVedtakRepository
+    private val efVedtakRepository: EfVedtakRepository,
+    private val vedtakEndringer: Vedtakendringer
 ) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -28,6 +30,7 @@ class EfVedtakListener(
         val efVedtakshendelse = objectMapper.readValue<EnsligForsørgerVedtakhendelse>(consumerRecord.value())
         try {
             efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse)
+            vedtakEndringer.beregnNyeVedtakOgLagOppgave()
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av personhendelse med behandlingId: ${efVedtakshendelse.behandlingId}")
             securelogger.error(
