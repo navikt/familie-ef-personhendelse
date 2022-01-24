@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.client
 
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -23,10 +24,10 @@ class SakClient(
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
 
-    fun hentFnrForAlleBarn(personIdent: String): List<String> {
+    fun finnNyeBarnForBruker(personIdent: PersonIdent): List<String> {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("/api/behandling/barn/$personIdent")
-        val response = getForEntity<Ressurs<List<String>>>(uriComponentsBuilder.build().toUri())
+            .pathSegment("/api/behandling/barn/nye-barn")
+        val response = postForEntity<Ressurs<List<String>>>(uriComponentsBuilder.build().toUri(), personIdent)
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
 }

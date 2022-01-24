@@ -4,6 +4,7 @@ import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
 
@@ -18,9 +19,7 @@ class ForelderBarnHandler(val sakClient: SakClient, val pdlClient: PdlClient) : 
 
     override fun skalOppretteOppgave(personhendelse: Personhendelse): Boolean {
         val personIdent = personhendelse.identerUtenAktørId().first()
-        val antallBarnPdl =
-            pdlClient.hentPerson(personIdent).forelderBarnRelasjon.filter { it.minRolleForPerson == ForelderBarnRelasjonRolle.BARN }.size
-        val antallBarnSøknad = sakClient.hentFnrForAlleBarn(personIdent).size
-        return antallBarnSøknad != antallBarnPdl
+        val nyeBarnForBruker = sakClient.finnNyeBarnForBruker(PersonIdent(personIdent))
+        return nyeBarnForBruker.isNotEmpty()
     }
 }
