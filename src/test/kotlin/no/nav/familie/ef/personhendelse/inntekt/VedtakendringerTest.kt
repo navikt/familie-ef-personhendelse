@@ -14,7 +14,8 @@ class VedtakendringerTest {
     private val efVedtakRepository = mockk<EfVedtakRepository>()
     private val inntektClient = mockk<InntektClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
-    val vedtakendringer = Vedtakendringer(efVedtakRepository, inntektClient, oppgaveClient)
+    private val inntektsendringer = mockk<Inntektsendringer>()
+    val vedtakendringer = Vedtakendringer(efVedtakRepository, inntektClient, oppgaveClient, inntektsendringer)
 
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {

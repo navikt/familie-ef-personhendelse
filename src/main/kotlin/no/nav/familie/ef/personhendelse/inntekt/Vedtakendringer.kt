@@ -1,7 +1,6 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
-import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -10,18 +9,20 @@ import java.time.YearMonth
 
 @Component
 class Vedtakendringer(
-    val vedtakRepository: EfVedtakRepository,
+    val efVedtakRepository: EfVedtakRepository,
     val inntektClient: InntektClient,
-    val oppgaveClient: OppgaveClient
+    val oppgaveClient: OppgaveClient,
+    val inntektsendringer: Inntektsendringer
 ) {
 
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     fun beregnNyeVedtakOgLagOppgave() {
-        val personerMedVedtakList = vedtakRepository.hentAllePersonerMedVedtak()
-
+        val personerMedVedtakList = efVedtakRepository.hentAllePersonerMedVedtak() // for testing
+        // val personerMedVedtakList = efVedtakRepository.hentPersonerMedVedtakIkkeBehandlet() //koden som faktisk skal brukes
         secureLogger.info("Antall personer med aktive vedtak: ${personerMedVedtakList.size}")
 
+        // Kommer til å bytte til batch-prosessering for forbedring av ytelse
         for (ensligForsørgerVedtakhendelse in personerMedVedtakList) {
             val response = inntektClient.hentInntektshistorikk(
                 ensligForsørgerVedtakhendelse.personIdent,
@@ -29,7 +30,8 @@ class Vedtakendringer(
                 null
             )
             if (harNyeVedtak(response)) {
-                secureLogger.info("Person med behandlingId ${ensligForsørgerVedtakhendelse.behandlingId} kan ha nye vedtak. Oppretter oppgave.")
+                secureLogger.info("Person ${ensligForsørgerVedtakhendelse.personIdent} kan ha nye vedtak. Oppretter oppgave.")
+                /*
                 val oppgaveId = oppgaveClient.opprettOppgave(
                     defaultOpprettOppgaveRequest(
                         ensligForsørgerVedtakhendelse.personIdent,
@@ -37,7 +39,12 @@ class Vedtakendringer(
                     )
                 )
                 secureLogger.info("Oppgave opprettet med id: $oppgaveId")
+                 */
             }
+            if (inntektsendringer.harEndretInntekt(response)) {
+                secureLogger.info("Person ${ensligForsørgerVedtakhendelse.personIdent} kan ha endret inntekt. Oppretter oppgave.")
+            }
+            efVedtakRepository.oppdaterAarMaanedProsessert(ensligForsørgerVedtakhendelse.personIdent)
         }
     }
 

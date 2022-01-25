@@ -14,7 +14,6 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.kafka.support.Acknowledgment
 
 class EfVedtakListenerTest {
 
@@ -24,15 +23,12 @@ class EfVedtakListenerTest {
     @MockK
     lateinit var vedtakendringer: Vedtakendringer
 
-    @MockK(relaxed = true)
-    lateinit var ack: Acknowledgment
-
     private lateinit var efVedtakListener: EfVedtakListener
 
     @BeforeEach
     internal fun setUp() {
         MockKAnnotations.init(this)
-        efVedtakListener = EfVedtakListener(efVedtakRepository, vedtakendringer)
+        efVedtakListener = EfVedtakListener(efVedtakRepository)
         clearAllMocks()
     }
 
