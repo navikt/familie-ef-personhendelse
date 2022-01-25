@@ -91,7 +91,6 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         val mapSqlParameterSource = MapSqlParameterSource("personIdent", personIdent)
             .addValue("yearMonth", yearMonth.toString())
 
-        namedParameterJdbcTemplate.update(sql, mapSqlParameterSource).takeIf { it == 1 }
-            ?: error("Kunne ikke oppdatere efvedtakhendelse")
+        namedParameterJdbcTemplate.update(sql, mapSqlParameterSource)
     }
 }
