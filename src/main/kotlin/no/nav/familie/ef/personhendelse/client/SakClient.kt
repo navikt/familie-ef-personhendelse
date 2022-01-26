@@ -22,4 +22,11 @@ class SakClient(
         val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), personidenter)
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
+
+    fun inntektForEksternId(eksternId: Int): Int {
+        val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
+            .pathSegment("api/vedtak/eksternId/$eksternId")
+        val response = getForEntity<Ressurs<Int>>(uriComponentsBuilder.build().toUri())
+        return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
+    }
 }

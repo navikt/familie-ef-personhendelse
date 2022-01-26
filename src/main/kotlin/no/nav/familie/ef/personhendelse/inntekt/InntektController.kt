@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(path = ["/api/inntekt"])
 @ProtectedWithClaims(issuer = "azuread")
-class InntektController(val vedtakendringer: Vedtakendringer) {
+class InntektController(val vedtakendringer: VedtakendringerService) {
 
     @GetMapping("/sjekkEndringer")
     fun sjekkEndringer(): ResponseEntity<Any> {

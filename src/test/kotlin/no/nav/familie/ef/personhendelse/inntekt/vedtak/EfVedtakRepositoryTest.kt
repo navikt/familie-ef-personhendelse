@@ -19,12 +19,12 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
         val efVedtakshendelse = EnsligForsørgerVedtakhendelse(1L, "personIdent1", StønadType.OVERGANGSSTØNAD)
         efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse)
 
-        val vedtakshendelse = efVedtakRepository.hentEfVedtakHendelse("personIdent1")
+        val vedtakshendelse = efVedtakRepository.hentAllePersonerMedVedtak().first()
         Assertions.assertThat(vedtakshendelse).isNotNull
-        Assertions.assertThat(1L).isEqualTo(vedtakshendelse?.behandlingId)
-        Assertions.assertThat(StønadType.OVERGANGSSTØNAD).isEqualTo(vedtakshendelse?.stønadType)
-        Assertions.assertThat(YearMonth.now()).isEqualTo(vedtakshendelse?.aarMaanedProsessert)
-        Assertions.assertThat(1).isEqualTo(vedtakshendelse?.versjon)
+        Assertions.assertThat(1L).isEqualTo(vedtakshendelse.behandlingId)
+        Assertions.assertThat(StønadType.OVERGANGSSTØNAD).isEqualTo(vedtakshendelse.stønadType)
+        Assertions.assertThat(YearMonth.now()).isEqualTo(vedtakshendelse.aarMaanedProsessert)
+        Assertions.assertThat(1).isEqualTo(vedtakshendelse.versjon)
     }
 
     @Test

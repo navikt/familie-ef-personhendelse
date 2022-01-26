@@ -4,22 +4,22 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.time.YearMonth
 
-@Component
-class Inntektsendringer(
+@Service
+class InntektsendringerService(
     val vedtakRepository: EfVedtakRepository,
     val inntektClient: InntektClient,
     val oppgaveClient: OppgaveClient
 ) {
 
-    val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
+    val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     fun beregnInntektsendringer() {
         val personerMedVedtakList = vedtakRepository.hentAllePersonerMedVedtak()
 
-        secureLogger.info("Antall personer med aktive vedtak: ${personerMedVedtakList.size}")
+        logger.info("Antall personer med aktive vedtak: ${personerMedVedtakList.size}")
 
         for (ensligForsørgerVedtakhendelse in personerMedVedtakList) {
             val response = inntektClient.hentInntektshistorikk(
@@ -28,7 +28,7 @@ class Inntektsendringer(
                 null
             )
             if (harEndretInntekt(response)) {
-                secureLogger.info("Person med behandlingId ${ensligForsørgerVedtakhendelse.personIdent} kan ha inntektsendringer. Skal opprette oppgave.")
+                logger.info("Person med behandlingId ${ensligForsørgerVedtakhendelse.behandlingId} kan ha inntektsendringer. Skal opprette oppgave.")
             }
         }
     }

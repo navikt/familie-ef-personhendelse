@@ -83,9 +83,9 @@ class InntektClientTest {
 
         val response = runBlocking { inntektClient.hentInntektshistorikk(personIdent, YearMonth.of(2020, 1), YearMonth.of(2020, 7)) }
 
-        val inntektType = response.aarMaanedHistorikk?.values?.first()?.values?.first()?.first()?.arbeidsInntektInformasjon?.inntektListe?.first()?.inntektType
-        val beløp = response.aarMaanedHistorikk?.values?.first()?.values?.first()?.first()?.arbeidsInntektInformasjon?.inntektListe?.first()?.beløp
-        val inntektsversjon = response.aarMaanedHistorikk?.values?.first()?.values?.first()?.first()?.versjon
+        val inntektType = response.aarMaanedHistorikk.values.first().values.first().first().arbeidsInntektInformasjon.inntektListe?.first()?.inntektType
+        val beløp = response.aarMaanedHistorikk.values.first().values.first().first().arbeidsInntektInformasjon.inntektListe?.first()?.beløp
+        val inntektsversjon = response.aarMaanedHistorikk.values.first().values.first().first().versjon
 
         Assertions.assertEquals(InntektType.LOENNSINNTEKT, inntektType)
         Assertions.assertEquals(35000, beløp)

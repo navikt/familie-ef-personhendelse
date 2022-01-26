@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.YearMonth
 
 data class InntektshistorikkResponse(
-    val aarMaanedHistorikk: Map<String, Map<String, List<InntektVersjon>>>? // <Year-month>, <orgnr, inntekt>
+    val aarMaanedHistorikk: Map<String, Map<String, List<InntektVersjon>>> = emptyMap() // <Year-month>, <orgnr, inntekt>
 ) {
-    fun inntektForMåned(yearMonth: String) = aarMaanedHistorikk?.get(yearMonth)?.values?.flatten()
+    fun inntektForMåned(yearMonth: String) = aarMaanedHistorikk.get(yearMonth)?.values?.flatten()
 }
 
 data class InntektVersjon(

@@ -9,13 +9,13 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 
-class VedtakendringerTest {
+class VedtakendringerServiceTest {
 
     private val efVedtakRepository = mockk<EfVedtakRepository>()
     private val inntektClient = mockk<InntektClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
-    private val inntektsendringer = mockk<Inntektsendringer>()
-    val vedtakendringer = Vedtakendringer(efVedtakRepository, inntektClient, oppgaveClient, inntektsendringer)
+    private val inntektsendringerService = mockk<InntektsendringerService>()
+    val vedtakendringer = VedtakendringerService(efVedtakRepository, inntektClient, oppgaveClient, inntektsendringerService)
 
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {

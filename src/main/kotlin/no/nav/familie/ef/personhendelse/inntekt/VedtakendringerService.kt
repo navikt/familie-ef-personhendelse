@@ -4,15 +4,15 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.time.YearMonth
 
-@Component
-class Vedtakendringer(
+@Service
+class VedtakendringerService(
     val efVedtakRepository: EfVedtakRepository,
     val inntektClient: InntektClient,
     val oppgaveClient: OppgaveClient,
-    val inntektsendringer: Inntektsendringer
+    val inntektsendringerService: InntektsendringerService
 ) {
 
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -41,7 +41,7 @@ class Vedtakendringer(
                 secureLogger.info("Oppgave opprettet med id: $oppgaveId")
                  */
             }
-            if (inntektsendringer.harEndretInntekt(response)) {
+            if (inntektsendringerService.harEndretInntekt(response)) {
                 secureLogger.info("Person ${ensligForsørgerVedtakhendelse.personIdent} kan ha endret inntekt. Oppretter oppgave.")
             }
             efVedtakRepository.oppdaterAarMaanedProsessert(ensligForsørgerVedtakhendelse.personIdent)

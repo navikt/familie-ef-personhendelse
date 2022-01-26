@@ -2,7 +2,6 @@ package no.nav.familie.ef.personhendelse.inntekt.vedtak
 
 import no.nav.familie.kontrakter.felles.ef.EnsligForsørgerVedtakhendelse
 import no.nav.familie.kontrakter.felles.ef.StønadType
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
@@ -27,64 +26,29 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         namedParameterJdbcTemplate.update(sql, params)
     }
 
-    fun hentEfVedtakHendelse(personIdent: String): VedtakhendelseInntektberegning? {
-        val sql = "SELECT * FROM efvedtakhendelse WHERE person_ident = :personIdent"
-        val mapSqlParameterSource = MapSqlParameterSource("personIdent", personIdent)
-        return try {
-            namedParameterJdbcTemplate.queryForObject(sql, mapSqlParameterSource) { rs: ResultSet, _: Int ->
-                VedtakhendelseInntektberegning(
-                    rs.getLong("behandling_id"),
-                    rs.getString("person_ident"),
-                    StønadType.valueOf(rs.getString("stonadstype")),
-                    YearMonth.parse(rs.getString("aar_maaned_prosessert")),
-                    rs.getInt("versjon")
-                )
-            }
-        } catch (e: EmptyResultDataAccessException) {
-            null
-        }
-    }
-
     fun hentAllePersonerMedVedtak(): List<VedtakhendelseInntektberegning> {
         val sql = "SELECT * FROM efvedtakhendelse"
         val mapSqlParameterSource = MapSqlParameterSource("stonadstype", StønadType.OVERGANGSSTØNAD.toString())
         return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, vedtakhendelseInntektberegningMapper)
     }
 
-    private val vedtakhendelseInntektberegningMapper = { rs: ResultSet, _: Int ->
-        VedtakhendelseInntektberegning(
-                rs.getLong("behandling_id"),
-                rs.getString("person_ident"),
-                StønadType.valueOf(rs.getString("stonadstype")),
-                YearMonth.parse(rs.getString("aar_maaned_prosessert")),
-                rs.getInt("versjon")
-        )
-    }
-    }
-
     fun hentPersonerMedVedtakIkkeBehandlet(): List<VedtakhendelseInntektberegning> {
         val sql = "SELECT * FROM efvedtakhendelse WHERE aar_maaned_prosessert != '${YearMonth.now()}'"
         val mapSqlParameterSource = MapSqlParameterSource("stonadstype", StønadType.OVERGANGSSTØNAD.toString())
-        return try {
-            namedParameterJdbcTemplate.query(sql, mapSqlParameterSource) { rs: ResultSet, _: Int ->
-                VedtakhendelseInntektberegning(
-                    rs.getLong("behandling_id"),
-                    rs.getString("person_ident"),
-                    StønadType.valueOf(rs.getString("stonadstype")),
-                    YearMonth.parse(rs.getString("aar_maaned_prosessert")),
-                    rs.getInt("versjon")
-                )
-            }
-        } catch (e: EmptyResultDataAccessException) {
-            listOf()
-        }
+        return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, vedtakhendelseInntektberegningMapper)
     }
 
-    fun oppdaterAarMaanedProsessert(personIdent: String) {
-        oppdaterAarMaanedProsessert(personIdent, YearMonth.now())
+    private val vedtakhendelseInntektberegningMapper = { rs: ResultSet, _: Int ->
+        VedtakhendelseInntektberegning(
+            rs.getLong("behandling_id"),
+            rs.getString("person_ident"),
+            StønadType.valueOf(rs.getString("stonadstype")),
+            YearMonth.parse(rs.getString("aar_maaned_prosessert")),
+            rs.getInt("versjon")
+        )
     }
 
-    fun oppdaterAarMaanedProsessert(personIdent: String, yearMonth: YearMonth) {
+    fun oppdaterAarMaanedProsessert(personIdent: String, yearMonth: YearMonth = YearMonth.now()) {
         val sql = "UPDATE efvedtakhendelse SET aar_maaned_prosessert = :yearMonth " +
             "WHERE person_ident = :personIdent"
         val mapSqlParameterSource = MapSqlParameterSource("personIdent", personIdent)
