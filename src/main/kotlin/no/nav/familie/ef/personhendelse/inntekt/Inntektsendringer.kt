@@ -48,7 +48,7 @@ class Inntektsendringer(
         val nyesteVersjon = nyesteRegistrerteInntekt?.maxOf { it.versjon }
 
         val inntektListe = nyesteRegistrerteInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
-        val beløpYtelseFraOffentligList = inntektListe?.filter { it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE }?.map { it.beløp } ?: listOf()
+        val beløpYtelseFraOffentligList = inntektListe?.filter { it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE }?.map { it.beløp } ?: listOf() // Dette må endres til å kun sjekke mot faste månedlige utbetalinger (ikke dagpenger / AAP)
         return beløpYtelseFraOffentligList.sumOf { it }
     }
 }
