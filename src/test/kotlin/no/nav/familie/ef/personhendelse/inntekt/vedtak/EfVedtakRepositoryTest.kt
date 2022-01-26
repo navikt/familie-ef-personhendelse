@@ -21,10 +21,27 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
         val vedtakshendelse = efVedtakRepository.hentAllePersonerMedVedtak().first()
         Assertions.assertThat(vedtakshendelse).isNotNull
-        Assertions.assertThat(1L).isEqualTo(vedtakshendelse.behandlingId)
+        Assertions.assertThat(vedtakshendelse.behandlingId).isEqualTo(1L)
         Assertions.assertThat(StønadType.OVERGANGSSTØNAD).isEqualTo(vedtakshendelse.stønadType)
         Assertions.assertThat(YearMonth.now()).isEqualTo(vedtakshendelse.aarMaanedProsessert)
         Assertions.assertThat(1).isEqualTo(vedtakshendelse.versjon)
+    }
+
+    @Test
+    fun `lagre og hent EnsligForsørgerVedtakshendelser med to like personidenter, men to ulike behandlingId`() {
+
+        val efVedtakshendelse = EnsligForsørgerVedtakhendelse(1L, "personIdent1", StønadType.OVERGANGSSTØNAD)
+        efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse)
+
+        val efVedtakshendelse2 = EnsligForsørgerVedtakhendelse(2L, "personIdent1", StønadType.OVERGANGSSTØNAD)
+        efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse2)
+
+        val vedtakshendelse = efVedtakRepository.hentAllePersonerMedVedtak().first()
+        Assertions.assertThat(vedtakshendelse).isNotNull
+        Assertions.assertThat(vedtakshendelse.behandlingId).isEqualTo(2L)
+        Assertions.assertThat(vedtakshendelse.stønadType).isEqualTo(StønadType.OVERGANGSSTØNAD)
+        Assertions.assertThat(vedtakshendelse.aarMaanedProsessert).isEqualTo(YearMonth.now())
+        Assertions.assertThat(vedtakshendelse.versjon).isEqualTo(1)
     }
 
     @Test
