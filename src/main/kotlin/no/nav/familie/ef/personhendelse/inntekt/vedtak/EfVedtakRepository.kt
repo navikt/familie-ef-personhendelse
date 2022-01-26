@@ -48,19 +48,18 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
     fun hentAllePersonerMedVedtak(): List<VedtakhendelseInntektberegning> {
         val sql = "SELECT * FROM efvedtakhendelse"
         val mapSqlParameterSource = MapSqlParameterSource("stonadstype", StønadType.OVERGANGSSTØNAD.toString())
-        return try {
-            namedParameterJdbcTemplate.query(sql, mapSqlParameterSource) { rs: ResultSet, _: Int ->
-                VedtakhendelseInntektberegning(
-                    rs.getLong("behandling_id"),
-                    rs.getString("person_ident"),
-                    StønadType.valueOf(rs.getString("stonadstype")),
-                    YearMonth.parse(rs.getString("aar_maaned_prosessert")),
-                    rs.getInt("versjon")
-                )
-            }
-        } catch (e: EmptyResultDataAccessException) {
-            listOf()
-        }
+        return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, vedtakhendelseInntektberegningMapper)
+    }
+
+    private val vedtakhendelseInntektberegningMapper = { rs: ResultSet, _: Int ->
+        VedtakhendelseInntektberegning(
+                rs.getLong("behandling_id"),
+                rs.getString("person_ident"),
+                StønadType.valueOf(rs.getString("stonadstype")),
+                YearMonth.parse(rs.getString("aar_maaned_prosessert")),
+                rs.getInt("versjon")
+        )
+    }
     }
 
     fun hentPersonerMedVedtakIkkeBehandlet(): List<VedtakhendelseInntektberegning> {
