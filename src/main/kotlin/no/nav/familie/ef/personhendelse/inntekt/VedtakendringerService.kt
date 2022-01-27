@@ -41,7 +41,7 @@ class VedtakendringerService(
                 secureLogger.info("Oppgave opprettet med id: $oppgaveId")
                  */
             }
-            if (inntektsendringerService.harEndretInntekt(response)) {
+            if (inntektsendringerService.harEndretInntekt(response, ensligForsørgerVedtakhendelse.behandlingId)) {
                 secureLogger.info("Person ${ensligForsørgerVedtakhendelse.personIdent} kan ha endret inntekt. Oppretter oppgave.")
             }
             efVedtakRepository.oppdaterAarMaanedProsessert(ensligForsørgerVedtakhendelse.personIdent)
