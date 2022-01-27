@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.client
 
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -17,6 +18,8 @@ class SakClient(
     private val uri: URI
 ) : AbstractRestClient(restOperations, "familie.ef-sak") {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun harStønadSiste12MånederForPersonidenter(personidenter: Set<String>): Boolean {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/ekstern/behandling/harstoenad/flere-identer")
@@ -27,6 +30,7 @@ class SakClient(
     fun inntektForEksternId(eksternId: Long): Int {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/vedtak/eksternId/$eksternId").queryParam("dato", LocalDate.now())
+        logger.info("URL: " + uriComponentsBuilder.build().toUri().toString())
         val response = getForEntity<Ressurs<Int>>(uriComponentsBuilder.build().toUri())
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
