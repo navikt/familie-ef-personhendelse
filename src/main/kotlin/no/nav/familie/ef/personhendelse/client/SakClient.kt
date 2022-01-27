@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import java.time.LocalDate
 
 @Component
 class SakClient(
@@ -25,7 +26,7 @@ class SakClient(
 
     fun inntektForEksternId(eksternId: Long): Int {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("api/vedtak/eksternId/$eksternId")
+            .pathSegment("api/vedtak/eksternId/$eksternId").queryParam("dato", LocalDate.now())
         val response = getForEntity<Ressurs<Int>>(uriComponentsBuilder.build().toUri())
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }

@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.web.client.RestOperations
 import java.net.URI
+import java.time.LocalDate
 
 internal class SakClientTest {
 
@@ -68,7 +70,7 @@ internal class SakClientTest {
     fun `Finnes behandling med gitt eksternId i ef-sak for person med forventet inntekt på 400 000 for gitt dato`() {
 
         wiremockServerItem.stubFor(
-            get(urlMatching("/api/vedtak/eksternId/1"))
+            get(urlEqualTo("/api/vedtak/eksternId/1?dato=${LocalDate.now()}"))
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json")
