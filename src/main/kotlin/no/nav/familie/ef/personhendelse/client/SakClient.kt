@@ -28,6 +28,6 @@ class SakClient(
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("/api/behandling/barn/nye-barn")
         val response = postForEntity<Ressurs<List<String>>>(uriComponentsBuilder.build().toUri(), personIdent)
-        return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
+        return response. getDataOrThrow()
     }
 }
