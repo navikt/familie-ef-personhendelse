@@ -58,7 +58,7 @@ class InntektsendringerService(
 
         val samletInntekt = inntektListe?.filter { it.inntektType != InntektType.YTELSE_FRA_OFFENTLIGE }?.sumOf { it.beløp } ?: 0
         logger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person med behandlingId (eksternId) $eksternId")
-        return samletInntekt >= (månedligForventetInntekt * 1.1)
+        return samletInntekt >= (månedligForventetInntekt * 1.1) && samletInntekt > 0 // Må sjekke om samletInntekt er større enn 0 for å ikke få true dersom alle variabler er 0 (antakelig kun i test)
     }
 
     private fun harMottattMerIOffentligeYtelser(nestNyesteRegistrerteInntekt: List<InntektVersjon>?, nyesteRegistrerteInntekt: List<InntektVersjon>?): Boolean {
