@@ -3,6 +3,7 @@ package no.nav.familie.ef.personhendelse.inntekt
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
+import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
@@ -14,8 +15,9 @@ class VedtakendringerServiceTest {
     private val efVedtakRepository = mockk<EfVedtakRepository>()
     private val inntektClient = mockk<InntektClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
+    private val sakClient = mockk<SakClient>()
     private val inntektsendringerService = mockk<InntektsendringerService>()
-    val vedtakendringer = VedtakendringerService(efVedtakRepository, inntektClient, oppgaveClient, inntektsendringerService)
+    val vedtakendringer = VedtakendringerService(efVedtakRepository, inntektClient, oppgaveClient, sakClient, inntektsendringerService)
 
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {
