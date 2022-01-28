@@ -1,15 +1,13 @@
 package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
-import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
 
 @Component
-class ForelderBarnHandler(val sakClient: SakClient, val pdlClient: PdlClient) : PersonhendelseHandler {
+class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
 
     override val type = PersonhendelseType.FORELDERBARNRELASJON
 

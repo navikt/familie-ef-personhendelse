@@ -7,8 +7,6 @@ import io.mockk.verify
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
-import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
-import no.nav.familie.ef.personhendelse.generated.hentperson.ForelderBarnRelasjon
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
@@ -27,7 +25,7 @@ class ForelderBarnHandlerTest {
     private val oppgaveClient = mockk<OppgaveClient>()
     private val personhendelseRepository = mockk<PersonhendelseRepository>(relaxed = true)
 
-    private val handler = ForelderBarnHandler(sakClient, pdlClient)
+    private val handler = ForelderBarnHandler(sakClient)
     private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository)
 
     private val personIdent = "12345612344"
@@ -42,25 +40,20 @@ class ForelderBarnHandlerTest {
     }
 
     @Test
-    internal fun `pdl og ef-sak har likt antall barn, forvent at oppgave ikke opprettes`() {
+    internal fun `finnNyeBarnForBruker inneholder ikke treff, forvent at oppgave ikke opprettes`() {
         val personhendelse = forelderBarnRelasjonHendelse("BARN")
-        every { sakClient.hentFnrForAlleBarn(any()) } returns listOf("fnr")
+        every { sakClient.finnNyeBarnForBruker(any()) } returns emptyList()
         every { pdlClient.hentPerson(personIdent) } returns person
-        every { person.forelderBarnRelasjon } returns listOf(forelderBarnRelasjon(ForelderBarnRelasjonRolle.BARN))
         service.håndterPersonhendelse(personhendelse)
-
         verify(exactly = 0) { oppgaveClient.opprettOppgave(any()) }
     }
 
     @Test
-    internal fun `pdl og ef-sak har ulikt antall barn, forvent at oppgave opprettes`() {
+    internal fun `finnNyeBarnForBruker inneholder treff, forvent at oppgave opprettes`() {
         val personhendelse = forelderBarnRelasjonHendelse("BARN")
-        every { sakClient.hentFnrForAlleBarn(any()) } returns listOf("fnr")
+        every { sakClient.finnNyeBarnForBruker(any()) } returns listOf("fnr")
         every { pdlClient.hentPerson(personIdent) } returns person
-        every { person.forelderBarnRelasjon } returns listOf(forelderBarnRelasjon(ForelderBarnRelasjonRolle.BARN),
-                                                             forelderBarnRelasjon(ForelderBarnRelasjonRolle.BARN))
         service.håndterPersonhendelse(personhendelse)
-
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
         assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt barn")
     }
@@ -70,20 +63,12 @@ class ForelderBarnHandlerTest {
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.opplysningstype = PersonhendelseType.FORELDERBARNRELASJON.hendelsetype
         personhendelse.forelderBarnRelasjon = no.nav.person.pdl.leesah.forelderbarnrelasjon.ForelderBarnRelasjon(
-                personIdent,
-                "",
-                minRolleForPerson
+            personIdent,
+            "",
+            minRolleForPerson
         )
         personhendelse.hendelseId = UUID.randomUUID().toString()
         personhendelse.endringstype = Endringstype.OPPRETTET
         return personhendelse
-    }
-
-    private fun forelderBarnRelasjon(forelderBarnRelasjonRolle: ForelderBarnRelasjonRolle): ForelderBarnRelasjon {
-        return ForelderBarnRelasjon(
-                personIdent,
-                ForelderBarnRelasjonRolle.__UNKNOWN_VALUE,
-                forelderBarnRelasjonRolle
-        )
     }
 }
