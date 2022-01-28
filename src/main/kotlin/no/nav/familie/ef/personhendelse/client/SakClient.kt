@@ -3,6 +3,7 @@ package no.nav.familie.ef.personhendelse.client
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.getDataOrThrow
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -28,6 +29,6 @@ class SakClient(
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("/api/behandling/barn/nye-barn")
         val response = postForEntity<Ressurs<List<String>>>(uriComponentsBuilder.build().toUri(), personIdent)
-        return response. getDataOrThrow()
+        return response.getDataOrThrow()
     }
 }
