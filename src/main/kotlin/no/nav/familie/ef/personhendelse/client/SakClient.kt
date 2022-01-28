@@ -27,10 +27,17 @@ class SakClient(
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
 
-    fun inntektForEksternId(eksternId: Long): Int {
+    fun inntektForEksternId(eksternId: Long): Int? {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("api/vedtak/eksternid/$eksternId").queryParam("dato", LocalDate.now())
-        val response = getForEntity<Ressurs<Int>>(uriComponentsBuilder.build().toUri())
-        return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
+            .pathSegment("api/vedtak/eksternid/$eksternId/inntekt").queryParam("dato", LocalDate.now())
+        val response = getForEntity<Ressurs<Int?>>(uriComponentsBuilder.build().toUri())
+        return response.data
+    }
+
+    fun harAktivtVedtak(eksternId: Long): Boolean {
+        val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
+            .pathSegment("api/vedtak/eksternid/$eksternId/harAktivtVedtak").queryParam("dato", LocalDate.now())
+        val response = getForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri())
+        return response.data ?: throw Exception("Feil ved kall, mottok NULL: harAktivtVedtak skal alltid returnere en verdi")
     }
 }

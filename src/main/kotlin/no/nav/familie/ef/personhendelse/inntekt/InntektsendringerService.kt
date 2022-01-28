@@ -24,13 +24,15 @@ class InntektsendringerService(
         logger.info("Antall personer med aktive vedtak: ${personerMedVedtakList.size}")
 
         for (ensligForsørgerVedtakhendelse in personerMedVedtakList) {
-            val response = inntektClient.hentInntektshistorikk(
-                ensligForsørgerVedtakhendelse.personIdent,
-                YearMonth.now().minusYears(1),
-                null
-            )
-            if (harEndretInntekt(response, ensligForsørgerVedtakhendelse.behandlingId)) {
-                logger.info("Person med behandlingId ${ensligForsørgerVedtakhendelse.behandlingId} kan ha inntektsendringer. Skal opprette oppgave.")
+            if (sakClient.harAktivtVedtak(ensligForsørgerVedtakhendelse.behandlingId)) {
+                val response = inntektClient.hentInntektshistorikk(
+                    ensligForsørgerVedtakhendelse.personIdent,
+                    YearMonth.now().minusYears(1),
+                    null
+                )
+                if (harEndretInntekt(response, ensligForsørgerVedtakhendelse.behandlingId)) {
+                    logger.info("Person med behandlingId ${ensligForsørgerVedtakhendelse.behandlingId} kan ha inntektsendringer. Skal opprette oppgave.")
+                }
             }
         }
     }
@@ -45,6 +47,10 @@ class InntektsendringerService(
 
     private fun har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt: List<InntektVersjon>?, eksternId: Long): Boolean {
         val forventetInntekt = sakClient.inntektForEksternId(eksternId)
+        if (forventetInntekt == null) {
+            logger.warn("Ingen gjeldende inntekt funnet på person med ekstern behandlingid $eksternId - har personen løpende stønad?")
+            return false
+        }
         val månedligForventetInntekt = (forventetInntekt / 12)
 
         val nyesteVersjon = nyesteRegistrerteInntekt?.maxOf { it.versjon }
