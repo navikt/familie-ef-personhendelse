@@ -70,7 +70,7 @@ internal class SakClientTest {
     fun `Finnes behandling med gitt eksternId i ef-sak for person med forventet inntekt på 400 000 for gitt dato`() {
 
         wiremockServerItem.stubFor(
-            get(urlEqualTo("/api/vedtak/eksternId/1?dato=${LocalDate.now()}"))
+            get(urlEqualTo("/api/vedtak/eksternid/1?dato=${LocalDate.now()}"))
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json")
