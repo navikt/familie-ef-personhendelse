@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.YearMonth
 
 data class InntektshistorikkResponse(
-    val aarMaanedHistorikk: Map<String, Map<String, List<InntektVersjon>>> // <Year-month>, <orgnr, inntekt>
-)
+    val aarMaanedHistorikk: Map<String, Map<String, List<InntektVersjon>>> = emptyMap() // <Year-month>, <orgnr, inntekt>
+) {
+    fun inntektForMåned(yearMonth: String) = aarMaanedHistorikk.get(yearMonth)?.values?.flatten()
+}
 
 data class InntektVersjon(
     val arbeidsInntektInformasjon: ArbeidsInntekthistorikkInformasjon,
@@ -75,12 +77,12 @@ data class ArbeidsInntekthistorikkInformasjon(
         val inntektsstatus: String,
         val leveringstidspunkt: YearMonth,
         val opplysningspliktig: Aktør,
-        val opptjeningsland: String,
+        val opptjeningsland: String?,
         val opptjeningsperiodeFom: String?,
         val opptjeningsperiodeTom: String?,
-        val skatteOgAvgiftsregel: String,
+        val skatteOgAvgiftsregel: String?,
         val skattemessigBosattLand: String?,
-        val tilleggsinformasjon: Tilleggsinformasjon,
+        val tilleggsinformasjon: Tilleggsinformasjon?,
         val utbetaltIMaaned: YearMonth,
         val utloeserArbeidsgiveravgift: Boolean,
         val virksomhet: Aktør
