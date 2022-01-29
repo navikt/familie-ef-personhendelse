@@ -43,6 +43,9 @@ spec:
     application:
       enabled: true
   accessPolicy:
+    inbound:
+      rules:
+        - application: familie-ef-sak
     outbound:
       rules:
         - application: familie-ef-sak
