@@ -34,7 +34,6 @@ class PersonhendelseListener(
     )
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
-            logger.info("Personhendelse : ${personhendelse.opplysningstype}")
             MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
             val personidenter = personhendelse.identerUtenAktørId()
             // Finnes hendelser uten personIdent i dev som følge av opprydding i testdata

@@ -36,7 +36,6 @@ class PersonhendelseService(
     }
 
     fun håndterPersonhendelse(personhendelse: Personhendelse) {
-        logger.debug("Håndterer ${personhendelse.opplysningstype}")
         handlers[personhendelse.opplysningstype]?.let { handler ->
             handler.personidenterPerPersonSomSkalKontrolleres(personhendelse).forEach { personidenter ->
                 if (personidenter.isEmpty()) {
