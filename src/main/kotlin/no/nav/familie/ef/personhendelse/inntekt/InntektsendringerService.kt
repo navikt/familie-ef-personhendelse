@@ -14,8 +14,6 @@ class InntektsendringerService(
     val sakClient: SakClient
 ) {
 
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
-
     fun harEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, identMedForventetInntekt: Map.Entry<String, Int?>): Boolean {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
@@ -36,7 +34,7 @@ class InntektsendringerService(
         val inntektListe = nyesteRegistrerteInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
 
         val samletInntekt = inntektListe?.filter { it.inntektType != InntektType.YTELSE_FRA_OFFENTLIGE }?.sumOf { it.beløp } ?: 0
-        logger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: ${identMedForventetInntekt.value}) for person ${identMedForventetInntekt.key}")
+        secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: ${identMedForventetInntekt.value}) for person ${identMedForventetInntekt.key}")
         return samletInntekt >= (månedligForventetInntekt * 1.1) && samletInntekt > 0 // Må sjekke om samletInntekt er større enn 0 for å ikke få true dersom alle variabler er 0 (antakelig kun i test)
     }
 
