@@ -3,7 +3,9 @@ package no.nav.familie.ef.personhendelse.client
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
+import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -14,8 +16,8 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.web.client.RestOperations
-import java.io.IOException
 import java.net.URI
+import java.time.LocalDate
 
 internal class SakClientTest {
 
@@ -56,7 +58,7 @@ internal class SakClientTest {
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(gyldigResponse())
+                        .withBody(harStoenadGyldigResponse)
                 )
         )
 
@@ -64,13 +66,35 @@ internal class SakClientTest {
         Assertions.assertThat(response).isEqualTo(true)
     }
 
-    @Throws(IOException::class)
-    private fun gyldigResponse(): String {
-        return "{\n" +
-            "    \"data\": true,\n" +
-            "    \"status\": \"SUKSESS\",\n" +
-            "    \"melding\": \"Innhenting av data var vellykket\",\n" +
-            "    \"stacktrace\": null\n" +
-            "}"
+    @Test
+    fun `Finnes behandling med gitt eksternId i ef-sak for person med forventet inntekt på 400 000 for gitt dato`() {
+
+        wiremockServerItem.stubFor(
+            get(urlEqualTo("/api/vedtak/eksternid/1/inntekt?dato=${LocalDate.now()}"))
+                .willReturn(
+                    aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(inntektGyldigResponse)
+                )
+        )
+
+        val response = sakClient.inntektForEksternId(1)
+        Assertions.assertThat(response).isEqualTo(400000)
     }
+
+    private val harStoenadGyldigResponse = """
+        {
+            "data": true,
+            "status": "SUKSESS",
+            "melding": "Innhenting av data var vellykket"
+        }
+    """.trimIndent()
+
+    private val inntektGyldigResponse = """
+        {
+            "data": 400000,
+            "status": "SUKSESS",
+            "melding": "Innhenting av data var vellykket"
+        }
+    """.trimIndent()
 }

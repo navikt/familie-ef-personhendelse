@@ -3,6 +3,7 @@ package no.nav.familie.ef.personhendelse.client
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
+import org.slf4j.LoggerFactory
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import java.time.LocalDate
 
 @Component
 class SakClient(
@@ -18,11 +20,27 @@ class SakClient(
     private val uri: URI
 ) : AbstractRestClient(restOperations, "familie.ef-sak") {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun harStønadSiste12MånederForPersonidenter(personidenter: Set<String>): Boolean {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/ekstern/behandling/harstoenad/flere-identer")
         val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), personidenter)
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
+    }
+
+    fun inntektForEksternId(eksternId: Long): Int? {
+        val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
+            .pathSegment("api/vedtak/eksternid/$eksternId/inntekt").queryParam("dato", LocalDate.now())
+        val response = getForEntity<Ressurs<Int?>>(uriComponentsBuilder.build().toUri())
+        return response.data
+    }
+
+    fun harAktivtVedtak(eksternId: Long): Boolean {
+        val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
+            .pathSegment("api/vedtak/eksternid/$eksternId/harAktivtVedtak").queryParam("dato", LocalDate.now())
+        val response = getForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri())
+        return response.data ?: throw Exception("Feil ved kall, mottok NULL: harAktivtVedtak skal alltid returnere en verdi")
     }
 
     fun finnNyeBarnForBruker(personIdent: PersonIdent): List<String> {

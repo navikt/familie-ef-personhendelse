@@ -43,9 +43,15 @@ spec:
     application:
       enabled: true
   accessPolicy:
+    inbound:
+      rules:
+        - application: familie-ef-sak
     outbound:
       rules:
         - application: familie-ef-sak
+        - application: familie-ef-proxy
+          namespace: teamfamilie
+          cluster: prod-fss
       external:
         - host: kafka-schema-registry.nais.adeo.no
         - host: pdl-api.prod-fss-pub.nais.io
