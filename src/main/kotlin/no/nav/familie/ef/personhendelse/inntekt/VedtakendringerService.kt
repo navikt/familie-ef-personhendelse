@@ -21,42 +21,43 @@ class VedtakendringerService(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     fun beregnNyeVedtakOgLagOppgave() {
-        val personerMedVedtakList = efVedtakRepository.hentAllePersonerMedVedtak() // for testing
-        // val personerMedVedtakList = efVedtakRepository.hentPersonerMedVedtakIkkeBehandlet() //koden som faktisk skal brukes
-        logger.info("Antall personer med aktive vedtak: ${personerMedVedtakList.size}")
+        // val personerMedVedtakList = efVedtakRepository.hentAllePersonerMedVedtak() // for testing
+
+        val identToForventetInntektMap = sakClient.hentAlleAktiveIdenterOgForventetInntekt()
+        logger.info("Antall personer med aktive vedtak: ${identToForventetInntektMap.keys.size}")
 
         // Kommer til å bytte til batch-prosessering for forbedring av ytelse
-        for (ensligForsørgerVedtakhendelse in personerMedVedtakList) {
-            if (sakClient.harAktivtVedtak(ensligForsørgerVedtakhendelse.behandlingId)) {
-                val response = inntektClient.hentInntektshistorikk(
-                    ensligForsørgerVedtakhendelse.personIdent,
-                    YearMonth.now().minusYears(1),
-                    null
-                )
-                if (harNyeVedtak(response)) {
-                    logger.info("Person med behandlingId ${ensligForsørgerVedtakhendelse.behandlingId} kan ha nye vedtak. Oppretter oppgave.")
-                    /*
-                    val oppgaveId = oppgaveClient.opprettOppgave(
-                        defaultOpprettOppgaveRequest(
-                            ensligForsørgerVedtakhendelse.personIdent,
-                            "Sjekk om bruker har fått nytt vedtak"
-                        )
+        for (identMedForventetInntekt in identToForventetInntektMap.entries) {
+            val response = inntektClient.hentInntektshistorikk(
+                identMedForventetInntekt.key,
+                YearMonth.now().minusYears(1),
+                null
+            )
+            if (harNyeVedtak(response)) {
+                secureLogger.info("Person ${identMedForventetInntekt.key} kan ha nye vedtak. Oppretter oppgave.")
+                /*
+                val oppgaveId = oppgaveClient.opprettOppgave(
+                    defaultOpprettOppgaveRequest(
+                        ensligForsørgerVedtakhendelse.personIdent,
+                        "Sjekk om bruker har fått nytt vedtak"
                     )
-                    secureLogger.info("Oppgave opprettet med id: $oppgaveId")
-                     */
-                }
-                if (inntektsendringerService.harEndretInntekt(response, ensligForsørgerVedtakhendelse.behandlingId)) {
-                    logger.info("Person med behandlingId ${ensligForsørgerVedtakhendelse.behandlingId} kan ha endret inntekt. Oppretter oppgave.")
-                }
-                efVedtakRepository.oppdaterAarMaanedProsessert(ensligForsørgerVedtakhendelse.personIdent)
+                )
+                secureLogger.info("Oppgave opprettet med id: $oppgaveId")
+                 */
             }
+            if (inntektsendringerService.harEndretInntekt(response, identMedForventetInntekt)) {
+                secureLogger.info("Person ${identMedForventetInntekt.key} kan ha endret inntekt. Oppretter oppgave.")
+            }
+            // efVedtakRepository.oppdaterAarMaanedProsessert(identMedForventetInntekt.key)
         }
     }
 
     fun harNyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): Boolean {
         // hent alle registrerte vedtak som var på personen sist beregning
-        val nyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
-        val nestNyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2).toString())
+        val nyesteRegistrerteInntekt =
+            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
+        val nestNyesteRegistrerteInntekt =
+            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2).toString())
 
         val antallOffentligeYtelserForNyeste = antallOffentligeYtelser(nyesteRegistrerteInntekt)
         val antallOffentligeYtelserForNestNyeste = antallOffentligeYtelser(nestNyesteRegistrerteInntekt)
