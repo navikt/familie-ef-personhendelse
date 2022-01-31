@@ -24,41 +24,41 @@ data class ArbeidsInntekthistorikkInformasjon(
     val inntektListe: List<Inntekt>?
 ) {
     data class ArbeidsforholdFrilanser(
-        val antallTimerPerUkeSomEnFullStillingTilsvarer: Double,
-        val arbeidsforholdID: String,
-        val arbeidsforholdIDnav: String,
-        val arbeidsforholdstype: String,
-        val arbeidsgiver: Aktør,
-        val arbeidstaker: Aktør,
-        val arbeidstidsordning: String,
-        val avloenningstype: String,
-        val frilansPeriodeFom: String,
-        val frilansPeriodeTom: String,
-        val sisteDatoForStillingsprosentendring: String,
-        val sisteLoennsendring: String,
-        val stillingsprosent: Double,
-        val yrke: String
+        val antallTimerPerUkeSomEnFullStillingTilsvarer: Double?,
+        val arbeidsforholdID: String?,
+        val arbeidsforholdIDnav: String?,
+        val arbeidsforholdstype: String?,
+        val arbeidsgiver: Aktør?,
+        val arbeidstaker: Aktør?,
+        val arbeidstidsordning: String?,
+        val avloenningstype: String?,
+        val frilansPeriodeFom: String?,
+        val frilansPeriodeTom: String?,
+        val sisteDatoForStillingsprosentendring: String?,
+        val sisteLoennsendring: String?,
+        val stillingsprosent: Double?,
+        val yrke: String?
     )
 
     data class Forskuddstrekk(
         @JsonProperty("beloep")
-        val beløp: Int,
-        val beskrivelse: String,
-        val forskuddstrekkGjelder: Aktør,
-        val leveringstidspunkt: String,
-        val opplysningspliktig: Aktør,
-        val utbetaler: Aktør
+        val beløp: Int?,
+        val beskrivelse: String?,
+        val forskuddstrekkGjelder: Aktør?,
+        val leveringstidspunkt: String?,
+        val opplysningspliktig: Aktør?,
+        val utbetaler: Aktør?
     )
 
     data class Fradrag(
         @JsonProperty("beloep")
-        val beløp: Int,
-        val beskrivelse: String,
-        val fradragGjelder: Aktør,
-        val fradragsperiode: YearMonth,
-        val inntektspliktig: Aktør,
-        val leveringstidspunkt: String,
-        val utbetaler: Aktør
+        val beløp: Int?,
+        val beskrivelse: String?,
+        val fradragGjelder: Aktør?,
+        val fradragsperiode: YearMonth?,
+        val inntektspliktig: Aktør?,
+        val leveringstidspunkt: String?,
+        val utbetaler: Aktør?
     )
 
     data class Inntekt(
