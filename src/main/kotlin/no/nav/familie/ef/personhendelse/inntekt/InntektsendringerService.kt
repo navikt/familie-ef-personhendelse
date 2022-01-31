@@ -47,7 +47,12 @@ class InntektsendringerService(
         val nyesteVersjon = nyesteRegistrerteInntekt?.maxOf { it.versjon }
 
         val inntektListe = nyesteRegistrerteInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
-        val beløpYtelseFraOffentligList = inntektListe?.filter { it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE && it.inntektsperiodetype == "Maaned" }?.map { it.beløp } ?: listOf() // Sjekker kun mot faste månedlige utbetalinger (ikke dagpenger / AAP fordi de ofte er variable)
+        val beløpYtelseFraOffentligList = inntektListe?.filter {
+            it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
+                it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
+                it.beskrivelse != "arbeidsavklaringspenger" &&
+                it.beskrivelse != "dagpengerVedArbeidsloeshet"
+        }?.map { it.beløp } ?: listOf() // Sjekker kun mot faste månedlige utbetalinger (ikke dagpenger / AAP fordi de ofte er variable)
         return beløpYtelseFraOffentligList.sumOf { it }
     }
 }
