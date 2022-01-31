@@ -40,4 +40,11 @@ class SakClient(
         val response = getForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri())
         return response.data ?: throw Exception("Feil ved kall, mottok NULL: harAktivtVedtak skal alltid returnere en verdi")
     }
+
+    fun hentAlleAktiveIdenterOgForventetInntekt(): Map<String, Int?> {
+        val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
+            .pathSegment("api/vedtak/gjeldendeIverksatteBehandlingerMedInntekt")
+        val response = getForEntity<Ressurs<Map<String, Int?>>>(uriComponentsBuilder.build().toUri())
+        return response.data ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
+    }
 }

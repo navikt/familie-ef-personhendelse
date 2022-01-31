@@ -12,19 +12,19 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 import java.time.YearMonth
+import java.util.AbstractMap
 
 class InntektsendringerServiceTest {
 
-    private val efVedtakRepository = mockk<EfVedtakRepository>()
-    private val inntektClient = mockk<InntektClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val sakClient = mockk<SakClient>()
 
-    val inntektsendringer = InntektsendringerService(efVedtakRepository, inntektClient, oppgaveClient, sakClient)
+    val inntektsendringer = InntektsendringerService(oppgaveClient, sakClient)
+    val forventetLønnsinntekt = 420000 // 35k pr mnd i eksempel json-fil
 
     @BeforeEach
     internal fun setUp() {
-        val forventetLønnsinntekt = 420000 // 35k pr mnd i eksempel json-fil
+
         every { sakClient.inntektForEksternId(1) } returns forventetLønnsinntekt
         every { sakClient.inntektForEksternId(2) } returns (forventetLønnsinntekt * 0.9).toInt()
         every { sakClient.inntektForEksternId(3) } returns (forventetLønnsinntekt * 0.91).toInt()
@@ -45,9 +45,13 @@ class InntektsendringerServiceTest {
             )
         )
 
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, 1)).isFalse
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, 2)).isTrue
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, 3)).isFalse
+        val sammeInntekt = AbstractMap.SimpleEntry("1", forventetLønnsinntekt)
+        val forventetInntektTiProsentLavere = AbstractMap.SimpleEntry("2", (forventetLønnsinntekt * 0.9).toInt())
+        val forventetInntektNiProsentLavere = AbstractMap.SimpleEntry("3", (forventetLønnsinntekt * 0.91).toInt())
+
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, sammeInntekt)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektTiProsentLavere)).isTrue
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektNiProsentLavere)).isFalse
     }
 
     @Test
@@ -63,8 +67,8 @@ class InntektsendringerServiceTest {
                 Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("928497704", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)))))
             )
         )
-
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, 1)).isTrue
+        val sammeInntekt = AbstractMap.SimpleEntry("1", forventetLønnsinntekt)
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, sammeInntekt)).isTrue
     }
 
     fun readResource(name: String): String {
