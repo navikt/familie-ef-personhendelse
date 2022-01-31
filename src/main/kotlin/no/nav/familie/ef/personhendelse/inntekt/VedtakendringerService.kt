@@ -28,12 +28,10 @@ class VedtakendringerService(
 
         // Kommer til å bytte til batch-prosessering for forbedring av ytelse
         for (identMedForventetInntekt in identToForventetInntektMap.entries) {
-            val response = inntektClient.hentInntektshistorikk(
-                identMedForventetInntekt.key,
-                YearMonth.now().minusYears(1),
-                null
-            )
-            if (harNyeVedtak(response)) {
+
+            val response = hentInntektshistorikk(identMedForventetInntekt)
+
+            if (response != null && harNyeVedtak(response)) {
                 secureLogger.info("Person ${identMedForventetInntekt.key} kan ha nye vedtak. Oppretter oppgave.")
                 /*
                 val oppgaveId = oppgaveClient.opprettOppgave(
@@ -45,11 +43,24 @@ class VedtakendringerService(
                 secureLogger.info("Oppgave opprettet med id: $oppgaveId")
                  */
             }
-            if (inntektsendringerService.harEndretInntekt(response, identMedForventetInntekt)) {
+            if (response != null && inntektsendringerService.harEndretInntekt(response, identMedForventetInntekt)) {
                 secureLogger.info("Person ${identMedForventetInntekt.key} kan ha endret inntekt. Oppretter oppgave.")
             }
             // efVedtakRepository.oppdaterAarMaanedProsessert(identMedForventetInntekt.key)
         }
+    }
+
+    private fun hentInntektshistorikk(identMedForventetInntekt: Map.Entry<String, Int?>): InntektshistorikkResponse? {
+        try {
+            return inntektClient.hentInntektshistorikk(
+                identMedForventetInntekt.key,
+                YearMonth.now().minusYears(1),
+                null
+            )
+        } catch (e: Exception) {
+            secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person ${identMedForventetInntekt.key}. Message: ${e.message} Cause: ${e.cause}")
+        }
+        return null
     }
 
     fun harNyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): Boolean {
