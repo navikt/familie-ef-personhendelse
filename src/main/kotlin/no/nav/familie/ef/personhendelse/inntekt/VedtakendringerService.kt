@@ -5,6 +5,7 @@ import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.YearMonth
 
@@ -20,6 +21,7 @@ class VedtakendringerService(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
+    @Async
     fun beregnNyeVedtakOgLagOppgave() {
         // val personerMedVedtakList = efVedtakRepository.hentAllePersonerMedVedtak() // for testing
 
