@@ -43,7 +43,6 @@ class VedtakendringerServiceTest {
             )
         )
 
-
         Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isTrue
     }
 
