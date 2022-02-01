@@ -41,7 +41,6 @@ class PersonhendelseService(
                 if (personidenter.isEmpty()) {
                     error("Savner personidenter til personhendelse=${personhendelse.hendelseId}")
                 }
-                logger.debug("Personhendelse av opplysningstype : ${personhendelse.opplysningstype} av type : ${personhendelse.endringstype.name}")
                 handle(handler, personhendelse, personidenter)
             }
         }
@@ -49,7 +48,8 @@ class PersonhendelseService(
 
     private fun handle(handler: PersonhendelseHandler, personhendelse: Personhendelse, personidenter: Set<String>) {
         val finnesBehandlingForPerson = sakClient.harStønadSiste12MånederForPersonidenter(personidenter)
-        logger.info("Personhendelse av type ${personhendelse.opplysningstype} håndteres")
+        logger.info("Personhendelse av opplysningstype : ${personhendelse.opplysningstype} av type : ${personhendelse.endringstype.name}." +
+                    " Behandling finnes : $finnesBehandlingForPerson . ")
         if (finnesBehandlingForPerson) {
             handlePersonhendelse(handler, personhendelse, personidenter.first())
         }
