@@ -41,6 +41,7 @@ class PersonhendelseService(
                 if (personidenter.isEmpty()) {
                     error("Savner personidenter til personhendelse=${personhendelse.hendelseId}")
                 }
+                logger.debug("Personhendelse av opplysningstype : ${personhendelse.opplysningstype}")
                 handle(handler, personhendelse, personidenter)
             }
         }
