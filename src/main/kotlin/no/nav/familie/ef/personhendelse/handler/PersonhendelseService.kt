@@ -48,7 +48,7 @@ class PersonhendelseService(
 
     private fun handle(handler: PersonhendelseHandler, personhendelse: Personhendelse, personidenter: Set<String>) {
         val finnesBehandlingForPerson = sakClient.harStønadSiste12MånederForPersonidenter(personidenter)
-
+        logger.info("Personhendelse av type ${personhendelse.opplysningstype} håndteres")
         if (finnesBehandlingForPerson) {
             handlePersonhendelse(handler, personhendelse, personidenter.first())
         }
