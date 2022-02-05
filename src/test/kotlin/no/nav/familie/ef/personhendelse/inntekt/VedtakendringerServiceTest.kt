@@ -46,6 +46,35 @@ class VedtakendringerServiceTest {
         Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isTrue
     }
 
+    @Test
+    fun `Bruker har flere utbetalinger på ytelse en måned`() {
+        val json: String = readResource("inntekt/InntekthistorikkLoennsinntektTilOffentligYtelseEksempel.json")
+        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12")?.first()?.arbeidsInntektInformasjon!!
+
+        val toUtbetalingerSammeYtelse = listOf(nyesteArbeidsInntektInformasjonIEksempelJson.inntektListe!!.first(), nyesteArbeidsInntektInformasjonIEksempelJson.inntektListe?.first()!!.copy(beløp = 10000))
+
+        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
+            linkedMapOf(
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("928497704", listOf(InntektVersjon(ArbeidsInntekthistorikkInformasjon(null, null, null, toUtbetalingerSammeYtelse), null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+                Pair(
+                    YearMonth.now().minusMonths(2).toString(),
+                    mapOf(
+                        Pair(
+                            "928497704",
+                            listOf(
+                                InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isFalse
+    }
+
     fun readResource(name: String): String {
         return this::class.java.classLoader.getResource(name)!!.readText(StandardCharsets.UTF_8)
     }
