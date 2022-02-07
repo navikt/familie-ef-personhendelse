@@ -7,6 +7,8 @@ data class InntektshistorikkResponse(
     val aarMaanedHistorikk: Map<String, Map<String, List<InntektVersjon>>> = emptyMap() // <Year-month>, <orgnr, inntekt>
 ) {
     fun inntektForMåned(yearMonth: String) = aarMaanedHistorikk.get(yearMonth)?.values?.flatten()
+
+    fun inntektEntryForMåned(yearMonth: String) = aarMaanedHistorikk[yearMonth]
 }
 
 data class InntektVersjon(
