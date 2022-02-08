@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 import java.time.YearMonth
-import java.util.AbstractMap
+import java.util.*
 
 class InntektsendringerServiceTest {
 
@@ -34,13 +34,13 @@ class InntektsendringerServiceTest {
         val json: String = readResource("inntekt/InntekthistorikkLoennsinntektEksempel.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-01")?.first()?.arbeidsInntektInformasjon!!
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12")?.first()?.arbeidsInntektInformasjon!!
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-01").first().arbeidsInntektInformasjon
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("928497704", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
-                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("928497704", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)))))
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)))))
             )
         )
 
@@ -51,6 +51,25 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, sammeInntekt)).isFalse
         Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektTiProsentLavere)).isTrue
         Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektNiProsentLavere)).isFalse
+    }
+
+    @Test
+    fun `Har for høy forventet inntekt, skal returnere false`() {
+        val json: String = readResource("inntekt/InntekthistorikkLoennsinntektEksempel.json")
+        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-01").first().arbeidsInntektInformasjon
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+
+        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
+            linkedMapOf(
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)))))
+            )
+        )
+
+        val høyInntekt = AbstractMap.SimpleEntry("1", 585001)
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, høyInntekt)).isFalse
     }
 
     fun readResource(name: String): String {

@@ -6,7 +6,9 @@ import java.time.YearMonth
 data class InntektshistorikkResponse(
     val aarMaanedHistorikk: Map<String, Map<String, List<InntektVersjon>>> = emptyMap() // <Year-month>, <orgnr, inntekt>
 ) {
-    fun inntektForMåned(yearMonth: String) = aarMaanedHistorikk.get(yearMonth)?.values?.flatten()
+    fun inntektForMåned(yearMonth: String) = aarMaanedHistorikk[yearMonth]?.values?.flatten() ?: emptyList()
+
+    fun inntektEntryForMåned(yearMonth: String) = aarMaanedHistorikk[yearMonth] ?: emptyMap()
 }
 
 data class InntektVersjon(

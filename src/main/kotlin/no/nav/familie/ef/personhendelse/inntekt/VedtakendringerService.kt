@@ -79,10 +79,18 @@ class VedtakendringerService(
     }
 
     private fun antallOffentligeYtelser(nyesteRegistrerteInntekt: List<InntektVersjon>?): Int {
-        val nyesteVersjon = nyesteRegistrerteInntekt?.maxOf { it.versjon }
+        val offentligYtelseInntekt = nyesteRegistrerteInntekt?.filter {
+            it.arbeidsInntektInformasjon.inntektListe?.any {
+                it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
+                    it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
+            }
+                ?: false
+        }
+
+        val nyesteVersjon = offentligYtelseInntekt?.maxOfOrNull { it.versjon }
 
         val inntektListe =
-            nyesteRegistrerteInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
+            offentligYtelseInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
         return inntektListe?.filter {
             it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
                 it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"

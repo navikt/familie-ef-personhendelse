@@ -15,7 +15,6 @@ class InntektsendringerService(
     fun harEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, identMedForventetInntekt: Map.Entry<String, Int?>): Boolean {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
-        val nestNyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2).toString())
 
         return har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt, identMedForventetInntekt)
     }
@@ -26,6 +25,7 @@ class InntektsendringerService(
             secureLogger.warn("Ingen gjeldende inntekt funnet på person ${identMedForventetInntekt.key} har personen løpende stønad?")
             return false
         }
+        if (identMedForventetInntekt.value!! > 585000) return false // Ignorer alle med over 585000 i årsinntekt, da de har 0 i utbetaling.
         val månedligForventetInntekt = (identMedForventetInntekt.value!! / 12)
 
         val nyesteVersjon = nyesteRegistrerteInntekt?.maxOf { it.versjon }
