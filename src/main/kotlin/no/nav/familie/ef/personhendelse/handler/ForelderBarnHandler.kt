@@ -20,7 +20,7 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
     }
 
     override fun skalOppretteOppgave(personhendelse: Personhendelse): Boolean {
-        val personIdent = personhendelse.identerUtenAktørId().first()
+        val personIdent = personhendelse.identerUtenAktørId().filter { it.length == 11 }.first()
         val nyeBarnForBruker = sakClient.finnNyeBarnForBruker(PersonIdent(personIdent))
         logger.debug("Nye barn for bruker er ${nyeBarnForBruker.size}, hendelseId : ${personhendelse.hendelseId}")
         return nyeBarnForBruker.isNotEmpty()
