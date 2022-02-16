@@ -34,8 +34,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
 
     fun hentPersonerMedVedtakIkkeBehandlet(): List<VedtakhendelseInntektberegning> {
         val sql = "SELECT * FROM efvedtakhendelse WHERE aar_maaned_prosessert != '${YearMonth.now()}'"
-        val mapSqlParameterSource = MapSqlParameterSource("stonadstype", StønadType.OVERGANGSSTØNAD.toString())
-        return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, vedtakhendelseInntektberegningMapper)
+        return namedParameterJdbcTemplate.query(sql, vedtakhendelseInntektberegningMapper)
     }
 
     private val vedtakhendelseInntektberegningMapper = { rs: ResultSet, _: Int ->

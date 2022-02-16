@@ -54,6 +54,24 @@ class InntektsendringerServiceTest {
     }
 
     @Test
+    fun `Utbetaling av offentlig ytelse og lønnsinntekt utgjør til sammen mer enn 10 prosent av forventet inntekt`() {
+        val json: String = readResource("inntekt/InntekthistorikkLoennsinntektOgOffentligYtelseEksempel.json")
+        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+
+        val inntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+
+        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
+            linkedMapOf(
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("5", listOf(InntektVersjon(inntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)))))
+            )
+        )
+
+        val forventetInntektTiProsentLavere = AbstractMap.SimpleEntry("2", (forventetLønnsinntekt * 0.9).toInt())
+
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektTiProsentLavere)).isFalse
+    }
+
+    @Test
     fun `Har for høy forventet inntekt, skal returnere false`() {
         val json: String = readResource("inntekt/InntekthistorikkLoennsinntektEksempel.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)

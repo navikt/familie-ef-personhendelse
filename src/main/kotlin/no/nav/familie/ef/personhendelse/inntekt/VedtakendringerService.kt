@@ -2,12 +2,23 @@ package no.nav.familie.ef.personhendelse.inntekt
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
+import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
+import no.nav.familie.ef.personhendelse.inntekt.vedtak.VedtakhendelseInntektberegning
+import no.nav.familie.kontrakter.felles.Behandlingstema
+import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.ef.StønadType
+import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.YearMonth
+import java.util.*
 
 @Service
 class VedtakendringerService(
@@ -15,7 +26,8 @@ class VedtakendringerService(
     val inntektClient: InntektClient,
     val oppgaveClient: OppgaveClient,
     val sakClient: SakClient,
-    val inntektsendringerService: InntektsendringerService
+    val inntektsendringerService: InntektsendringerService,
+    val personhendelseService: PersonhendelseService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -23,46 +35,23 @@ class VedtakendringerService(
 
     @Async
     fun beregnNyeVedtakOgLagOppgave() {
-        // val personerMedVedtakList = efVedtakRepository.hentAllePersonerMedVedtak() // for testing
+        val personerMedVedtakList = efVedtakRepository.hentPersonerMedVedtakIkkeBehandlet()
 
         val identToForventetInntektMap = sakClient.hentAlleAktiveIdenterOgForventetInntekt()
         logger.info("Antall personer med aktive vedtak: ${identToForventetInntektMap.keys.size}")
 
-        // Kommer til å bytte til batch-prosessering for forbedring av ytelse
-        for (identMedForventetInntekt in identToForventetInntektMap.entries) {
+        personerMedVedtakList.forEach {
+            val response = hentInntektshistorikk(it.personIdent)
+            if (response != null) {
+                val harNyeVedtak = harNyeVedtak(response)
+                val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, AbstractMap.SimpleEntry(it.personIdent, identToForventetInntektMap[it.personIdent]))
 
-            val response = hentInntektshistorikk(identMedForventetInntekt)
-
-            if (response != null && harNyeVedtak(response)) {
-                secureLogger.info("Person ${identMedForventetInntekt.key} kan ha nye vedtak. Oppretter oppgave.")
-                /*
-                val oppgaveId = oppgaveClient.opprettOppgave(
-                    defaultOpprettOppgaveRequest(
-                        ensligForsørgerVedtakhendelse.personIdent,
-                        "Sjekk om bruker har fått nytt vedtak"
-                    )
-                )
-                secureLogger.info("Oppgave opprettet med id: $oppgaveId")
-                 */
+                if (harNyeVedtak || harEndretInntekt) {
+                    opprettOppgave(harNyeVedtak, harEndretInntekt, it)
+                }
+                efVedtakRepository.oppdaterAarMaanedProsessert(it.personIdent)
             }
-            if (response != null && inntektsendringerService.harEndretInntekt(response, identMedForventetInntekt)) {
-                secureLogger.info("Person ${identMedForventetInntekt.key} kan ha endret inntekt. Oppretter oppgave.")
-            }
-            // efVedtakRepository.oppdaterAarMaanedProsessert(identMedForventetInntekt.key)
         }
-    }
-
-    private fun hentInntektshistorikk(identMedForventetInntekt: Map.Entry<String, Int?>): InntektshistorikkResponse? {
-        try {
-            return inntektClient.hentInntektshistorikk(
-                identMedForventetInntekt.key,
-                YearMonth.now().minusYears(1),
-                null
-            )
-        } catch (e: Exception) {
-            secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person ${identMedForventetInntekt.key}. Message: ${e.message} Cause: ${e.cause}")
-        }
-        return null
     }
 
     fun harNyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): Boolean {
@@ -95,5 +84,56 @@ class VedtakendringerService(
             it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
                 it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
         }?.groupBy { it.beskrivelse }?.size ?: 0
+    }
+
+    private fun hentInntektshistorikk(fnr: String): InntektshistorikkResponse? {
+        try {
+            return inntektClient.hentInntektshistorikk(
+                fnr,
+                YearMonth.now().minusYears(1),
+                null
+            )
+        } catch (e: Exception) {
+            secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person $fnr. Message: ${e.message} Cause: ${e.cause}")
+        }
+        return null
+    }
+
+    private fun opprettOppgave(harNyeVedtak: Boolean, harEndretInntekt: Boolean, vedtakhendelseInntektberegning: VedtakhendelseInntektberegning) {
+        val oppgavetekst = lagOppgavetekst(harNyeVedtak, harEndretInntekt)
+        secureLogger.info("${vedtakhendelseInntektberegning.personIdent} - $oppgavetekst")
+        val oppgaveId = oppgaveClient.opprettOppgave(
+            OpprettOppgaveRequest(
+                ident = OppgaveIdentV2(ident = vedtakhendelseInntektberegning.personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
+                saksId = null,
+                tema = Tema.ENF,
+                oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
+                fristFerdigstillelse = fristFerdigstillelse(),
+                beskrivelse = oppgavetekst,
+                enhetsnummer = null,
+                behandlingstema = vedtakhendelseInntektberegning.stønadType.tilBehandlingstemaValue(),
+                tilordnetRessurs = null,
+                behandlesAvApplikasjon = "familie-ef-sak"
+            )
+        )
+        personhendelseService.leggOppgaveIMappe(oppgaveId)
+    }
+
+    private fun lagOppgavetekst(harNyeVedtak: Boolean, harEndretInntekt: Boolean): String {
+        if (harNyeVedtak && harEndretInntekt) {
+            return "Person kan ha nye vedtak og endret inntekt."
+        } else if (harNyeVedtak) {
+            return "Person kan ha nye vedtak."
+        } else {
+            return "Person kan ha endret inntekt"
+        }
+    }
+}
+
+fun StønadType.tilBehandlingstemaValue(): String {
+    return when (this) {
+        StønadType.OVERGANGSSTØNAD -> Behandlingstema.Overgangsstønad.value
+        StønadType.BARNETILSYN -> Behandlingstema.Barnetilsyn.value
+        StønadType.SKOLEPENGER -> Behandlingstema.Skolepenger.value
     }
 }
