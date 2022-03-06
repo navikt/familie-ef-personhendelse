@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 import java.time.YearMonth
-import java.util.*
+import java.util.AbstractMap
 
 class InntektsendringerServiceTest {
 
