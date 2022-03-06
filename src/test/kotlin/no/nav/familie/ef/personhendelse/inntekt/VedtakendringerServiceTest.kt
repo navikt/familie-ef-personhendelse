@@ -2,9 +2,13 @@ package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.mockk
+import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
+import no.nav.familie.kontrakter.felles.Behandlingstema
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -17,8 +21,10 @@ class VedtakendringerServiceTest {
     private val inntektClient = mockk<InntektClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val sakClient = mockk<SakClient>()
+    private val arbeidsfordelingClient = mockk<ArbeidsfordelingClient>()
     private val inntektsendringerService = mockk<InntektsendringerService>()
-    val vedtakendringer = VedtakendringerService(efVedtakRepository, inntektClient, oppgaveClient, sakClient, inntektsendringerService)
+    private val personhendelseService = mockk<PersonhendelseService>()
+    private val vedtakendringer = VedtakendringerService(efVedtakRepository, inntektClient, oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerService, personhendelseService)
 
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {
@@ -28,6 +34,7 @@ class VedtakendringerServiceTest {
         Assertions.assertThat(vedtakendringer.harNyeVedtak(inntektshistorikkResponse)).isFalse
     }
 
+    @Test
     fun `Bruker har lønnsinntekt frem til forrige måned`() {
         val json: String = readResource("inntekt/InntekthistorikkLoennsinntektTilOffentligYtelseEksempel.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
@@ -86,6 +93,11 @@ class VedtakendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
         val oppdatertInntektshistorikkResponse = oppdatertInntektshistorikkResponseTilNyereDato(inntektshistorikkResponse)
         Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertInntektshistorikkResponse)).isFalse
+    }
+
+    @Test
+    fun `map stønadtype til behandlingstema`() {
+        Assertions.assertThat(StønadType.OVERGANGSSTØNAD.tilBehandlingstemaValue()).isEqualTo(Behandlingstema.Overgangsstønad.value)
     }
 
     fun oppdatertInntektshistorikkResponseTilNyereDato(inntektshistorikkResponse: InntektshistorikkResponse): InntektshistorikkResponse {
