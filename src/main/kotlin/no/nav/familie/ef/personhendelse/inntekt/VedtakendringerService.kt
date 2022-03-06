@@ -118,7 +118,7 @@ class VedtakendringerService(
                 behandlesAvApplikasjon = "familie-ef-sak"
             )
         )
-
+        secureLogger.info("Opprettet oppgave for person ${vedtakhendelseInntektberegning.personIdent} med id: $oppgaveId")
         try {
             personhendelseService.leggOppgaveIMappe(oppgaveId)
         } catch (e: Exception) {
