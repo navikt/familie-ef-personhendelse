@@ -21,15 +21,15 @@ class InntektsendringerService(
 
     private fun har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Boolean {
 
-        if (forventetInntekt == null) {
+        if (forventetInntekt == null || nyesteRegistrerteInntekt?.maxOfOrNull { it.versjon } == null) {
             secureLogger.warn("Ingen gjeldende inntekt funnet på person $ident har personen løpende stønad?")
             return false
         }
         if (forventetInntekt > 585000) return false // Ignorer alle med over 585000 i årsinntekt, da de har 0 i utbetaling.
         val månedligForventetInntekt = (forventetInntekt / 12)
 
-        val nyesteVersjon = nyesteRegistrerteInntekt?.maxOf { it.versjon }
-        val inntektListe = nyesteRegistrerteInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
+        val nyesteVersjon = nyesteRegistrerteInntekt.maxOf { it.versjon }
+        val inntektListe = nyesteRegistrerteInntekt.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
 
         val samletInntekt = inntektListe?.filter { !ignorerteYtelserIBeregningAvInntekt.contains(it.beskrivelse) }?.sumOf { it.beløp } ?: 0
         secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident")
