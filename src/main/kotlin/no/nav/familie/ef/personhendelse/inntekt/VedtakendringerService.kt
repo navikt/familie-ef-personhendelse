@@ -1,5 +1,6 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
@@ -18,7 +19,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.YearMonth
-import java.util.*
 
 @Service
 class VedtakendringerService(
@@ -26,6 +26,7 @@ class VedtakendringerService(
     val inntektClient: InntektClient,
     val oppgaveClient: OppgaveClient,
     val sakClient: SakClient,
+    val arbeidsfordelingClient: ArbeidsfordelingClient,
     val inntektsendringerService: InntektsendringerService,
     val personhendelseService: PersonhendelseService
 ) {
@@ -44,7 +45,7 @@ class VedtakendringerService(
             val response = hentInntektshistorikk(it.personIdent)
             if (response != null) {
                 val harNyeVedtak = harNyeVedtak(response)
-                val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, AbstractMap.SimpleEntry(it.personIdent, identToForventetInntektMap[it.personIdent]))
+                val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, it.personIdent, identToForventetInntektMap[it.personIdent])
 
                 if (harNyeVedtak || harEndretInntekt) {
                     opprettOppgave(harNyeVedtak, harEndretInntekt, it)
@@ -102,6 +103,7 @@ class VedtakendringerService(
     private fun opprettOppgave(harNyeVedtak: Boolean, harEndretInntekt: Boolean, vedtakhendelseInntektberegning: VedtakhendelseInntektberegning) {
         val oppgavetekst = lagOppgavetekst(harNyeVedtak, harEndretInntekt)
         secureLogger.info("${vedtakhendelseInntektberegning.personIdent} - $oppgavetekst")
+        val enhetsnummer = arbeidsfordelingClient.hentArbeidsfordelingEnhetId(vedtakhendelseInntektberegning.personIdent)
         val oppgaveId = oppgaveClient.opprettOppgave(
             OpprettOppgaveRequest(
                 ident = OppgaveIdentV2(ident = vedtakhendelseInntektberegning.personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
@@ -110,13 +112,19 @@ class VedtakendringerService(
                 oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
                 fristFerdigstillelse = fristFerdigstillelse(),
                 beskrivelse = oppgavetekst,
-                enhetsnummer = null,
+                enhetsnummer = enhetsnummer,
                 behandlingstema = vedtakhendelseInntektberegning.stønadType.tilBehandlingstemaValue(),
                 tilordnetRessurs = null,
                 behandlesAvApplikasjon = "familie-ef-sak"
             )
         )
-        personhendelseService.leggOppgaveIMappe(oppgaveId)
+
+        try {
+            personhendelseService.leggOppgaveIMappe(oppgaveId)
+        } catch (e: Exception) {
+            logger.error("Feil under knytning av mappe til oppgave - se securelogs for stacktrace")
+            secureLogger.error("Feil under knytning av mappe til oppgave", e)
+        }
     }
 
     private fun lagOppgavetekst(harNyeVedtak: Boolean, harEndretInntekt: Boolean): String {

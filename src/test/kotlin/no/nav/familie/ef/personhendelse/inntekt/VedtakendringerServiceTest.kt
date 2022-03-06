@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.mockk
+import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
@@ -20,9 +21,10 @@ class VedtakendringerServiceTest {
     private val inntektClient = mockk<InntektClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val sakClient = mockk<SakClient>()
+    private val arbeidsfordelingClient = mockk<ArbeidsfordelingClient>()
     private val inntektsendringerService = mockk<InntektsendringerService>()
     private val personhendelseService = mockk<PersonhendelseService>()
-    private val vedtakendringer = VedtakendringerService(efVedtakRepository, inntektClient, oppgaveClient, sakClient, inntektsendringerService, personhendelseService)
+    private val vedtakendringer = VedtakendringerService(efVedtakRepository, inntektClient, oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerService, personhendelseService)
 
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {

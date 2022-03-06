@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 import java.time.YearMonth
-import java.util.*
 
 class InntektsendringerServiceTest {
 
@@ -44,13 +43,12 @@ class InntektsendringerServiceTest {
             )
         )
 
-        val sammeInntekt = AbstractMap.SimpleEntry("1", forventetLønnsinntekt)
-        val forventetInntektTiProsentLavere = AbstractMap.SimpleEntry("2", (forventetLønnsinntekt * 0.9).toInt())
-        val forventetInntektNiProsentLavere = AbstractMap.SimpleEntry("3", (forventetLønnsinntekt * 0.91).toInt())
+        val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
+        val forventetInntektNiProsentLavere = (forventetLønnsinntekt * 0.91).toInt()
 
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, sammeInntekt)).isFalse
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektTiProsentLavere)).isTrue
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektNiProsentLavere)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forventetLønnsinntekt)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "2", forventetInntektTiProsentLavere)).isTrue
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "3", forventetInntektNiProsentLavere)).isFalse
     }
 
     @Test
@@ -66,9 +64,9 @@ class InntektsendringerServiceTest {
             )
         )
 
-        val forventetInntektTiProsentLavere = AbstractMap.SimpleEntry("2", (forventetLønnsinntekt * 0.9).toInt())
+        val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
 
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektTiProsentLavere)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "2", forventetInntektTiProsentLavere)).isFalse
     }
 
     @Test
@@ -86,8 +84,8 @@ class InntektsendringerServiceTest {
             )
         )
 
-        val høyInntekt = AbstractMap.SimpleEntry("1", 585001)
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, høyInntekt)).isFalse
+        val forHøyInntekt = 585001
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forHøyInntekt)).isFalse
     }
 
     fun readResource(name: String): String {

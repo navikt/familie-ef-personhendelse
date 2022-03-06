@@ -12,27 +12,27 @@ class InntektsendringerService(
     val sakClient: SakClient
 ) {
 
-    fun harEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, identMedForventetInntekt: Map.Entry<String, Int?>): Boolean {
+    fun harEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, ident: String, forventetInntekt: Int?): Boolean {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
 
-        return har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt, identMedForventetInntekt)
+        return har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt, ident, forventetInntekt)
     }
 
-    private fun har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt: List<InntektVersjon>?, identMedForventetInntekt: Map.Entry<String, Int?>): Boolean {
+    private fun har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Boolean {
 
-        if (identMedForventetInntekt.value == null) {
-            secureLogger.warn("Ingen gjeldende inntekt funnet på person ${identMedForventetInntekt.key} har personen løpende stønad?")
+        if (forventetInntekt == null) {
+            secureLogger.warn("Ingen gjeldende inntekt funnet på person $ident har personen løpende stønad?")
             return false
         }
-        if (identMedForventetInntekt.value!! > 585000) return false // Ignorer alle med over 585000 i årsinntekt, da de har 0 i utbetaling.
-        val månedligForventetInntekt = (identMedForventetInntekt.value!! / 12)
+        if (forventetInntekt > 585000) return false // Ignorer alle med over 585000 i årsinntekt, da de har 0 i utbetaling.
+        val månedligForventetInntekt = (forventetInntekt / 12)
 
         val nyesteVersjon = nyesteRegistrerteInntekt?.maxOf { it.versjon }
         val inntektListe = nyesteRegistrerteInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
 
         val samletInntekt = inntektListe?.filter { !ignorerteYtelserIBeregningAvInntekt.contains(it.beskrivelse) }?.sumOf { it.beløp } ?: 0
-        secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: ${identMedForventetInntekt.value}) for person ${identMedForventetInntekt.key}")
+        secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident")
         return samletInntekt >= (månedligForventetInntekt * 1.1) && samletInntekt > 0 // Må sjekke om samletInntekt er større enn 0 for å ikke få true dersom alle variabler er 0 (antakelig kun i test)
     }
 

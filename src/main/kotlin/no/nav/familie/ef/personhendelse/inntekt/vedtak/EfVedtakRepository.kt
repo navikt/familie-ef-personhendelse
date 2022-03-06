@@ -11,7 +11,7 @@ import java.time.YearMonth
 @Repository
 class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
-    fun lagreEfVedtakshendelse(vedtakshendelse: EnsligForsørgerVedtakhendelse) {
+    fun lagreEfVedtakshendelse(vedtakshendelse: EnsligForsørgerVedtakhendelse, aarMaanedProsessert: YearMonth = YearMonth.now()) {
         val sql = "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType, :aar_maaned_prosessert, :versjon)" +
             " ON CONFLICT DO NOTHING"
         val params = MapSqlParameterSource(
@@ -19,7 +19,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
                 "behandlingId" to vedtakshendelse.behandlingId,
                 "personIdent" to vedtakshendelse.personIdent,
                 "stønadType" to vedtakshendelse.stønadType.toString(),
-                "aar_maaned_prosessert" to YearMonth.now().toString(),
+                "aar_maaned_prosessert" to aarMaanedProsessert.toString(),
                 "versjon" to 1
             )
         )
