@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 import java.time.YearMonth
-import java.util.AbstractMap
 
 class InntektsendringerServiceTest {
 
@@ -44,13 +43,30 @@ class InntektsendringerServiceTest {
             )
         )
 
-        val sammeInntekt = AbstractMap.SimpleEntry("1", forventetLønnsinntekt)
-        val forventetInntektTiProsentLavere = AbstractMap.SimpleEntry("2", (forventetLønnsinntekt * 0.9).toInt())
-        val forventetInntektNiProsentLavere = AbstractMap.SimpleEntry("3", (forventetLønnsinntekt * 0.91).toInt())
+        val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
+        val forventetInntektNiProsentLavere = (forventetLønnsinntekt * 0.91).toInt()
 
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, sammeInntekt)).isFalse
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektTiProsentLavere)).isTrue
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, forventetInntektNiProsentLavere)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forventetLønnsinntekt)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "2", forventetInntektTiProsentLavere)).isTrue
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "3", forventetInntektNiProsentLavere)).isFalse
+    }
+
+    @Test
+    fun `Utbetaling av offentlig ytelse og lønnsinntekt utgjør til sammen mer enn 10 prosent av forventet inntekt`() {
+        val json: String = readResource("inntekt/InntekthistorikkLoennsinntektOgOffentligYtelseEksempel.json")
+        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+
+        val inntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+
+        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
+            linkedMapOf(
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("5", listOf(InntektVersjon(inntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)))))
+            )
+        )
+
+        val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
+
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "2", forventetInntektTiProsentLavere)).isFalse
     }
 
     @Test
@@ -68,8 +84,8 @@ class InntektsendringerServiceTest {
             )
         )
 
-        val høyInntekt = AbstractMap.SimpleEntry("1", 585001)
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, høyInntekt)).isFalse
+        val forHøyInntekt = 585001
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forHøyInntekt)).isFalse
     }
 
     fun readResource(name: String): String {

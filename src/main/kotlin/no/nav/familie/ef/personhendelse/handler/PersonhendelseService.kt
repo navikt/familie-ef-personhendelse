@@ -124,7 +124,7 @@ class PersonhendelseService(
         lagreHendelse(personhendelse, oppgave.id!!)
     }
 
-    private fun leggOppgaveIMappe(oppgaveId: Long) {
+    fun leggOppgaveIMappe(oppgaveId: Long) {
         val oppgave = oppgaveClient.finnOppgaveMedId(oppgaveId)
         if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { // Skjermede personer skal ikke puttes i mappe
             val finnMappeRequest = FinnMappeRequest(
