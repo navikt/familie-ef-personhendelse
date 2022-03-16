@@ -92,5 +92,6 @@ data class ArbeidsInntekthistorikkInformasjon(
 }
 
 data class TilleggsinformasjonDetaljer(
-    val ikkebeskrevet: String?
+    val ikkebeskrevet: String?,
+    val detaljerType: String?
 )

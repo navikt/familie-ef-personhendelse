@@ -31,11 +31,11 @@ class InntektsendringerService(
         val nyesteVersjon = nyesteRegistrerteInntekt.maxOf { it.versjon }
         val inntektListe = nyesteRegistrerteInntekt.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
 
-        val samletInntekt = inntektListe?.filter { !ignorerteYtelserIBeregningAvInntekt.contains(it.beskrivelse) }?.sumOf { it.beløp } ?: 0
+        val samletInntekt = inntektListe?.filter { !ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse) }?.sumOf { it.beløp } ?: 0
         secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident")
         return samletInntekt >= (månedligForventetInntekt * 1.1) && samletInntekt > 0 // Må sjekke om samletInntekt er større enn 0 for å ikke få true dersom alle variabler er 0 (antakelig kun i test)
     }
 
     // Ignorterte ytelser: AAP og Dagpenger er ignorert fordi de er variable. Alle uføre går under annet regelverk (samordning) og skal derfor ignoreres.
-    val ignorerteYtelserIBeregningAvInntekt = listOf("overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere", "arbeidsavklaringspenger", "dagpengerVedArbeidsloeshet", "ufoeretrygd", "ufoereytelseEtteroppgjoer")
+    val ignorerteYtelserOgUtbetalinger = listOf("overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere", "arbeidsavklaringspenger", "dagpengerVedArbeidsloeshet", "ufoeretrygd", "ufoereytelseEtteroppgjoer", "feriepenger")
 }
