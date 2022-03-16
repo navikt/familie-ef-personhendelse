@@ -51,6 +51,7 @@ data class AMeldingInntekt(
 
 data class Tilleggsinformasjon(
     val kategori: String? = null, // Kodeverk -> EDAGTilleggsinfoKategorier
+    val tilleggsinformasjonDetaljer: TilleggsinformasjonDetaljer?
 )
 
 enum class AktørType {

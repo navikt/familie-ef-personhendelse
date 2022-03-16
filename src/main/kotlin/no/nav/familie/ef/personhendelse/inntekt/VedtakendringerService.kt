@@ -45,7 +45,11 @@ class VedtakendringerService(
             val response = hentInntektshistorikk(it.personIdent)
             if (response != null) {
                 val harNyeVedtak = harNyeVedtak(response)
-                val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, it.personIdent, identToForventetInntektMap[it.personIdent])
+                val harEndretInntekt = inntektsendringerService.harEndretInntekt(
+                    response,
+                    it.personIdent,
+                    identToForventetInntektMap[it.personIdent]
+                )
 
                 if (harNyeVedtak || harEndretInntekt) {
                     opprettOppgave(harNyeVedtak, harEndretInntekt, it)
@@ -83,7 +87,8 @@ class VedtakendringerService(
             offentligYtelseInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
         return inntektListe?.filter {
             it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
-                it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
+                it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
+                it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType != "ETTERBETALINGSPERIODE"
         }?.groupBy { it.beskrivelse }?.size ?: 0
     }
 
@@ -100,13 +105,21 @@ class VedtakendringerService(
         return null
     }
 
-    private fun opprettOppgave(harNyeVedtak: Boolean, harEndretInntekt: Boolean, vedtakhendelseInntektberegning: VedtakhendelseInntektberegning) {
+    private fun opprettOppgave(
+        harNyeVedtak: Boolean,
+        harEndretInntekt: Boolean,
+        vedtakhendelseInntektberegning: VedtakhendelseInntektberegning
+    ) {
         val oppgavetekst = lagOppgavetekst(harNyeVedtak, harEndretInntekt)
         secureLogger.info("${vedtakhendelseInntektberegning.personIdent} - $oppgavetekst")
-        val enhetsnummer = arbeidsfordelingClient.hentArbeidsfordelingEnhetId(vedtakhendelseInntektberegning.personIdent)
+        val enhetsnummer =
+            arbeidsfordelingClient.hentArbeidsfordelingEnhetId(vedtakhendelseInntektberegning.personIdent)
         val oppgaveId = oppgaveClient.opprettOppgave(
             OpprettOppgaveRequest(
-                ident = OppgaveIdentV2(ident = vedtakhendelseInntektberegning.personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
+                ident = OppgaveIdentV2(
+                    ident = vedtakhendelseInntektberegning.personIdent,
+                    gruppe = IdentGruppe.FOLKEREGISTERIDENT
+                ),
                 saksId = null,
                 tema = Tema.ENF,
                 oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
