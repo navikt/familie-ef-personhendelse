@@ -180,7 +180,7 @@ private fun Personhendelse.ferdigstiltBeskrivelse() =
 
 private fun Personhendelse.finnesIngenHendelseBeskrivelse() =
     "Det har oppstått en personhendelse som det ikke finnes noen tidligere hendelse eller oppgave for. " +
-        "Personhendelse id : ${this.hendelseId}, ${this.endringstype.name}"
+        "Personhendelse id: ${this.hendelseId}, endringstype: ${this.endringstype.name}, opplysningstype ${this.opplysningstype}"
 
 private fun Oppgave.erÅpen() = !listOf(StatusEnum.FERDIGSTILT, StatusEnum.FEILREGISTRERT).contains(this.status)
 
