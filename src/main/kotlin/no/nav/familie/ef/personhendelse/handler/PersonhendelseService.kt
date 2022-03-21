@@ -68,7 +68,7 @@ class PersonhendelseService(
         if (!oppgaveBeskrivelse.skalOpprettes) {
             return
         }
-        opprettOppgave(handler, personhendelse, personIdent)
+        opprettOppgave(oppgaveBeskrivelse, personhendelse, personIdent)
     }
 
     private fun logHendelse(
@@ -84,9 +84,9 @@ class PersonhendelseService(
         secureLogger.info("$logMessage personIdent=$personIdent")
     }
 
-    private fun opprettOppgave(handler: PersonhendelseHandler, personhendelse: Personhendelse, personIdent: String) {
-        val oppgaveBeskrivelse = handler.lagOppgaveBeskrivelse(personhendelse)
-        val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
+    private fun opprettOppgave(oppgaveBeskrivelse: OppgaveBeskrivelse, personhendelse: Personhendelse, personIdent: String) {
+        val beskrivelse = oppgaveBeskrivelse.beskrivelse
+        val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $beskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
 
         try {

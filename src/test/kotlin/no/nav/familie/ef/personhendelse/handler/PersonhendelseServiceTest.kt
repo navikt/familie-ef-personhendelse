@@ -54,7 +54,7 @@ internal class PersonhendelseServiceTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) }.returns(0L)
         personhendelseService.håndterPersonhendelse(personhendelse)
-        assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(dummyHandler.lagOppgaveBeskrivelse(personhendelse))
+        assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(dummyHandler.lagOppgaveBeskrivelse(personhendelse).beskrivelse)
     }
 
     @Test
@@ -125,12 +125,8 @@ internal class PersonhendelseServiceTest {
         override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
         var skalOppretteOppgave = true
 
-        override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
-            return "Dummyhandler"
-        }
-
-        override fun skalOppretteOppgave(personhendelse: Personhendelse): Boolean {
-            return skalOppretteOppgave
+        override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveBeskrivelse {
+            return OppgaveBeskrivelse(skalOpprettes = skalOppretteOppgave, beskrivelse = "Dummy handler")
         }
     }
 }

@@ -9,7 +9,12 @@ import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
+import no.nav.familie.kontrakter.ef.personhendelse.NyeBarnDto
+import no.nav.familie.kontrakter.ef.personhendelse.NyttBarn
+import no.nav.familie.kontrakter.ef.personhendelse.NyttBarnÅrsak
+import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.assertj.core.api.Assertions.assertThat
@@ -34,6 +39,7 @@ class ForelderBarnHandlerTest {
 
     @BeforeEach
     internal fun setUp() {
+        every { oppgaveClient.finnOppgaveMedId(any()) }.returns(Oppgave(id = 0L, status = StatusEnum.OPPRETTET))
         every { sakClient.harStønadSiste12MånederForPersonidenter(any()) } returns true
         every { oppgaveClient.opprettOppgave(capture(slot)) } returns 1L
         every { pdlClient.hentPerson(any()) } returns person
@@ -42,7 +48,7 @@ class ForelderBarnHandlerTest {
     @Test
     internal fun `finnNyeBarnForBruker inneholder ikke treff, forvent at oppgave ikke opprettes`() {
         val personhendelse = forelderBarnRelasjonHendelse("BARN")
-        every { sakClient.finnNyeBarnForBruker(any()) } returns emptyList()
+        every { sakClient.finnNyeBarnForBruker(any()) } returns NyeBarnDto(emptyList())
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 0) { oppgaveClient.opprettOppgave(any()) }
@@ -51,11 +57,18 @@ class ForelderBarnHandlerTest {
     @Test
     internal fun `finnNyeBarnForBruker inneholder treff, forvent at oppgave opprettes`() {
         val personhendelse = forelderBarnRelasjonHendelse("BARN")
-        every { sakClient.finnNyeBarnForBruker(any()) } returns listOf("fnr")
+        every { sakClient.finnNyeBarnForBruker(any()) } returns NyeBarnDto(
+            listOf(
+                NyttBarn(
+                    "fnr",
+                    NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING
+                )
+            )
+        )
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
-        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt barn")
+        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt barn. ")
     }
 
     private fun forelderBarnRelasjonHendelse(minRolleForPerson: String): Personhendelse {

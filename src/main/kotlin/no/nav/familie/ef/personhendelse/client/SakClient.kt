@@ -1,7 +1,7 @@
 package no.nav.familie.ef.personhendelse.client
 
-import no.nav.familie.ef.personhendelse.handler.NyeBarnDto
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.ef.personhendelse.NyeBarnDto
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
@@ -48,7 +48,8 @@ class SakClient(
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/vedtak/gjeldendeIverksatteBehandlingerMedInntekt")
         val response = getForEntity<Ressurs<Map<String, Int?>>>(uriComponentsBuilder.build().toUri())
-        return response.data ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
+        return response.data
+            ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
     }
 
     fun finnNyeBarnForBruker(personIdent: PersonIdent): NyeBarnDto {
