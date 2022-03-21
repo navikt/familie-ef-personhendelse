@@ -25,21 +25,17 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
 
     override val type = PersonhendelseType.FORELDERBARNRELASJON
 
-    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
-        var beskrivelse = "Bruker har fått et nytt barn. "
-        val personIdent = personhendelse.identerUtenAktørId().first()
-        val nyeBarnForBruker = sakClient.finnNyeBarnForBruker(PersonIdent(personIdent))
-        if (nyeBarnForBruker.nyeBarn.filter { it.årsak == NyttBarnÅrsak.FØDT_FØR_TERMIN }.isNotEmpty()) {
-            beskrivelse += "Et barn er født før termindato."
-        }
-        return beskrivelse
-    }
-
-    override fun skalOppretteOppgave(personhendelse: Personhendelse): Boolean {
+    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveBeskrivelse {
         val personIdent = personhendelse.identerUtenAktørId().first()
         val nyeBarnForBruker = sakClient.finnNyeBarnForBruker(PersonIdent(personIdent))
         logger.debug("Nye barn for bruker er ${nyeBarnForBruker.nyeBarn.size}, hendelseId : ${personhendelse.hendelseId}")
-        return nyeBarnForBruker.nyeBarn.isNotEmpty()
+        if (nyeBarnForBruker.nyeBarn.isNotEmpty()) {
+            return OppgaveBeskrivelse(skalOpprettes = false)
+        }
+        var beskrivelse = "Bruker har fått et nytt barn. "
+        if (nyeBarnForBruker.nyeBarn.filter { it.årsak == NyttBarnÅrsak.FØDT_FØR_TERMIN }.isNotEmpty()) {
+            beskrivelse += "Et barn er født før termindato."
+        }
+        return OppgaveBeskrivelse(true, beskrivelse)
     }
-
 }

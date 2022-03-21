@@ -62,10 +62,10 @@ class PersonhendelseService(
             opphørEllerKorrigerOppgave(personhendelse)
             return
         }
-        val skalOppretteOppgave = handler.skalOppretteOppgave(personhendelse)
-        logHendelse(personhendelse, skalOppretteOppgave, personIdent)
+        val oppgaveBeskrivelse = handler.lagOppgaveBeskrivelse(personhendelse)
+        logHendelse(personhendelse, oppgaveBeskrivelse, personIdent)
 
-        if (!skalOppretteOppgave) {
+        if (!oppgaveBeskrivelse.skalOpprettes) {
             return
         }
         opprettOppgave(handler, personhendelse, personIdent)
@@ -73,13 +73,13 @@ class PersonhendelseService(
 
     private fun logHendelse(
         personhendelse: Personhendelse,
-        skalOppretteOppgave: Boolean,
+        oppgaveBeskrivelse: OppgaveBeskrivelse,
         personIdent: String?
     ) {
         val logMessage = "Finnes sak for opplysningstype=${personhendelse.opplysningstype}" +
             " hendelseId=${personhendelse.hendelseId}" +
             " endringstype=${personhendelse.endringstype}" +
-            " skalOppretteOppgave=$skalOppretteOppgave"
+            " skalOppretteOppgave=${oppgaveBeskrivelse.skalOpprettes}"
         logger.info(logMessage)
         secureLogger.info("$logMessage personIdent=$personIdent")
     }

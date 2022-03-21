@@ -3,13 +3,13 @@ package no.nav.familie.ef.personhendelse.handler
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
 import no.nav.person.pdl.leesah.Personhendelse
 
+data class OppgaveBeskrivelse(val skalOpprettes: Boolean = false, val beskrivelse: String? = null)
+
 interface PersonhendelseHandler {
 
     val type: PersonhendelseType
 
-    fun skalOppretteOppgave(personhendelse: Personhendelse) = true
-
-    fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String
+    fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveBeskrivelse
 
     /**
      * Returnerer en liste med personidenter for hver person som vi skal kontrollere
