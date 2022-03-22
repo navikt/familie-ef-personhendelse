@@ -14,16 +14,16 @@ class SivilstandHandler : PersonhendelseHandler {
 
     override val type = PersonhendelseType.SIVILSTAND
 
-    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveBeskrivelse {
+    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveInformasjon {
         if (personhendelse.sivilstandNotNull()) {
             logger.info("Mottatt sivilstand hendelse med verdi ${personhendelse.sivilstand.type}")
         }
         if (!personhendelse.skalSivilstandHåndteres()) {
-            return OppgaveBeskrivelse()
+            return IkkeOpprettOppgave
         }
         val beskrivelse = "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
             "gyldig fra og med dato: ${(personhendelse.sivilstand.bekreftelsesdato ?: personhendelse.sivilstand.gyldigFraOgMed).tilNorskDatoformat()}"
-        return OppgaveBeskrivelse(skalOpprettes = true, beskrivelse = beskrivelse)
+        return OpprettOppgave(beskrivelse = beskrivelse)
     }
 }
 

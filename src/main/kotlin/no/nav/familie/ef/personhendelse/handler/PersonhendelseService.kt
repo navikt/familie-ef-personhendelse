@@ -64,27 +64,26 @@ class PersonhendelseService(
         }
         val oppgaveBeskrivelse = handler.lagOppgaveBeskrivelse(personhendelse)
         logHendelse(personhendelse, oppgaveBeskrivelse, personIdent)
-
-        if (!oppgaveBeskrivelse.skalOpprettes) {
-            return
+        when (oppgaveBeskrivelse) {
+            is IkkeOpprettOppgave -> return
+            is OpprettOppgave -> opprettOppgave(oppgaveBeskrivelse, personhendelse, personIdent)
         }
-        opprettOppgave(oppgaveBeskrivelse, personhendelse, personIdent)
     }
 
     private fun logHendelse(
         personhendelse: Personhendelse,
-        oppgaveBeskrivelse: OppgaveBeskrivelse,
+        oppgaveBeskrivelse: OppgaveInformasjon,
         personIdent: String?
     ) {
         val logMessage = "Finnes sak for opplysningstype=${personhendelse.opplysningstype}" +
             " hendelseId=${personhendelse.hendelseId}" +
             " endringstype=${personhendelse.endringstype}" +
-            " skalOppretteOppgave=${oppgaveBeskrivelse.skalOpprettes}"
+            " skalOppretteOppgave=${oppgaveBeskrivelse is OpprettOppgave}"
         logger.info(logMessage)
         secureLogger.info("$logMessage personIdent=$personIdent")
     }
 
-    private fun opprettOppgave(oppgaveBeskrivelse: OppgaveBeskrivelse, personhendelse: Personhendelse, personIdent: String) {
+    private fun opprettOppgave(oppgaveBeskrivelse: OpprettOppgave, personhendelse: Personhendelse, personIdent: String) {
         val beskrivelse = oppgaveBeskrivelse.beskrivelse
         val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $beskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)

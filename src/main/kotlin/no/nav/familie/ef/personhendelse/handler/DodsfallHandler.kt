@@ -13,8 +13,8 @@ class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHandler {
 
     override val type = PersonhendelseType.DØDSFALL
 
-    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveBeskrivelse {
-        return OppgaveBeskrivelse(skalOpprettes = true, beskrivelse = "Dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}")
+    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveInformasjon {
+        return OpprettOppgave(beskrivelse = "Dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}")
     }
 
     override fun personidenterPerPersonSomSkalKontrolleres(personhendelse: Personhendelse): List<Set<String>> {
