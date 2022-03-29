@@ -62,31 +62,30 @@ class PersonhendelseService(
             opphørEllerKorrigerOppgave(personhendelse)
             return
         }
-        val skalOppretteOppgave = handler.skalOppretteOppgave(personhendelse)
-        logHendelse(personhendelse, skalOppretteOppgave, personIdent)
-
-        if (!skalOppretteOppgave) {
-            return
+        val oppgaveBeskrivelse = handler.lagOppgaveBeskrivelse(personhendelse)
+        logHendelse(personhendelse, oppgaveBeskrivelse, personIdent)
+        when (oppgaveBeskrivelse) {
+            is IkkeOpprettOppgave -> return
+            is OpprettOppgave -> opprettOppgave(oppgaveBeskrivelse, personhendelse, personIdent)
         }
-        opprettOppgave(handler, personhendelse, personIdent)
     }
 
     private fun logHendelse(
         personhendelse: Personhendelse,
-        skalOppretteOppgave: Boolean,
+        oppgaveBeskrivelse: OppgaveInformasjon,
         personIdent: String?
     ) {
         val logMessage = "Finnes sak for opplysningstype=${personhendelse.opplysningstype}" +
             " hendelseId=${personhendelse.hendelseId}" +
             " endringstype=${personhendelse.endringstype}" +
-            " skalOppretteOppgave=$skalOppretteOppgave"
+            " skalOppretteOppgave=${oppgaveBeskrivelse is OpprettOppgave}"
         logger.info(logMessage)
         secureLogger.info("$logMessage personIdent=$personIdent")
     }
 
-    private fun opprettOppgave(handler: PersonhendelseHandler, personhendelse: Personhendelse, personIdent: String) {
-        val oppgaveBeskrivelse = handler.lagOppgaveBeskrivelse(personhendelse)
-        val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $oppgaveBeskrivelse")
+    private fun opprettOppgave(oppgaveBeskrivelse: OpprettOppgave, personhendelse: Personhendelse, personIdent: String) {
+        val beskrivelse = oppgaveBeskrivelse.beskrivelse
+        val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $beskrivelse")
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
 
         try {

@@ -9,8 +9,8 @@ class UtflyttingHandler : PersonhendelseHandler {
 
     override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
 
-    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): String {
-        return personhendelse.utflyttingsBeskrivelse()
+    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveInformasjon {
+        return OpprettOppgave(personhendelse.utflyttingsBeskrivelse())
     }
 }
 
