@@ -30,7 +30,7 @@ internal class PersonhendelseServiceTest {
     private val dummyHandler: DummyHandler = DummyHandler()
 
     private val personhendelseService =
-            PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository)
+        PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository)
 
     @BeforeEach
     internal fun setUp() {
@@ -65,9 +65,9 @@ internal class PersonhendelseServiceTest {
         handlerSpyk.håndterPersonhendelse(personhendelse)
         verify(exactly = 0) {
             handlerSpyk["handlePersonhendelse"](
-                    any<PersonhendelseHandler>(),
-                    any<Personhendelse>(),
-                    any<String>()
+                any<PersonhendelseHandler>(),
+                any<Personhendelse>(),
+                any<String>()
             )
         }
     }

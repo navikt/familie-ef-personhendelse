@@ -19,5 +19,5 @@ interface PersonhendelseHandler {
      * Mens når vi skal håndtere dødsfall returneres identer til personen og eventuellt forelder, [[f1], [f2], [b1]]
      */
     fun personidenterPerPersonSomSkalKontrolleres(personhendelse: Personhendelse): List<Set<String>> =
-            listOf(personhendelse.identerUtenAktørId().toSet())
+        listOf(personhendelse.identerUtenAktørId().toSet())
 }
