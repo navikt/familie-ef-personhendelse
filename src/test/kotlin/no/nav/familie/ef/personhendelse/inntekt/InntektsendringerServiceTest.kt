@@ -70,6 +70,23 @@ class InntektsendringerServiceTest {
     }
 
     @Test
+    fun `Bruker med forventet inntekt, men har mer enn 10% høyere inntekt med etterbetaling av utbetalinger fra offentlig ytelse, som skal ignoreres og derfor returnere false`() {
+        val json: String = readResource("inntekt/InntekthistorikkEtterbetalingSkalIgnoreres.json")
+        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+
+        val inntektVersjonForNyesteMåned = inntektshistorikkResponse.inntektForMåned("2022-02")
+
+        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
+            linkedMapOf(
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", inntektVersjonForNyesteMåned))),
+            )
+        )
+        val forventetInntekt = 172_000
+
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "2", forventetInntekt)).isFalse
+    }
+
+    @Test
     fun `Har for høy forventet inntekt, skal returnere false`() {
         val json: String = readResource("inntekt/InntekthistorikkLoennsinntektEksempel.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
@@ -86,6 +103,25 @@ class InntektsendringerServiceTest {
 
         val forHøyInntekt = 585001
         Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forHøyInntekt)).isFalse
+    }
+
+    @Test
+    fun `Har inntekt under halv G, skal returnere false selv om inntekt har økt mer enn 10%`() {
+        val json: String = readResource("inntekt/InntekthistorikkInntektUnderHalvG.json")
+        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-01").first().arbeidsInntektInformasjon
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+
+        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
+            linkedMapOf(
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)))))
+            )
+        )
+
+        val forventetInntekt = 30000
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forventetInntekt)).isFalse
     }
 
     @Test
