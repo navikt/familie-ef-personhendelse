@@ -125,6 +125,23 @@ class InntektsendringerServiceTest {
     }
 
     @Test
+    fun `Ignorer utbetalinger av uførepensjon fra andre enn NAV`() {
+        val json: String = readResource("inntekt/InntekthistorikkUførepensjonFraAndreEnnFolketrygden.json")
+        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-01")
+
+        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
+            linkedMapOf(
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+            )
+        )
+
+        val forventetInntekt = 5000
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forventetInntekt)).isFalse
+    }
+
+    @Test
     fun `Ignorer ferieutbetalinger`() {
         val json: String = readResource("inntekt/InntekthistorikkFeriepengerSkalIgnoreres.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)

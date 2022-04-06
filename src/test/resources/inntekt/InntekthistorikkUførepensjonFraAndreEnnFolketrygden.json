@@ -1,0 +1,156 @@
+{
+  "aarMaanedHistorikk": {
+    "2022-01": {
+      "1": [
+        {
+          "versjon": 1,
+          "opplysningspliktig": "1",
+          "virksomhet": "1",
+          "innleveringstidspunkt": "2022-02-03T10:23:33.333",
+          "arbeidsInntektInformasjon": {
+            "inntektListe": [
+              {
+                "inntektType": "PENSJON_ELLER_TRYGD",
+                "beloep": 4381,
+                "fordel": "kontantytelse",
+                "inntektskilde": "A-ordningen",
+                "inntektsperiodetype": "Maaned",
+                "inntektsstatus": "LoependeInnrapportert",
+                "leveringstidspunkt": "2022-04",
+                "utbetaltIMaaned": "2022-01",
+                "opplysningspliktig": {
+                  "identifikator": "1",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "virksomhet": {
+                  "identifikator": "1",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "inntektsmottaker": {
+                  "identifikator": "2",
+                  "aktoerType": "NATURLIG_IDENT"
+                },
+                "inngaarIGrunnlagForTrekk": true,
+                "utloeserArbeidsgiveravgift": false,
+                "informasjonsstatus": "InngaarAlltid",
+                "beskrivelse": "ufoerepensjonFraAndreEnnFolketrygden"
+              }
+            ],
+            "forskuddstrekkListe": [
+              {
+                "beloep": -1393,
+                "leveringstidspunkt": "2022-04-06T10:11:30.355",
+                "opplysningspliktig": {
+                  "identifikator": "1",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "utbetaler": {
+                  "identifikator": "1",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "forskuddstrekkGjelder": {
+                  "identifikator": "2",
+                  "aktoerType": "NATURLIG_IDENT"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "3": [
+        {
+          "versjon": 1,
+          "opplysningspliktig": "3",
+          "virksomhet": "4",
+          "innleveringstidspunkt": "2022-02-07T13:07:30.62",
+          "arbeidsInntektInformasjon": {
+            "inntektListe": [
+              {
+                "inntektType": "PENSJON_ELLER_TRYGD",
+                "beloep": 2596,
+                "fordel": "kontantytelse",
+                "inntektskilde": "A-ordningen",
+                "inntektsperiodetype": "Maaned",
+                "inntektsstatus": "LoependeInnrapportert",
+                "leveringstidspunkt": "2022-04",
+                "opptjeningsperiodeFom": "2022-01-01",
+                "opptjeningsperiodeTom": "2022-01-31",
+                "utbetaltIMaaned": "2022-01",
+                "opplysningspliktig": {
+                  "identifikator": "3",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "virksomhet": {
+                  "identifikator": "4",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "tilleggsinformasjon": {
+                  "kategori": "AldersUfoereEtterlatteAvtalefestetOgKrigspensjon",
+                  "tilleggsinformasjonDetaljer": {
+                    "detaljerType": "ALDERSUFOEREETTERLATTEAVTALEFESTETOGKRIGSPENSJON",
+                    "tidsromFom": "2022-01-01",
+                    "tidsromTom": "2022-01-31"
+                  }
+                },
+                "inntektsmottaker": {
+                  "identifikator": "2",
+                  "aktoerType": "NATURLIG_IDENT"
+                },
+                "inngaarIGrunnlagForTrekk": true,
+                "utloeserArbeidsgiveravgift": false,
+                "informasjonsstatus": "InngaarAlltid",
+                "beskrivelse": "ufoerepensjonFraAndreEnnFolketrygden"
+              }
+            ],
+            "forskuddstrekkListe": [
+              {
+                "beloep": -571,
+                "leveringstidspunkt": "2022-04-06T10:11:30.355",
+                "opplysningspliktig": {
+                  "identifikator": "3",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "utbetaler": {
+                  "identifikator": "4",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "forskuddstrekkGjelder": {
+                  "identifikator": "2",
+                  "aktoerType": "NATURLIG_IDENT"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "5": [
+        {
+          "versjon": 1,
+          "opplysningspliktig": "5",
+          "virksomhet": "5",
+          "innleveringstidspunkt": "2022-01-20T04:45:38.77",
+          "arbeidsInntektInformasjon": {
+            "forskuddstrekkListe": [
+              {
+                "beloep": -3832,
+                "leveringstidspunkt": "2022-04-06T10:11:30.356",
+                "opplysningspliktig": {
+                  "identifikator": "5",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "utbetaler": {
+                  "identifikator": "5",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "forskuddstrekkGjelder": {
+                  "identifikator": "2",
+                  "aktoerType": "NATURLIG_IDENT"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
