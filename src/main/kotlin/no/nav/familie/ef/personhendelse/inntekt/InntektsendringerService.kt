@@ -33,7 +33,6 @@ class InntektsendringerService(
         val orgNrToNyesteVersjonMap = nyesteRegistrerteInntekt.associate { it.opplysningspliktig to it.versjon }
         val inntektListe = nyesteRegistrerteInntekt.filter { it.versjon == orgNrToNyesteVersjonMap.get(it.opplysningspliktig) && it.arbeidsInntektInformasjon.inntektListe != null }.flatMap { it.arbeidsInntektInformasjon.inntektListe!! }
 
-        // val inntektListe = nyesteRegistrerteInntekt.firstOrNull { it.versjon == orgNrToNyesteVersjonMap.get(it.opplysningspliktig) }?.arbeidsInntektInformasjon?.inntektListe
         val samletInntekt = inntektListe.filterNot {
             ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse) ||
                 (it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE && it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType == "ETTERBETALINGSPERIODE")
