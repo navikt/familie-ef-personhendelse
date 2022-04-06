@@ -12,6 +12,8 @@ class InntektsendringerService(
     val sakClient: SakClient
 ) {
 
+    private val halvtGrunnbeløpMånedlig = (106399 / 2) / 12
+
     fun harEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, ident: String, forventetInntekt: Int?): Boolean {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
@@ -28,10 +30,14 @@ class InntektsendringerService(
         if (forventetInntekt > 585000) return false // Ignorer alle med over 585000 i årsinntekt, da de har 0 i utbetaling.
         val månedligForventetInntekt = (forventetInntekt / 12)
 
-        val nyesteVersjon = nyesteRegistrerteInntekt.maxOf { it.versjon }
-        val inntektListe = nyesteRegistrerteInntekt.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
+        val orgNrToNyesteVersjonMap = nyesteRegistrerteInntekt.associate { it.opplysningspliktig to it.versjon }
+        val inntektListe = nyesteRegistrerteInntekt.filter { it.versjon == orgNrToNyesteVersjonMap.get(it.opplysningspliktig) && it.arbeidsInntektInformasjon.inntektListe != null }.flatMap { it.arbeidsInntektInformasjon.inntektListe!! }
 
-        val samletInntekt = inntektListe?.filter { !ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse) }?.sumOf { it.beløp } ?: 0
+        val samletInntekt = inntektListe.filterNot {
+            ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse) ||
+                (it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE && it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType == "ETTERBETALINGSPERIODE")
+        }.sumOf { it.beløp }
+        if (samletInntekt < halvtGrunnbeløpMånedlig) return false
         secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident")
         return samletInntekt >= (månedligForventetInntekt * 1.1) && samletInntekt > 0 // Må sjekke om samletInntekt er større enn 0 for å ikke få true dersom alle variabler er 0 (antakelig kun i test)
     }
