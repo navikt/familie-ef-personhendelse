@@ -23,10 +23,9 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
         if (nyeBarnForBruker.nyeBarn.isEmpty()) {
             return IkkeOpprettOppgave
         }
-        var beskrivelse = "Bruker har fått et nytt barn. "
         if (nyeBarnForBruker.nyeBarn.filter { it.årsak == NyttBarnÅrsak.FØDT_FØR_TERMIN }.isNotEmpty()) {
-            beskrivelse += "Et barn er født før termindato."
+            return OpprettOppgave("Bruker er innvilget overgangsstønad for ufødt barn. Barnet er registrert født i måneden før oppgitt termindato. Vurder saken.")
         }
-        return OpprettOppgave(beskrivelse)
+        return OpprettOppgave("Bruker har fått et nytt barn.")
     }
 }
