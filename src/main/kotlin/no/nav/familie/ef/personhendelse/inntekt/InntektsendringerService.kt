@@ -43,5 +43,9 @@ class InntektsendringerService(
     }
 
     // Ignorterte ytelser: AAP og Dagpenger er ignorert fordi de er variable. Alle uføre går under annet regelverk (samordning) og skal derfor ignoreres.
-    val ignorerteYtelserOgUtbetalinger = listOf("overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere", "arbeidsavklaringspenger", "dagpengerVedArbeidsloeshet", "ufoeretrygd", "ufoereytelseEtteroppgjoer", "feriepenger")
+    val ignorerteYtelserOgUtbetalinger = listOf(
+        "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere",
+        "arbeidsavklaringspenger", "dagpengerVedArbeidsloeshet", "ufoeretrygd", "ufoereytelseEtteroppgjoer",
+        "feriepenger", "ufoerepensjonFraAndreEnnFolketrygden"
+    )
 }
