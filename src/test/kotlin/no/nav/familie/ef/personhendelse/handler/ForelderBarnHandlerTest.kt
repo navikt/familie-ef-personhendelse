@@ -68,7 +68,7 @@ class ForelderBarnHandlerTest {
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
-        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt barn. ")
+        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt barn.")
     }
 
     private fun forelderBarnRelasjonHendelse(minRolleForPerson: String): Personhendelse {
