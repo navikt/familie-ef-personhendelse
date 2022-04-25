@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.6</version>
+        <version>2.6.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.familie.ef</groupId>
@@ -29,21 +29,21 @@
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <java.version>17</java.version>
-        <kotlin.version>1.6.20</kotlin.version>
-        <kafka-avro-serializer.version>7.0.2</kafka-avro-serializer.version>
+        <kotlin.version>1.6.21</kotlin.version>
+        <kafka-avro-serializer.version>7.1.1</kafka-avro-serializer.version>
         <avro.version>1.11.0</avro.version>
         <graphql-kotlin-spring-client.version>5.3.2</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>5.3.2</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <ktlint-maven-plugin.version>1.7.0</ktlint-maven-plugin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
-        <kontrakter.version>2.0_20220331215756_9594442</kontrakter.version>
-        <felles.version>1.20220329165814_c0860ec</felles.version>
+        <kontrakter.version>2.0_20220422142843_5371873</kontrakter.version>
+        <felles.version>1.20220406145421_5f46d64</felles.version>
         <token-validation-spring-test.version>2.0.14</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
-        <wiremock.version>2.32.0</wiremock.version>
+        <wiremock.version>2.33.1</wiremock.version>
         <mockk.version>1.12.3</mockk.version>
-        <testcontainers.version>1.16.3</testcontainers.version>
+        <testcontainers.version>1.17.1</testcontainers.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
     </properties>
     <dependencies>
@@ -346,7 +346,7 @@
             <plugin>
                 <groupId>com.rudikershaw.gitbuildhook</groupId>
                 <artifactId>git-build-hook-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <configuration>
                     <installHooks>
                         <pre-commit>hooks/pre-commit.sh</pre-commit>
