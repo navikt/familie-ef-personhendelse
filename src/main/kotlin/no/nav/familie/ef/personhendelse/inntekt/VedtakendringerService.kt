@@ -53,7 +53,6 @@ class VedtakendringerService(
                     if (harNyeVedtak || harEndretInntekt) {
                         if (skalOppretteOppgave) {
                             opprettOppgave(harNyeVedtak, harEndretInntekt, it)
-
                         } else {
                             secureLogger.info("Ville opprettet oppgave for $it harNyeVedtak: $harNyeVedtak harEndretInntekt: $harEndretInntekt")
                         }
