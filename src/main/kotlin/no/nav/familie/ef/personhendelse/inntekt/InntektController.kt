@@ -4,6 +4,7 @@ import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController
 class InntektController(val vedtakendringer: VedtakendringerService) {
 
     @GetMapping("/sjekkEndringer")
-    fun sjekkEndringer(): ResponseEntity<Any> {
-        vedtakendringer.beregnNyeVedtakOgLagOppgave()
+    fun sjekkEndringer(@RequestParam skalOppretteOppgaver: Boolean ): ResponseEntity<Any> {
+        vedtakendringer.beregnNyeVedtakOgLagOppgave(skalOppretteOppgaver)
         return ResponseEntity.ok().build()
     }
 }

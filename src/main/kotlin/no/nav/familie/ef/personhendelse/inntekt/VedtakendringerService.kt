@@ -34,7 +34,7 @@ class VedtakendringerService(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     @Async
-    fun beregnNyeVedtakOgLagOppgave() {
+    fun beregnNyeVedtakOgLagOppgave(skalOppretteOppgave: Boolean = false) {
         val personerMedVedtakList = efVedtakRepository.hentPersonerMedVedtakIkkeBehandlet().map { it.personIdent }
         val chunkedPersonerMedVedtakList = personerMedVedtakList.chunked(500)
 
@@ -51,9 +51,14 @@ class VedtakendringerService(
                     )
 
                     if (harNyeVedtak || harEndretInntekt) {
-                        opprettOppgave(harNyeVedtak, harEndretInntekt, it)
+                        if (skalOppretteOppgave) {
+                            opprettOppgave(harNyeVedtak, harEndretInntekt, it)
+
+                        } else {
+                            secureLogger.info("Ville opprettet oppgave for $it harNyeVedtak: $harNyeVedtak harEndretInntekt: $harEndretInntekt")
+                        }
                     }
-                    efVedtakRepository.oppdaterAarMaanedProsessert(it)
+                    if (skalOppretteOppgave) efVedtakRepository.oppdaterAarMaanedProsessert(it)
                 }
             }
         }
