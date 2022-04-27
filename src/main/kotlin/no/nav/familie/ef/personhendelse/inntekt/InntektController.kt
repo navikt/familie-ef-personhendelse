@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 class InntektController(val vedtakendringer: VedtakendringerService) {
 
     @GetMapping("/sjekkEndringer")
-    fun sjekkEndringer(@RequestParam skalOppretteOppgaver: Boolean ): ResponseEntity<Any> {
+    fun sjekkEndringer(@RequestParam skalOppretteOppgaver: Boolean): ResponseEntity<Any> {
         vedtakendringer.beregnNyeVedtakOgLagOppgave(skalOppretteOppgaver)
         return ResponseEntity.ok().build()
     }

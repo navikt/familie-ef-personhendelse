@@ -36,31 +36,35 @@ class VedtakendringerService(
     @Async
     fun beregnNyeVedtakOgLagOppgave(skalOppretteOppgave: Boolean = false) {
         val personerMedVedtakList = efVedtakRepository.hentPersonerMedVedtakIkkeBehandlet().map { it.personIdent }
-        val chunkedPersonerMedVedtakList = personerMedVedtakList.chunked(500)
 
-        for (personidenter in chunkedPersonerMedVedtakList) {
-            val identToForventetInntektMap = sakClient.hentForventetInntektForIdenter(personidenter)
-            personidenter.forEach {
-                val response = hentInntektshistorikk(it)
+        personerMedVedtakList.chunked(500)
+            .map { sakClient.hentForventetInntektForIdenter(it) }
+            .flatMap { it.entries }
+            .forEach { (ident, inntekt) ->
+                val response = hentInntektshistorikk(ident)
                 if (response != null) {
-                    val harNyeVedtak = harNyeVedtak(response)
-                    val harEndretInntekt = inntektsendringerService.harEndretInntekt(
-                        response,
-                        it,
-                        identToForventetInntektMap[it]
-                    )
-
-                    if (harNyeVedtak || harEndretInntekt) {
-                        if (skalOppretteOppgave) {
-                            opprettOppgave(harNyeVedtak, harEndretInntekt, it)
-                        } else {
-                            secureLogger.info("Ville opprettet oppgave for $it harNyeVedtak: $harNyeVedtak harEndretInntekt: $harEndretInntekt")
-                        }
-                    }
-                    if (skalOppretteOppgave) efVedtakRepository.oppdaterAarMaanedProsessert(it)
+                    opprettOppgaveHvisNyttVedtakEllerEndretInntekt(ident, response, inntekt, skalOppretteOppgave)
                 }
             }
+    }
+
+    private fun opprettOppgaveHvisNyttVedtakEllerEndretInntekt(
+        ident: String,
+        response: InntektshistorikkResponse,
+        inntekt: Int?,
+        skalOppretteOppgave: Boolean
+    ) {
+        val harNyeVedtak = harNyeVedtak(response)
+        val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, ident, inntekt)
+
+        if (harNyeVedtak || harEndretInntekt) {
+            if (skalOppretteOppgave) {
+                opprettOppgave(harNyeVedtak, harEndretInntekt, ident)
+            } else {
+                secureLogger.info("Ville opprettet oppgave for $ident harNyeVedtak: $harNyeVedtak harEndretInntekt: $harEndretInntekt")
+            }
         }
+        if (skalOppretteOppgave) efVedtakRepository.oppdaterAarMaanedProsessert(ident)
     }
 
     fun harNyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): Boolean {
