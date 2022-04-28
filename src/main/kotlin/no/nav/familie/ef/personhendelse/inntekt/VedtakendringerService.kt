@@ -6,7 +6,6 @@ import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
-import no.nav.familie.ef.personhendelse.inntekt.vedtak.VedtakhendelseInntektberegning
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.ef.StønadType
@@ -35,28 +34,37 @@ class VedtakendringerService(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     @Async
-    fun beregnNyeVedtakOgLagOppgave() {
-        val personerMedVedtakList = efVedtakRepository.hentPersonerMedVedtakIkkeBehandlet()
+    fun beregnNyeVedtakOgLagOppgave(skalOppretteOppgave: Boolean = false) {
+        val personerMedVedtakList = efVedtakRepository.hentPersonerMedVedtakIkkeBehandlet().map { it.personIdent }
 
-        val identToForventetInntektMap = sakClient.hentAlleAktiveIdenterOgForventetInntekt()
-        logger.info("Antall personer med aktive vedtak: ${identToForventetInntektMap.keys.size}")
-
-        personerMedVedtakList.forEach {
-            val response = hentInntektshistorikk(it.personIdent)
-            if (response != null) {
-                val harNyeVedtak = harNyeVedtak(response)
-                val harEndretInntekt = inntektsendringerService.harEndretInntekt(
-                    response,
-                    it.personIdent,
-                    identToForventetInntektMap[it.personIdent]
-                )
-
-                if (harNyeVedtak || harEndretInntekt) {
-                    opprettOppgave(harNyeVedtak, harEndretInntekt, it)
+        personerMedVedtakList.chunked(500)
+            .map { sakClient.hentForventetInntektForIdenter(it) }
+            .flatMap { it.entries }
+            .forEach { (ident, inntekt) ->
+                val response = hentInntektshistorikk(ident)
+                if (response != null) {
+                    opprettOppgaveHvisNyttVedtakEllerEndretInntekt(ident, response, inntekt, skalOppretteOppgave)
                 }
-                efVedtakRepository.oppdaterAarMaanedProsessert(it.personIdent)
+            }
+    }
+
+    private fun opprettOppgaveHvisNyttVedtakEllerEndretInntekt(
+        ident: String,
+        response: InntektshistorikkResponse,
+        inntekt: Int?,
+        skalOppretteOppgave: Boolean
+    ) {
+        val harNyeVedtak = harNyeVedtak(response)
+        val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, ident, inntekt)
+
+        if (harNyeVedtak || harEndretInntekt) {
+            if (skalOppretteOppgave) {
+                opprettOppgave(harNyeVedtak, harEndretInntekt, ident)
+            } else {
+                secureLogger.info("Ville opprettet oppgave for $ident harNyeVedtak: $harNyeVedtak harEndretInntekt: $harEndretInntekt")
             }
         }
+        if (skalOppretteOppgave) efVedtakRepository.oppdaterAarMaanedProsessert(ident)
     }
 
     fun harNyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): Boolean {
@@ -108,16 +116,17 @@ class VedtakendringerService(
     private fun opprettOppgave(
         harNyeVedtak: Boolean,
         harEndretInntekt: Boolean,
-        vedtakhendelseInntektberegning: VedtakhendelseInntektberegning
+        personident: String,
+        stønadType: StønadType = StønadType.OVERGANGSSTØNAD
     ) {
         val oppgavetekst = lagOppgavetekst(harNyeVedtak, harEndretInntekt)
-        secureLogger.info("${vedtakhendelseInntektberegning.personIdent} - $oppgavetekst")
+        secureLogger.info("$personident - $oppgavetekst")
         val enhetsnummer =
-            arbeidsfordelingClient.hentArbeidsfordelingEnhetId(vedtakhendelseInntektberegning.personIdent)
+            arbeidsfordelingClient.hentArbeidsfordelingEnhetId(personident)
         val oppgaveId = oppgaveClient.opprettOppgave(
             OpprettOppgaveRequest(
                 ident = OppgaveIdentV2(
-                    ident = vedtakhendelseInntektberegning.personIdent,
+                    ident = personident,
                     gruppe = IdentGruppe.FOLKEREGISTERIDENT
                 ),
                 saksId = null,
@@ -126,12 +135,12 @@ class VedtakendringerService(
                 fristFerdigstillelse = fristFerdigstillelse(),
                 beskrivelse = oppgavetekst,
                 enhetsnummer = enhetsnummer,
-                behandlingstema = vedtakhendelseInntektberegning.stønadType.tilBehandlingstemaValue(),
+                behandlingstema = stønadType.tilBehandlingstemaValue(),
                 tilordnetRessurs = null,
                 behandlesAvApplikasjon = "familie-ef-sak"
             )
         )
-        secureLogger.info("Opprettet oppgave for person ${vedtakhendelseInntektberegning.personIdent} med id: $oppgaveId")
+        secureLogger.info("Opprettet oppgave for person $personident med id: $oppgaveId")
         try {
             personhendelseService.leggOppgaveIMappe(oppgaveId)
         } catch (e: Exception) {

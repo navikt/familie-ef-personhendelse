@@ -52,6 +52,14 @@ class SakClient(
             ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
     }
 
+    fun hentForventetInntektForIdenter(personidenter: Collection<String>): Map<String, Int?> {
+        val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
+            .pathSegment("api/vedtak/gjeldendeIverksatteBehandlingerMedInntekt")
+        val response = postForEntity<Ressurs<Map<String, Int?>>>(uriComponentsBuilder.build().toUri(), personidenter)
+        return response.data
+            ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
+    }
+
     fun finnNyeBarnForBruker(personIdent: PersonIdent): NyeBarnDto {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("/api/behandling/barn/nye-eller-tidligere-fodte-barn")
