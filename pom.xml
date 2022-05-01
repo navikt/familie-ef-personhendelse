@@ -39,7 +39,7 @@
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
         <kontrakter.version>2.0_20220422142843_5371873</kontrakter.version>
         <felles.version>1.20220406145421_5f46d64</felles.version>
-        <token-validation-spring-test.version>2.0.14</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
+        <token-validation-spring-test.version>2.0.15</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.33.1</wiremock.version>
         <mockk.version>1.12.3</mockk.version>
