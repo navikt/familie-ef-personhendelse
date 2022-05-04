@@ -17,6 +17,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import java.time.Month
 import java.time.YearMonth
 
 @Service
@@ -150,12 +151,13 @@ class VedtakendringerService(
     }
 
     private fun lagOppgavetekst(harNyeVedtak: Boolean, harEndretInntekt: Boolean): String {
+        val måned = YearMonth.now().minusMonths(1).month.tilNorsk()
         if (harNyeVedtak && harEndretInntekt) {
-            return "Person kan ha nye vedtak og endret inntekt."
+            return "Person har fått utbetalt ny stønad fra NAV og har økt inntekt i $måned. Vurder om overgangsstønaden skal revurderes."
         } else if (harNyeVedtak) {
-            return "Person kan ha nye vedtak."
+            return "Person har fått utbetalt ny stønad fra NAV i $måned. Vurder om overgangsstønaden skal revurderes."
         } else {
-            return "Person kan ha endret inntekt"
+            return "Person har økt inntekt i $måned. Vurder om overgangsstønaden skal revurderes."
         }
     }
 }
@@ -167,3 +169,20 @@ fun StønadType.tilBehandlingstemaValue(): String {
         StønadType.SKOLEPENGER -> Behandlingstema.Skolepenger.value
     }
 }
+
+fun Month.tilNorsk(): String =
+    when (this.name) {
+        Month.JANUARY.name -> "januar"
+        Month.FEBRUARY.name -> "februar"
+        Month.MARCH.name -> "mars"
+        Month.APRIL.name -> "april"
+        Month.MAY.name -> "mai"
+        Month.JUNE.name -> "juni"
+        Month.JULY.name -> "juli"
+        Month.AUGUST.name -> "august"
+        Month.SEPTEMBER.name -> "september"
+        Month.OCTOBER.name -> "oktober"
+        Month.NOVEMBER.name -> "november"
+        Month.DECEMBER.name -> "desember"
+        else -> this.name
+    }

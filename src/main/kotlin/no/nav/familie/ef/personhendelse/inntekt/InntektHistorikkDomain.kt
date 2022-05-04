@@ -14,7 +14,7 @@ data class InntektshistorikkResponse(
 data class InntektVersjon(
     val arbeidsInntektInformasjon: ArbeidsInntekthistorikkInformasjon,
     val avvikListe: List<Avvik>?,
-    val innleveringstidspunkt: String,
+    val innleveringstidspunkt: String?,
     val opplysningspliktig: String,
     val versjon: Int
 )
