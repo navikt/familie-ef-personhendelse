@@ -41,10 +41,10 @@ class VedtakendringerService(
         personerMedVedtakList.chunked(500)
             .map { sakClient.hentForventetInntektForIdenter(it) }
             .flatMap { it.entries }
-            .forEach { (ident, inntekt) ->
+            .forEach { (ident, forventetInntekt) ->
                 val response = hentInntektshistorikk(ident)
-                if (response != null) {
-                    opprettOppgaveHvisNyttVedtakEllerEndretInntekt(ident, response, inntekt, skalOppretteOppgave)
+                if (response != null && forventetInntekt != null) {
+                    opprettOppgaveHvisNyttVedtakEllerEndretInntekt(ident, response, forventetInntekt, skalOppretteOppgave)
                 }
             }
     }
