@@ -36,9 +36,10 @@ class VedtakendringerService(
 
     @Async
     fun beregnNyeVedtakOgLagOppgave(skalOppretteOppgave: Boolean = false) {
-        val personerMedVedtakList = efVedtakRepository.hentPersonerMedVedtakIkkeBehandlet().map { it.personIdent }
 
-        personerMedVedtakList.chunked(500)
+        val personerMedAktivStonad = sakClient.hentPersonerMedAktivStønad()
+
+        personerMedAktivStonad.chunked(500)
             .map { sakClient.hentForventetInntektForIdenter(it) }
             .flatMap { it.entries }
             .forEach { (ident, forventetInntekt) ->
@@ -65,7 +66,6 @@ class VedtakendringerService(
                 secureLogger.info("Ville opprettet oppgave for $ident harNyeVedtak: $harNyeVedtak harEndretInntekt: $harEndretInntekt")
             }
         }
-        if (skalOppretteOppgave) efVedtakRepository.oppdaterAarMaanedProsessert(ident)
     }
 
     fun harNyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): Boolean {

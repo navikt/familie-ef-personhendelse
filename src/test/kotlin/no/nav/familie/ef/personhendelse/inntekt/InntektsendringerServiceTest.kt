@@ -176,7 +176,6 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "3", forventetInntekt)).isTrue
     }
 
-
     fun readResource(name: String): String {
         return this::class.java.classLoader.getResource(name)!!.readText(StandardCharsets.UTF_8)
     }
