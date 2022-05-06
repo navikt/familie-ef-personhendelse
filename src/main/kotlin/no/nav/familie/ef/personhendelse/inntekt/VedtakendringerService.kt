@@ -37,8 +37,10 @@ class VedtakendringerService(
     @Async
     fun beregnNyeVedtakOgLagOppgave(skalOppretteOppgave: Boolean = false) {
 
+        logger.info("Starter beregning av inntektsendringer")
         val personerMedAktivStonad = sakClient.hentPersonerMedAktivStønad()
-
+        logger.info("Antall personer med aktiv stønad: ${personerMedAktivStonad.size}")
+        var counter = 0
         personerMedAktivStonad.chunked(500)
             .map { sakClient.hentForventetInntektForIdenter(it) }
             .flatMap { it.entries }
@@ -47,7 +49,12 @@ class VedtakendringerService(
                 if (response != null && forventetInntekt != null) {
                     opprettOppgaveHvisNyttVedtakEllerEndretInntekt(ident, response, forventetInntekt, skalOppretteOppgave)
                 }
+                counter++
+                if (counter % 500 == 0) {
+                    logger.info("Antall personer sjekket: $counter (av ${personerMedAktivStonad.size}")
+                }
             }
+        logger.info("Vedtak- og inntektsendringer ferdig")
     }
 
     private fun opprettOppgaveHvisNyttVedtakEllerEndretInntekt(
@@ -105,7 +112,7 @@ class VedtakendringerService(
         try {
             return inntektClient.hentInntektshistorikk(
                 fnr,
-                YearMonth.now().minusYears(1),
+                YearMonth.now().minusMonths(4),
                 null
             )
         } catch (e: Exception) {
