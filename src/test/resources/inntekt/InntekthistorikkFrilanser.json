@@ -1,0 +1,184 @@
+{
+  "aarMaanedHistorikk": {
+    "2022-03": {
+      "1": [
+        {
+          "versjon": 1,
+          "opplysningspliktig": "1",
+          "virksomhet": "2",
+          "innleveringstidspunkt": "2022-03-23T14:07:23.893",
+          "arbeidsInntektInformasjon": {}
+        }
+      ],
+      "3": [
+        {
+          "versjon": 1,
+          "opplysningspliktig": "3",
+          "virksomhet": "4",
+          "innleveringstidspunkt": "2022-03-22T13:57:13.92",
+          "arbeidsInntektInformasjon": {
+            "arbeidsforholdListe": [
+              {
+                "antallTimerPerUkeSomEnFullStillingTilsvarer": 37.5,
+                "arbeidstidsordning": "ikkeSkift",
+                "sisteLoennsendring": "2021-01-06",
+                "frilansPeriodeFom": "2021-01-06",
+                "stillingsprosent": 100.0,
+                "yrke": "2544112",
+                "arbeidsforholdID": "4896-4461",
+                "arbeidsforholdstype": "frilanserOppdragstakerHonorarPersonerMm",
+                "arbeidsgiver": {
+                  "identifikator": "4",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "arbeidstaker": {
+                  "identifikator": "5",
+                  "aktoerType": "NATURLIG_IDENT"
+                }
+              }
+            ],
+            "inntektListe": [
+              {
+                "inntektType": "LOENNSINNTEKT",
+                "beloep": 7627.69,
+                "fordel": "kontantytelse",
+                "inntektskilde": "A-ordningen",
+                "inntektsperiodetype": "Maaned",
+                "inntektsstatus": "LoependeInnrapportert",
+                "leveringstidspunkt": "2022-05",
+                "opptjeningsperiodeFom": "2022-03-01",
+                "opptjeningsperiodeTom": "2022-03-31",
+                "utbetaltIMaaned": "2022-03",
+                "opplysningspliktig": {
+                  "identifikator": "3",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "virksomhet": {
+                  "identifikator": "4",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "inntektsmottaker": {
+                  "identifikator": "5",
+                  "aktoerType": "NATURLIG_IDENT"
+                },
+                "inngaarIGrunnlagForTrekk": true,
+                "utloeserArbeidsgiveravgift": true,
+                "informasjonsstatus": "InngaarAlltid",
+                "beskrivelse": "timeloenn",
+                "antall": 37
+              }
+            ],
+            "forskuddstrekkListe": [
+              {
+                "beloep": -839,
+                "leveringstidspunkt": "2022-05-04T09:35:41.114",
+                "opplysningspliktig": {
+                  "identifikator": "3",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "utbetaler": {
+                  "identifikator": "4",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "forskuddstrekkGjelder": {
+                  "identifikator": "5",
+                  "aktoerType": "NATURLIG_IDENT"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "6": [
+        {
+          "versjon": 1,
+          "opplysningspliktig": "6",
+          "virksomhet": "6",
+          "innleveringstidspunkt": "2022-03-22T08:39:45.317",
+          "arbeidsInntektInformasjon": {
+            "inntektListe": [
+              {
+                "inntektType": "YTELSE_FRA_OFFENTLIGE",
+                "beloep": 7395,
+                "fordel": "kontantytelse",
+                "inntektskilde": "A-ordningen",
+                "inntektsperiodetype": "Maaned",
+                "inntektsstatus": "LoependeInnrapportert",
+                "leveringstidspunkt": "2022-05",
+                "utbetaltIMaaned": "2022-03",
+                "opplysningspliktig": {
+                  "identifikator": "6",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "virksomhet": {
+                  "identifikator": "6",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "inntektsmottaker": {
+                  "identifikator": "5",
+                  "aktoerType": "NATURLIG_IDENT"
+                },
+                "inngaarIGrunnlagForTrekk": true,
+                "utloeserArbeidsgiveravgift": false,
+                "informasjonsstatus": "InngaarAlltid",
+                "beskrivelse": "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
+              },
+              {
+                "inntektType": "YTELSE_FRA_OFFENTLIGE",
+                "beloep": 7395,
+                "fordel": "kontantytelse",
+                "inntektskilde": "A-ordningen",
+                "inntektsperiodetype": "Maaned",
+                "inntektsstatus": "LoependeInnrapportert",
+                "leveringstidspunkt": "2022-05",
+                "utbetaltIMaaned": "2022-03",
+                "opplysningspliktig": {
+                  "identifikator": "6",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "virksomhet": {
+                  "identifikator": "6",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "tilleggsinformasjon": {
+                  "kategori": "Periode",
+                  "tilleggsinformasjonDetaljer": {
+                    "detaljerType": "ETTERBETALINGSPERIODE",
+                    "etterbetalingsperiodeFom": "2022-02-01",
+                    "etterbetalingsperiodeTom": "2022-02-28"
+                  }
+                },
+                "inntektsmottaker": {
+                  "identifikator": "5",
+                  "aktoerType": "NATURLIG_IDENT"
+                },
+                "inngaarIGrunnlagForTrekk": true,
+                "utloeserArbeidsgiveravgift": false,
+                "informasjonsstatus": "InngaarAlltid",
+                "beskrivelse": "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
+              }
+            ],
+            "forskuddstrekkListe": [
+              {
+                "beloep": -1626,
+                "leveringstidspunkt": "2022-05-04T09:35:41.114",
+                "opplysningspliktig": {
+                  "identifikator": "6",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "utbetaler": {
+                  "identifikator": "6",
+                  "aktoerType": "ORGANISASJON"
+                },
+                "forskuddstrekkGjelder": {
+                  "identifikator": "5",
+                  "aktoerType": "NATURLIG_IDENT"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

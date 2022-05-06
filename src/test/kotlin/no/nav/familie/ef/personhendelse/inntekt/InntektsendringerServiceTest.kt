@@ -159,6 +159,23 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "3", forventetLønnsinntekt)).isFalse
     }
 
+    @Test
+    fun `Inntekt som frilanser skal medberegnes`() {
+        val json: String = readResource("inntekt/InntekthistorikkFrilanser.json")
+        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-03")
+
+        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
+            linkedMapOf(
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+            )
+        )
+
+        val forventetInntekt = 70000
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "3", forventetInntekt)).isTrue
+    }
+
     fun readResource(name: String): String {
         return this::class.java.classLoader.getResource(name)!!.readText(StandardCharsets.UTF_8)
     }
