@@ -78,7 +78,8 @@ class ForelderBarnHandlerTest {
         personhendelse.forelderBarnRelasjon = no.nav.person.pdl.leesah.forelderbarnrelasjon.ForelderBarnRelasjon(
             personIdent,
             "",
-            minRolleForPerson
+            minRolleForPerson,
+            null
         )
         personhendelse.hendelseId = UUID.randomUUID().toString()
         personhendelse.endringstype = Endringstype.OPPRETTET
