@@ -38,7 +38,7 @@ internal class UtflyttingHandlerTest {
         personhendelse.endringstype = Endringstype.OPPRETTET
         personhendelse.hendelseId = UUID.randomUUID().toString()
 
-        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personIdent)) } returns false
+        every { sakClient.harLøpendeStønad(setOf(personIdent)) } returns false
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
 
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
@@ -57,7 +57,7 @@ internal class UtflyttingHandlerTest {
         personhendelse.endringstype = Endringstype.OPPRETTET
         personhendelse.hendelseId = UUID.randomUUID().toString()
 
-        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personIdent)) } returns true
+        every { sakClient.harLøpendeStønad(setOf(personIdent)) } returns true
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
 
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()

@@ -43,7 +43,7 @@ class SivilstandHandlerTest {
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.endringstype = Endringstype.OPPRETTET
 
-        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personIdent)) } returns false
+        every { sakClient.harLøpendeStønad(setOf(personIdent)) } returns false
 
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
@@ -67,7 +67,7 @@ class SivilstandHandlerTest {
         personhendelse.endringstype = Endringstype.OPPRETTET
         personhendelse.hendelseId = UUID.randomUUID().toString()
 
-        every { sakClient.harStønadSiste12MånederForPersonidenter(setOf(personIdent)) } returns true
+        every { sakClient.harLøpendeStønad(setOf(personIdent)) } returns true
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
 

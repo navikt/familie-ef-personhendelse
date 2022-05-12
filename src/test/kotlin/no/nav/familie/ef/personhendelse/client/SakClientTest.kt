@@ -62,7 +62,7 @@ internal class SakClientTest {
                 )
         )
 
-        val response = sakClient.harStønadSiste12MånederForPersonidenter(personidenter)
+        val response = sakClient.harLøpendeStønad(personidenter)
         Assertions.assertThat(response).isEqualTo(true)
     }
 
