@@ -37,6 +37,11 @@ class ForelderBarnHandlerTest {
 
     private val slot = slot<OpprettOppgaveRequest>()
 
+    private val personhendelse = forelderBarnRelasjonHendelse("BARN")
+
+    private val barn1Fnr = "fnr"
+    private val barn2Fnr = "fnr2"
+
     @BeforeEach
     internal fun setUp() {
         every { oppgaveClient.finnOppgaveMedId(any()) }.returns(Oppgave(id = 0L, status = StatusEnum.OPPRETTET))
@@ -47,7 +52,6 @@ class ForelderBarnHandlerTest {
 
     @Test
     internal fun `finnNyeBarnForBruker inneholder ikke treff, forvent at oppgave ikke opprettes`() {
-        val personhendelse = forelderBarnRelasjonHendelse("BARN")
         every { sakClient.finnNyeBarnForBruker(any()) } returns NyeBarnDto(emptyList())
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
@@ -56,19 +60,40 @@ class ForelderBarnHandlerTest {
 
     @Test
     internal fun `finnNyeBarnForBruker inneholder treff, forvent at oppgave opprettes`() {
-        val personhendelse = forelderBarnRelasjonHendelse("BARN")
-        every { sakClient.finnNyeBarnForBruker(any()) } returns NyeBarnDto(
-            listOf(
-                NyttBarn(
-                    "fnr",
-                    NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING
-                )
-            )
-        )
+        mockNyeBarn(NyttBarn(barn1Fnr, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING))
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
-        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt barn.")
+        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt/nye barn (fnr).")
+    }
+
+    @Test
+    internal fun `finnNyeBarnForBruker inneholder terminbarn, forvent at oppgave opprettes`() {
+        mockNyeBarn(NyttBarn(barn1Fnr, NyttBarnÅrsak.FØDT_FØR_TERMIN))
+        every { pdlClient.hentPerson(personIdent) } returns person
+        service.håndterPersonhendelse(personhendelse)
+        verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
+        assertThat(slot.captured.beskrivelse)
+                .isEqualTo("Personhendelse: Bruker er innvilget overgangsstønad for ufødt barn (fnr). " +
+                           "Barnet er registrert født i måneden før oppgitt termindato. Vurder saken.")
+    }
+
+    @Test
+    internal fun `finnNyeBarnForBruker inneholder terminbarn og nytt barn, forvent at oppgave opprettes`() {
+        mockNyeBarn(NyttBarn(barn1Fnr, NyttBarnÅrsak.FØDT_FØR_TERMIN),
+                    NyttBarn(barn2Fnr, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING))
+        every { pdlClient.hentPerson(personIdent) } returns person
+        service.håndterPersonhendelse(personhendelse)
+        verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
+        assertThat(slot.captured.beskrivelse)
+                .isEqualTo("Personhendelse: Bruker er innvilget overgangsstønad for ufødt barn (fnr). " +
+                           "Barnet er registrert født i måneden før oppgitt termindato. " +
+                           "Bruker har også fått et nytt/nye barn (fnr2). " +
+                           "Vurder saken.")
+    }
+
+    private fun mockNyeBarn(vararg nyeBarn: NyttBarn) {
+        every { sakClient.finnNyeBarnForBruker(any()) } returns NyeBarnDto(nyeBarn.toList())
     }
 
     private fun forelderBarnRelasjonHendelse(minRolleForPerson: String): Personhendelse {
@@ -76,10 +101,10 @@ class ForelderBarnHandlerTest {
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.opplysningstype = PersonhendelseType.FORELDERBARNRELASJON.hendelsetype
         personhendelse.forelderBarnRelasjon = no.nav.person.pdl.leesah.forelderbarnrelasjon.ForelderBarnRelasjon(
-            personIdent,
-            "",
-            minRolleForPerson,
-            null
+                personIdent,
+                "",
+                minRolleForPerson,
+                null
         )
         personhendelse.hendelseId = UUID.randomUUID().toString()
         personhendelse.endringstype = Endringstype.OPPRETTET
