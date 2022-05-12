@@ -6,6 +6,7 @@ import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 
 @Component
 class SivilstandHandler : PersonhendelseHandler {
@@ -15,16 +16,22 @@ class SivilstandHandler : PersonhendelseHandler {
     override val type = PersonhendelseType.SIVILSTAND
 
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveInformasjon {
+        val sivilstand = personhendelse.sivilstand
+        val gyldigFraOgMed = sivilstand.gyldigFraOgMed ?: sivilstand.bekreftelsesdato
         if (personhendelse.sivilstandNotNull()) {
-            logger.info("Mottatt sivilstand hendelse med verdi ${personhendelse.sivilstand.type}")
+            logger.info("Mottatt sivilstand hendelse med verdi ${sivilstand.type} gyldigFraOgMed=${gyldigFraOgMed}")
         }
-        if (!personhendelse.skalSivilstandHåndteres()) {
+        if (!personhendelse.skalSivilstandHåndteres() || erEldreEnn2År(gyldigFraOgMed)) {
             return IkkeOpprettOppgave
         }
-        val beskrivelse = "Sivilstand endret til \"${personhendelse.sivilstand.type.enumToReadable()}\", " +
-            "gyldig fra og med dato: ${(personhendelse.sivilstand.bekreftelsesdato ?: personhendelse.sivilstand.gyldigFraOgMed).tilNorskDatoformat()}"
+
+        val beskrivelse = "Sivilstand endret til \"${sivilstand.type.enumToReadable()}\", " +
+                          "gyldig fra og med dato: ${gyldigFraOgMed.tilNorskDatoformat()}"
         return OpprettOppgave(beskrivelse = beskrivelse)
     }
+
+    private fun erEldreEnn2År(gyldigFraOgMed: LocalDate?) =
+            gyldigFraOgMed != null && gyldigFraOgMed < LocalDate.now().minusYears(2)
 }
 
 fun Personhendelse.skalSivilstandHåndteres(): Boolean {
