@@ -33,10 +33,12 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
             val nyeBarnTekst = if (nyeBarnSomIkkeFinnesPåBehandlingen.isNotEmpty())
                 "Bruker har også fått et nytt/nye barn (${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenter()}). "
             else ""
-            return OpprettOppgave("Bruker er innvilget overgangsstønad for ufødt barn (${barnFødtFørTermin.separerteIdenter()}). " +
-                                  "Barnet er registrert født i måneden før oppgitt termindato. " +
-                                  nyeBarnTekst +
-                                  "Vurder saken.")
+            return OpprettOppgave(
+                "Bruker er innvilget overgangsstønad for ufødt barn (${barnFødtFørTermin.separerteIdenter()}). " +
+                    "Barnet er registrert født i måneden før oppgitt termindato. " +
+                    nyeBarnTekst +
+                    "Vurder saken."
+            )
         }
         return OpprettOppgave("Bruker har fått et nytt/nye barn (${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenter()}).")
     }
