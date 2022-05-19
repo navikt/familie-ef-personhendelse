@@ -35,10 +35,10 @@ class SivilstandHandlerTest {
     fun `Ikke opprett oppgave for sivilstand hendelse registrert partner dersom person ikke har løpende ef-sak`() {
         val personhendelse = Personhendelse()
         personhendelse.sivilstand = Sivilstand(
-                Sivilstandstype.REGISTRERT_PARTNER.name,
-                LocalDate.now(),
-                partnerPersonIdent,
-                LocalDate.now()
+            Sivilstandstype.REGISTRERT_PARTNER.name,
+            LocalDate.now(),
+            partnerPersonIdent,
+            LocalDate.now()
         )
         personhendelse.opplysningstype = PersonhendelseType.SIVILSTAND.hendelsetype
         personhendelse.personidenter = listOf(personIdent)
@@ -58,10 +58,10 @@ class SivilstandHandlerTest {
     fun `Ikke opprett oppgave for sivilstand hendelse registrert partner dersom datoet for hendelsen er eldre enn 2 år`() {
         val personhendelse = Personhendelse()
         personhendelse.sivilstand = Sivilstand(
-                Sivilstandstype.REGISTRERT_PARTNER.name,
-                LocalDate.now().minusYears(2).minusMonths(1),
-                partnerPersonIdent,
-                LocalDate.now().minusYears(2).minusMonths(1)
+            Sivilstandstype.REGISTRERT_PARTNER.name,
+            LocalDate.now().minusYears(2).minusMonths(1),
+            partnerPersonIdent,
+            LocalDate.now().minusYears(2).minusMonths(1)
         )
         personhendelse.opplysningstype = PersonhendelseType.SIVILSTAND.hendelsetype
         personhendelse.personidenter = listOf(personIdent)
@@ -81,10 +81,10 @@ class SivilstandHandlerTest {
     fun `Opprett oppgave for sivilstand hendelse registrert partner dersom person har løpende ef-sak`() {
         val personhendelse = Personhendelse()
         personhendelse.sivilstand = Sivilstand(
-                Sivilstandstype.REGISTRERT_PARTNER.name,
-                LocalDate.now(),
-                partnerPersonIdent,
-                LocalDate.now()
+            Sivilstandstype.REGISTRERT_PARTNER.name,
+            LocalDate.now(),
+            partnerPersonIdent,
+            LocalDate.now()
         )
         personhendelse.opplysningstype = PersonhendelseType.SIVILSTAND.hendelsetype
         personhendelse.personidenter = listOf(personIdent)

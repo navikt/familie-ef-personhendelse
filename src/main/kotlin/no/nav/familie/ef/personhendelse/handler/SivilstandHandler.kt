@@ -19,19 +19,19 @@ class SivilstandHandler : PersonhendelseHandler {
         val sivilstand = personhendelse.sivilstand
         val gyldigFraOgMed = sivilstand.gyldigFraOgMed ?: sivilstand.bekreftelsesdato
         if (personhendelse.sivilstandNotNull()) {
-            logger.info("Mottatt sivilstand hendelse med verdi ${sivilstand.type} gyldigFraOgMed=${gyldigFraOgMed}")
+            logger.info("Mottatt sivilstand hendelse med verdi ${sivilstand.type} gyldigFraOgMed=$gyldigFraOgMed")
         }
         if (!personhendelse.skalSivilstandHåndteres() || erEldreEnn2År(gyldigFraOgMed)) {
             return IkkeOpprettOppgave
         }
 
         val beskrivelse = "Sivilstand endret til \"${sivilstand.type.enumToReadable()}\", " +
-                          "gyldig fra og med dato: ${gyldigFraOgMed.tilNorskDatoformat()}"
+            "gyldig fra og med dato: ${gyldigFraOgMed.tilNorskDatoformat()}"
         return OpprettOppgave(beskrivelse = beskrivelse)
     }
 
     private fun erEldreEnn2År(gyldigFraOgMed: LocalDate?) =
-            gyldigFraOgMed != null && gyldigFraOgMed < LocalDate.now().minusYears(2)
+        gyldigFraOgMed != null && gyldigFraOgMed < LocalDate.now().minusYears(2)
 }
 
 fun Personhendelse.skalSivilstandHåndteres(): Boolean {
