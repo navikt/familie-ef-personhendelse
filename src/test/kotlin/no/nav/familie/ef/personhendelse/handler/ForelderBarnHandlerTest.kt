@@ -45,7 +45,7 @@ class ForelderBarnHandlerTest {
     @BeforeEach
     internal fun setUp() {
         every { oppgaveClient.finnOppgaveMedId(any()) }.returns(Oppgave(id = 0L, status = StatusEnum.OPPRETTET))
-        every { sakClient.harStønadSiste12MånederForPersonidenter(any()) } returns true
+        every { sakClient.harLøpendeStønad(any()) } returns true
         every { oppgaveClient.opprettOppgave(capture(slot)) } returns 1L
         every { pdlClient.hentPerson(any()) } returns person
     }

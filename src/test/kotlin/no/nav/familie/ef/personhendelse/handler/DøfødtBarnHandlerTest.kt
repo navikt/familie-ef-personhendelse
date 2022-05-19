@@ -32,7 +32,7 @@ internal class DøfødtBarnHandlerTest {
 
     @BeforeEach
     internal fun setUp() {
-        every { sakClient.harStønadSiste12MånederForPersonidenter(any()) } returns true
+        every { sakClient.harLøpendeStønad(any()) } returns true
         every { oppgaveClient.opprettOppgave(capture(slot)) } returns 1L
     }
 

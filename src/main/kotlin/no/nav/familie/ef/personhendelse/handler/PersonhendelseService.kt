@@ -47,12 +47,12 @@ class PersonhendelseService(
     }
 
     private fun handle(handler: PersonhendelseHandler, personhendelse: Personhendelse, personidenter: Set<String>) {
-        val finnesBehandlingForPerson = sakClient.harStønadSiste12MånederForPersonidenter(personidenter)
+        val harLøpendeStønad = sakClient.harLøpendeStønad(personidenter)
         logger.info(
-            "Personhendelse av opplysningstype : ${personhendelse.opplysningstype} av type : ${personhendelse.endringstype.name}." +
-                " Behandling finnes : $finnesBehandlingForPerson . "
+            "Personhendelse av opplysningstype=${personhendelse.opplysningstype} av type=${personhendelse.endringstype.name} - " +
+                " harLøpendeStønad=$harLøpendeStønad"
         )
-        if (finnesBehandlingForPerson) {
+        if (harLøpendeStønad) {
             handlePersonhendelse(handler, personhendelse, personidenter.first())
         }
     }
