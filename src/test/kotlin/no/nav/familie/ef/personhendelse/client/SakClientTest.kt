@@ -53,7 +53,7 @@ internal class SakClientTest {
     fun `Finnes behandling i ef-sak for person og returner true`() {
 
         wiremockServerItem.stubFor(
-            post(urlMatching("/api/ekstern/behandling/harstoenad/flere-identer"))
+            post(urlMatching("/api/ekstern/behandling/har-loepende-stoenad"))
                 .withRequestBody(equalToJson(objectMapper.writeValueAsString(personidenter)))
                 .willReturn(
                     aResponse()
@@ -62,7 +62,7 @@ internal class SakClientTest {
                 )
         )
 
-        val response = sakClient.harStønadSiste12MånederForPersonidenter(personidenter)
+        val response = sakClient.harLøpendeStønad(personidenter)
         Assertions.assertThat(response).isEqualTo(true)
     }
 

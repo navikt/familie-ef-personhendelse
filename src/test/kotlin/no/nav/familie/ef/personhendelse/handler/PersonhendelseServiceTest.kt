@@ -37,7 +37,7 @@ internal class PersonhendelseServiceTest {
         every { oppgaveClient.finnOppgaveMedId(any()) }.returns(Oppgave(id = 0L, status = StatusEnum.OPPRETTET))
         every { oppgaveClient.oppdaterOppgave(any()) }.returns(0L)
         every { oppgaveClient.opprettOppgave(any()) }.returns(0L)
-        every { sakClient.harStønadSiste12MånederForPersonidenter(any()) }.returns(true)
+        every { sakClient.harLøpendeStønad(any()) }.returns(true)
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
     }
 
@@ -60,7 +60,7 @@ internal class PersonhendelseServiceTest {
     @Test
     fun `finnes ingen behandling for person, forvent at hendelsen ikke håndteres`() {
         val personhendelse = personhendelse(Endringstype.OPPRETTET)
-        every { sakClient.harStønadSiste12MånederForPersonidenter(any()) }.returns(false)
+        every { sakClient.harLøpendeStønad(any()) }.returns(false)
         val handlerSpyk = spyk(personhendelseService, recordPrivateCalls = true)
         handlerSpyk.håndterPersonhendelse(personhendelse)
         verify(exactly = 0) {
