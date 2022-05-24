@@ -165,10 +165,12 @@ class InntektsendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-03")
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-03")
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson)))
             )
         )
 

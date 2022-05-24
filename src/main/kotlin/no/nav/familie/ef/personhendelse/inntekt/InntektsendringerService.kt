@@ -17,8 +17,9 @@ class InntektsendringerService(
     fun harEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, ident: String, forventetInntekt: Int?): Boolean {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
+        val nestNyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2).toString())
 
-        return har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt, ident, forventetInntekt)
+        return har10ProsentHøyereInntektEnnForventet(nestNyesteRegistrerteInntekt, ident, forventetInntekt) && har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt, ident, forventetInntekt)
     }
 
     private fun har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Boolean {
