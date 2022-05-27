@@ -39,7 +39,7 @@ class EfVedtakListenerTest {
             efVedtakRepository.lagreEfVedtakshendelse(any())
         } just Runs
         every {
-            vedtakendringerService.beregnNyeVedtakOgLagOppgave()
+            vedtakendringerService.beregnInntektsendringerOgLagreIDb()
         } just Runs
         val efVedtakshendelse = EnsligForsørgerVedtakhendelse(1L, "personIdent", StønadType.OVERGANGSSTØNAD)
         val hendelse = ConsumerRecord("topic", 1, 1, "key", objectMapper.writeValueAsString(efVedtakshendelse))

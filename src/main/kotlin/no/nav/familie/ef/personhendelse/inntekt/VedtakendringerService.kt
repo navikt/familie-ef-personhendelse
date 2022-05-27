@@ -36,28 +36,25 @@ class VedtakendringerService(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     @Async
-    fun beregnNyeVedtakOgLagOppgave(skalOppretteOppgave: Boolean = false) {
+    fun beregnInntektsendringerOgLagreIDb(skalOppretteOppgave: Boolean = false) {
 
         logger.info("Starter beregning av inntektsendringer")
-        val personerMedAktivStonad = sakClient.hentPersonerMedAktivStønad()
-        logger.info("Antall personer med aktiv stønad: ${personerMedAktivStonad.size}")
+        val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønad()
+        efVedtakRepository.clearInntektsendringer()
+        logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
         var counter = 0
-        personerMedAktivStonad.chunked(500).forEach {
+        personerMedAktivStønad.chunked(500).forEach {
             sakClient.hentForventetInntektForIdenter(it).forEach { forventetInntektForPerson ->
                 val response = hentInntektshistorikk(forventetInntektForPerson.personIdent)
                 if (response != null &&
                     forventetInntektForPerson.forventetInntektForrigeMåned != null &&
                     forventetInntektForPerson.forventetInntektToMånederTilbake != null
                 ) {
-                    opprettOppgaveHvisNyttVedtakEllerEndretInntekt(
-                        forventetInntektForPerson,
-                        response,
-                        skalOppretteOppgave
-                    )
+                    lagreInntektsendringForPerson(forventetInntektForPerson, response)
                 }
                 counter++
                 if (counter % 500 == 0) {
-                    logger.info("Antall personer sjekket: $counter (av ${personerMedAktivStonad.size}")
+                    logger.info("Antall personer sjekket: $counter (av ${personerMedAktivStønad.size}")
                 }
             }
         }
@@ -65,24 +62,25 @@ class VedtakendringerService(
         logger.info("Vedtak- og inntektsendringer ferdig")
     }
 
-    private fun opprettOppgaveHvisNyttVedtakEllerEndretInntekt(
+    private fun lagreInntektsendringForPerson(
         forventetInntektForPerson: ForventetInntektForPerson,
-        response: InntektshistorikkResponse,
-        skalOppretteOppgave: Boolean
+        response: InntektshistorikkResponse
     ) {
         val harNyeVedtak = harNyeVedtak(response)
         val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, forventetInntektForPerson)
+        efVedtakRepository.lagreInntektsendring(forventetInntektForPerson.personIdent, harNyeVedtak, harEndretInntekt)
+    }
 
-        if (harNyeVedtak || harEndretInntekt) {
-            if (skalOppretteOppgave) {
-                opprettOppgave(harNyeVedtak, harEndretInntekt, forventetInntektForPerson.personIdent)
-            } else {
-                secureLogger.info(
-                    "Ville opprettet oppgave for ${forventetInntektForPerson.personIdent} " +
-                        "harNyeVedtak: $harNyeVedtak harEndretInntekt: $harEndretInntekt"
-                )
+    fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {
+        val inntektsendringer = efVedtakRepository.hentInntektsendringer()
+        if (skalOppretteOppgave) {
+            inntektsendringer.forEach {
+                opprettOppgave(it.harNyttVedtak, it.harEndretInntekt, it.personIdent)
             }
+        } else {
+            logger.info("Ville opprettet inntektsendring-oppgave for ${inntektsendringer.size} personer")
         }
+        return inntektsendringer.size
     }
 
     fun harNyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): Boolean {
