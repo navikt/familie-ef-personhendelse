@@ -48,9 +48,9 @@ class KafkaConfig(
     @Bean
     fun kafkaPersonhendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
         ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
-            val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
-            factory.consumerFactory = DefaultKafkaConsumerFactory(consumerConfigs())
-            factory.setErrorHandler(kafkaErrorHandler)
-            return factory
-        }
+        val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
+        factory.consumerFactory = DefaultKafkaConsumerFactory(consumerConfigs())
+        factory.setErrorHandler(kafkaErrorHandler)
+        return factory
+    }
 }
