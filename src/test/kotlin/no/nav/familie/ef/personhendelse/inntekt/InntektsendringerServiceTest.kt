@@ -3,6 +3,7 @@ package no.nav.familie.ef.personhendelse.inntekt
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -46,9 +47,9 @@ class InntektsendringerServiceTest {
         val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
         val forventetInntektNiProsentLavere = (forventetLønnsinntekt * 0.91).toInt()
 
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forventetLønnsinntekt)).isFalse
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "2", forventetInntektTiProsentLavere)).isTrue
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "3", forventetInntektNiProsentLavere)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("1", forventetLønnsinntekt, forventetLønnsinntekt))).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere))).isTrue
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere))).isFalse
     }
 
     @Test
@@ -66,7 +67,7 @@ class InntektsendringerServiceTest {
 
         val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
 
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "2", forventetInntektTiProsentLavere)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere))).isFalse
     }
 
     @Test
@@ -83,7 +84,7 @@ class InntektsendringerServiceTest {
         )
         val forventetInntekt = 172_000
 
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "2", forventetInntekt)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("2", forventetInntekt, forventetInntekt))).isFalse
     }
 
     @Test
@@ -102,7 +103,7 @@ class InntektsendringerServiceTest {
         )
 
         val forHøyInntekt = 585001
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forHøyInntekt)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("1", forHøyInntekt, forHøyInntekt))).isFalse
     }
 
     @Test
@@ -121,7 +122,7 @@ class InntektsendringerServiceTest {
         )
 
         val forventetInntekt = 30000
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forventetInntekt)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("1", forventetInntekt, forventetInntekt))).isFalse
     }
 
     @Test
@@ -138,7 +139,7 @@ class InntektsendringerServiceTest {
         )
 
         val forventetInntekt = 5000
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "1", forventetInntekt)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("1", forventetInntekt, forventetInntekt))).isFalse
     }
 
     @Test
@@ -156,7 +157,7 @@ class InntektsendringerServiceTest {
             )
         )
 
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "3", forventetLønnsinntekt)).isFalse
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("3", forventetLønnsinntekt, forventetLønnsinntekt))).isFalse
     }
 
     @Test
@@ -165,15 +166,17 @@ class InntektsendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-03")
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-03")
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson)))
             )
         )
 
         val forventetInntekt = 70000
-        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, "3", forventetInntekt)).isTrue
+        Assertions.assertThat(inntektsendringer.harEndretInntekt(oppdatertDatoInntektshistorikkResponse, ForventetInntektForPerson("3", forventetInntekt, forventetInntekt))).isTrue
     }
 
     fun readResource(name: String): String {

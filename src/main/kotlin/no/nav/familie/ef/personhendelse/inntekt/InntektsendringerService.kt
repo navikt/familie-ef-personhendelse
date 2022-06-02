@@ -1,5 +1,6 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.secureLogger
@@ -14,11 +15,13 @@ class InntektsendringerService(
 
     private val halvtGrunnbeløpMånedlig = (106399 / 2) / 12
 
-    fun harEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, ident: String, forventetInntekt: Int?): Boolean {
+    fun harEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, forventetInntektForPerson: ForventetInntektForPerson): Boolean {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
+        val nestNyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2).toString())
 
-        return har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt, ident, forventetInntekt)
+        return har10ProsentHøyereInntektEnnForventet(nestNyesteRegistrerteInntekt, forventetInntektForPerson.personIdent, forventetInntektForPerson.forventetInntektToMånederTilbake) &&
+            har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt, forventetInntektForPerson.personIdent, forventetInntektForPerson.forventetInntektToMånederTilbake)
     }
 
     private fun har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Boolean {

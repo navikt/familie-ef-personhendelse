@@ -82,6 +82,20 @@ internal class SakClientTest {
         Assertions.assertThat(response).isEqualTo(400000)
     }
 
+    @Test
+    fun `Les gyldig response fra gjeldendeIverksatteBehandlingerMedInntekt`() {
+        wiremockServerItem.stubFor(
+            post(urlEqualTo("/api/vedtak/gjeldendeIverksatteBehandlingerMedInntekt"))
+                .willReturn(
+                    aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(gjeldendeIverksatteBehandlingerGyldigResponse)
+                )
+        )
+        val response = sakClient.hentForventetInntektForIdenter(listOf("1", "2"))
+        Assertions.assertThat(response.first().forventetInntektForrigeMåned).isEqualTo(100_000)
+    }
+
     private val harStoenadGyldigResponse = """
         {
             "data": true,
@@ -95,6 +109,27 @@ internal class SakClientTest {
             "data": 400000,
             "status": "SUKSESS",
             "melding": "Innhenting av data var vellykket"
+        }
+    """.trimIndent()
+
+    private val gjeldendeIverksatteBehandlingerGyldigResponse = """
+        {
+            "data": [
+                {
+                    "personIdent": "1",
+                    "forventetInntektForrigeMåned": 100000,
+                    "forventetInntektToMånederTilbake": 200000
+                },
+                {
+                    "personIdent": "2",
+                    "forventetInntektForrigeMåned": 400000,
+                    "forventetInntektToMånederTilbake": 350000
+                }
+            ],
+            "status": "SUKSESS",
+            "melding": "Innhenting av data var vellykket",
+            "frontendFeilmelding": null,
+            "stacktrace": null
         }
     """.trimIndent()
 }

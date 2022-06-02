@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
+import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
@@ -41,36 +42,45 @@ class VedtakendringerService(
         val personerMedAktivStonad = sakClient.hentPersonerMedAktivStønad()
         logger.info("Antall personer med aktiv stønad: ${personerMedAktivStonad.size}")
         var counter = 0
-        personerMedAktivStonad.chunked(500)
-            .map { sakClient.hentForventetInntektForIdenter(it) }
-            .flatMap { it.entries }
-            .forEach { (ident, forventetInntekt) ->
-                val response = hentInntektshistorikk(ident)
-                if (response != null && forventetInntekt != null) {
-                    opprettOppgaveHvisNyttVedtakEllerEndretInntekt(ident, response, forventetInntekt, skalOppretteOppgave)
+        personerMedAktivStonad.chunked(500).forEach {
+            sakClient.hentForventetInntektForIdenter(it).forEach { forventetInntektForPerson ->
+                val response = hentInntektshistorikk(forventetInntektForPerson.personIdent)
+                if (response != null &&
+                    forventetInntektForPerson.forventetInntektForrigeMåned != null &&
+                    forventetInntektForPerson.forventetInntektToMånederTilbake != null
+                ) {
+                    opprettOppgaveHvisNyttVedtakEllerEndretInntekt(
+                        forventetInntektForPerson,
+                        response,
+                        skalOppretteOppgave
+                    )
                 }
                 counter++
                 if (counter % 500 == 0) {
                     logger.info("Antall personer sjekket: $counter (av ${personerMedAktivStonad.size}")
                 }
             }
+        }
+
         logger.info("Vedtak- og inntektsendringer ferdig")
     }
 
     private fun opprettOppgaveHvisNyttVedtakEllerEndretInntekt(
-        ident: String,
+        forventetInntektForPerson: ForventetInntektForPerson,
         response: InntektshistorikkResponse,
-        inntekt: Int?,
         skalOppretteOppgave: Boolean
     ) {
         val harNyeVedtak = harNyeVedtak(response)
-        val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, ident, inntekt)
+        val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, forventetInntektForPerson)
 
         if (harNyeVedtak || harEndretInntekt) {
             if (skalOppretteOppgave) {
-                opprettOppgave(harNyeVedtak, harEndretInntekt, ident)
+                opprettOppgave(harNyeVedtak, harEndretInntekt, forventetInntektForPerson.personIdent)
             } else {
-                secureLogger.info("Ville opprettet oppgave for $ident harNyeVedtak: $harNyeVedtak harEndretInntekt: $harEndretInntekt")
+                secureLogger.info(
+                    "Ville opprettet oppgave for ${forventetInntektForPerson.personIdent} " +
+                        "harNyeVedtak: $harNyeVedtak harEndretInntekt: $harEndretInntekt"
+                )
             }
         }
     }
