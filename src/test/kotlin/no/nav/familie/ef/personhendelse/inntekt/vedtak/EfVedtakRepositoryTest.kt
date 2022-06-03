@@ -67,4 +67,20 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
         Assertions.assertThat(vedtakshendelseList.size).isEqualTo(1)
         Assertions.assertThat(vedtakshendelseList.first().aarMaanedProsessert).isEqualTo(YearMonth.of(2021, 12))
     }
+
+    @Test
+    fun `lagre inntektsendringer`() {
+        efVedtakRepository.lagreInntektsendring("1", true, false)
+        var hentInntektsendringer = efVedtakRepository.hentInntektsendringer()
+        Assertions.assertThat(hentInntektsendringer.size).isEqualTo(1)
+
+        val inntektsendring = hentInntektsendringer.first()
+        Assertions.assertThat(inntektsendring.personIdent).isEqualTo("1")
+        Assertions.assertThat(inntektsendring.harNyttVedtak).isTrue
+        Assertions.assertThat(inntektsendring.harEndretInntekt).isFalse
+
+        efVedtakRepository.clearInntektsendringer()
+        hentInntektsendringer = efVedtakRepository.hentInntektsendringer()
+        Assertions.assertThat(hentInntektsendringer.isEmpty()).isTrue
+    }
 }

@@ -6,14 +6,20 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
+import java.time.LocalDateTime
 import java.time.YearMonth
+import java.util.UUID
 
 @Repository
 class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
-    fun lagreEfVedtakshendelse(vedtakshendelse: EnsligForsørgerVedtakhendelse, aarMaanedProsessert: YearMonth = YearMonth.now()) {
-        val sql = "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType, :aar_maaned_prosessert, :versjon)" +
-            " ON CONFLICT DO NOTHING"
+    fun lagreEfVedtakshendelse(
+        vedtakshendelse: EnsligForsørgerVedtakhendelse,
+        aarMaanedProsessert: YearMonth = YearMonth.now()
+    ) {
+        val sql =
+            "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType, :aar_maaned_prosessert, :versjon)" +
+                " ON CONFLICT DO NOTHING"
         val params = MapSqlParameterSource(
             mapOf(
                 "behandlingId" to vedtakshendelse.behandlingId,
@@ -27,7 +33,8 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
     }
 
     fun hentAllePersonerMedVedtak(): List<VedtakhendelseInntektberegning> {
-        val sql = "SELECT MAX(behandling_id) as behandling_id, person_ident, stonadstype, aar_maaned_prosessert, versjon FROM efvedtakhendelse GROUP BY person_ident, stonadstype, aar_maaned_prosessert, versjon ORDER BY behandling_id"
+        val sql =
+            "SELECT MAX(behandling_id) as behandling_id, person_ident, stonadstype, aar_maaned_prosessert, versjon FROM efvedtakhendelse GROUP BY person_ident, stonadstype, aar_maaned_prosessert, versjon ORDER BY behandling_id"
         val mapSqlParameterSource = MapSqlParameterSource("stonadstype", StønadType.OVERGANGSSTØNAD.toString())
         return namedParameterJdbcTemplate.query(sql, mapSqlParameterSource, vedtakhendelseInntektberegningMapper)
     }
@@ -55,4 +62,46 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
 
         namedParameterJdbcTemplate.update(sql, mapSqlParameterSource)
     }
+
+    fun lagreInntektsendring(personIdent: String, harNyeVedtak: Boolean, harEndretInntekt: Boolean) {
+        val sql =
+            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :harEndretInntekt, :prosessertTid)" +
+                " ON CONFLICT DO NOTHING"
+        val params = MapSqlParameterSource(
+            mapOf(
+                "id" to UUID.randomUUID(),
+                "personIdent" to personIdent,
+                "harNyeVedtak" to harNyeVedtak,
+                "harEndretInntekt" to harEndretInntekt,
+                "prosessertTid" to LocalDateTime.now()
+            )
+        )
+        namedParameterJdbcTemplate.update(sql, params)
+    }
+
+    fun hentInntektsendringer(): List<Inntektsendring> {
+        val sql = "SELECT * FROM inntektsendringer WHERE harNyttVedtak = true OR harEndretInntekt = true"
+        return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
+    }
+
+    private val inntektsendringerMapper = { rs: ResultSet, _: Int ->
+        Inntektsendring(
+            rs.getString("person_ident"),
+            rs.getBoolean("harNyttVedtak"),
+            rs.getBoolean("harEndretInntekt"),
+            rs.getObject("prosessert_tid", LocalDateTime::class.java)
+        )
+    }
+
+    fun clearInntektsendringer() {
+        val sql = "DELETE FROM inntektsendringer"
+        namedParameterJdbcTemplate.update(sql, MapSqlParameterSource())
+    }
 }
+
+data class Inntektsendring(
+    val personIdent: String,
+    val harNyttVedtak: Boolean,
+    val harEndretInntekt: Boolean,
+    val prosessertTid: LocalDateTime
+)

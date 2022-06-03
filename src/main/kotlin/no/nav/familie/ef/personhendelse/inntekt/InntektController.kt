@@ -13,8 +13,14 @@ import org.springframework.web.bind.annotation.RestController
 class InntektController(val vedtakendringer: VedtakendringerService) {
 
     @GetMapping("/sjekkEndringer")
-    fun sjekkEndringer(@RequestParam skalOppretteOppgaver: Boolean): ResponseEntity<Any> {
-        vedtakendringer.beregnNyeVedtakOgLagOppgave(skalOppretteOppgaver)
+    fun sjekkEndringer(): ResponseEntity<Any> {
+        vedtakendringer.beregnInntektsendringerOgLagreIDb()
         return ResponseEntity.ok().build()
+    }
+
+    @GetMapping("/opprettOppgaver")
+    fun opprettOppgaverForInntektsendringer(@RequestParam skalOppretteOppgaver: Boolean): ResponseEntity<Int> {
+        val antallOppgaver = vedtakendringer.opprettOppgaverForInntektsendringer(skalOppretteOppgaver)
+        return ResponseEntity.ok(antallOppgaver)
     }
 }
