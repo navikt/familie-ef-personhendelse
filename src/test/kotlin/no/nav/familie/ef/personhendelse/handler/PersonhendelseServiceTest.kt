@@ -73,11 +73,11 @@ internal class PersonhendelseServiceTest {
     }
 
     @Test
-    fun `håndter personhendelse av typen annuller uten en tidligere hendelse, forvent oppgaveopprettelse`() {
+    fun `håndter personhendelse av typen annuller uten en tidligere hendelse, ikke opprett oppgave`() {
         val personhendelse = personhendelse(Endringstype.ANNULLERT)
         every { personhendelseRepository.hentHendelse(any()) }.returns(null)
         personhendelseService.håndterPersonhendelse(personhendelse)
-        verify { oppgaveClient.opprettOppgave(any()) }
+        verify(exactly = 0) { oppgaveClient.opprettOppgave(any()) }
     }
 
     @Test
