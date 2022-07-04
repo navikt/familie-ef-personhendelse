@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.0</version>
+        <version>2.7.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.familie.ef</groupId>
@@ -37,9 +37,9 @@
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <ktlint-maven-plugin.version>1.7.0</ktlint-maven-plugin.version>
         <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
-        <kontrakter.version>2.0_20220615165608_348f1f2</kontrakter.version>
+        <kontrakter.version>2.0_20220622102545_00805ef</kontrakter.version>
         <felles.version>1.20220701144106_918df22</felles.version>
-        <token-validation-spring-test.version>2.1.0</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
+        <token-validation-spring-test.version>2.1.1</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.33.2</wiremock.version>
         <mockk.version>1.12.4</mockk.version>
