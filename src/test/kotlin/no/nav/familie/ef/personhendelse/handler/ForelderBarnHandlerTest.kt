@@ -37,7 +37,7 @@ class ForelderBarnHandlerTest {
 
     private val slot = slot<OpprettOppgaveRequest>()
 
-    private val personhendelse = forelderBarnRelasjonHendelse("BARN")
+    private val personhendelse = forelderBarnRelasjonHendelse()
 
     private val barn1Fnr = "fnr"
     private val barn2Fnr = "fnr2"
@@ -64,7 +64,7 @@ class ForelderBarnHandlerTest {
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
-        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt/nye barn (fnr).")
+        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt/nye barn (fnr) som ikke finnes på behandling.")
     }
 
     @Test
@@ -102,14 +102,14 @@ class ForelderBarnHandlerTest {
         every { sakClient.finnNyeBarnForBruker(any()) } returns NyeBarnDto(nyeBarn.toList())
     }
 
-    private fun forelderBarnRelasjonHendelse(minRolleForPerson: String): Personhendelse {
+    private fun forelderBarnRelasjonHendelse(): Personhendelse {
         val personhendelse = Personhendelse()
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.opplysningstype = PersonhendelseType.FORELDERBARNRELASJON.hendelsetype
         personhendelse.forelderBarnRelasjon = no.nav.person.pdl.leesah.forelderbarnrelasjon.ForelderBarnRelasjon(
             personIdent,
-            "",
-            minRolleForPerson,
+            "BARN",
+            "MOR",
             null
         )
         personhendelse.hendelseId = UUID.randomUUID().toString()

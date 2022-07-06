@@ -21,7 +21,7 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
     override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveInformasjon {
         val personIdent = personhendelse.identerUtenAktørId().first()
         val nyeBarnForBruker = sakClient.finnNyeBarnForBruker(PersonIdent(personIdent))
-        if (nyeBarnForBruker.nyeBarn.isEmpty()) {
+        if (nyeBarnForBruker.nyeBarn.isEmpty() || personhendelse.forelderBarnRelasjon.relatertPersonsRolle != "BARN") {
             return IkkeOpprettOppgave
         }
 
@@ -40,7 +40,7 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
                     "Vurder saken."
             )
         }
-        return OpprettOppgave("Bruker har fått et nytt/nye barn (${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenter()}).")
+        return OpprettOppgave("Bruker har fått et nytt/nye barn (${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenter()}) som ikke finnes på behandling.")
     }
 
     private fun NyeBarnDto.filtrerÅrsak(årsak: NyttBarnÅrsak) = this.nyeBarn.filter { it.årsak == årsak }

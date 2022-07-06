@@ -102,9 +102,10 @@ class PersonhendelseService(
     private fun opphørEllerKorrigerOppgave(personhendelse: Personhendelse) {
         val hendelse = hentHendelse(personhendelse)
         if (hendelse == null) {
-            logger.info("Tidligere hendelse for personhendelse : ${personhendelse.hendelseId} ble ikke funnet")
-            val oppgaveId = opprettOppgaveMedBeskrivelse(personhendelse, personhendelse.finnesIngenHendelseBeskrivelse())
-            logger.info("Oppgave for at det ikke finnes hendelse opprettet med oppgaveId=$oppgaveId")
+            logger.warn(
+                "Tidligere hendelse for personhendelse : ${personhendelse.hendelseId} ble ikke funnet. " +
+                    personhendelse.finnesIngenHendelseBeskrivelse()
+            )
             return
         }
         val oppgave = hentOppgave(hendelse)
