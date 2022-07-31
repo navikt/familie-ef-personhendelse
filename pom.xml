@@ -42,7 +42,7 @@
         <token-validation-spring-test.version>2.1.2</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.33.2</wiremock.version>
-        <mockk.version>1.12.4</mockk.version>
+        <mockk.version>1.12.5</mockk.version>
         <testcontainers.version>1.17.3</testcontainers.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
     </properties>
