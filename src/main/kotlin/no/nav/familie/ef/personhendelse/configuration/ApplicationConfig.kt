@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.configuration
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.http.config.RestTemplateAzure
+import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
@@ -27,14 +28,17 @@ import java.time.temporal.ChronoUnit
 @ConfigurationPropertiesScan("no.nav.familie.ef.personhendelse")
 @EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger"])
 @EnableScheduling
-@Import(RestTemplateAzure::class)
+@Import(
+    RestTemplateAzure::class,
+    KafkaErrorHandler::class
+)
 @EnableOAuth2Client(cacheEnabled = true)
 class ApplicationConfig {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Bean
-    fun kotlinModule(): KotlinModule = KotlinModule()
+    fun kotlinModule(): KotlinModule = KotlinModule.Builder().build()
 
     @Bean
     fun logFilter(): FilterRegistrationBean<LogFilter> {

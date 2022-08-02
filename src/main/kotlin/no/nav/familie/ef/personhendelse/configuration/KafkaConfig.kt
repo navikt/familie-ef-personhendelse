@@ -2,7 +2,7 @@ package no.nav.familie.ef.personhendelse.configuration
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
-import no.nav.familie.ef.personhendelse.kafka.KafkaErrorHandler
+import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -50,7 +50,7 @@ class KafkaConfig(
         ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
         val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
         factory.consumerFactory = DefaultKafkaConsumerFactory(consumerConfigs())
-        factory.setErrorHandler(kafkaErrorHandler)
+        factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory
     }
 }
