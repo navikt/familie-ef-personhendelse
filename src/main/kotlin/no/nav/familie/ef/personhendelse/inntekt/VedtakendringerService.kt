@@ -37,7 +37,6 @@ class VedtakendringerService(
 
     @Async
     fun beregnInntektsendringerOgLagreIDb(skalOppretteOppgave: Boolean = false) {
-
         logger.info("Starter beregning av inntektsendringer")
         val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønad()
         efVedtakRepository.clearInntektsendringer()

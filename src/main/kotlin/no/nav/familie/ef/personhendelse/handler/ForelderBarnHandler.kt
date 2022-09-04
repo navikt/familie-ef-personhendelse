@@ -30,9 +30,11 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
         val barnFødtFørTermin = nyeBarnForBruker.filtrerÅrsak(NyttBarnÅrsak.FØDT_FØR_TERMIN)
         val nyeBarnSomIkkeFinnesPåBehandlingen = nyeBarnForBruker.filtrerÅrsak(NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
         if (barnFødtFørTermin.isNotEmpty()) {
-            val nyeBarnTekst = if (nyeBarnSomIkkeFinnesPåBehandlingen.isNotEmpty())
+            val nyeBarnTekst = if (nyeBarnSomIkkeFinnesPåBehandlingen.isNotEmpty()) {
                 "Bruker har også fått et nytt/nye barn (${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenter()}). "
-            else ""
+            } else {
+                ""
+            }
             return OpprettOppgave(
                 "Bruker er innvilget overgangsstønad for ufødt barn (${barnFødtFørTermin.separerteIdenter()}). " +
                     "Barnet er registrert født i måneden før oppgitt termindato. " +

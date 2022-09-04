@@ -25,7 +25,6 @@ class InntektsendringerService(
     }
 
     private fun har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Boolean {
-
         if (forventetInntekt == null || nyesteRegistrerteInntekt?.maxOfOrNull { it.versjon } == null) {
             secureLogger.warn("Ingen gjeldende inntekt funnet på person $ident har personen løpende stønad?")
             return false

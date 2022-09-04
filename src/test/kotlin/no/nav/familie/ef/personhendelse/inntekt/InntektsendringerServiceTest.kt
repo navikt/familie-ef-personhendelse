@@ -23,7 +23,6 @@ class InntektsendringerServiceTest {
 
     @BeforeEach
     internal fun setUp() {
-
         every { sakClient.inntektForEksternId(1) } returns forventetLønnsinntekt
         every { sakClient.inntektForEksternId(2) } returns (forventetLønnsinntekt * 0.9).toInt()
         every { sakClient.inntektForEksternId(3) } returns (forventetLønnsinntekt * 0.91).toInt()
@@ -150,7 +149,7 @@ class InntektsendringerServiceTest {
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", inntektVersjonForNyesteMåned))),
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", inntektVersjonForNyesteMåned)))
             )
         )
         val forventetInntekt = 172_000
@@ -288,7 +287,7 @@ class InntektsendringerServiceTest {
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson)))
             )
         )
 

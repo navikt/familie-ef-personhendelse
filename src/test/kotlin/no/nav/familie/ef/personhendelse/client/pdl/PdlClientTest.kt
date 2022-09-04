@@ -49,7 +49,6 @@ class PdlClientTest {
 
     @Test
     fun `HentPerson query skal returnere person`() {
-
         val hentPersonQuery = javaClass.getResource("/pdl/queries/hentPerson.graphql").readText().graphqlCompatible()
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlPersonRequestVariables(personIdent),
