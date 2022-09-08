@@ -46,7 +46,7 @@ data class AMeldingInntekt(
     val skattemessigBosattLand: String? = null,
     val virksomhet: Aktør, // ? = null,
     val tilleggsinformasjon: Tilleggsinformasjon? = null,
-    val beskrivelse: String? = null, // hentes fra kodeverk
+    val beskrivelse: String? = null // hentes fra kodeverk
 )
 
 data class Tilleggsinformasjon(
@@ -57,7 +57,7 @@ data class Tilleggsinformasjon(
 enum class AktørType {
     AKTOER_ID,
     NATURLIG_IDENT,
-    ORGANISASJON,
+    ORGANISASJON
 }
 
 enum class InntektType {

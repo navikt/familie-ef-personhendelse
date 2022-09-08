@@ -30,6 +30,7 @@ abstract class IntegrasjonSpringRunnerTest {
     protected val restTemplate = TestRestTemplate()
 
     @Autowired private lateinit var applicationContext: ApplicationContext
+
     @Autowired private lateinit var namedParameterJdbcTemplate: NamedParameterJdbcTemplate
 
     @LocalServerPort

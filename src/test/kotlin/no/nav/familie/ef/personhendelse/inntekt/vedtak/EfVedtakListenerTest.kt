@@ -34,7 +34,6 @@ class EfVedtakListenerTest {
 
     @Test
     fun `send inn gyldig consumer record, forvent lagring av efvedtakhendelse til db`() {
-
         every {
             efVedtakRepository.lagreEfVedtakshendelse(any())
         } just Runs

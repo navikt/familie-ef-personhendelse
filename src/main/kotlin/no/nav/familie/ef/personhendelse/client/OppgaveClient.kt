@@ -28,13 +28,12 @@ import java.time.Month
 @Component
 class OppgaveClient(
     @Value("\${FAMILIE_INTEGRASJONER_API_URL}") private val integrasjonUrl: String,
-    @Qualifier("azure") restOperations: RestOperations,
+    @Qualifier("azure") restOperations: RestOperations
 ) : AbstractRestClient(restOperations, "familie.integrasjoner") {
 
     val oppgaveUrl = "$integrasjonUrl/api/oppgave"
 
     fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long {
-
         val opprettOppgaveUri = URI.create("$oppgaveUrl/opprett")
         val response =
             postForEntity<Ressurs<OppgaveResponse>>(

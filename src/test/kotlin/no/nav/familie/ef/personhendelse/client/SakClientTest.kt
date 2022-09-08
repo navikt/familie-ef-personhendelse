@@ -51,7 +51,6 @@ internal class SakClientTest {
 
     @Test
     fun `Finnes behandling i ef-sak for person og returner true`() {
-
         wiremockServerItem.stubFor(
             post(urlMatching("/api/ekstern/behandling/har-loepende-stoenad"))
                 .withRequestBody(equalToJson(objectMapper.writeValueAsString(personidenter)))
@@ -68,7 +67,6 @@ internal class SakClientTest {
 
     @Test
     fun `Finnes behandling med gitt eksternId i ef-sak for person med forventet inntekt på 400 000 for gitt dato`() {
-
         wiremockServerItem.stubFor(
             get(urlEqualTo("/api/vedtak/eksternid/1/inntekt?dato=${LocalDate.now()}"))
                 .willReturn(

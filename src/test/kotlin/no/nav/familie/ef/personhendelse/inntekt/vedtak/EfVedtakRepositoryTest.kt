@@ -15,7 +15,6 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre og hent EnsligForsørgerVedtakshendelse`() {
-
         val efVedtakshendelse = EnsligForsørgerVedtakhendelse(1L, "personIdent1", StønadType.OVERGANGSSTØNAD)
         efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse)
 
@@ -29,7 +28,6 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre og hent EnsligForsørgerVedtakshendelser med to like personidenter, men to ulike behandlingId`() {
-
         val efVedtakshendelse = EnsligForsørgerVedtakhendelse(1L, "personIdent1", StønadType.OVERGANGSSTØNAD)
         efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse)
 
@@ -46,7 +44,6 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre og hent ikke behandlede ensligForsørgerVedtakshendelse`() {
-
         val efVedtakshendelse = EnsligForsørgerVedtakhendelse(2L, "personIdent2", StønadType.OVERGANGSSTØNAD)
         efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse)
 
@@ -57,7 +54,6 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre og oppdater ensligForsørgerVedtakshendelse`() {
-
         val efVedtakshendelse = EnsligForsørgerVedtakhendelse(3L, "personIdent3", StønadType.OVERGANGSSTØNAD)
         efVedtakRepository.lagreEfVedtakshendelse(efVedtakshendelse)
         efVedtakRepository.oppdaterAarMaanedProsessert("personIdent3", YearMonth.of(2021, 12))

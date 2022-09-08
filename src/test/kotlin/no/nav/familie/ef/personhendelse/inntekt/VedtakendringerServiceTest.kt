@@ -96,7 +96,8 @@ class VedtakendringerServiceTest {
                     YearMonth.now().minusMonths(2).toString(),
                     mapOf(
                         Pair(
-                            "1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))
+                            "1",
+                            listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))
                         )
                     )
                 )
@@ -133,7 +134,7 @@ class VedtakendringerServiceTest {
         return InntektshistorikkResponse(
             linkedMapOf(
                 Pair(YearMonth.now().minusMonths(1).toString(), inntektshistorikkResponse.inntektEntryForMåned(keys.first())),
-                Pair(YearMonth.now().minusMonths(2).toString(), inntektshistorikkResponse.inntektEntryForMåned(keys.last())),
+                Pair(YearMonth.now().minusMonths(2).toString(), inntektshistorikkResponse.inntektEntryForMåned(keys.last()))
             )
         )
     }

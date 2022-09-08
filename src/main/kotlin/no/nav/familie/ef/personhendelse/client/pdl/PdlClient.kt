@@ -27,7 +27,6 @@ class PdlClient(
     val hentIdenter = javaClass.getResource("/pdl/queries/hentIdenter.graphql").readText().graphqlCompatible()
 
     fun hentPerson(fnr: String): Person {
-
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlPersonRequestVariables(fnr),
             query = hentPersonQuery
@@ -49,7 +48,6 @@ class PdlClient(
 }
 
 private fun httpHeadersPdl(): HttpHeaders {
-
     return HttpHeaders().apply {
         add("Tema", "ENF")
     }

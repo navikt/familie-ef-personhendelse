@@ -49,7 +49,6 @@ class InntektClientTest {
 
     @Test
     fun `tester inntektsresponse`() {
-
         wiremockServerItem.stubFor(
             WireMock.post(WireMock.urlEqualTo("/api/inntekt?fom=2020-11&tom=2021-11"))
                 .withRequestBody(equalToJson(objectMapper.writeValueAsString(PersonIdent(personIdent))))
@@ -70,7 +69,6 @@ class InntektClientTest {
 
     @Test
     fun `tester inntektshistorikk response`() {
-
         wiremockServerItem.stubFor(
             WireMock.post(WireMock.urlEqualTo("/api/inntekt/historikk?fom=2020-01&tom=2020-07"))
                 .withRequestBody(equalToJson(objectMapper.writeValueAsString(PersonIdent(personIdent))))
