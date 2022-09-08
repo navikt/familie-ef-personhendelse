@@ -12,6 +12,7 @@ import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepo
 import no.nav.familie.kontrakter.ef.personhendelse.NyeBarnDto
 import no.nav.familie.kontrakter.ef.personhendelse.NyttBarn
 import no.nav.familie.kontrakter.ef.personhendelse.NyttBarnÅrsak
+import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
@@ -60,22 +61,34 @@ class ForelderBarnHandlerTest {
 
     @Test
     internal fun `finnNyeBarnForBruker inneholder treff, forvent at oppgave opprettes`() {
-        mockNyeBarn(NyttBarn(barn1Fnr, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING))
+        mockNyeBarn(NyttBarn(barn1Fnr, StønadType.OVERGANGSSTØNAD, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING))
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
-        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt/nye barn (fnr) som ikke finnes på behandling.")
+        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt/nye barn fnr (Overgangsstønad) som ikke finnes på behandling.")
+    }
+
+    @Test
+    internal fun `finnNyeBarnForBruker inneholder flere treff, forvent at oppgave opprettes`() {
+        mockNyeBarn(
+            NyttBarn(barn1Fnr, StønadType.OVERGANGSSTØNAD, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING),
+            NyttBarn(barn1Fnr, StønadType.BARNETILSYN, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
+        )
+        every { pdlClient.hentPerson(personIdent) } returns person
+        service.håndterPersonhendelse(personhendelse)
+        verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
+        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt/nye barn fnr (Overgangsstønad), fnr (Barnetilsyn) som ikke finnes på behandling.")
     }
 
     @Test
     internal fun `finnNyeBarnForBruker inneholder terminbarn, forvent at oppgave opprettes`() {
-        mockNyeBarn(NyttBarn(barn1Fnr, NyttBarnÅrsak.FØDT_FØR_TERMIN))
+        mockNyeBarn(NyttBarn(barn1Fnr, StønadType.BARNETILSYN, NyttBarnÅrsak.FØDT_FØR_TERMIN))
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
         assertThat(slot.captured.beskrivelse)
             .isEqualTo(
-                "Personhendelse: Bruker er innvilget overgangsstønad for ufødt barn (fnr). " +
+                "Personhendelse: Bruker er innvilget stønad for ufødt(e) barn fnr (Barnetilsyn). " +
                     "Barnet er registrert født i måneden før oppgitt termindato. Vurder saken."
             )
     }
@@ -83,17 +96,17 @@ class ForelderBarnHandlerTest {
     @Test
     internal fun `finnNyeBarnForBruker inneholder terminbarn og nytt barn, forvent at oppgave opprettes`() {
         mockNyeBarn(
-            NyttBarn(barn1Fnr, NyttBarnÅrsak.FØDT_FØR_TERMIN),
-            NyttBarn(barn2Fnr, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
+            NyttBarn(barn1Fnr, StønadType.OVERGANGSSTØNAD, NyttBarnÅrsak.FØDT_FØR_TERMIN),
+            NyttBarn(barn2Fnr, StønadType.SKOLEPENGER, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
         )
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
         assertThat(slot.captured.beskrivelse)
             .isEqualTo(
-                "Personhendelse: Bruker er innvilget overgangsstønad for ufødt barn (fnr). " +
+                "Personhendelse: Bruker er innvilget stønad for ufødt(e) barn fnr (Overgangsstønad). " +
                     "Barnet er registrert født i måneden før oppgitt termindato. " +
-                    "Bruker har også fått et nytt/nye barn (fnr2). " +
+                    "Bruker har også fått et nytt/nye barn fnr2 (Skolepenger). " +
                     "Vurder saken."
             )
     }

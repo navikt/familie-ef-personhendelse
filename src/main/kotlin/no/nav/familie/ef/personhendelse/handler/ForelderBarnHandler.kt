@@ -31,21 +31,21 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
         val nyeBarnSomIkkeFinnesPåBehandlingen = nyeBarnForBruker.filtrerÅrsak(NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
         if (barnFødtFørTermin.isNotEmpty()) {
             val nyeBarnTekst = if (nyeBarnSomIkkeFinnesPåBehandlingen.isNotEmpty()) {
-                "Bruker har også fått et nytt/nye barn (${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenter()}). "
+                "Bruker har også fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()}. "
             } else {
                 ""
             }
             return OpprettOppgave(
-                "Bruker er innvilget overgangsstønad for ufødt barn (${barnFødtFørTermin.separerteIdenter()}). " +
+                "Bruker er innvilget stønad for ufødt(e) barn ${barnFødtFørTermin.separerteIdenterMedStønadstype()}. " +
                     "Barnet er registrert født i måneden før oppgitt termindato. " +
                     nyeBarnTekst +
                     "Vurder saken."
             )
         }
-        return OpprettOppgave("Bruker har fått et nytt/nye barn (${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenter()}) som ikke finnes på behandling.")
+        return OpprettOppgave("Bruker har fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()} som ikke finnes på behandling.")
     }
 
     private fun NyeBarnDto.filtrerÅrsak(årsak: NyttBarnÅrsak) = this.nyeBarn.filter { it.årsak == årsak }
 
-    private fun List<NyttBarn>.separerteIdenter() = this.joinToString(", ") { it.personIdent }
+    private fun List<NyttBarn>.separerteIdenterMedStønadstype() = this.joinToString(", ") { it.personIdent + " (${it.stønadstype.name.enumToReadable()})" }
 }
