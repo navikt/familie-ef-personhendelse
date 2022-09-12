@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v1
       - name: Read/save maven cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-cache-ef-personhendelse-${{ hashFiles('**/pom.xml') }}
