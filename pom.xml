@@ -38,7 +38,7 @@
         <ktlint-maven-plugin.version>1.7.0</ktlint-maven-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
         <kontrakter.version>2.0_20220916130234_aa8ba65</kontrakter.version>
-        <felles.version>1.20220901103347_4819e55</felles.version>
+        <felles.version>1.20220930133126_14f75ec</felles.version>
         <token-validation-spring-test.version>2.1.4</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.34.0</wiremock.version>
