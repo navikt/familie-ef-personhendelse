@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
+import org.springframework.kafka.listener.ContainerProperties
 
 @EnableKafka
 @Configuration
@@ -50,6 +51,17 @@ class KafkaConfig(
         ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
         val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
         factory.consumerFactory = DefaultKafkaConsumerFactory(consumerConfigs())
+        factory.setCommonErrorHandler(kafkaErrorHandler)
+        return factory
+    }
+
+    @Bean
+    fun kafkaAivenPersonhendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler):
+        ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
+        properties.properties["specific.avro.reader"] = "true"
+        val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
+        factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
+        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
         factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory
     }

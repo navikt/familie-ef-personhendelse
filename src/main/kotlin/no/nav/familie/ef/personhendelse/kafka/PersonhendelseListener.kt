@@ -37,6 +37,7 @@ class PersonhendelseListener(
             MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
             val personidenter = personhendelse.identerUtenAktørId()
             // Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
+            logger.info("Leser personhendelse med hendelseId: ${personhendelse.hendelseId} fra on-prem")
             if (!personidenter.firstOrNull().isNullOrBlank()) {
                 personhendelseService.håndterPersonhendelse(personhendelse)
             } else {
@@ -53,6 +54,16 @@ class PersonhendelseListener(
         } finally {
             MDC.remove(MDCConstants.MDC_CALL_ID)
         }
+    }
+
+    @KafkaListener(
+        id = "familie-ef-personhendelse-aiven",
+        groupId = "familie-ef-personhendelse-leesah-1",
+        topics = ["pdl.leesah-v1"],
+        containerFactory = "kafkaAivenPersonhendelseListenerContainerFactory"
+    )
+    fun listenAiven(@Payload personhendelse: Personhendelse) {
+        logger.info("Leser personhendelse med hendelseId: ${personhendelse.hendelseId} fra Aiven. Gjør ingenting med denne hendelsen.")
     }
 
     /* -- Behold denne utkommenterte koden! Kjekt å kunne lese fra start ved behov for debugging i preprod
