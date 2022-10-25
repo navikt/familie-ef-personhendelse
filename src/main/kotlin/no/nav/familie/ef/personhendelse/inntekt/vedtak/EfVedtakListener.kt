@@ -22,7 +22,8 @@ class EfVedtakListener(
 
     @KafkaListener(
         id = "familie-ef-personhendelse-vedtak",
-        topics = ["\${FAMILIE_EF_VEDTAK_TOPIC}"]
+        topics = ["\${FAMILIE_EF_VEDTAK_TOPIC}"],
+        containerFactory = "kafkaVedtakListenerContainerFactory"
     )
     fun listen(consumerRecord: ConsumerRecord<String, String>) {
         val efVedtakshendelse = objectMapper.readValue<EnsligForsørgerVedtakhendelse>(consumerRecord.value())
