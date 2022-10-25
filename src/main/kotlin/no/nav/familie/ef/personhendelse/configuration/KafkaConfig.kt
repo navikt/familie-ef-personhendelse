@@ -6,8 +6,8 @@ import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG
 import org.apache.kafka.common.config.SaslConfigs
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
@@ -61,7 +61,6 @@ class KafkaConfig(
         ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
         properties.properties[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = "true"
         val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
-        factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
         factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
         factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory
@@ -72,8 +71,11 @@ class KafkaConfig(
         ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
         factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
-        properties.properties[VALUE_DESERIALIZER_CLASS_CONFIG] = "org.apache.kafka.common.serialization.StringDeserializer"
-        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
+        val props = properties.buildConsumerProperties()
+        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        props[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = false
+        factory.consumerFactory = DefaultKafkaConsumerFactory(props)
         factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory
     }
