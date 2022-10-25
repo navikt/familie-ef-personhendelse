@@ -46,6 +46,10 @@ class PersonhendelseService(
         }
     }
 
+    fun harHåndtertHendelse(hendelseId: String): Boolean {
+        return personhendelseRepository.hentHendelse(UUID.fromString(hendelseId)) != null
+    }
+
     private fun handle(handler: PersonhendelseHandler, personhendelse: Personhendelse, personidenter: Set<String>) {
         val harLøpendeStønad = sakClient.harLøpendeStønad(personidenter)
         logger.info(
