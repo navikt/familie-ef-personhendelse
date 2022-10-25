@@ -40,18 +40,4 @@ class EfVedtakListener(
             throw e
         }
     }
-
-
-    override fun onPartitionsAssigned(
-        assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
-        callback: ConsumerSeekAware.ConsumerSeekCallback
-    ) {
-        logger.info("overrided onPartitionsAssigned seekToBeginning")
-        assignments.keys.stream()
-            .filter { it.topic() == "teamfamilie.aapen-ensligforsorger-iverksatt-vedtak" }
-            .forEach {
-                callback.seekRelative("teamfamilie.aapen-ensligforsorger-iverksatt-vedtak", it.partition(), -1, false)
-                // callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
-            }
-    }
 }
