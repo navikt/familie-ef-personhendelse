@@ -38,7 +38,9 @@ class PersonhendelseListener(
             val personidenter = personhendelse.identerUtenAktørId()
             // Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
             logger.info("Leser personhendelse med hendelseId: ${personhendelse.hendelseId} fra on-prem")
-            if (!personidenter.firstOrNull().isNullOrBlank()) {
+            if (!personidenter.firstOrNull().isNullOrBlank() &&
+                !personhendelseService.harHåndtertHendelse(personhendelse.hendelseId)
+            ) {
                 personhendelseService.håndterPersonhendelse(personhendelse)
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
@@ -56,17 +58,6 @@ class PersonhendelseListener(
         }
     }
 
-    @KafkaListener(
-        id = "familie-ef-personhendelse-aiven",
-        groupId = "familie-ef-personhendelse-leesah-1",
-        topics = ["pdl.leesah-v1"],
-        containerFactory = "kafkaAivenPersonhendelseListenerContainerFactory"
-    )
-    fun listenAiven(@Payload personhendelse: Personhendelse) {
-        logger.info("Leser personhendelse med hendelseId: ${personhendelse.hendelseId} fra Aiven. Gjør ingenting med denne hendelsen.")
-    }
-
-    /* -- Behold denne utkommenterte koden! Kjekt å kunne lese fra start ved behov for debugging i preprod
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
         callback: ConsumerSeekAware.ConsumerSeekCallback
@@ -79,5 +70,4 @@ class PersonhendelseListener(
                 // callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
             }
     }
-     */
 }

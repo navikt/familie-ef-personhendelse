@@ -11,6 +11,7 @@ import no.nav.person.pdl.leesah.Personhendelse
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.UUID
 
 internal class PersonhendelseListenerTest {
 
@@ -53,6 +54,7 @@ internal class PersonhendelseListenerTest {
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.endringstype = endringstype
         personhendelse.opplysningstype = opplysningstype.hendelsetype
+        personhendelse.hendelseId = UUID.randomUUID().toString()
         return personhendelse
     }
 }
