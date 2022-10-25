@@ -20,8 +20,6 @@ spring:
 
 AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth/v2.0/token
-KAFKA_ONPREM_BOOTSTRAP_SERVERS: http://localhost:9092
-KAFKA_ONPREM_SCHEMA_REGISTRY_URL: http://localhost:8081
 SPRING_PROFILES_ACTIVE: local
 FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.dev.intern.nav.no/api/inntekt
 SRV_CREDENTIAL_USERNAME: serviceuser_username

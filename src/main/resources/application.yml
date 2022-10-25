@@ -48,7 +48,6 @@ spring:
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      group-id: familie-ef-personhendelse-vedtak
       max-poll-records: 1
       auto-offset-reset: latest
       enable-auto-commit: false
@@ -116,8 +115,6 @@ management:
   metrics.export.prometheus.enabled: true
   metrics.web.server.auto-time-requests: true
 
-KAFKA_ONPREM_BOOTSTRAP_SERVERS: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443
-KAFKA_ONPREM_SCHEMA_REGISTRY_URL: https://kafka-schema-registry.nais.adeo.no/
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.prod-fss-pub.nais.io
 FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.prod-fss-pub.nais.io
