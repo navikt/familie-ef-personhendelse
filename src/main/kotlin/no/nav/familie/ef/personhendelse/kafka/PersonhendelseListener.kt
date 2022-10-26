@@ -28,9 +28,10 @@ class PersonhendelseListener(
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
     @KafkaListener(
-        id = "familie-ef-personhendelse",
-        topics = ["aapen-person-pdl-leesah-v1"],
-        containerFactory = "kafkaPersonhendelseListenerContainerFactory"
+        id = "familie-ef-personhendelse-aiven",
+        groupId = "familie-ef-personhendelse-leesah-1",
+        topics = ["pdl.leesah-v1"],
+        containerFactory = "kafkaAivenPersonhendelseListenerContainerFactory"
     )
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
