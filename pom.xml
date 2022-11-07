@@ -30,18 +30,18 @@
         <changelist>-SNAPSHOT</changelist>
         <java.version>17</java.version>
         <kotlin.version>1.7.20</kotlin.version>
-        <kafka-avro-serializer.version>7.2.2</kafka-avro-serializer.version>
+        <kafka-avro-serializer.version>7.3.0</kafka-avro-serializer.version>
         <avro.version>1.11.1</avro.version>
         <graphql-kotlin-spring-client.version>6.2.5</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>6.2.5</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <ktlint-maven-plugin.version>1.7.0</ktlint-maven-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-        <kontrakter.version>2.0_20221027151559_d8da825</kontrakter.version>
-        <felles.version>1.20221006150009_46021ed</felles.version>
+        <kontrakter.version>2.0_20221104115410_3179526</kontrakter.version>
+        <felles.version>1.20221101085322_cc4d556</felles.version>
         <token-validation-spring-test.version>2.1.6</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
-        <wiremock.version>2.34.0</wiremock.version>
+        <wiremock.version>2.35.0</wiremock.version>
         <mockk.version>1.13.2</mockk.version>
         <testcontainers.version>1.17.5</testcontainers.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
