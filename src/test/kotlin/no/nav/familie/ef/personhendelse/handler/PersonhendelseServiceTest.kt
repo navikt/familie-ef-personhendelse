@@ -12,7 +12,9 @@ import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
+import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.person.pdl.leesah.Endringstype
@@ -33,12 +35,22 @@ internal class PersonhendelseServiceTest {
     private val personhendelseService =
         PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository)
 
+    private val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
+
+    private val personHendelseIdent = "11111111111"
+    private val annenIdent = "2"
+    private val oppgave = Oppgave(
+        id = 0L,
+        status = StatusEnum.OPPRETTET,
+        identer = listOf(OppgaveIdentV2(annenIdent, IdentGruppe.FOLKEREGISTERIDENT))
+    )
+
     @BeforeEach
     internal fun setUp() {
-        every { oppgaveClient.finnOppgaveMedId(any()) }.returns(Oppgave(id = 0L, status = StatusEnum.OPPRETTET))
-        every { oppgaveClient.oppdaterOppgave(any()) }.returns(0L)
-        every { oppgaveClient.opprettOppgave(any()) }.returns(0L)
-        every { sakClient.harLøpendeStønad(any()) }.returns(true)
+        every { oppgaveClient.finnOppgaveMedId(any()) } returns oppgave
+        every { oppgaveClient.oppdaterOppgave(any()) } returns 0L
+        every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 0L
+        every { sakClient.harLøpendeStønad(any()) } returns true
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
         justRun { oppgaveClient.leggOppgaveIMappe(any()) }
     }
@@ -112,14 +124,26 @@ internal class PersonhendelseServiceTest {
         verify { oppgaveClient.opprettOppgave(any()) }
     }
 
-    private fun personhendelse(endringstype: Endringstype): Personhendelse {
-        var personhendelse = Personhendelse()
-        personhendelse.personidenter = mutableListOf("12345612344")
-        personhendelse.endringstype = endringstype
-        personhendelse.hendelseId = UUID.randomUUID().toString()
-        personhendelse.tidligereHendelseId = UUID.randomUUID().toString()
-        personhendelse.opplysningstype = PersonhendelseType.UTFLYTTING_FRA_NORGE.name
-        return personhendelse
+    @Test
+    internal fun `korrigert hendelse skal opprette oppgave på forrige oppgave sin ident`() {
+        val personhendelse = personhendelse(Endringstype.KORRIGERT)
+        val hendelse = Hendelse(UUID.randomUUID(), 100L, Endringstype.OPPRETTET, LocalDateTime.now())
+
+        every { oppgaveClient.finnOppgaveMedId(any()) } returns oppgave.copy(status = StatusEnum.FERDIGSTILT)
+        every { personhendelseRepository.hentHendelse(any()) } returns hendelse
+
+        personhendelseService.håndterPersonhendelse(personhendelse)
+
+        assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(annenIdent)
+        verify(exactly = 1) { oppgaveClient.leggOppgaveIMappe(any()) }
+    }
+
+    private fun personhendelse(endringstype: Endringstype): Personhendelse = Personhendelse().apply {
+        personidenter = listOf(personHendelseIdent)
+        this.endringstype = endringstype
+        hendelseId = UUID.randomUUID().toString()
+        tidligereHendelseId = UUID.randomUUID().toString()
+        opplysningstype = PersonhendelseType.UTFLYTTING_FRA_NORGE.name
     }
 
     class DummyHandler : PersonhendelseHandler {
