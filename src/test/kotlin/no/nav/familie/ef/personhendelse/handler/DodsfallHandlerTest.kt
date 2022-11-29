@@ -28,7 +28,7 @@ class DodsfallHandlerTest {
 
     private val sakClient = mockk<SakClient>()
     private val pdlClient = mockk<PdlClient>()
-    private val oppgaveClient = mockk<OppgaveClient>()
+    private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
 
     private val handler = DodsfallHandler(pdlClient)

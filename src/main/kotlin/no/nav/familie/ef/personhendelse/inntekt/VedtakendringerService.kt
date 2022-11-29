@@ -5,7 +5,6 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
-import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
@@ -28,8 +27,7 @@ class VedtakendringerService(
     val oppgaveClient: OppgaveClient,
     val sakClient: SakClient,
     val arbeidsfordelingClient: ArbeidsfordelingClient,
-    val inntektsendringerService: InntektsendringerService,
-    val personhendelseService: PersonhendelseService
+    val inntektsendringerService: InntektsendringerService
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -156,12 +154,7 @@ class VedtakendringerService(
             )
         )
         secureLogger.info("Opprettet oppgave for person $personident med id: $oppgaveId")
-        try {
-            personhendelseService.leggOppgaveIMappe(oppgaveId)
-        } catch (e: Exception) {
-            logger.error("Feil under knytning av mappe til oppgave - se securelogs for stacktrace")
-            secureLogger.error("Feil under knytning av mappe til oppgave", e)
-        }
+        oppgaveClient.leggOppgaveIMappe(oppgaveId)
     }
 
     private fun lagOppgavetekst(harNyeVedtak: Boolean, harEndretInntekt: Boolean): String {

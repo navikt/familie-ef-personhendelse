@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.handler
 
 import io.mockk.every
 import io.mockk.just
+import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
@@ -39,30 +40,35 @@ internal class PersonhendelseServiceTest {
         every { oppgaveClient.opprettOppgave(any()) }.returns(0L)
         every { sakClient.harLøpendeStønad(any()) }.returns(true)
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
+        justRun { oppgaveClient.leggOppgaveIMappe(any()) }
     }
 
     @Test
     fun `endringstype OPPRETTET håndteres og behandling finnes for person, forvent at oppgave opprettes`() {
         val personhendelse = personhendelse(Endringstype.OPPRETTET)
+
         personhendelseService.håndterPersonhendelse(personhendelse)
+
         verify { oppgaveClient.opprettOppgave(any()) }
     }
 
     @Test
     fun `endringstype OPPRETTET håndteres og behandling finnes for person, forvent at beskrivelse for handler sendes`() {
         val personhendelse = personhendelse(Endringstype.OPPRETTET)
-        val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
-        every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) }.returns(0L)
+
         personhendelseService.håndterPersonhendelse(personhendelse)
+
         assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(dummyHandler.lagOppgaveBeskrivelse(personhendelse).beskrivelse)
     }
 
     @Test
     fun `finnes ingen behandling for person, forvent at hendelsen ikke håndteres`() {
         val personhendelse = personhendelse(Endringstype.OPPRETTET)
-        every { sakClient.harLøpendeStønad(any()) }.returns(false)
+        every { sakClient.harLøpendeStønad(any()) } returns false
         val handlerSpyk = spyk(personhendelseService, recordPrivateCalls = true)
+
         handlerSpyk.håndterPersonhendelse(personhendelse)
+
         verify(exactly = 0) {
             handlerSpyk["handlePersonhendelse"](
                 any<PersonhendelseHandler>(),
@@ -75,8 +81,10 @@ internal class PersonhendelseServiceTest {
     @Test
     fun `håndter personhendelse av typen annuller uten en tidligere hendelse, ikke opprett oppgave`() {
         val personhendelse = personhendelse(Endringstype.ANNULLERT)
-        every { personhendelseRepository.hentHendelse(any()) }.returns(null)
+        every { personhendelseRepository.hentHendelse(any()) } returns null
+
         personhendelseService.håndterPersonhendelse(personhendelse)
+
         verify(exactly = 0) { oppgaveClient.opprettOppgave(any()) }
     }
 
@@ -84,8 +92,10 @@ internal class PersonhendelseServiceTest {
     fun `send personhendelse av typen annuller til en tilknyttet oppgave, forvent oppgaveoppdatering`() {
         val personhendelse = personhendelse(Endringstype.ANNULLERT)
         val dummyHendelse = Hendelse(UUID.randomUUID(), 0L, Endringstype.ANNULLERT, LocalDateTime.now())
-        every { personhendelseRepository.hentHendelse(any()) }.returns(dummyHendelse)
+        every { personhendelseRepository.hentHendelse(any()) } returns dummyHendelse
+
         personhendelseService.håndterPersonhendelse(personhendelse)
+
         verify { oppgaveClient.oppdaterOppgave(any()) }
     }
 
@@ -94,9 +104,11 @@ internal class PersonhendelseServiceTest {
         val personhendelse = personhendelse(Endringstype.ANNULLERT)
 
         val dummyHendelse = Hendelse(UUID.randomUUID(), 0L, Endringstype.ANNULLERT, LocalDateTime.now())
-        every { personhendelseRepository.hentHendelse(any()) }.returns(dummyHendelse)
-        every { oppgaveClient.finnOppgaveMedId(any()) }.returns(Oppgave(id = 0L, status = StatusEnum.FERDIGSTILT))
+        every { personhendelseRepository.hentHendelse(any()) } returns dummyHendelse
+        every { oppgaveClient.finnOppgaveMedId(any()) } returns Oppgave(id = 0L, status = StatusEnum.FERDIGSTILT)
+
         personhendelseService.håndterPersonhendelse(personhendelse)
+
         verify { oppgaveClient.opprettOppgave(any()) }
     }
 
