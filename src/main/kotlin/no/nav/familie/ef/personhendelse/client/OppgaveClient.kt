@@ -5,7 +5,6 @@ import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.getDataOrThrow
-import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
@@ -52,11 +51,11 @@ class OppgaveClient(
         return response.getDataOrThrow()
     }
 
-    fun finnMapper(finnMappeRequest: FinnMappeRequest): FinnMappeResponseDto {
+    fun finnMapper(enhetsnummer: String, limit: Int = 1000): FinnMappeResponseDto {
         val response = getForEntity<Ressurs<FinnMappeResponseDto>>(
             UriComponentsBuilder.fromUri(URI.create("$oppgaveUrl/mappe/sok"))
-                .queryParam("enhetsnr", finnMappeRequest.enhetsnr)
-                .queryParam("limit", finnMappeRequest.limit)
+                .queryParam("enhetsnr", enhetsnummer)
+                .queryParam("limit", limit)
                 .build()
                 .toUri()
         )

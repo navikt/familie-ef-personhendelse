@@ -5,7 +5,6 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
-import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.person.pdl.leesah.Endringstype
@@ -131,13 +130,7 @@ class PersonhendelseService(
     fun leggOppgaveIMappe(oppgaveId: Long) {
         val oppgave = oppgaveClient.finnOppgaveMedId(oppgaveId)
         if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { // Skjermede personer skal ikke puttes i mappe
-            val finnMappeRequest = FinnMappeRequest(
-                listOf(),
-                oppgave.tildeltEnhetsnr!!,
-                null,
-                1000
-            )
-            val mapperResponse = oppgaveClient.finnMapper(finnMappeRequest)
+            val mapperResponse = oppgaveClient.finnMapper(oppgave.tildeltEnhetsnr!!)
             val mappe = mapperResponse.mapper.find {
                 it.navn.contains("62") &&
                     it.navn.contains("Hendelser") &&
