@@ -135,7 +135,7 @@ class PersonhendelseService(
 
     /**
      * Gjenbruker ident til forrige opprettede oppgave.
-     * Dette då hendelsen kan være koblet til banret og oppgaven som ble opprettet var opprettet på forelderen
+     * Dette da hendelsen kan være koblet til barnet og oppgaven som ble opprettet var opprettet på forelderen
      */
     private fun identFraOppgaveEllerPersonhendelse(
         oppgave: Oppgave,
