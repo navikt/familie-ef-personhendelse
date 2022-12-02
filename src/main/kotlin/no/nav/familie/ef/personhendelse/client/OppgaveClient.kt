@@ -5,7 +5,6 @@ import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.getDataOrThrow
-import no.nav.familie.kontrakter.felles.oppgave.FinnMappeRequest
 import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
@@ -55,13 +54,7 @@ class OppgaveClient(
     fun leggOppgaveIMappe(oppgaveId: Long) {
         val oppgave = finnOppgaveMedId(oppgaveId)
         if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { // Skjermede personer skal ikke puttes i mappe
-            val finnMappeRequest = FinnMappeRequest(
-                listOf(),
-                oppgave.tildeltEnhetsnr!!,
-                null,
-                1000
-            )
-            val mapperResponse = finnMapper(finnMappeRequest)
+            val mapperResponse = finnMapper(oppgave.tildeltEnhetsnr!!)
             try {
                 oppdaterOppgaveMedMappe(mapperResponse, oppgave)
             } catch (e: Exception) {
@@ -83,10 +76,11 @@ class OppgaveClient(
         oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
     }
 
-    private fun finnMapper(finnMappeRequest: FinnMappeRequest): FinnMappeResponseDto {
+    private fun finnMapper(enhetsnummer: String, limit: Int = 1000): FinnMappeResponseDto {
         val response = getForEntity<Ressurs<FinnMappeResponseDto>>(
             UriComponentsBuilder.fromUri(URI.create("$oppgaveUrl/mappe/sok"))
-                .queryParams(finnMappeRequest.toQueryParams())
+                .queryParam("enhetsnr", enhetsnummer)
+                .queryParam("limit", limit)
                 .build()
                 .toUri()
         )

@@ -6,7 +6,6 @@ import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.time.LocalDate
 
 @Component
 class SivilstandHandler : PersonhendelseHandler {
@@ -20,31 +19,25 @@ class SivilstandHandler : PersonhendelseHandler {
         val gyldigFraOgMed = sivilstand.gyldigFraOgMed ?: sivilstand.bekreftelsesdato
         if (personhendelse.sivilstandNotNull()) {
             logger.info("Mottatt sivilstand hendelse med verdi ${sivilstand.type} gyldigFraOgMed=$gyldigFraOgMed")
-        }
-        if (!personhendelse.skalSivilstandHåndteres() || erEldreEnn2År(gyldigFraOgMed)) {
+        } else {
             return IkkeOpprettOppgave
         }
 
-        val beskrivelse = "Sivilstand endret til \"${sivilstand.type.enumToReadable()}\", " +
+        val beskrivelse = personhendelse.endringstype.tilTekst() + " sivilstand av type \"${sivilstand.type.enumToReadable()}\", " +
             "gyldig fra og med dato: ${gyldigFraOgMed.tilNorskDatoformat()}"
         return OpprettOppgave(beskrivelse = beskrivelse)
     }
-
-    private fun erEldreEnn2År(gyldigFraOgMed: LocalDate?) =
-        gyldigFraOgMed != null && gyldigFraOgMed < LocalDate.now().minusYears(2)
 }
-
-fun Personhendelse.skalSivilstandHåndteres(): Boolean {
-    return this.sivilstandNotNull() &&
-        (sivilstandTyperSomSkalHåndteres.contains(this.sivilstand.type)) &&
-        (endringstyperSomSkalHåndteres.contains(this.endringstype))
-}
-
 private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this.sivilstand.type != null
 
-private val sivilstandTyperSomSkalHåndteres = listOf("GIFT", "REGISTRERT_PARTNER")
-
-private val endringstyperSomSkalHåndteres = listOf(Endringstype.OPPRETTET, Endringstype.KORRIGERT)
+fun Endringstype.tilTekst(): String {
+    return when (this) {
+        Endringstype.OPPRETTET -> "Ny"
+        Endringstype.KORRIGERT -> "Korrigering av"
+        Endringstype.ANNULLERT -> "Annullering av"
+        Endringstype.OPPHOERT -> "Opphør av"
+    }
+}
 
 fun String.enumToReadable(): String {
     return this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
