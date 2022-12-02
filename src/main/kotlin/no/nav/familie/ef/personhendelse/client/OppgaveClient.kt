@@ -51,7 +51,32 @@ class OppgaveClient(
         return response.getDataOrThrow()
     }
 
-    fun finnMapper(enhetsnummer: String, limit: Int = 1000): FinnMappeResponseDto {
+    fun leggOppgaveIMappe(oppgaveId: Long) {
+        val oppgave = finnOppgaveMedId(oppgaveId)
+        if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { // Skjermede personer skal ikke puttes i mappe
+            val mapperResponse = finnMapper(oppgave.tildeltEnhetsnr!!)
+            try {
+                oppdaterOppgaveMedMappe(mapperResponse, oppgave)
+            } catch (e: Exception) {
+                log.error("Feil under knytning av mappe til oppgave - se securelogs for stacktrace")
+                secureLogger.error("Feil under knytning av mappe til oppgave", e)
+            }
+        }
+    }
+
+    private fun oppdaterOppgaveMedMappe(
+        mapperResponse: FinnMappeResponseDto,
+        oppgave: Oppgave
+    ) {
+        val mappe = mapperResponse.mapper.find {
+            it.navn.contains("62") &&
+                it.navn.contains("Hendelser") &&
+                !it.navn.contains("EF Sak", true)
+        } ?: error("Fant ikke mappe 62 Hendelser for uplassert oppgave")
+        oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
+    }
+
+    private fun finnMapper(enhetsnummer: String, limit: Int = 1000): FinnMappeResponseDto {
         val response = getForEntity<Ressurs<FinnMappeResponseDto>>(
             UriComponentsBuilder.fromUri(URI.create("$oppgaveUrl/mappe/sok"))
                 .queryParam("enhetsnr", enhetsnummer)
@@ -69,6 +94,10 @@ class OppgaveClient(
             HttpHeaders().medContentTypeJsonUTF8()
         )
         return response.getDataOrThrow().oppgaveId
+    }
+
+    companion object {
+        private const val EF_ENHETNUMMER = "4489"
     }
 }
 

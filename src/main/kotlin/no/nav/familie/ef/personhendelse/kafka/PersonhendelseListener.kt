@@ -38,7 +38,10 @@ class PersonhendelseListener(
             MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
             val personidenter = personhendelse.identerUtenAktørId()
             // Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
-            logger.info("Leser personhendelse med hendelseId: ${personhendelse.hendelseId}")
+            logger.info(
+                "Leser personhendelse med hendelseId=${personhendelse.hendelseId} " +
+                    "tidligereHendelseId=${personhendelse.tidligereHendelseId}"
+            )
             if (!personidenter.firstOrNull().isNullOrBlank() &&
                 !personhendelseService.harHåndtertHendelse(personhendelse.hendelseId)
             ) {

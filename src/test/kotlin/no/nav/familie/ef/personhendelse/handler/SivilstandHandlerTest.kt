@@ -23,7 +23,7 @@ import java.util.UUID
 class SivilstandHandlerTest {
 
     private val sakClient = mockk<SakClient>()
-    private val oppgaveClient = mockk<OppgaveClient>()
+    private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
     private val handler = SivilstandHandler()
     private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository)

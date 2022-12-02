@@ -28,7 +28,7 @@ class ForelderBarnHandlerTest {
     private val sakClient = mockk<SakClient>()
     private val pdlClient = mockk<PdlClient>()
     private val person = mockk<Person>()
-    private val oppgaveClient = mockk<OppgaveClient>()
+    private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>(relaxed = true)
 
     private val handler = ForelderBarnHandler(sakClient)

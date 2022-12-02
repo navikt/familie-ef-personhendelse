@@ -20,7 +20,7 @@ import java.util.UUID
 internal class DøfødtBarnHandlerTest {
 
     private val sakClient = mockk<SakClient>()
-    private val oppgaveClient = mockk<OppgaveClient>()
+    private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>(relaxed = true)
 
     private val handler = DøfødtBarnHandler()

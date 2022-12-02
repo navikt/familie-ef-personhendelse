@@ -5,6 +5,8 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
+import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
+import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.person.pdl.leesah.Endringstype
@@ -24,7 +26,6 @@ class PersonhendelseService(
 
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
-    private val EF_ENHETNUMMER = "4489"
     private val handlers: Map<String, PersonhendelseHandler> = personhendelseHandlers.associateBy { it.type.hendelsetype }
 
     init {
@@ -88,22 +89,20 @@ class PersonhendelseService(
 
     private fun opprettOppgave(oppgaveBeskrivelse: OpprettOppgave, personhendelse: Personhendelse, personIdent: String) {
         val beskrivelse = oppgaveBeskrivelse.beskrivelse
-        val opprettOppgaveRequest = defaultOpprettOppgaveRequest(personIdent, "Personhendelse: $beskrivelse")
+        val opprettOppgaveRequest = defaultOpprettOppgaveRequest(
+            personIdent = personIdent,
+            beskrivelse = "Personhendelse: $beskrivelse"
+        )
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
 
-        try {
-            leggOppgaveIMappe(oppgaveId)
-        } catch (e: Exception) {
-            logger.error("Feil under knytning av mappe til oppgave - se securelogs for stacktrace")
-            secureLogger.error("Feil under knytning av mappe til oppgave", e)
-        }
+        oppgaveClient.leggOppgaveIMappe(oppgaveId)
 
         lagreHendelse(personhendelse, oppgaveId)
         logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
     }
 
     private fun opphørEllerKorrigerOppgave(personhendelse: Personhendelse) {
-        val hendelse = hentHendelse(personhendelse)
+        val hendelse = hentTidligereHendelse(personhendelse)
         if (hendelse == null) {
             logger.warn(
                 "Tidligere hendelse for personhendelse : ${personhendelse.hendelseId} ble ikke funnet. " +
@@ -121,24 +120,12 @@ class PersonhendelseService(
             }
             logger.info("Oppgave oppdatert med oppgaveId=$nyOppgave for endringstype : ${personhendelse.endringstype.name}")
         } else {
-            opprettOppgaveMedBeskrivelse(personhendelse, personhendelse.ferdigstiltBeskrivelse())
-            logger.info("Ny oppgave ifm en allerede lukket oppgave er opprettet med oppgaveId=${oppgave.id}")
+            val ident = identFraOppgaveEllerPersonhendelse(oppgave, personhendelse)
+            val nyOppgaveId = opprettOppgaveMedBeskrivelse(ident, personhendelse.ferdigstiltBeskrivelse())
+            logger.info("Ny oppgave=$nyOppgaveId ifm en allerede lukket oppgave er opprettet med oppgaveId=${oppgave.id}")
+            oppgaveClient.leggOppgaveIMappe(nyOppgaveId)
         }
         lagreHendelse(personhendelse, oppgave.id!!)
-    }
-
-    fun leggOppgaveIMappe(oppgaveId: Long) {
-        val oppgave = oppgaveClient.finnOppgaveMedId(oppgaveId)
-        if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { // Skjermede personer skal ikke puttes i mappe
-            val mapperResponse = oppgaveClient.finnMapper(oppgave.tildeltEnhetsnr!!)
-            val mappe = mapperResponse.mapper.find {
-                it.navn.contains("62") &&
-                    it.navn.contains("Hendelser") &&
-                    !it.navn.contains("EF Sak", true)
-            }
-                ?: error("Fant ikke mappe 62 Hendelser for uplassert oppgave")
-            oppgaveClient.oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
-        }
     }
 
     private fun oppdater(oppgave: Oppgave, beskrivelse: String, status: StatusEnum?): Long {
@@ -146,7 +133,19 @@ class PersonhendelseService(
         return oppgaveClient.oppdaterOppgave(nyOppgave)
     }
 
-    private fun hentHendelse(personhendelse: Personhendelse): Hendelse? {
+    /**
+     * Gjenbruker ident til forrige opprettede oppgave.
+     * Dette da hendelsen kan være koblet til barnet og oppgaven som ble opprettet var opprettet på forelderen
+     */
+    private fun identFraOppgaveEllerPersonhendelse(
+        oppgave: Oppgave,
+        personhendelse: Personhendelse
+    ): String =
+        oppgave.identer?.firstOrNull { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }?.ident
+            ?: personhendelse.identerUtenAktørId().firstOrNull()
+            ?: error("Finner ikke ident for personHendelse=${personhendelse.hendelseId}")
+
+    private fun hentTidligereHendelse(personhendelse: Personhendelse): Hendelse? {
         return personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.tidligereHendelseId))
     }
 
@@ -162,11 +161,11 @@ class PersonhendelseService(
         return oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId)
     }
 
-    private fun opprettOppgaveMedBeskrivelse(personhendelse: Personhendelse, beskrivelse: String): Long {
+    private fun opprettOppgaveMedBeskrivelse(personIdent: String, beskrivelse: String): Long {
         return oppgaveClient.opprettOppgave(
             defaultOpprettOppgaveRequest(
-                personhendelse.personidenter.first(),
-                beskrivelse
+                personIdent = personIdent,
+                beskrivelse = beskrivelse
             )
         )
     }

@@ -5,7 +5,6 @@ import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.ef.StønadType
@@ -23,8 +22,14 @@ class VedtakendringerServiceTest {
     private val sakClient = mockk<SakClient>()
     private val arbeidsfordelingClient = mockk<ArbeidsfordelingClient>()
     private val inntektsendringerService = mockk<InntektsendringerService>()
-    private val personhendelseService = mockk<PersonhendelseService>()
-    private val vedtakendringer = VedtakendringerService(efVedtakRepository, inntektClient, oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerService, personhendelseService)
+    private val vedtakendringer = VedtakendringerService(
+        efVedtakRepository,
+        inntektClient,
+        oppgaveClient,
+        sakClient,
+        arbeidsfordelingClient,
+        inntektsendringerService
+    )
 
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {
