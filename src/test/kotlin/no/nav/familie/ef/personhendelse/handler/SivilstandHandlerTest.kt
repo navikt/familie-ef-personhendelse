@@ -5,6 +5,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
+import io.mockk.verify
 import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
@@ -80,6 +81,17 @@ class SivilstandHandlerTest {
         service.håndterPersonhendelse(personhendelse)
 
         assertThat(oppgaveRequestSlot.isCaptured).isFalse
+    }
+
+    @Test
+    fun `Korrigering av separasjon-hendelse`() {
+        every { personhendelseRepository.hentHendelse(any()) } returns Hendelse(UUID.randomUUID(), 1, Endringstype.OPPRETTET, LocalDateTime.now())
+        val personhendelse = createSivilstandHendelse(Sivilstandstype.SEPARERT, Endringstype.KORRIGERT)
+        personhendelse.tidligereHendelseId = UUID.randomUUID().toString()
+        service.håndterPersonhendelse(personhendelse)
+
+        assertThat(oppgaveRequestSlot.isCaptured).isFalse
+        verify(exactly = 1) { oppgaveClient.oppdaterOppgave(any()) }
     }
 
     @Test
