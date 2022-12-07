@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.handler
 
 import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
+import no.nav.familie.ef.personhendelse.generated.enums.Sivilstandstype
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.Logger
@@ -23,10 +24,20 @@ class SivilstandHandler : PersonhendelseHandler {
             return IkkeOpprettOppgave
         }
 
+        if (opprettetSkiltEllerSeparert(personhendelse)) {
+            return IkkeOpprettOppgave
+        }
+
         val beskrivelse = personhendelse.endringstype.tilTekst() + " sivilstand av type \"${sivilstand.type.enumToReadable()}\", " +
             "gyldig fra og med dato: ${gyldigFraOgMed.tilNorskDatoformat()}"
         return OpprettOppgave(beskrivelse = beskrivelse)
     }
+
+    private fun opprettetSkiltEllerSeparert(personhendelse: Personhendelse) =
+        (
+            (personhendelse.sivilstand.type == Sivilstandstype.SKILT.name || personhendelse.sivilstand.type == Sivilstandstype.SEPARERT.name) &&
+                personhendelse.endringstype == Endringstype.OPPRETTET
+            )
 }
 private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this.sivilstand.type != null
 
