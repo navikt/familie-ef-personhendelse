@@ -187,7 +187,5 @@ private fun Oppgave.korrigertBeskrivelse() = "\n\nDenne oppgaven har blitt korri
 private fun Personhendelse.skalOpphøreEllerKorrigeres() =
     listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT, Endringstype.OPPHOERT).contains(this.endringstype)
 
-private fun Personhendelse.erIkkeOpphørAvSivilstand() = !(
-    this.opplysningstype == PersonhendelseType.SIVILSTAND.hendelsetype &&
-        this.endringstype == Endringstype.OPPHOERT
-    )
+private fun Personhendelse.erIkkeOpphørAvSivilstand() =
+    !(this.opplysningstype == PersonhendelseType.SIVILSTAND.hendelsetype && this.endringstype == Endringstype.OPPHOERT)
