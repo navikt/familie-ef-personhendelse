@@ -1,5 +1,6 @@
 package no.nav.familie.ef.personhendelse.handler
 
+import no.nav.familie.ef.personhendelse.client.pdl.secureLogger
 import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
 import no.nav.familie.ef.personhendelse.generated.enums.Sivilstandstype
 import no.nav.person.pdl.leesah.Endringstype
@@ -21,6 +22,9 @@ class SivilstandHandler : PersonhendelseHandler {
         if (personhendelse.sivilstandNotNull()) {
             logger.info("Mottatt sivilstand hendelse med verdi ${sivilstand.type} gyldigFraOgMed=$gyldigFraOgMed")
         } else {
+            if (personhendelse.endringstype == Endringstype.OPPHOERT) {
+                secureLogger.error("Opphør av sivilstand uten type. HendelseId: ${personhendelse.hendelseId} tidligere hendelseId: ${personhendelse.tidligereHendelseId}")
+            }
             return IkkeOpprettOppgave
         }
 
@@ -34,10 +38,8 @@ class SivilstandHandler : PersonhendelseHandler {
     }
 
     private fun opprettetSkiltEllerSeparert(personhendelse: Personhendelse) =
-        (
-            (personhendelse.sivilstand.type == Sivilstandstype.SKILT.name || personhendelse.sivilstand.type == Sivilstandstype.SEPARERT.name) &&
-                personhendelse.endringstype == Endringstype.OPPRETTET
-            )
+        (personhendelse.sivilstand.type == Sivilstandstype.SKILT.name || personhendelse.sivilstand.type == Sivilstandstype.SEPARERT.name) &&
+            personhendelse.endringstype == Endringstype.OPPRETTET
 }
 private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this.sivilstand.type != null
 
