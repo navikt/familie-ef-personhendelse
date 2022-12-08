@@ -62,7 +62,7 @@ class PersonhendelseService(
     }
 
     private fun handlePersonhendelse(handler: PersonhendelseHandler, personhendelse: Personhendelse, personIdent: String) {
-        if (personhendelse.skalOpphøreEllerKorrigeres()) {
+        if (personhendelse.skalOpphøreEllerKorrigeres() && personhendelse.erIkkeOpphørAvSivilstand()) {
             opphørEllerKorrigerOppgave(personhendelse)
             return
         }
@@ -186,3 +186,6 @@ private fun Oppgave.korrigertBeskrivelse() = "\n\nDenne oppgaven har blitt korri
 
 private fun Personhendelse.skalOpphøreEllerKorrigeres() =
     listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT, Endringstype.OPPHOERT).contains(this.endringstype)
+
+private fun Personhendelse.erIkkeOpphørAvSivilstand() =
+    !(this.opplysningstype == PersonhendelseType.SIVILSTAND.hendelsetype && this.endringstype == Endringstype.OPPHOERT)
