@@ -112,7 +112,7 @@ fun defaultOpprettOppgaveRequest(personIdent: String, beskrivelse: String) =
         enhetsnummer = null,
         behandlingstema = Behandlingstema.Overgangsstønad.value,
         tilordnetRessurs = null,
-        behandlesAvApplikasjon = "familie-ef-sak"
+        behandlesAvApplikasjon = null
     )
 
 fun HttpHeaders.medContentTypeJsonUTF8(): HttpHeaders {

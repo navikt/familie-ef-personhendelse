@@ -150,7 +150,7 @@ class VedtakendringerService(
                 enhetsnummer = enhetsnummer,
                 behandlingstema = stønadType.tilBehandlingstemaValue(),
                 tilordnetRessurs = null,
-                behandlesAvApplikasjon = "familie-ef-sak"
+                behandlesAvApplikasjon = null
             )
         )
         secureLogger.info("Opprettet oppgave for person $personident med id: $oppgaveId")
