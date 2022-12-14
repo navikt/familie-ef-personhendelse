@@ -3,7 +3,7 @@ package no.nav.familie.ef.personhendelse.handler
 import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.client.defaultOpprettOppgaveRequest
+import no.nav.familie.ef.personhendelse.client.opprettVurderLivshendelseoppgave
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
@@ -89,7 +89,7 @@ class PersonhendelseService(
 
     private fun opprettOppgave(oppgaveBeskrivelse: OpprettOppgave, personhendelse: Personhendelse, personIdent: String) {
         val beskrivelse = oppgaveBeskrivelse.beskrivelse
-        val opprettOppgaveRequest = defaultOpprettOppgaveRequest(
+        val opprettOppgaveRequest = opprettVurderLivshendelseoppgave(
             personIdent = personIdent,
             beskrivelse = "Personhendelse: $beskrivelse"
         )
@@ -163,7 +163,7 @@ class PersonhendelseService(
 
     private fun opprettOppgaveMedBeskrivelse(personIdent: String, beskrivelse: String): Long {
         return oppgaveClient.opprettOppgave(
-            defaultOpprettOppgaveRequest(
+            opprettVurderLivshendelseoppgave(
                 personIdent = personIdent,
                 beskrivelse = beskrivelse
             )

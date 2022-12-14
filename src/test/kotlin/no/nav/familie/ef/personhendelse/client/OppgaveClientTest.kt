@@ -90,6 +90,6 @@ class OppgaveClientTest {
             enhetsnummer = null,
             behandlingstema = Behandlingstema.Overgangsstønad.value,
             tilordnetRessurs = null,
-            behandlesAvApplikasjon = "familie-ef-sak"
+            behandlesAvApplikasjon = null
         )
 }
