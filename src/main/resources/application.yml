@@ -115,10 +115,18 @@ management:
   metrics.export.prometheus.enabled: true
   metrics.web.server.auto-time-requests: true
 
+DEPLOY_ENV: prod
 
-FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.prod-fss-pub.nais.io
-FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.prod-fss-pub.nais.io
-PDL_URL: https://pdl-api.prod-fss-pub.nais.io/graphql
-PDL_SCOPE: api://prod-fss.pdl.pdl-api/.default
+FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.${DEPLOY_ENV}-fss-pub.nais.io
+FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integrasjoner/.default
+
+FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.${DEPLOY_ENV}-fss-pub.nais.io
+EF_PROXY_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-ef-proxy/.default
+
+PDL_URL: https://pdl-api.${DEPLOY_ENV}-fss-pub.nais.io/graphql
+PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
+
 EF_SAK_URL: http://familie-ef-sak
+EF_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ef-sak/.default
+
 FAMILIE_EF_VEDTAK_TOPIC: teamfamilie.aapen-ensligforsorger-iverksatt-vedtak
