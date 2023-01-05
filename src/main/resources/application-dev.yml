@@ -1,11 +1,1 @@
-FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner-q1.dev-fss-pub.nais.io
-FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.dev-fss-pub.nais.io
-PDL_URL: https://pdl-api-q1.dev-fss-pub.nais.io/graphql
-PDL_SCOPE: api://dev-fss.pdl.pdl-api-q1/.default
-FAMILIE_EF_VEDTAK_TOPIC: teamfamilie.aapen-ensligforsorger-iverksatt-vedtak
-
-no.nav.security.jwt:
-  client:
-    registration:
-      integrasjoner-client-credentials:
-        scope: api://dev-fss.teamfamilie.familie-integrasjoner-q1/.default
+DEPLOY_ENV: dev
