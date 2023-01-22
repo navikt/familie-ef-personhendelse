@@ -32,7 +32,7 @@
         <kotlin.version>1.8.0</kotlin.version>
         <kafka-avro-serializer.version>7.3.1</kafka-avro-serializer.version>
         <avro.version>1.11.1</avro.version>
-        <graphql-kotlin-spring-client.version>6.3.3</graphql-kotlin-spring-client.version>
+        <graphql-kotlin-spring-client.version>6.3.5</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>6.3.3</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <ktlint-maven-plugin.version>1.7.0</ktlint-maven-plugin.version>
