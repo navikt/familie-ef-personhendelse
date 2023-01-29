@@ -28,7 +28,7 @@ class VedtakendringerServiceTest {
         oppgaveClient,
         sakClient,
         arbeidsfordelingClient,
-        inntektsendringerService
+        inntektsendringerService,
     )
 
     @Test
@@ -42,8 +42,8 @@ class VedtakendringerServiceTest {
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
-                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)))))
-            )
+                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+            ),
         )
 
         Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isFalse
@@ -60,8 +60,8 @@ class VedtakendringerServiceTest {
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
-                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson)))
-            )
+                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson))),
+            ),
         )
 
         Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isFalse
@@ -78,8 +78,8 @@ class VedtakendringerServiceTest {
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
-                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)))))
-            )
+                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+            ),
         )
 
         Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isTrue
@@ -102,11 +102,11 @@ class VedtakendringerServiceTest {
                     mapOf(
                         Pair(
                             "1",
-                            listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))
-                        )
-                    )
-                )
-            )
+                            listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1)),
+                        ),
+                    ),
+                ),
+            ),
         )
 
         Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isFalse
@@ -139,8 +139,8 @@ class VedtakendringerServiceTest {
         return InntektshistorikkResponse(
             linkedMapOf(
                 Pair(YearMonth.now().minusMonths(1).toString(), inntektshistorikkResponse.inntektEntryForMåned(keys.first())),
-                Pair(YearMonth.now().minusMonths(2).toString(), inntektshistorikkResponse.inntektEntryForMåned(keys.last()))
-            )
+                Pair(YearMonth.now().minusMonths(2).toString(), inntektshistorikkResponse.inntektEntryForMåned(keys.last())),
+            ),
         )
     }
 

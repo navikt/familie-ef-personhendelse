@@ -114,7 +114,7 @@ class SivilstandHandlerTest {
             sivilstandstype.name,
             LocalDate.now(),
             partnerPersonIdent,
-            LocalDate.now()
+            LocalDate.now(),
         )
         personhendelse.opplysningstype = PersonhendelseType.SIVILSTAND.hendelsetype
         personhendelse.personidenter = listOf(personIdent)

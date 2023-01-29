@@ -21,7 +21,7 @@ class PersonhendelseService(
     personhendelseHandlers: List<PersonhendelseHandler>,
     private val sakClient: SakClient,
     private val oppgaveClient: OppgaveClient,
-    private val personhendelseRepository: PersonhendelseRepository
+    private val personhendelseRepository: PersonhendelseRepository,
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -54,7 +54,7 @@ class PersonhendelseService(
         val harLøpendeStønad = sakClient.harLøpendeStønad(personidenter)
         logger.info(
             "Personhendelse av opplysningstype=${personhendelse.opplysningstype} av type=${personhendelse.endringstype.name} - " +
-                " harLøpendeStønad=$harLøpendeStønad"
+                " harLøpendeStønad=$harLøpendeStønad",
         )
         if (harLøpendeStønad) {
             handlePersonhendelse(handler, personhendelse, personidenter.first())
@@ -77,7 +77,7 @@ class PersonhendelseService(
     private fun logHendelse(
         personhendelse: Personhendelse,
         oppgaveBeskrivelse: OppgaveInformasjon,
-        personIdent: String?
+        personIdent: String?,
     ) {
         val logMessage = "Finnes sak for opplysningstype=${personhendelse.opplysningstype}" +
             " hendelseId=${personhendelse.hendelseId}" +
@@ -91,7 +91,7 @@ class PersonhendelseService(
         val beskrivelse = oppgaveBeskrivelse.beskrivelse
         val opprettOppgaveRequest = opprettVurderLivshendelseoppgave(
             personIdent = personIdent,
-            beskrivelse = "Personhendelse: $beskrivelse"
+            beskrivelse = "Personhendelse: $beskrivelse",
         )
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
 
@@ -106,7 +106,7 @@ class PersonhendelseService(
         if (hendelse == null) {
             logger.warn(
                 "Tidligere hendelse for personhendelse : ${personhendelse.hendelseId} ble ikke funnet. " +
-                    personhendelse.finnesIngenHendelseBeskrivelse()
+                    personhendelse.finnesIngenHendelseBeskrivelse(),
             )
             return
         }
@@ -139,7 +139,7 @@ class PersonhendelseService(
      */
     private fun identFraOppgaveEllerPersonhendelse(
         oppgave: Oppgave,
-        personhendelse: Personhendelse
+        personhendelse: Personhendelse,
     ): String =
         oppgave.identer?.firstOrNull { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }?.ident
             ?: personhendelse.identerUtenAktørId().firstOrNull()
@@ -153,7 +153,7 @@ class PersonhendelseService(
         personhendelseRepository.lagrePersonhendelse(
             UUID.fromString(personhendelse.hendelseId),
             oppgaveId,
-            personhendelse.endringstype
+            personhendelse.endringstype,
         )
     }
 
@@ -165,8 +165,8 @@ class PersonhendelseService(
         return oppgaveClient.opprettOppgave(
             opprettVurderLivshendelseoppgave(
                 personIdent = personIdent,
-                beskrivelse = beskrivelse
-            )
+                beskrivelse = beskrivelse,
+            ),
         )
     }
 }

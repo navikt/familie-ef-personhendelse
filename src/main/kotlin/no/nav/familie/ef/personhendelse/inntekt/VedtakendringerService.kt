@@ -27,7 +27,7 @@ class VedtakendringerService(
     val oppgaveClient: OppgaveClient,
     val sakClient: SakClient,
     val arbeidsfordelingClient: ArbeidsfordelingClient,
-    val inntektsendringerService: InntektsendringerService
+    val inntektsendringerService: InntektsendringerService,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -61,7 +61,7 @@ class VedtakendringerService(
 
     private fun lagreInntektsendringForPerson(
         forventetInntektForPerson: ForventetInntektForPerson,
-        response: InntektshistorikkResponse
+        response: InntektshistorikkResponse,
     ) {
         val harNyeVedtak = harNyeVedtak(response)
         val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, forventetInntektForPerson)
@@ -118,7 +118,7 @@ class VedtakendringerService(
             return inntektClient.hentInntektshistorikk(
                 fnr,
                 YearMonth.now().minusMonths(4),
-                null
+                null,
             )
         } catch (e: Exception) {
             secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person $fnr. Message: ${e.message} Cause: ${e.cause}")
@@ -130,7 +130,7 @@ class VedtakendringerService(
         harNyeVedtak: Boolean,
         harEndretInntekt: Boolean,
         personident: String,
-        stønadType: StønadType = StønadType.OVERGANGSSTØNAD
+        stønadType: StønadType = StønadType.OVERGANGSSTØNAD,
     ) {
         val oppgavetekst = lagOppgavetekst(harNyeVedtak, harEndretInntekt)
         secureLogger.info("$personident - $oppgavetekst")
@@ -140,7 +140,7 @@ class VedtakendringerService(
             OpprettOppgaveRequest(
                 ident = OppgaveIdentV2(
                     ident = personident,
-                    gruppe = IdentGruppe.FOLKEREGISTERIDENT
+                    gruppe = IdentGruppe.FOLKEREGISTERIDENT,
                 ),
                 saksId = null,
                 tema = Tema.ENF,
@@ -150,8 +150,8 @@ class VedtakendringerService(
                 enhetsnummer = enhetsnummer,
                 behandlingstema = stønadType.tilBehandlingstemaValue(),
                 tilordnetRessurs = null,
-                behandlesAvApplikasjon = null
-            )
+                behandlesAvApplikasjon = null,
+            ),
         )
         secureLogger.info("Opprettet oppgave for person $personident med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId)

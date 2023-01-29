@@ -24,8 +24,8 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
                 "hendelsesId" to hendelsesId,
                 "oppgaveId" to oppgaveId,
                 "endringsType" to endringstype.name,
-                "timestamp" to LocalDateTime.now()
-            )
+                "timestamp" to LocalDateTime.now(),
+            ),
         )
         namedParameterJdbcTemplate.update(sql, params)
     }
@@ -39,7 +39,7 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
                     UUID.fromString(rs.getString("hendelse_id")),
                     rs.getLong("oppgave_id"),
                     Endringstype.valueOf(rs.getString("endringstype")),
-                    rs.getTimestamp("opprettet_tid").toLocalDateTime()
+                    rs.getTimestamp("opprettet_tid").toLocalDateTime(),
                 )
             }
         } catch (e: EmptyResultDataAccessException) {

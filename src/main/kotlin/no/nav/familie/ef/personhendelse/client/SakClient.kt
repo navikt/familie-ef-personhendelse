@@ -17,7 +17,7 @@ import java.time.LocalDate
 class SakClient(
     @Qualifier("azure") restOperations: RestOperations,
     @Value("\${EF_SAK_URL}")
-    private val uri: URI
+    private val uri: URI,
 ) : AbstractRestClient(restOperations, "familie.ef-sak") {
 
     fun harLøpendeStønad(personidenter: Set<String>): Boolean {
@@ -76,5 +76,5 @@ class SakClient(
 data class ForventetInntektForPerson(
     val personIdent: String,
     val forventetInntektForrigeMåned: Int?,
-    val forventetInntektToMånederTilbake: Int?
+    val forventetInntektToMånederTilbake: Int?,
 )

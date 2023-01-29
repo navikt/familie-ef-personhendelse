@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.YearMonth
 
 data class InntektshistorikkResponse(
-    val aarMaanedHistorikk: Map<String, Map<String, List<InntektVersjon>>> = emptyMap() // <Year-month>, <orgnr, inntekt>
+    val aarMaanedHistorikk: Map<String, Map<String, List<InntektVersjon>>> = emptyMap(), // <Year-month>, <orgnr, inntekt>
 ) {
     fun inntektForMåned(yearMonth: String) = aarMaanedHistorikk[yearMonth]?.values?.flatten() ?: emptyList()
 
@@ -16,14 +16,14 @@ data class InntektVersjon(
     val avvikListe: List<Avvik>?,
     val innleveringstidspunkt: String?,
     val opplysningspliktig: String,
-    val versjon: Int
+    val versjon: Int,
 )
 
 data class ArbeidsInntekthistorikkInformasjon(
     val arbeidsforholdListe: List<ArbeidsforholdFrilanser>?,
     val forskuddstrekkListe: List<Forskuddstrekk>?,
     val fradragListe: List<Fradrag>?,
-    val inntektListe: List<Inntekt>?
+    val inntektListe: List<Inntekt>?,
 ) {
     data class ArbeidsforholdFrilanser(
         val antallTimerPerUkeSomEnFullStillingTilsvarer: Double?,
@@ -39,7 +39,7 @@ data class ArbeidsInntekthistorikkInformasjon(
         val sisteDatoForStillingsprosentendring: String?,
         val sisteLoennsendring: String?,
         val stillingsprosent: Double?,
-        val yrke: String?
+        val yrke: String?,
     )
 
     data class Forskuddstrekk(
@@ -49,7 +49,7 @@ data class ArbeidsInntekthistorikkInformasjon(
         val forskuddstrekkGjelder: Aktør?,
         val leveringstidspunkt: String?,
         val opplysningspliktig: Aktør?,
-        val utbetaler: Aktør?
+        val utbetaler: Aktør?,
     )
 
     data class Fradrag(
@@ -60,7 +60,7 @@ data class ArbeidsInntekthistorikkInformasjon(
         val fradragsperiode: YearMonth?,
         val inntektspliktig: Aktør?,
         val leveringstidspunkt: String?,
-        val utbetaler: Aktør?
+        val utbetaler: Aktør?,
     )
 
     data class Inntekt(
@@ -87,11 +87,11 @@ data class ArbeidsInntekthistorikkInformasjon(
         val tilleggsinformasjon: Tilleggsinformasjon?,
         val utbetaltIMaaned: YearMonth,
         val utloeserArbeidsgiveravgift: Boolean,
-        val virksomhet: Aktør
+        val virksomhet: Aktør,
     )
 }
 
 data class TilleggsinformasjonDetaljer(
     val ikkebeskrevet: String?,
-    val detaljerType: String?
+    val detaljerType: String?,
 )

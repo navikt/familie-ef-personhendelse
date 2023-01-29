@@ -72,7 +72,7 @@ class ForelderBarnHandlerTest {
     internal fun `finnNyeBarnForBruker inneholder flere treff, forvent at oppgave opprettes`() {
         mockNyeBarn(
             NyttBarn(barn1Fnr, StønadType.OVERGANGSSTØNAD, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING),
-            NyttBarn(barn1Fnr, StønadType.BARNETILSYN, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
+            NyttBarn(barn1Fnr, StønadType.BARNETILSYN, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING),
         )
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
@@ -89,7 +89,7 @@ class ForelderBarnHandlerTest {
         assertThat(slot.captured.beskrivelse)
             .isEqualTo(
                 "Personhendelse: Bruker er innvilget stønad for ufødt(e) barn fnr (Barnetilsyn). " +
-                    "Barnet er registrert født i måneden før oppgitt termindato. Vurder saken."
+                    "Barnet er registrert født i måneden før oppgitt termindato. Vurder saken.",
             )
     }
 
@@ -97,7 +97,7 @@ class ForelderBarnHandlerTest {
     internal fun `finnNyeBarnForBruker inneholder terminbarn og nytt barn, forvent at oppgave opprettes`() {
         mockNyeBarn(
             NyttBarn(barn1Fnr, StønadType.OVERGANGSSTØNAD, NyttBarnÅrsak.FØDT_FØR_TERMIN),
-            NyttBarn(barn2Fnr, StønadType.SKOLEPENGER, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
+            NyttBarn(barn2Fnr, StønadType.SKOLEPENGER, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING),
         )
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
@@ -107,7 +107,7 @@ class ForelderBarnHandlerTest {
                 "Personhendelse: Bruker er innvilget stønad for ufødt(e) barn fnr (Overgangsstønad). " +
                     "Barnet er registrert født i måneden før oppgitt termindato. " +
                     "Bruker har også fått et nytt/nye barn fnr2 (Skolepenger). " +
-                    "Vurder saken."
+                    "Vurder saken.",
             )
     }
 
@@ -123,7 +123,7 @@ class ForelderBarnHandlerTest {
             personIdent,
             "BARN",
             "MOR",
-            null
+            null,
         )
         personhendelse.hendelseId = UUID.randomUUID().toString()
         personhendelse.endringstype = Endringstype.OPPRETTET

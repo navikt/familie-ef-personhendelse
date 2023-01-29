@@ -57,8 +57,8 @@ internal class SakClientTest {
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(harStoenadGyldigResponse)
-                )
+                        .withBody(harStoenadGyldigResponse),
+                ),
         )
 
         val response = sakClient.harLøpendeStønad(personidenter)
@@ -72,8 +72,8 @@ internal class SakClientTest {
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(inntektGyldigResponse)
-                )
+                        .withBody(inntektGyldigResponse),
+                ),
         )
 
         val response = sakClient.inntektForEksternId(1)
@@ -87,8 +87,8 @@ internal class SakClientTest {
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(gjeldendeIverksatteBehandlingerGyldigResponse)
-                )
+                        .withBody(gjeldendeIverksatteBehandlingerGyldigResponse),
+                ),
         )
         val response = sakClient.hentForventetInntektForIdenter(listOf("1", "2"))
         Assertions.assertThat(response.first().forventetInntektForrigeMåned).isEqualTo(100_000)

@@ -51,11 +51,11 @@ class InntektsendringerServiceTest {
                                     null,
                                     "innleveringstidspunkt",
                                     "opplysningspliktig",
-                                    1
-                                )
-                            )
-                        )
-                    )
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
                 Pair(
                     YearMonth.now().minusMonths(2).toString(),
@@ -68,13 +68,13 @@ class InntektsendringerServiceTest {
                                     null,
                                     "innleveringstidspunkt",
                                     "opplysningspliktig",
-                                    1
-                                )
-                            )
-                        )
-                    )
-                )
-            )
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
 
         val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
@@ -83,20 +83,20 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("1", forventetLønnsinntekt, forventetLønnsinntekt)
-            )
+                ForventetInntektForPerson("1", forventetLønnsinntekt, forventetLønnsinntekt),
+            ),
         ).isFalse
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere)
-            )
+                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
+            ),
         ).isTrue
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere)
-            )
+                ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere),
+            ),
         ).isFalse
     }
 
@@ -121,13 +121,13 @@ class InntektsendringerServiceTest {
                                     null,
                                     "innleveringstidspunkt",
                                     "opplysningspliktig",
-                                    1
-                                )
-                            )
-                        )
-                    )
-                )
-            )
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
 
         val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
@@ -135,8 +135,8 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere)
-            )
+                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
+            ),
         ).isFalse
     }
 
@@ -149,16 +149,16 @@ class InntektsendringerServiceTest {
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", inntektVersjonForNyesteMåned)))
-            )
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", inntektVersjonForNyesteMåned))),
+            ),
         )
         val forventetInntekt = 172_000
 
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("2", forventetInntekt, forventetInntekt)
-            )
+                ForventetInntektForPerson("2", forventetInntekt, forventetInntekt),
+            ),
         ).isFalse
     }
 
@@ -185,11 +185,11 @@ class InntektsendringerServiceTest {
                                     null,
                                     "innleveringstidspunkt",
                                     "opplysningspliktig",
-                                    1
-                                )
-                            )
-                        )
-                    )
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
                 Pair(
                     YearMonth.now().minusMonths(2).toString(),
@@ -202,21 +202,21 @@ class InntektsendringerServiceTest {
                                     null,
                                     "innleveringstidspunkt",
                                     "opplysningspliktig",
-                                    1
-                                )
-                            )
-                        )
-                    )
-                )
-            )
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
 
         val forHøyInntekt = 585001
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("1", forHøyInntekt, forHøyInntekt)
-            )
+                ForventetInntektForPerson("1", forHøyInntekt, forHøyInntekt),
+            ),
         ).isFalse
     }
 
@@ -243,11 +243,11 @@ class InntektsendringerServiceTest {
                                     null,
                                     "innleveringstidspunkt",
                                     "opplysningspliktig",
-                                    1
-                                )
-                            )
-                        )
-                    )
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
                 Pair(
                     YearMonth.now().minusMonths(2).toString(),
@@ -260,21 +260,21 @@ class InntektsendringerServiceTest {
                                     null,
                                     "innleveringstidspunkt",
                                     "opplysningspliktig",
-                                    1
-                                )
-                            )
-                        )
-                    )
-                )
-            )
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
 
         val forventetInntekt = 30000
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("1", forventetInntekt, forventetInntekt)
-            )
+                ForventetInntektForPerson("1", forventetInntekt, forventetInntekt),
+            ),
         ).isFalse
     }
 
@@ -287,16 +287,16 @@ class InntektsendringerServiceTest {
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson)))
-            )
+                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+            ),
         )
 
         val forventetInntekt = 5000
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("1", forventetInntekt, forventetInntekt)
-            )
+                ForventetInntektForPerson("1", forventetInntekt, forventetInntekt),
+            ),
         ).isFalse
     }
 
@@ -323,11 +323,11 @@ class InntektsendringerServiceTest {
                                     null,
                                     "innleveringstidspunkt",
                                     "opplysningspliktig",
-                                    1
-                                )
-                            )
-                        )
-                    )
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
                 Pair(
                     YearMonth.now().minusMonths(2).toString(),
@@ -340,20 +340,20 @@ class InntektsendringerServiceTest {
                                     null,
                                     "innleveringstidspunkt",
                                     "opplysningspliktig",
-                                    1
-                                )
-                            )
-                        )
-                    )
-                )
-            )
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
 
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("3", forventetLønnsinntekt, forventetLønnsinntekt)
-            )
+                ForventetInntektForPerson("3", forventetLønnsinntekt, forventetLønnsinntekt),
+            ),
         ).isFalse
     }
 
@@ -370,17 +370,17 @@ class InntektsendringerServiceTest {
                 Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
                 Pair(
                     YearMonth.now().minusMonths(2).toString(),
-                    mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson))
-                )
-            )
+                    mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson)),
+                ),
+            ),
         )
 
         val forventetInntekt = 70000
         Assertions.assertThat(
             inntektsendringer.harEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("3", forventetInntekt, forventetInntekt)
-            )
+                ForventetInntektForPerson("3", forventetInntekt, forventetInntekt),
+            ),
         ).isTrue
     }
 

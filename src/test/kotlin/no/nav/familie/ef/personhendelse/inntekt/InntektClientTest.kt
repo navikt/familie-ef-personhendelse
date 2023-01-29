@@ -55,8 +55,8 @@ class InntektClientTest {
                 .willReturn(
                     WireMock.aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(gyldigResponse)
-                )
+                        .withBody(gyldigResponse),
+                ),
         )
 
         val response = runBlocking { inntektClient.hentInntekt(personIdent, YearMonth.of(2020, 11), YearMonth.of(2021, 11)) }
@@ -75,8 +75,8 @@ class InntektClientTest {
                 .willReturn(
                     WireMock.aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(gyldigInntekthistorikkResponse)
-                )
+                        .withBody(gyldigInntekthistorikkResponse),
+                ),
         )
 
         val response = runBlocking { inntektClient.hentInntektshistorikk(personIdent, YearMonth.of(2020, 1), YearMonth.of(2020, 7)) }

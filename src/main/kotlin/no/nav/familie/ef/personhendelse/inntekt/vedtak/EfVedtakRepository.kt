@@ -15,7 +15,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
 
     fun lagreEfVedtakshendelse(
         vedtakshendelse: EnsligForsørgerVedtakhendelse,
-        aarMaanedProsessert: YearMonth = YearMonth.now()
+        aarMaanedProsessert: YearMonth = YearMonth.now(),
     ) {
         val sql =
             "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType, :aar_maaned_prosessert, :versjon)" +
@@ -26,8 +26,8 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
                 "personIdent" to vedtakshendelse.personIdent,
                 "stønadType" to vedtakshendelse.stønadType.toString(),
                 "aar_maaned_prosessert" to aarMaanedProsessert.toString(),
-                "versjon" to 1
-            )
+                "versjon" to 1,
+            ),
         )
         namedParameterJdbcTemplate.update(sql, params)
     }
@@ -50,7 +50,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
             rs.getString("person_ident"),
             StønadType.valueOf(rs.getString("stonadstype")),
             YearMonth.parse(rs.getString("aar_maaned_prosessert")),
-            rs.getInt("versjon")
+            rs.getInt("versjon"),
         )
     }
 
@@ -73,8 +73,8 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
                 "personIdent" to personIdent,
                 "harNyeVedtak" to harNyeVedtak,
                 "harEndretInntekt" to harEndretInntekt,
-                "prosessertTid" to LocalDateTime.now()
-            )
+                "prosessertTid" to LocalDateTime.now(),
+            ),
         )
         namedParameterJdbcTemplate.update(sql, params)
     }
@@ -89,7 +89,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
             rs.getString("person_ident"),
             rs.getBoolean("harNyttVedtak"),
             rs.getBoolean("harEndretInntekt"),
-            rs.getObject("prosessert_tid", LocalDateTime::class.java)
+            rs.getObject("prosessert_tid", LocalDateTime::class.java),
         )
     }
 
@@ -103,5 +103,5 @@ data class Inntektsendring(
     val personIdent: String,
     val harNyttVedtak: Boolean,
     val harEndretInntekt: Boolean,
-    val prosessertTid: LocalDateTime
+    val prosessertTid: LocalDateTime,
 )
