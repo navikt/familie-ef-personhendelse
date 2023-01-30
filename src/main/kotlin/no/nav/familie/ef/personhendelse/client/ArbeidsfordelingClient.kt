@@ -12,7 +12,7 @@ import java.net.URI
 @Component
 class ArbeidsfordelingClient(
     @Qualifier("azure") restOperations: RestOperations,
-    @Value("\${FAMILIE_INTEGRASJONER_API_URL}") private val integrasjonUri: String
+    @Value("\${FAMILIE_INTEGRASJONER_API_URL}") private val integrasjonUri: String,
 ) : AbstractRestClient(restOperations, "familie.integrasjoner") {
 
     private val hentBehandlendeEnhetMedRelasjonerUrl = "$integrasjonUri/api/arbeidsfordeling/enhet/ENF/med-relasjoner"

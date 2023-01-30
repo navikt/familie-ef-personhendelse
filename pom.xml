@@ -32,8 +32,8 @@
         <kotlin.version>1.8.0</kotlin.version>
         <kafka-avro-serializer.version>7.3.1</kafka-avro-serializer.version>
         <avro.version>1.11.1</avro.version>
-        <graphql-kotlin-spring-client.version>6.3.3</graphql-kotlin-spring-client.version>
-        <graphql-kotlin-maven-plugin.version>6.3.3</graphql-kotlin-maven-plugin.version>
+        <graphql-kotlin-spring-client.version>6.3.5</graphql-kotlin-spring-client.version>
+        <graphql-kotlin-maven-plugin.version>6.3.5</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <ktlint-maven-plugin.version>1.7.0</ktlint-maven-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
@@ -42,7 +42,7 @@
         <token-validation-spring-test.version>2.1.6</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.0</wiremock.version>
-        <mockk.version>1.13.2</mockk.version>
+        <mockk.version>1.13.4</mockk.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
     </properties>
@@ -374,7 +374,7 @@
                     <dependency>
                         <groupId>com.pinterest</groupId>
                         <artifactId>ktlint</artifactId>
-                        <version>0.47.1</version>
+                        <version>0.48.2</version>
                     </dependency>
                     <!-- additional 3rd party ruleset(s) can be specified here -->
                 </dependencies>

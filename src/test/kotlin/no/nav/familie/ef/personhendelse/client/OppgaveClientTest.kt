@@ -58,8 +58,8 @@ class OppgaveClientTest {
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(gyldigResponse())
-                )
+                        .withBody(gyldigResponse()),
+                ),
         )
 
         val request = defaultOpprettOppgaveRequest(personIdent, "test")
@@ -90,6 +90,6 @@ class OppgaveClientTest {
             enhetsnummer = null,
             behandlingstema = Behandlingstema.Overgangsstønad.value,
             tilordnetRessurs = null,
-            behandlesAvApplikasjon = null
+            behandlesAvApplikasjon = null,
         )
 }

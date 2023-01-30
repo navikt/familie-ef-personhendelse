@@ -49,7 +49,7 @@ class DodsfallHandlerTest {
             emptyList(),
             emptyList(),
             emptyList(),
-            listOf(Foedsel(foedselsdato = LocalDate.parse("2009-09-09")))
+            listOf(Foedsel(foedselsdato = LocalDate.parse("2009-09-09"))),
         )
 
     @BeforeEach

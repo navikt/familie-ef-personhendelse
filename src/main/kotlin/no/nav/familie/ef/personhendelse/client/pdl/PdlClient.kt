@@ -18,7 +18,7 @@ import java.net.URI
 class PdlClient(
     @Qualifier("azure") restOperations: RestOperations,
     @Value("\${PDL_URL}")
-    val url: URI
+    val url: URI,
 ) : AbstractRestClient(restOperations, "pdl") {
 
     val pdlUri: URI = UriComponentsBuilder.fromUri(url).build().toUri()
@@ -29,7 +29,7 @@ class PdlClient(
     fun hentPerson(fnr: String): Person {
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlPersonRequestVariables(fnr),
-            query = hentPersonQuery
+            query = hentPersonQuery,
         )
 
         val pdlResponse: PdlResponse<HentPerson.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
@@ -39,7 +39,7 @@ class PdlClient(
     fun hentIdenter(personIdent: String): Set<String> {
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlIdentRequestVariables(personIdent),
-            query = hentIdenter
+            query = hentIdenter,
         )
 
         val pdlResponse: PdlResponse<HentIdenter.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())

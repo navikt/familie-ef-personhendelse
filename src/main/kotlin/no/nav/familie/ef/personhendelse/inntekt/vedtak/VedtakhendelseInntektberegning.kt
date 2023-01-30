@@ -8,5 +8,5 @@ data class VedtakhendelseInntektberegning(
     val personIdent: String,
     val stønadType: StønadType,
     val aarMaanedProsessert: YearMonth,
-    val versjon: Int
+    val versjon: Int,
 )

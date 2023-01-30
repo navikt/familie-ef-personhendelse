@@ -21,7 +21,7 @@ import java.util.UUID
 class PersonhendelseListener(
     @Value("\${SPRING_PROFILES_ACTIVE}")
     private val env: String,
-    private val personhendelseService: PersonhendelseService
+    private val personhendelseService: PersonhendelseService,
 ) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -31,7 +31,7 @@ class PersonhendelseListener(
         id = "familie-ef-personhendelse-aiven",
         groupId = "familie-ef-personhendelse-leesah-1",
         topics = ["pdl.leesah-v1"],
-        containerFactory = "kafkaAivenPersonhendelseListenerContainerFactory"
+        containerFactory = "kafkaAivenPersonhendelseListenerContainerFactory",
     )
     fun listen(@Payload personhendelse: Personhendelse) {
         try {
@@ -40,7 +40,7 @@ class PersonhendelseListener(
             // Finnes hendelser uten personIdent i dev som følge av opprydding i testdata
             logger.info(
                 "Leser personhendelse med hendelseId=${personhendelse.hendelseId} " +
-                    "tidligereHendelseId=${personhendelse.tidligereHendelseId}"
+                    "tidligereHendelseId=${personhendelse.tidligereHendelseId}",
             )
             if (!personidenter.firstOrNull().isNullOrBlank() &&
                 !personhendelseService.harHåndtertHendelse(personhendelse.hendelseId)
@@ -54,7 +54,7 @@ class PersonhendelseListener(
             securelogger.error(
                 "Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}" +
                     " hendelse={}",
-                objectMapper.writeValueAsString(personhendelse)
+                objectMapper.writeValueAsString(personhendelse),
             )
             throw e
         } finally {

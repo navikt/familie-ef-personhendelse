@@ -8,7 +8,7 @@ val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 inline fun <reified DATA : Any, reified T : Any> feilsjekkOgReturnerData(
     ident: String?,
     pdlResponse: PdlResponse<DATA>,
-    dataMapper: (DATA) -> T?
+    dataMapper: (DATA) -> T?,
 ): T {
     if (pdlResponse.harFeil()) {
         if (pdlResponse.errors?.any { it.extensions?.notFound() == true } == true) {

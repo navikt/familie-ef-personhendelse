@@ -42,7 +42,7 @@ internal class PersonhendelseServiceTest {
     private val oppgave = Oppgave(
         id = 0L,
         status = StatusEnum.OPPRETTET,
-        identer = listOf(OppgaveIdentV2(annenIdent, IdentGruppe.FOLKEREGISTERIDENT))
+        identer = listOf(OppgaveIdentV2(annenIdent, IdentGruppe.FOLKEREGISTERIDENT)),
     )
 
     @BeforeEach
@@ -85,7 +85,7 @@ internal class PersonhendelseServiceTest {
             handlerSpyk["handlePersonhendelse"](
                 any<PersonhendelseHandler>(),
                 any<Personhendelse>(),
-                any<String>()
+                any<String>(),
             )
         }
     }

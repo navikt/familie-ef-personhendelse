@@ -52,7 +52,7 @@ class PdlClientTest {
         val hentPersonQuery = javaClass.getResource("/pdl/queries/hentPerson.graphql").readText().graphqlCompatible()
         val pdlPersonRequest = PdlPersonRequest(
             variables = PdlPersonRequestVariables(personIdent),
-            query = hentPersonQuery
+            query = hentPersonQuery,
         )
 
         wiremockServerItem.stubFor(
@@ -61,8 +61,8 @@ class PdlClientTest {
                 .willReturn(
                     WireMock.aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(pdlResponse())
-                )
+                        .withBody(pdlResponse()),
+                ),
         )
 
         val response = pdlClient.hentPerson(personIdent)

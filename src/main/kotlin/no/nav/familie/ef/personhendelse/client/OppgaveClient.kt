@@ -27,7 +27,7 @@ import java.time.Month
 @Component
 class OppgaveClient(
     @Value("\${FAMILIE_INTEGRASJONER_API_URL}") private val integrasjonUrl: String,
-    @Qualifier("azure") restOperations: RestOperations
+    @Qualifier("azure") restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "familie.integrasjoner") {
 
     val oppgaveUrl = "$integrasjonUrl/api/oppgave"
@@ -38,7 +38,7 @@ class OppgaveClient(
             postForEntity<Ressurs<OppgaveResponse>>(
                 opprettOppgaveUri,
                 opprettOppgaveRequest,
-                HttpHeaders().medContentTypeJsonUTF8()
+                HttpHeaders().medContentTypeJsonUTF8(),
             )
         return response.getDataOrThrow().oppgaveId
     }
@@ -46,7 +46,7 @@ class OppgaveClient(
     fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
         val response = getForEntity<Ressurs<Oppgave>>(
             URI.create("$oppgaveUrl/$oppgaveId"),
-            HttpHeaders().medContentTypeJsonUTF8()
+            HttpHeaders().medContentTypeJsonUTF8(),
         )
         return response.getDataOrThrow()
     }
@@ -66,7 +66,7 @@ class OppgaveClient(
 
     private fun oppdaterOppgaveMedMappe(
         mapperResponse: FinnMappeResponseDto,
-        oppgave: Oppgave
+        oppgave: Oppgave,
     ) {
         val mappe = mapperResponse.mapper.find {
             it.navn.contains("62") &&
@@ -82,7 +82,7 @@ class OppgaveClient(
                 .queryParam("enhetsnr", enhetsnummer)
                 .queryParam("limit", limit)
                 .build()
-                .toUri()
+                .toUri(),
         )
         return response.getDataOrThrow()
     }
@@ -91,7 +91,7 @@ class OppgaveClient(
         val response = patchForEntity<Ressurs<OppgaveResponse>>(
             URI.create("$oppgaveUrl".plus("/${oppgave.id!!}/oppdater")),
             oppgave,
-            HttpHeaders().medContentTypeJsonUTF8()
+            HttpHeaders().medContentTypeJsonUTF8(),
         )
         return response.getDataOrThrow().oppgaveId
     }
@@ -112,7 +112,7 @@ fun opprettVurderLivshendelseoppgave(personIdent: String, beskrivelse: String) =
         enhetsnummer = null,
         behandlingstema = Behandlingstema.Overgangsstønad.value,
         tilordnetRessurs = null,
-        behandlesAvApplikasjon = null
+        behandlesAvApplikasjon = null,
     )
 
 fun HttpHeaders.medContentTypeJsonUTF8(): HttpHeaders {

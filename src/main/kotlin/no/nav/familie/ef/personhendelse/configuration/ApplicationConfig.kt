@@ -30,7 +30,7 @@ import java.time.temporal.ChronoUnit
 @EnableScheduling
 @Import(
     RestTemplateAzure::class,
-    KafkaErrorHandler::class
+    KafkaErrorHandler::class,
 )
 @EnableOAuth2Client(cacheEnabled = true)
 class ApplicationConfig {
@@ -86,7 +86,7 @@ class ApplicationConfig {
         return DefaultOAuth2HttpClient(
             RestTemplateBuilder()
                 .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS))
+                .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS)),
         )
     }
 }

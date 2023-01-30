@@ -39,7 +39,7 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
                 "Bruker er innvilget stønad for ufødt(e) barn ${barnFødtFørTermin.separerteIdenterMedStønadstype()}. " +
                     "Barnet er registrert født i måneden før oppgitt termindato. " +
                     nyeBarnTekst +
-                    "Vurder saken."
+                    "Vurder saken.",
             )
         }
         return OpprettOppgave("Bruker har fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()} som ikke finnes på behandling.")

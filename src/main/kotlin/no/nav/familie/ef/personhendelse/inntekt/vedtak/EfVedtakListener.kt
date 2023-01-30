@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 class EfVedtakListener(
-    private val efVedtakRepository: EfVedtakRepository
+    private val efVedtakRepository: EfVedtakRepository,
 ) : ConsumerSeekAware {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -24,7 +24,7 @@ class EfVedtakListener(
         id = "familie-ef-personhendelse-vedtak",
         topics = ["\${FAMILIE_EF_VEDTAK_TOPIC}"],
         containerFactory = "kafkaVedtakListenerContainerFactory",
-        groupId = "familie-ef-personhendelse-vedtak"
+        groupId = "familie-ef-personhendelse-vedtak",
     )
     fun listen(consumerRecord: ConsumerRecord<String, String>) {
         val efVedtakshendelse = objectMapper.readValue<EnsligForsørgerVedtakhendelse>(consumerRecord.value())
@@ -35,7 +35,7 @@ class EfVedtakListener(
             securelogger.error(
                 "Feil ved håndtering av personhendelse med behandlingId ${efVedtakshendelse.behandlingId}: ${e.message}" +
                     " hendelse={}",
-                objectMapper.writeValueAsString(efVedtakshendelse)
+                objectMapper.writeValueAsString(efVedtakshendelse),
             )
             throw e
         }

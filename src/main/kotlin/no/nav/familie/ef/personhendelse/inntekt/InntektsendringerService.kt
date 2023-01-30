@@ -10,7 +10,7 @@ import java.time.YearMonth
 @Service
 class InntektsendringerService(
     val oppgaveClient: OppgaveClient,
-    val sakClient: SakClient
+    val sakClient: SakClient,
 ) {
 
     private val halvtGrunnbeløpMånedlig = (106399 / 2) / 12
@@ -52,6 +52,6 @@ class InntektsendringerService(
         "ufoeretrygd",
         "ufoereytelseEtteroppgjoer",
         "feriepenger",
-        "ufoerepensjonFraAndreEnnFolketrygden"
+        "ufoerepensjonFraAndreEnnFolketrygden",
     )
 }
