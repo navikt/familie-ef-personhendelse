@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component
 class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
 
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
+    private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override val type = PersonhendelseType.FORELDERBARNRELASJON
 
@@ -25,7 +26,12 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
             return IkkeOpprettOppgave
         }
 
-        logger.info("Nye barn for bruker er ${nyeBarnForBruker.nyeBarn}, hendelseId : ${personhendelse.hendelseId}")
+        logger.info(
+            "Hendelse=${personhendelse.hendelseId} - " +
+                    "brukeren har ${nyeBarnForBruker.nyeBarn.size} nye barn " +
+                    "årsaker=${nyeBarnForBruker.nyeBarn.map { it.årsak }.toSet()}"
+        )
+        secureLogger.info("Nye barn for bruker er ${nyeBarnForBruker.nyeBarn}, hendelseId : ${personhendelse.hendelseId}")
 
         val barnFødtFørTermin = nyeBarnForBruker.filtrerÅrsak(NyttBarnÅrsak.FØDT_FØR_TERMIN)
         val nyeBarnSomIkkeFinnesPåBehandlingen = nyeBarnForBruker.filtrerÅrsak(NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
