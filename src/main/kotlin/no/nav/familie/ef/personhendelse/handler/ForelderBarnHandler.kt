@@ -28,8 +28,8 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
 
         logger.info(
             "Hendelse=${personhendelse.hendelseId} - " +
-                    "brukeren har ${nyeBarnForBruker.nyeBarn.size} nye barn " +
-                    "årsaker=${nyeBarnForBruker.nyeBarn.map { it.årsak }.toSet()}"
+                "brukeren har ${nyeBarnForBruker.nyeBarn.size} nye barn " +
+                "årsaker=${nyeBarnForBruker.nyeBarn.map { it.årsak }.toSet()}",
         )
         secureLogger.info("Nye barn for bruker er ${nyeBarnForBruker.nyeBarn}, hendelseId : ${personhendelse.hendelseId}")
 
