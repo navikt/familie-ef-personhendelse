@@ -95,9 +95,11 @@ class VedtakendringerService(
 
     private fun antallOffentligeYtelser(nyesteRegistrerteInntekt: List<InntektVersjon>?): Int {
         val offentligYtelseInntekt = nyesteRegistrerteInntekt?.filter {
-            it.arbeidsInntektInformasjon.inntektListe?.any {
-                it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
-                    it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
+            it.arbeidsInntektInformasjon.inntektListe?.any { offentligYtelse ->
+                offentligYtelse.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
+                    offentligYtelse.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
+                    offentligYtelse.beskrivelse != "sykepenger" &&
+                    offentligYtelse.beskrivelse != "foreldrepenger"
             }
                 ?: false
         }
