@@ -111,8 +111,8 @@ class VedtakendringerService(
         return inntektListe?.filter {
             it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
                 it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
-                    it.beskrivelse != "sykepenger" &&
-                    it.beskrivelse != "foreldrepenger" &&
+                it.beskrivelse != "sykepenger" &&
+                it.beskrivelse != "foreldrepenger" &&
                 it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType != "ETTERBETALINGSPERIODE"
         }?.groupBy { it.beskrivelse }?.size ?: 0
     }

@@ -85,7 +85,6 @@ class VedtakendringerServiceTest {
         Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isFalse
     }
 
-
     @Test
     fun `Bruker har lønnsinntekt frem til forrige måned`() {
         val json: String = readResource("inntekt/InntekthistorikkLoennsinntektTilOffentligYtelseEksempel.json")

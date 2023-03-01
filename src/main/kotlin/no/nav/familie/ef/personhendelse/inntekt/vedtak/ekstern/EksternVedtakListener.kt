@@ -28,7 +28,10 @@ class EksternVedtakListener(
         try {
             if (eksternVedtakService.mottarEfStønad(vedtakhendelse)) {
                 logger.info("Person med aktiv stønad har fått nytt vedtak ${vedtakhendelse.ytelse}")
-                secureLogger.info("Person med fnr: ${vedtakhendelse.fødselsnummer} med aktiv stønad har fått vedtak om ${vedtakhendelse.ytelse}")
+                secureLogger.info(
+                    "Person med fnr: ${vedtakhendelse.fødselsnummer} med aktiv stønad har fått vedtak om " +
+                        "${vedtakhendelse.ytelse} fra dato: ${vedtakhendelse.fraDato} og til dato: ${vedtakhendelse.tilDato}",
+                )
                 // Skal opprette oppgaver automatisk her, men starter med logging for å observere først
             }
         } catch (e: Exception) {
