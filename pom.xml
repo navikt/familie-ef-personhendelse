@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
+        <version>3.0.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.familie.ef</groupId>
@@ -34,11 +34,10 @@
         <graphql-kotlin-spring-client.version>6.4.0</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>6.4.0</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
-        <ktlint-maven-plugin.version>1.7.0</ktlint-maven-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-        <kontrakter.version>2.0_20230203100416_d4bab2f</kontrakter.version>
-        <felles.version>1.20230116145510_2afcc20</felles.version>
-        <token-validation-spring-test.version>2.1.6</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
+        <kontrakter.version>3.0_20230306094848_3425b04-JAKARTA</kontrakter.version>
+        <felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
+        <token-validation-spring-test.version>3.0.4</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.0</wiremock.version>
         <mockk.version>1.13.4</mockk.version>
@@ -79,6 +78,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
+        <!-- https://github.com/spring-projects/spring-boot/issues/33044#issuecomment-1379812611 -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -142,7 +146,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
+            <artifactId>wiremock-jre8-standalone</artifactId>
             <version>${wiremock.version}</version>
             <scope>test</scope>
         </dependency>
@@ -294,7 +298,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <fork>true</fork>
                     <mainClass>${start-class}</mainClass>
                 </configuration>
                 <executions>

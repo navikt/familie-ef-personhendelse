@@ -113,7 +113,7 @@ management:
     path-mapping:
       info: "isAlive"
   metrics.export.prometheus.enabled: true
-  metrics.web.server.auto-time-requests: true
+  prometheus.metrics.export.enabled: true
 
 DEPLOY_ENV: prod
 
