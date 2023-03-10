@@ -8,7 +8,7 @@ metadata:
 spec:
   image: {{ image }}
   ingresses:
-    - https://familie-ef-personhendelse.dev.intern.nav.no
+    - https://familie-ef-personhendelse.intern.dev.nav.no
   liveness:
     path: /internal/isAlive
     initialDelay: 30
