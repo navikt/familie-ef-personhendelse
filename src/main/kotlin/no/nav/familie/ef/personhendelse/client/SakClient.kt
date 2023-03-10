@@ -67,7 +67,7 @@ class SakClient(
 
     fun finnNyeBarnForBruker(personIdent: PersonIdent): NyeBarnDto {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("/api/behandling/barn/nye-eller-tidligere-fodte-barn")
+            .pathSegment("api/behandling/barn/nye-eller-tidligere-fodte-barn")
         val response = postForEntity<Ressurs<NyeBarnDto>>(uriComponentsBuilder.build().toUri(), personIdent)
         return response.getDataOrThrow()
     }
