@@ -49,9 +49,9 @@ class SakClient(
             ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
     }
 
-    fun hentPersonerMedAktivStønad(): List<String> {
+    fun hentPersonerMedAktivStønadIkkeManueltRevurdertSisteToMåneder(): List<String> {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("api/vedtak/personerMedAktivStonad")
+            .pathSegment("api/vedtak/personerMedAktivStonadIkkeManueltRevurdertSisteToMaaneder")
         val response = getForEntity<Ressurs<List<String>>>(uriComponentsBuilder.build().toUri())
         return response.data
             ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
