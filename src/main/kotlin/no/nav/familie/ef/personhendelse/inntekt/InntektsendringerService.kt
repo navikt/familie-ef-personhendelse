@@ -21,7 +21,7 @@ class InntektsendringerService(
         val nestNyesteRegistrerteInntekt = inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2).toString())
 
         return har10ProsentHøyereInntektEnnForventet(nestNyesteRegistrerteInntekt, forventetInntektForPerson.personIdent, forventetInntektForPerson.forventetInntektToMånederTilbake) &&
-            har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt, forventetInntektForPerson.personIdent, forventetInntektForPerson.forventetInntektToMånederTilbake)
+            har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt, forventetInntektForPerson.personIdent, forventetInntektForPerson.forventetInntektForrigeMåned)
     }
 
     private fun har10ProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Boolean {
