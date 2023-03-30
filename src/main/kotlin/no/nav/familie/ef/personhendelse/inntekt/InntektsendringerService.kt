@@ -13,7 +13,7 @@ class InntektsendringerService(
     val sakClient: SakClient,
 ) {
 
-    private val halvtGrunnbeløpMånedlig = (106399 / 2) / 12
+    private val halvtGrunnbeløpMånedlig = (111477 / 2) / 12
 
     fun beregnEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, forventetInntektForPerson: ForventetInntektForPerson): EndretInntekt {
         // hent alle registrerte vedtak som var på personen sist beregning
@@ -48,13 +48,17 @@ class InntektsendringerService(
         val månedligForventetInntekt = (forventetInntekt / 12)
 
         val orgNrToNyesteVersjonMap = nyesteRegistrerteInntekt.associate { it.opplysningspliktig to it.versjon }
-        val inntektListe = nyesteRegistrerteInntekt.filter { it.versjon == orgNrToNyesteVersjonMap.get(it.opplysningspliktig) && it.arbeidsInntektInformasjon.inntektListe != null }.flatMap { it.arbeidsInntektInformasjon.inntektListe!! }
-
+        val inntektListe = nyesteRegistrerteInntekt.filter {
+            it.versjon == orgNrToNyesteVersjonMap[it.opplysningspliktig] && it.arbeidsInntektInformasjon.inntektListe != null
+        }.flatMap { it.arbeidsInntektInformasjon.inntektListe!! }
         val samletInntekt = inntektListe.filterNot {
             ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse) ||
                 (it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE && it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType == "ETTERBETALINGSPERIODE")
         }.sumOf { it.beløp }
+
         if (samletInntekt < halvtGrunnbeløpMånedlig) return 0
+        if (månedligForventetInntekt == 0) return 100 // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
+
         secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident")
         val antallProsentInntektEndret = (((samletInntekt / månedligForventetInntekt.toDouble()) * 100) - 100).toInt()
         return antallProsentInntektEndret
