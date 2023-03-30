@@ -66,14 +66,15 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre inntektsendringer`() {
-        efVedtakRepository.lagreInntektsendring("1", true, false)
+        efVedtakRepository.lagreInntektsendring("1", true, 10, 5)
         var hentInntektsendringer = efVedtakRepository.hentInntektsendringer()
         Assertions.assertThat(hentInntektsendringer.size).isEqualTo(1)
 
         val inntektsendring = hentInntektsendringer.first()
         Assertions.assertThat(inntektsendring.personIdent).isEqualTo("1")
         Assertions.assertThat(inntektsendring.harNyttVedtak).isTrue
-        Assertions.assertThat(inntektsendring.harEndretInntekt).isFalse
+        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake).isEqualTo(10)
+        Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned).isEqualTo(5)
 
         efVedtakRepository.clearInntektsendringer()
         hentInntektsendringer = efVedtakRepository.hentInntektsendringer()

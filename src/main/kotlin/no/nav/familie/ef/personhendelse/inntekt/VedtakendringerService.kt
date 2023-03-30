@@ -64,15 +64,20 @@ class VedtakendringerService(
         response: InntektshistorikkResponse,
     ) {
         val harNyeVedtak = harNyeVedtak(response)
-        val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, forventetInntektForPerson)
-        efVedtakRepository.lagreInntektsendring(forventetInntektForPerson.personIdent, harNyeVedtak, harEndretInntekt)
+        val endretInntekt = inntektsendringerService.beregnEndretInntekt(response, forventetInntektForPerson)
+        efVedtakRepository.lagreInntektsendring(
+            forventetInntektForPerson.personIdent,
+            harNyeVedtak,
+            endretInntekt.toMånederTilbake,
+            endretInntekt.forrigeMåned,
+        )
     }
 
     fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {
         val inntektsendringer = efVedtakRepository.hentInntektsendringer()
         if (skalOppretteOppgave) {
             inntektsendringer.forEach {
-                opprettOppgave(it.harNyttVedtak, it.harEndretInntekt, it.personIdent)
+                opprettOppgave(it.harNyttVedtak, it.inntektsendringToMånederTilbake, it.inntektsendringForrigeMåned, it.personIdent)
             }
         } else {
             logger.info("Ville opprettet inntektsendring-oppgave for ${inntektsendringer.size} personer")
@@ -83,9 +88,9 @@ class VedtakendringerService(
     fun harNyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): Boolean {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
+            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1))
         val nestNyesteRegistrerteInntekt =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2).toString())
+            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2))
 
         val antallOffentligeYtelserForNyeste = antallOffentligeYtelser(nyesteRegistrerteInntekt)
         val antallOffentligeYtelserForNestNyeste = antallOffentligeYtelser(nestNyesteRegistrerteInntekt)
@@ -132,11 +137,12 @@ class VedtakendringerService(
 
     private fun opprettOppgave(
         harNyeVedtak: Boolean,
-        harEndretInntekt: Boolean,
+        inntektsendringToMånederInntekt: Int,
+        inntektsendringForrigeMåned: Int,
         personident: String,
         stønadType: StønadType = StønadType.OVERGANGSSTØNAD,
     ) {
-        val oppgavetekst = lagOppgavetekst(harNyeVedtak, harEndretInntekt)
+        val oppgavetekst = lagOppgavetekst(harNyeVedtak, inntektsendringToMånederInntekt >= 10 && inntektsendringForrigeMåned >= 10)
         secureLogger.info("$personident - $oppgavetekst")
         val enhetsnummer =
             arbeidsfordelingClient.hentArbeidsfordelingEnhetId(personident)
@@ -162,13 +168,15 @@ class VedtakendringerService(
     }
 
     private fun lagOppgavetekst(harNyeVedtak: Boolean, harEndretInntekt: Boolean): String {
-        val måned = YearMonth.now().minusMonths(1).month.tilNorsk()
+        val forrigeMåned = YearMonth.now().minusMonths(1).month.tilNorsk()
+        val toMånederTilbake = YearMonth.now().minusMonths(2).month.tilNorsk()
+
         if (harNyeVedtak && harEndretInntekt) {
-            return "Person har fått utbetalt ny stønad fra NAV og har økt inntekt i $måned. Vurder om overgangsstønaden skal revurderes."
+            return "Person har fått utbetalt ny stønad fra NAV og har økt inntekt i $toMånederTilbake og $forrigeMåned. Vurder om overgangsstønaden skal revurderes."
         } else if (harNyeVedtak) {
-            return "Person har fått utbetalt ny stønad fra NAV i $måned. Vurder om overgangsstønaden skal revurderes."
+            return "Person har fått utbetalt ny stønad fra NAV i $forrigeMåned. Vurder om overgangsstønaden skal revurderes."
         } else {
-            return "Person har økt inntekt i $måned. Vurder om overgangsstønaden skal revurderes."
+            return "Person har økt inntekt i $toMånederTilbake og $forrigeMåned. Vurder om overgangsstønaden skal revurderes."
         }
     }
 }
