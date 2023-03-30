@@ -18,7 +18,7 @@ class InntektsendringerServiceTest {
     private val oppgaveClient = mockk<OppgaveClient>()
     private val sakClient = mockk<SakClient>()
 
-    val inntektsendringer = InntektsendringerService(oppgaveClient, sakClient)
+    val inntektsendringerService = InntektsendringerService(oppgaveClient, sakClient)
     val forventetLønnsinntekt = 420000 // 35k pr mnd i eksempel json-fil
 
     @BeforeEach
@@ -81,23 +81,23 @@ class InntektsendringerServiceTest {
         val forventetInntektNiProsentLavere = (forventetLønnsinntekt * 0.91).toInt()
 
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("1", forventetLønnsinntekt, forventetLønnsinntekt),
             ),
-        ).isFalse
+        ).isEqualTo(EndretInntekt(false, 0))
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
             ),
-        ).isTrue
+        ).isEqualTo(EndretInntekt(true, 11))
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere),
             ),
-        ).isFalse
+        ).isEqualTo(EndretInntekt(false, 9))
     }
 
     @Test
@@ -133,10 +133,10 @@ class InntektsendringerServiceTest {
         val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
 
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
-            ),
+            ).harEndretInntekt,
         ).isFalse
     }
 
@@ -155,10 +155,10 @@ class InntektsendringerServiceTest {
         val forventetInntekt = 172_000
 
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("2", forventetInntekt, forventetInntekt),
-            ),
+            ).harEndretInntekt,
         ).isFalse
     }
 
@@ -213,10 +213,10 @@ class InntektsendringerServiceTest {
 
         val forHøyInntekt = 585001
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("1", forHøyInntekt, forHøyInntekt),
-            ),
+            ).harEndretInntekt,
         ).isFalse
     }
 
@@ -271,10 +271,10 @@ class InntektsendringerServiceTest {
 
         val forventetInntekt = 30000
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("1", forventetInntekt, forventetInntekt),
-            ),
+            ).harEndretInntekt,
         ).isFalse
     }
 
@@ -293,10 +293,10 @@ class InntektsendringerServiceTest {
 
         val forventetInntekt = 5000
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("1", forventetInntekt, forventetInntekt),
-            ),
+            ).harEndretInntekt,
         ).isFalse
     }
 
@@ -350,10 +350,10 @@ class InntektsendringerServiceTest {
         )
 
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("3", forventetLønnsinntekt, forventetLønnsinntekt),
-            ),
+            ).harEndretInntekt,
         ).isFalse
     }
 
@@ -377,10 +377,10 @@ class InntektsendringerServiceTest {
 
         val forventetInntekt = 70000
         Assertions.assertThat(
-            inntektsendringer.harEndretInntekt(
+            inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("3", forventetInntekt, forventetInntekt),
-            ),
+            ).harEndretInntekt,
         ).isTrue
     }
 

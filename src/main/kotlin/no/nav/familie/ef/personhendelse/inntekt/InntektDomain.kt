@@ -54,6 +54,11 @@ data class Tilleggsinformasjon(
     val tilleggsinformasjonDetaljer: TilleggsinformasjonDetaljer?,
 )
 
+data class EndretInntekt(
+    val harEndretInntekt: Boolean,
+    val gjennomsnittligEndringProsent: Int,
+)
+
 enum class AktørType {
     AKTOER_ID,
     NATURLIG_IDENT,

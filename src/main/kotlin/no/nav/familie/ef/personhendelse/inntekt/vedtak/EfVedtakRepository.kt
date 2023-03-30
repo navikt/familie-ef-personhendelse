@@ -63,9 +63,9 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         namedParameterJdbcTemplate.update(sql, mapSqlParameterSource)
     }
 
-    fun lagreInntektsendring(personIdent: String, harNyeVedtak: Boolean, harEndretInntekt: Boolean) {
+    fun lagreInntektsendring(personIdent: String, harNyeVedtak: Boolean, harEndretInntekt: Boolean, inntektEndretProsent: Int) {
         val sql =
-            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :harEndretInntekt, :prosessertTid)" +
+            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :harEndretInntekt, :prosessertTid, :inntektEndretProsent)" +
                 " ON CONFLICT DO NOTHING"
         val params = MapSqlParameterSource(
             mapOf(
@@ -74,6 +74,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
                 "harNyeVedtak" to harNyeVedtak,
                 "harEndretInntekt" to harEndretInntekt,
                 "prosessertTid" to LocalDateTime.now(),
+                "inntektEndretProsent" to inntektEndretProsent,
             ),
         )
         namedParameterJdbcTemplate.update(sql, params)
@@ -90,6 +91,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
             rs.getBoolean("harNyttVedtak"),
             rs.getBoolean("harEndretInntekt"),
             rs.getObject("prosessert_tid", LocalDateTime::class.java),
+            rs.getInt("inntekt_endret_prosent"),
         )
     }
 
@@ -104,4 +106,5 @@ data class Inntektsendring(
     val harNyttVedtak: Boolean,
     val harEndretInntekt: Boolean,
     val prosessertTid: LocalDateTime,
+    val inntektEndretProsent: Int,
 )

@@ -64,8 +64,13 @@ class VedtakendringerService(
         response: InntektshistorikkResponse,
     ) {
         val harNyeVedtak = harNyeVedtak(response)
-        val harEndretInntekt = inntektsendringerService.harEndretInntekt(response, forventetInntektForPerson)
-        efVedtakRepository.lagreInntektsendring(forventetInntektForPerson.personIdent, harNyeVedtak, harEndretInntekt)
+        val endretInntekt = inntektsendringerService.beregnEndretInntekt(response, forventetInntektForPerson)
+        efVedtakRepository.lagreInntektsendring(
+            forventetInntektForPerson.personIdent,
+            harNyeVedtak,
+            endretInntekt.harEndretInntekt,
+            endretInntekt.gjennomsnittligEndringProsent,
+        )
     }
 
     fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {

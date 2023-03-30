@@ -1,0 +1,1 @@
+ALTER TABLE inntektsendringer ADD COLUMN inntekt_endret_prosent INT;
