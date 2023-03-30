@@ -54,10 +54,12 @@ data class Tilleggsinformasjon(
     val tilleggsinformasjonDetaljer: TilleggsinformasjonDetaljer?,
 )
 
-data class EndretInntekt(
-    val harEndretInntekt: Boolean,
-    val gjennomsnittligEndringProsent: Int,
-)
+data class Inntektsendring(
+    val toMånederTilbake: Int,
+    val forrigeMåned: Int,
+) {
+    fun harEndretInntekt() = toMånederTilbake >= 10 && forrigeMåned >= 10
+}
 
 enum class AktørType {
     AKTOER_ID,

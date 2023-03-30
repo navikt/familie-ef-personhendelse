@@ -34,14 +34,14 @@ class InntektsendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned("2022-01").first().arbeidsInntektInformasjon
+            inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1)).first().arbeidsInntektInformasjon
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+            inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(
-                    YearMonth.now().minusMonths(1).toString(),
+                    YearMonth.now().minusMonths(1),
                     mapOf(
                         Pair(
                             "1",
@@ -58,7 +58,7 @@ class InntektsendringerServiceTest {
                     ),
                 ),
                 Pair(
-                    YearMonth.now().minusMonths(2).toString(),
+                    YearMonth.now().minusMonths(2),
                     mapOf(
                         Pair(
                             "1",
@@ -85,19 +85,19 @@ class InntektsendringerServiceTest {
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("1", forventetLønnsinntekt, forventetLønnsinntekt),
             ),
-        ).isEqualTo(EndretInntekt(false, 0))
+        ).isEqualTo(Inntektsendring(0, 0))
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
             ),
-        ).isEqualTo(EndretInntekt(true, 11))
+        ).isEqualTo(Inntektsendring(11, 11))
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere),
             ),
-        ).isEqualTo(EndretInntekt(false, 9))
+        ).isEqualTo(Inntektsendring(9, 9))
     }
 
     @Test
@@ -106,12 +106,12 @@ class InntektsendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val inntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+            inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(
-                    YearMonth.now().minusMonths(1).toString(),
+                    YearMonth.now().minusMonths(1),
                     mapOf(
                         Pair(
                             "5",
@@ -136,20 +136,20 @@ class InntektsendringerServiceTest {
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
-            ).harEndretInntekt,
+            ).harEndretInntekt(),
         ).isFalse
     }
 
     @Test
-    fun `Bruker med forventet inntekt, men har mer enn 10 prosent høyere inntekt med etterbetaling av utbetalinger fra offentlig ytelse, som skal ignoreres og derfor returnere false`() {
+    fun `Bruker med mer enn 10 prosent inntektsendring pga etterbetaling skal ignoreres`() {
         val json: String = readResource("inntekt/InntekthistorikkEtterbetalingSkalIgnoreres.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
-        val inntektVersjonForNyesteMåned = inntektshistorikkResponse.inntektForMåned("2022-02")
+        val inntektVersjonForNyesteMåned = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 2))
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", inntektVersjonForNyesteMåned))),
+                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", inntektVersjonForNyesteMåned))),
             ),
         )
         val forventetInntekt = 172_000
@@ -158,7 +158,7 @@ class InntektsendringerServiceTest {
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("2", forventetInntekt, forventetInntekt),
-            ).harEndretInntekt,
+            ).harEndretInntekt(),
         ).isFalse
     }
 
@@ -168,14 +168,14 @@ class InntektsendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned("2022-01").first().arbeidsInntektInformasjon
+            inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1)).first().arbeidsInntektInformasjon
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+            inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(
-                    YearMonth.now().minusMonths(1).toString(),
+                    YearMonth.now().minusMonths(1),
                     mapOf(
                         Pair(
                             "1",
@@ -192,7 +192,7 @@ class InntektsendringerServiceTest {
                     ),
                 ),
                 Pair(
-                    YearMonth.now().minusMonths(2).toString(),
+                    YearMonth.now().minusMonths(2),
                     mapOf(
                         Pair(
                             "1",
@@ -216,7 +216,7 @@ class InntektsendringerServiceTest {
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("1", forHøyInntekt, forHøyInntekt),
-            ).harEndretInntekt,
+            ).harEndretInntekt(),
         ).isFalse
     }
 
@@ -226,14 +226,14 @@ class InntektsendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned("2022-01").first().arbeidsInntektInformasjon
+            inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1)).first().arbeidsInntektInformasjon
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+            inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(
-                    YearMonth.now().minusMonths(1).toString(),
+                    YearMonth.now().minusMonths(1),
                     mapOf(
                         Pair(
                             "1",
@@ -250,7 +250,7 @@ class InntektsendringerServiceTest {
                     ),
                 ),
                 Pair(
-                    YearMonth.now().minusMonths(2).toString(),
+                    YearMonth.now().minusMonths(2),
                     mapOf(
                         Pair(
                             "1",
@@ -274,7 +274,7 @@ class InntektsendringerServiceTest {
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("1", forventetInntekt, forventetInntekt),
-            ).harEndretInntekt,
+            ).harEndretInntekt(),
         ).isFalse
     }
 
@@ -283,11 +283,11 @@ class InntektsendringerServiceTest {
         val json: String = readResource("inntekt/InntekthistorikkUførepensjonFraAndreEnnFolketrygden.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-01")
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1))
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
             ),
         )
 
@@ -296,7 +296,7 @@ class InntektsendringerServiceTest {
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("1", forventetInntekt, forventetInntekt),
-            ).harEndretInntekt,
+            ).harEndretInntekt(),
         ).isFalse
     }
 
@@ -306,14 +306,14 @@ class InntektsendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned("2022-02").first().arbeidsInntektInformasjon
+            inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 2)).first().arbeidsInntektInformasjon
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned("2022-01").first().arbeidsInntektInformasjon
+            inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1)).first().arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
                 Pair(
-                    YearMonth.now().minusMonths(1).toString(),
+                    YearMonth.now().minusMonths(1),
                     mapOf(
                         Pair(
                             "1",
@@ -330,7 +330,7 @@ class InntektsendringerServiceTest {
                     ),
                 ),
                 Pair(
-                    YearMonth.now().minusMonths(2).toString(),
+                    YearMonth.now().minusMonths(2),
                     mapOf(
                         Pair(
                             "1",
@@ -353,7 +353,7 @@ class InntektsendringerServiceTest {
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("3", forventetLønnsinntekt, forventetLønnsinntekt),
-            ).harEndretInntekt,
+            ).harEndretInntekt(),
         ).isFalse
     }
 
@@ -362,14 +362,14 @@ class InntektsendringerServiceTest {
         val json: String = readResource("inntekt/InntekthistorikkFrilanser.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-03")
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-03")
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 3))
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 3))
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
                 Pair(
-                    YearMonth.now().minusMonths(2).toString(),
+                    YearMonth.now().minusMonths(2),
                     mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson)),
                 ),
             ),
@@ -380,7 +380,7 @@ class InntektsendringerServiceTest {
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("3", forventetInntekt, forventetInntekt),
-            ).harEndretInntekt,
+            ).harEndretInntekt(),
         ).isTrue
     }
 

@@ -63,25 +63,25 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         namedParameterJdbcTemplate.update(sql, mapSqlParameterSource)
     }
 
-    fun lagreInntektsendring(personIdent: String, harNyeVedtak: Boolean, harEndretInntekt: Boolean, inntektEndretProsent: Int) {
+    fun lagreInntektsendring(personIdent: String, harNyeVedtak: Boolean, inntektsendringToMånederTilbake: Int, inntektsendringForrigeMåned: Int) {
         val sql =
-            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :harEndretInntekt, :prosessertTid, :inntektEndretProsent)" +
+            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :prosessertTid, :inntektsendringToMånederTilbake, :inntektsendringForrigeMåned)" +
                 " ON CONFLICT DO NOTHING"
         val params = MapSqlParameterSource(
             mapOf(
                 "id" to UUID.randomUUID(),
                 "personIdent" to personIdent,
                 "harNyeVedtak" to harNyeVedtak,
-                "harEndretInntekt" to harEndretInntekt,
                 "prosessertTid" to LocalDateTime.now(),
-                "inntektEndretProsent" to inntektEndretProsent,
+                "inntektsendringToMånederTilbake" to inntektsendringToMånederTilbake,
+                "inntektsendringForrigeMåned" to inntektsendringForrigeMåned,
             ),
         )
         namedParameterJdbcTemplate.update(sql, params)
     }
 
     fun hentInntektsendringer(): List<Inntektsendring> {
-        val sql = "SELECT * FROM inntektsendringer WHERE harNyttVedtak = true OR harEndretInntekt = true"
+        val sql = "SELECT * FROM inntektsendringer WHERE harNyttVedtak = true OR (inntekt_endret_to_maaneder_tilbake >= 10 AND inntekt_endret_forrige_maaned >= 10)"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
@@ -89,14 +89,14 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         Inntektsendring(
             rs.getString("person_ident"),
             rs.getBoolean("harNyttVedtak"),
-            rs.getBoolean("harEndretInntekt"),
             rs.getObject("prosessert_tid", LocalDateTime::class.java),
-            rs.getInt("inntekt_endret_prosent"),
+            rs.getInt("inntekt_endret_to_maaneder_tilbake"),
+            rs.getInt("inntekt_endret_forrige_maaned"),
         )
     }
 
     fun clearInntektsendringer() {
-        val sql = "DELETE FROM inntektsendringer"
+        val sql = "TRUNCATE TABLE inntektsendringer"
         namedParameterJdbcTemplate.update(sql, MapSqlParameterSource())
     }
 }
@@ -104,7 +104,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
 data class Inntektsendring(
     val personIdent: String,
     val harNyttVedtak: Boolean,
-    val harEndretInntekt: Boolean,
     val prosessertTid: LocalDateTime,
-    val inntektEndretProsent: Int,
+    val inntektsendringToMånederTilbake: Int,
+    val inntektsendringForrigeMåned: Int,
 )

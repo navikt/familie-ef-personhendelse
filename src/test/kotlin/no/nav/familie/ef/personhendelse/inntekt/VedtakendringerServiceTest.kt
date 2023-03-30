@@ -36,13 +36,13 @@ class VedtakendringerServiceTest {
         val json: String = readResource("inntekt/InntekthistorikkLoennsinntektEksempel.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-01").first().arbeidsInntektInformasjon
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1)).first().arbeidsInntektInformasjon
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
-                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+                Pair(YearMonth.now().minusMonths(2), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
             ),
         )
 
@@ -54,13 +54,13 @@ class VedtakendringerServiceTest {
         val json: String = readResource("inntekt/InntekthistorikkEtterbetalingSkalIgnoreres.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-02")
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-01")
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 2))
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1))
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
-                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson))),
+                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+                Pair(YearMonth.now().minusMonths(2), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson))),
             ),
         )
 
@@ -72,13 +72,13 @@ class VedtakendringerServiceTest {
         val json: String = readResource("inntekt/InntekthistorikkMedForeldrepenger.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2023-01")
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2022-12")
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2023, 1))
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 12))
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
-                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson))),
+                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+                Pair(YearMonth.now().minusMonths(2), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson))),
             ),
         )
 
@@ -90,13 +90,13 @@ class VedtakendringerServiceTest {
         val json: String = readResource("inntekt/InntekthistorikkLoennsinntektTilOffentligYtelseEksempel.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-11").first().arbeidsInntektInformasjon
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
+        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 11)).first().arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
-                Pair(YearMonth.now().minusMonths(2).toString(), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", listOf(InntektVersjon(nyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+                Pair(YearMonth.now().minusMonths(2), mapOf(Pair("1", listOf(InntektVersjon(nestNyesteArbeidsInntektInformasjonIEksempelJson, null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
             ),
         )
 
@@ -108,15 +108,15 @@ class VedtakendringerServiceTest {
         val json: String = readResource("inntekt/InntekthistorikkLoennsinntektTilOffentligYtelseEksempel.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned("2021-12").first().arbeidsInntektInformasjon
+        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
         val toUtbetalingerSammeYtelse = listOf(nyesteArbeidsInntektInformasjonIEksempelJson.inntektListe!!.first(), nyesteArbeidsInntektInformasjonIEksempelJson.inntektListe?.first()!!.copy(beløp = 10000))
 
         val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), mapOf(Pair("1", listOf(InntektVersjon(ArbeidsInntekthistorikkInformasjon(null, null, null, toUtbetalingerSammeYtelse), null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
+                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", listOf(InntektVersjon(ArbeidsInntekthistorikkInformasjon(null, null, null, toUtbetalingerSammeYtelse), null, "innleveringstidspunkt", "opplysningspliktig", 1))))),
                 Pair(
-                    YearMonth.now().minusMonths(2).toString(),
+                    YearMonth.now().minusMonths(2),
                     mapOf(
                         Pair(
                             "1",
@@ -153,11 +153,11 @@ class VedtakendringerServiceTest {
     }
 
     fun oppdatertInntektshistorikkResponseTilNyereDato(inntektshistorikkResponse: InntektshistorikkResponse): InntektshistorikkResponse {
-        val keys = inntektshistorikkResponse.aarMaanedHistorikk.keys.sortedBy { YearMonth.parse(it) }
+        val keys = inntektshistorikkResponse.aarMaanedHistorikk.keys.sortedBy { it }
         return InntektshistorikkResponse(
             linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1).toString(), inntektshistorikkResponse.inntektEntryForMåned(keys.first())),
-                Pair(YearMonth.now().minusMonths(2).toString(), inntektshistorikkResponse.inntektEntryForMåned(keys.last())),
+                Pair(YearMonth.now().minusMonths(1), inntektshistorikkResponse.inntektEntryForMåned(keys.first())),
+                Pair(YearMonth.now().minusMonths(2), inntektshistorikkResponse.inntektEntryForMåned(keys.last())),
             ),
         )
     }

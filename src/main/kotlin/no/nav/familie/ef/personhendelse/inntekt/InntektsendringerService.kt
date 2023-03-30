@@ -15,31 +15,28 @@ class InntektsendringerService(
 
     private val halvtGrunnbeløpMånedlig = (111477 / 2) / 12
 
-    fun beregnEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, forventetInntektForPerson: ForventetInntektForPerson): EndretInntekt {
+    fun beregnEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, forventetInntektForPerson: ForventetInntektForPerson): Inntektsendring {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1).toString())
+            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1))
         val nestNyesteRegistrerteInntekt =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2).toString())
+            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2))
 
-        val antallProsentToMånederTilbake = antallProsentHøyereInntektEnnForventet(
+        val inntektsendringToMånederTilbake = beregnInntektsendring(
             nestNyesteRegistrerteInntekt,
             forventetInntektForPerson.personIdent,
             forventetInntektForPerson.forventetInntektToMånederTilbake,
         )
-        val antallProsentForrigeMåned = antallProsentHøyereInntektEnnForventet(
+        val inntektsendringForrigeMåned = beregnInntektsendring(
             nyesteRegistrerteInntekt,
             forventetInntektForPerson.personIdent,
             forventetInntektForPerson.forventetInntektForrigeMåned,
         )
 
-        return EndretInntekt(
-            antallProsentForrigeMåned >= 10 && antallProsentToMånederTilbake >= 10,
-            (antallProsentForrigeMåned + antallProsentToMånederTilbake) / 2,
-        )
+        return Inntektsendring(toMånederTilbake = inntektsendringToMånederTilbake, forrigeMåned = inntektsendringForrigeMåned)
     }
 
-    private fun antallProsentHøyereInntektEnnForventet(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Int {
+    private fun beregnInntektsendring(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Int {
         if (forventetInntekt == null || nyesteRegistrerteInntekt?.maxOfOrNull { it.versjon } == null) {
             secureLogger.warn("Ingen gjeldende inntekt funnet på person $ident har personen løpende stønad?")
             return 0
@@ -60,8 +57,8 @@ class InntektsendringerService(
         if (månedligForventetInntekt == 0) return 100 // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
 
         secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident")
-        val antallProsentInntektEndret = (((samletInntekt / månedligForventetInntekt.toDouble()) * 100) - 100).toInt()
-        return antallProsentInntektEndret
+        val inntektsendring = (((samletInntekt - månedligForventetInntekt) / månedligForventetInntekt.toDouble()) * 100).toInt()
+        return inntektsendring
     }
 
     // Ignorterte ytelser: AAP og Dagpenger er ignorert fordi de er variable. Alle uføre går under annet regelverk (samordning) og skal derfor ignoreres.
