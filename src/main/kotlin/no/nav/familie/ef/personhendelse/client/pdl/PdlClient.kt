@@ -5,6 +5,7 @@ import no.nav.familie.ef.personhendelse.generated.HentPerson
 import no.nav.familie.ef.personhendelse.generated.hentidenter.IdentInformasjon
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.felles.Tema
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -50,6 +51,7 @@ class PdlClient(
 private fun httpHeadersPdl(): HttpHeaders {
     return HttpHeaders().apply {
         add("Tema", "ENF")
+        add("behandlingsnummer", Tema.ENF.behandlingsnummer)
     }
 }
 
