@@ -35,7 +35,7 @@
         <graphql-kotlin-maven-plugin.version>6.5.0</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-        <kontrakter.version>3.0_20230526102731_e1eff1d</kontrakter.version>
+        <kontrakter.version>3.0_20230607101621_61d0afb</kontrakter.version>
         <felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
         <token-validation-spring-test.version>3.0.4</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
