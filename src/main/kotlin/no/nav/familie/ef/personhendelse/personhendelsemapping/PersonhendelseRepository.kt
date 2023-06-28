@@ -48,7 +48,7 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
     }
 
     fun hentAlleOppgaveIds(): List<Long>? {
-        val sql = "SELECT oppgaveId FROM hendelse "
+        val sql = "SELECT oppgave_id FROM hendelse "
         return try {
             namedParameterJdbcTemplate.query(sql) { rs: ResultSet, _: Int ->
                 rs.getLong("oppgave_id")
