@@ -46,4 +46,15 @@ class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdb
             null
         }
     }
+
+    fun hentAlleOppgaveIds(): List<Long>? {
+        val sql = "SELECT oppgave_id FROM hendelse "
+        return try {
+            namedParameterJdbcTemplate.query(sql) { rs: ResultSet, _: Int ->
+                rs.getLong("oppgave_id")
+            }
+        } catch (e: EmptyResultDataAccessException) {
+            null
+        }
+    }
 }
