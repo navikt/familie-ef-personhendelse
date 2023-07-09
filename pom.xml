@@ -28,7 +28,7 @@
         <revision>1.0</revision>
         <changelist>-SNAPSHOT</changelist>
         <java.version>17</java.version>
-        <kotlin.version>1.8.22</kotlin.version>
+        <kotlin.version>1.9.0</kotlin.version>
         <kafka-avro-serializer.version>7.4.0</kafka-avro-serializer.version>
         <avro.version>1.11.1</avro.version>
         <graphql-kotlin-spring-client.version>6.5.3</graphql-kotlin-spring-client.version>
