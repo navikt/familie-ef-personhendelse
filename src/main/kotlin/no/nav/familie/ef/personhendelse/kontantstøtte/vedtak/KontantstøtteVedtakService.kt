@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.kontantstøtte
+package no.nav.familie.ef.personhendelse.kontantstøtte.vedtak
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient

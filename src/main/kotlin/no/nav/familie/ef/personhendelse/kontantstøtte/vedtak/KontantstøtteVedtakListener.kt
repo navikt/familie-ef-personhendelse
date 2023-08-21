@@ -1,7 +1,6 @@
 package no.nav.familie.ef.personhendelse.kontantstøtte.vedtak
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.ef.personhendelse.kontantstøtte.KontantstøtteVedtakService
 import no.nav.familie.eksterne.kontrakter.VedtakDVH
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
