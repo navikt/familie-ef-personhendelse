@@ -43,7 +43,7 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
     }
 
     /**
-     * TODO : Må kommenteres ut for
+     * TODO : Må kommenteres ut etter første deploy for å ikke søke tilbake til siste melding hver gang
      */
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
