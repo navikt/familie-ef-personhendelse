@@ -26,7 +26,7 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
         val personIdent = vedtakhendelse.person.personIdent
         try {
-            logger.debug("Lest vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
+            logger.info("Lest vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
             if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
                 //kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(personIdent, "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn")
                 //logger.info("Opprettet VurderKonsekvensOppgave for kontantstøttevedtak med behandlingId: ${vedtakhendelse.behandlingsId}")
