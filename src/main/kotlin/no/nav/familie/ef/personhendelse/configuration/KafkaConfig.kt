@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.configuration
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
+import no.nav.familie.eksterne.kontrakter.VedtakDVH
 import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -35,6 +36,15 @@ class KafkaConfig {
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = false
         factory.consumerFactory = DefaultKafkaConsumerFactory(props)
+        factory.setCommonErrorHandler(kafkaErrorHandler)
+        return factory
+    }
+
+    @Bean
+    fun kafkaKsVedtakListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<Long, VedtakDVH> {
+        properties.properties[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = "true"
+        val factory = ConcurrentKafkaListenerContainerFactory<Long, VedtakDVH>()
+        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
         factory.setCommonErrorHandler(kafkaErrorHandler)
         return factory
     }

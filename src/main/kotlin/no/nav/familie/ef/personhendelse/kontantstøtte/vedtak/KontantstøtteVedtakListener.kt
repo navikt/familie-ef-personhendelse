@@ -20,23 +20,23 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         id = "aapen-kontantstotte-vedtak-aiven",
         groupId = "familie-ef-kontantstøtte-vedtak",
         topics = ["teamfamilie.aapen-kontantstotte-vedtak-v1"],
-        containerFactory = "kafkaVedtakListenerContainerFactory",
+        containerFactory = "kafkaKsVedtakListenerContainerFactory",
     )
-    fun listen(@Payload consumerRecord: ConsumerRecord<String, String>) {
-        val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
+    fun listen(@Payload vedtakhendelse: VedtakDVH) {
         val personIdent = vedtakhendelse.person.personIdent
         try {
             logger.info("Lest vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
             if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
-                //kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(personIdent, "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn")
-                //logger.info("Opprettet VurderKonsekvensOppgave for kontantstøttevedtak med behandlingId: ${vedtakhendelse.behandlingsId}")
+                // kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(personIdent, "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn")
+                // logger.info("Opprettet VurderKonsekvensOppgave for kontantstøttevedtak med behandlingId: ${vedtakhendelse.behandlingsId}")
             }
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av kontantstøttevedtak - se securelogs for mer detaljer")
             securelogger.error(
                 "Feil ved håndtering av vedtakhendelse med behandlingsId ${vedtakhendelse.behandlingsId} med ytelse kontantstøtte : ${e.message}" +
                     " hendelse={}",
-                objectMapper.writeValueAsString(vedtakhendelse), e
+                objectMapper.writeValueAsString(vedtakhendelse),
+                e,
             )
             throw e
         }
@@ -47,14 +47,14 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
      */
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
-        callback: ConsumerSeekAware.ConsumerSeekCallback
+        callback: ConsumerSeekAware.ConsumerSeekCallback,
     ) {
         logger.info("overrided onPartitionsAssigned seekToBeginning")
         assignments.keys.stream()
             .filter { it.topic() == "teamfamilie.aapen-kontantstotte-vedtak-v1" }
             .forEach {
                 callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
-                //callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
+                // callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
             }
     }
 }
