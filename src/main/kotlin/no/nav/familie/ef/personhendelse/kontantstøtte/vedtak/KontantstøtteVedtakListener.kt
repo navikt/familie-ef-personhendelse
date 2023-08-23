@@ -45,7 +45,7 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
     /**
      * TODO : Må kommenteres ut etter første deploy for å ikke søke tilbake til siste melding hver gang
      */
-    override fun onPartitionsAssigned(
+   /* override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
         callback: ConsumerSeekAware.ConsumerSeekCallback,
     ) {
@@ -56,5 +56,5 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
                 callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
                 // callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
             }
-    }
+    }*/
 }
