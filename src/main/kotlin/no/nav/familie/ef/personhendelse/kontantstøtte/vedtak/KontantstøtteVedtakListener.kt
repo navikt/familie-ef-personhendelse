@@ -19,14 +19,14 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
     @KafkaListener(
         id = "aapen-kontantstotte-vedtak-aiven",
         groupId = "familie-ef-kontantstøtte-vedtak",
-        topics = ["teamfamilie.aapen-kontantstotte-vedtak-v1"],
-        containerFactory = "kafkaKsVedtakListenerContainerFactory",
+        topics = ["\${FAMILIE_KS_VEDTAK_TOPIC}"],
+        containerFactory = "kafkaKontantstøtteVedtakListenerContainerFactory",
     )
-    fun listen(@Payload vedtakhendelse: VedtakDVH) {
-        val personIdent = vedtakhendelse.person.personIdent
+    fun listen(consumerRecord: ConsumerRecord<String, String>) {
+        val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
         try {
             logger.info("Lest vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
-            if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
+            if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(vedtakhendelse.person.personIdent)) {
                 // kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(personIdent, "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn")
                 // logger.info("Opprettet VurderKonsekvensOppgave for kontantstøttevedtak med behandlingId: ${vedtakhendelse.behandlingsId}")
             }
