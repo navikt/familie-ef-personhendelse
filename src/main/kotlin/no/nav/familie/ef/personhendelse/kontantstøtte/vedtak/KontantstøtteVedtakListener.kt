@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
-import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 
 @Component
@@ -45,7 +44,7 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
     /**
      * TODO : Må kommenteres ut etter første deploy for å ikke søke tilbake til siste melding hver gang
      */
-   /* override fun onPartitionsAssigned(
+    override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
         callback: ConsumerSeekAware.ConsumerSeekCallback,
     ) {
@@ -56,5 +55,5 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
                 callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
                 // callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
             }
-    }*/
+    }
 }
