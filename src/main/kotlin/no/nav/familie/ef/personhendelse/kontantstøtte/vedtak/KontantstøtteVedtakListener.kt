@@ -25,9 +25,13 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
         try {
             logger.info("Lest vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
-            if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(vedtakhendelse.person.personIdent)) {
-                // kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(personIdent, "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn")
-                // logger.info("Opprettet VurderKonsekvensOppgave for kontantstøttevedtak med behandlingId: ${vedtakhendelse.behandlingsId}")
+            val personIdent = vedtakhendelse.person.personIdent
+            if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
+                kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(
+                    personIdent = personIdent,
+                    "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn"
+                )
+                logger.info("Opprettet VurderKonsekvensOppgave for kontantstøttevedtak med behandlingId: ${vedtakhendelse.behandlingsId}")
             }
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av kontantstøttevedtak - se securelogs for mer detaljer")
