@@ -27,6 +27,7 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
             logger.info("Lest vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
             val personIdent = vedtakhendelse.person.personIdent
             if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
+                logger.info("Person har løpende barnetilsyn")
                 kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(
                     personIdent = personIdent,
                     "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn"
@@ -56,8 +57,8 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         assignments.keys.stream()
             .filter { it.topic() == "teamfamilie.aapen-kontantstotte-vedtak-v1" }
             .forEach {
-                callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
-                // callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
+                //callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
+                callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
             }
     }
 }
