@@ -24,7 +24,8 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
     fun listen(consumerRecord: ConsumerRecord<String, String>) {
         val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
         try {
-            logger.info("Lest vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
+            logger.info("Lest vedtak for kontantstøtte med behandlingId: " +
+                "${vedtakhendelse.behandlingsId}. Tidspunkt for vedtak : ${vedtakhendelse.tidspunktVedtak}")
             val personIdent = vedtakhendelse.person.personIdent
             if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
                 logger.info("Person har løpende barnetilsyn")
@@ -57,8 +58,8 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         assignments.keys.stream()
             .filter { it.topic() == "teamfamilie.aapen-kontantstotte-vedtak-v1" }
             .forEach {
-                //callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
-                callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
+                callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
+                //callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
             }
     }
 }
