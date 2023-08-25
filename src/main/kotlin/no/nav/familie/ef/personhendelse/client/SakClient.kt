@@ -33,7 +33,7 @@ class SakClient(
     fun harLøpendeBarnetilsyn(personident: String): Boolean {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/ekstern/behandling/har-loepende-barnetilsyn")
-        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), personident)
+        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), PersonIdent(personident))
         logger.info("Sjekker har løpende barnetilsyn for ident: $personident, resultat: ${response.data}")
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
