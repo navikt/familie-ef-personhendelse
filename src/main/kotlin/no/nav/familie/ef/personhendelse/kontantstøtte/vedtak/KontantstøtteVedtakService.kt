@@ -12,7 +12,6 @@ class KontantstøtteVedtakService(val efSakClient: SakClient, val oppgaveClient:
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun harLøpendeBarnetilsyn(personIdent: String): Boolean {
-        logger.info("Sjekker har løpende barnetilsyn for ident: $personIdent")
         return efSakClient.harLøpendeBarnetilsyn(personIdent)
     }
 

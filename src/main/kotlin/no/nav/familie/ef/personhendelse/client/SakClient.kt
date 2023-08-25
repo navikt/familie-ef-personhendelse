@@ -5,6 +5,7 @@ import no.nav.familie.kontrakter.ef.personhendelse.NyeBarnDto
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -20,6 +21,8 @@ class SakClient(
     private val uri: URI,
 ) : AbstractRestClient(restOperations, "familie.ef-sak") {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     fun harLøpendeStønad(personidenter: Set<String>): Boolean {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/ekstern/behandling/har-loepende-stoenad")
@@ -31,6 +34,7 @@ class SakClient(
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/ekstern/behandling/har-loepende-barnetilsyn")
         val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), personident)
+        logger.info("Sjekker har løpende barnetilsyn for ident: $personident, resultat: ${response.data}")
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
 
