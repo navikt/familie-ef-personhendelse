@@ -27,18 +27,12 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
         try {
             logger.info("Leser vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
-            val personIdent = vedtakhendelse.person.personIdent
-            if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
-                kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(
-                    personIdent = personIdent,
-                    vurderKonsekvensOppgaveBeskrivelse,
-                )
-            }
+            opprettOppgaveHvisPersonHarLøpendeBarnetilsyn(vedtakhendelse.person.personIdent)
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av kontantstøttevedtak - se securelogs for mer detaljer")
             securelogger.error(
-                "Feil ved håndtering av vedtakhendelse med behandlingsId ${vedtakhendelse.behandlingsId} med ytelse kontantstøtte : ${e.message}" +
-                    " hendelse={}",
+                "Feil ved håndtering av vedtakhendelse med behandlingsId ${vedtakhendelse.behandlingsId} med ytelse " +
+                    "kontantstøtte : ${e.message} hendelse={}",
                 objectMapper.writeValueAsString(vedtakhendelse),
                 e,
             )
@@ -46,8 +40,17 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         }
     }
 
+    private fun opprettOppgaveHvisPersonHarLøpendeBarnetilsyn(personIdent: String) {
+        if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
+            kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(
+                personIdent = personIdent,
+                vurderKonsekvensOppgaveBeskrivelse,
+            )
+        }
+    }
+
     /**
-     * TODO : Bør kommenteres ut etter første deploy for å ikke kunne trigge seekToEnd
+     * TODO : Kommenter ut / slett etter første deploy og deploy på nytt for å ikke trigge seekToEnd igjen senere.
      */
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
