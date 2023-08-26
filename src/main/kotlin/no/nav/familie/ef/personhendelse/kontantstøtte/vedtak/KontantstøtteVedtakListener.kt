@@ -14,6 +14,8 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
+    private val vurderKonsekvensOppgaveBeskrivelse =
+        "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn"
 
     @KafkaListener(
         id = "aapen-kontantstotte-vedtak-aiven",
@@ -24,16 +26,12 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
     fun listen(consumerRecord: ConsumerRecord<String, String>) {
         val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
         try {
-            logger.info("Lest vedtak for kontantstøtte med behandlingId: " +
-                "${vedtakhendelse.behandlingsId}. Tidspunkt for vedtak : ${vedtakhendelse.tidspunktVedtak}")
+            logger.info("Leser vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
             val personIdent = vedtakhendelse.person.personIdent
             if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
-                logger.info("Person har løpende barnetilsyn")
                 kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(
-                    personIdent = personIdent,
-                    "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn"
+                    personIdent = personIdent, vurderKonsekvensOppgaveBeskrivelse
                 )
-                logger.info("Opprettet VurderKonsekvensOppgave for kontantstøttevedtak med behandlingId: ${vedtakhendelse.behandlingsId}")
             }
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av kontantstøttevedtak - se securelogs for mer detaljer")
@@ -48,7 +46,7 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
     }
 
     /**
-     * TODO : Må kommenteres ut etter første deploy for å ikke søke tilbake til siste melding hver gang
+     * TODO : Bør kommenteres ut etter første deploy for å ikke kunne trigge seekToEnd
      */
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
@@ -58,8 +56,8 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         assignments.keys.stream()
             .filter { it.topic() == "teamfamilie.aapen-kontantstotte-vedtak-v1" }
             .forEach {
-                callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
-                //callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
+                //callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
+                callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
             }
     }
 }

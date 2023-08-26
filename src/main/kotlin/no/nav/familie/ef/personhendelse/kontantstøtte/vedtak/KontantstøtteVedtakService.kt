@@ -22,7 +22,6 @@ class KontantstøtteVedtakService(val efSakClient: SakClient, val oppgaveClient:
         )
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
         oppgaveClient.leggOppgaveIMappe(oppgaveId)
-
-        logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
+        logger.info("Oppgave for kontantstøttevedtak opprettet med oppgaveId=$oppgaveId")
     }
 }
