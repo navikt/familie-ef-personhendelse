@@ -115,6 +115,20 @@ fun opprettVurderLivshendelseoppgave(personIdent: String, beskrivelse: String) =
         behandlesAvApplikasjon = null,
     )
 
+fun opprettVurderKonsekvensoppgaveForBarnetilsyn(personIdent: String, beskrivelse: String) =
+    OpprettOppgaveRequest(
+        ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
+        saksId = null,
+        tema = Tema.ENF,
+        oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
+        fristFerdigstillelse = fristFerdigstillelse(),
+        beskrivelse = beskrivelse,
+        enhetsnummer = null,
+        behandlingstema = Behandlingstema.Barnetilsyn.value,
+        tilordnetRessurs = null,
+        behandlesAvApplikasjon = null,
+    )
+
 fun HttpHeaders.medContentTypeJsonUTF8(): HttpHeaders {
     this.add("Content-Type", "application/json;charset=UTF-8")
     this.acceptCharset = listOf(Charsets.UTF_8)

@@ -27,6 +27,13 @@ class SakClient(
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
 
+    fun harLøpendeBarnetilsyn(personident: String): Boolean {
+        val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
+            .pathSegment("api/ekstern/behandling/har-loepende-barnetilsyn")
+        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), PersonIdent(personident))
+        return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
+    }
+
     fun inntektForEksternId(eksternId: Long): Int? {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/vedtak/eksternid/$eksternId/inntekt").queryParam("dato", LocalDate.now())

@@ -36,6 +36,7 @@
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
         <kontrakter.version>3.0_20230731084015_3570802</kontrakter.version>
+        <eksterne-kontrakter.version>2.0_20230330120047_dfdd4f2</eksterne-kontrakter.version>
         <felles.version>2.20230508082643_6b28bd8</felles.version>
         <token-validation-spring-test.version>3.0.4</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
@@ -173,6 +174,11 @@
             <artifactId>postgresql</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie.eksterne.kontrakter</groupId>
+            <artifactId>stonadsstatistikk-ks</artifactId>
+            <version>${eksterne-kontrakter.version}</version>
         </dependency>
     </dependencies>
 
