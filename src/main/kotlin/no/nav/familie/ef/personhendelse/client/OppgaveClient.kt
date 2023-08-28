@@ -115,7 +115,7 @@ fun opprettVurderLivshendelseoppgave(personIdent: String, beskrivelse: String) =
         behandlesAvApplikasjon = null,
     )
 
-fun opprettVurderKonsekvensoppgaveForBarnetilsyn(personIdent: String, beskrivelse: String) =
+fun lagVurderKonsekvensoppgaveForBarnetilsyn(personIdent: String, beskrivelse: String) =
     OpprettOppgaveRequest(
         ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
         saksId = null,

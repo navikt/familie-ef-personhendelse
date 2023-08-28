@@ -2,7 +2,7 @@ package no.nav.familie.ef.personhendelse.kontantstøtte.vedtak
 
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.client.opprettVurderKonsekvensoppgaveForBarnetilsyn
+import no.nav.familie.ef.personhendelse.client.lagVurderKonsekvensoppgaveForBarnetilsyn
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -16,7 +16,7 @@ class KontantstøtteVedtakService(val efSakClient: SakClient, val oppgaveClient:
     }
 
     fun opprettVurderKonsekvensOppgaveForBarnetilsyn(personIdent: String, beskrivelse: String) {
-        val opprettOppgaveRequest = opprettVurderKonsekvensoppgaveForBarnetilsyn(
+        val opprettOppgaveRequest = lagVurderKonsekvensoppgaveForBarnetilsyn(
             personIdent = personIdent,
             beskrivelse = beskrivelse,
         )
