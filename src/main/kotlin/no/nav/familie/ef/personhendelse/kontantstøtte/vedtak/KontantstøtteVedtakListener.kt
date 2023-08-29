@@ -15,7 +15,7 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
     private val vurderKonsekvensOppgaveBeskrivelse =
-        "Bruker har fått vedtak om kontantstøtte og har løpende barnetilsyn"
+        "Bruker har løpende stønad til barnetilsyn og har fått innvilget kontantstøtte."
 
     @KafkaListener(
         id = "aapen-kontantstotte-vedtak-aiven",
