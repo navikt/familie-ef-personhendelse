@@ -68,7 +68,7 @@ class VedtakendringerServiceTest {
     }
 
     @Test
-    fun `Bruker har fått foreldrepenger som skal filtreres bort, da det blir oppdaget gjennom EksternVedtak-lytter`() {
+    fun `Bruker har fått foreldrepenger i nyeste måned`() {
         val json: String = readResource("inntekt/InntekthistorikkMedForeldrepenger.json")
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
@@ -82,7 +82,7 @@ class VedtakendringerServiceTest {
             ),
         )
 
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isFalse
+        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isTrue
     }
 
     @Test

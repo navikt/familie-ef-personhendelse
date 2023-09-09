@@ -63,9 +63,9 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         namedParameterJdbcTemplate.update(sql, mapSqlParameterSource)
     }
 
-    fun lagreInntektsendring(personIdent: String, harNyeVedtak: Boolean, inntektsendringToMånederTilbake: Int, inntektsendringForrigeMåned: Int) {
+    fun lagreInntektsendring(personIdent: String, harNyeVedtak: Boolean, inntektsendringToMånederTilbake: Int, inntektsendringForrigeMåned: Int, nyYtelse: String?) {
         val sql =
-            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :prosessertTid, :inntektsendringToMånederTilbake, :inntektsendringForrigeMåned)" +
+            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :prosessertTid, :inntektsendringToMånederTilbake, :inntektsendringForrigeMåned, :nyYtelse)" +
                 " ON CONFLICT DO NOTHING"
         val params = MapSqlParameterSource(
             mapOf(
@@ -75,6 +75,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
                 "prosessertTid" to LocalDateTime.now(),
                 "inntektsendringToMånederTilbake" to inntektsendringToMånederTilbake,
                 "inntektsendringForrigeMåned" to inntektsendringForrigeMåned,
+                "nyYtelse" to nyYtelse,
             ),
         )
         namedParameterJdbcTemplate.update(sql, params)
@@ -92,6 +93,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
             rs.getObject("prosessert_tid", LocalDateTime::class.java),
             rs.getInt("inntekt_endret_to_maaneder_tilbake"),
             rs.getInt("inntekt_endret_forrige_maaned"),
+            rs.getString("ny_ytelse_type"),
         )
     }
 
@@ -107,4 +109,5 @@ data class Inntektsendring(
     val prosessertTid: LocalDateTime,
     val inntektsendringToMånederTilbake: Int,
     val inntektsendringForrigeMåned: Int,
+    val nyYtelse: String?,
 )

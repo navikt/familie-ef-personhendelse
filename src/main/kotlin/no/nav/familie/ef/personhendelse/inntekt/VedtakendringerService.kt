@@ -59,17 +59,20 @@ class VedtakendringerService(
         logger.info("Vedtak- og inntektsendringer ferdig")
     }
 
+    fun harNyeVedtak(response: InntektshistorikkResponse) = nyeVedtak(response)?.isNotEmpty() ?: false
+
     private fun lagreInntektsendringForPerson(
         forventetInntektForPerson: ForventetInntektForPerson,
         response: InntektshistorikkResponse,
     ) {
-        val harNyeVedtak = harNyeVedtak(response)
+        val nyeVedtak = nyeVedtak(response)
         val endretInntekt = inntektsendringerService.beregnEndretInntekt(response, forventetInntektForPerson)
         efVedtakRepository.lagreInntektsendring(
             forventetInntektForPerson.personIdent,
-            harNyeVedtak,
+            nyeVedtak?.isNotEmpty() ?: false,
             endretInntekt.toMånederTilbake,
             endretInntekt.forrigeMåned,
+            nyeVedtak?.joinToString(),
         )
     }
 
@@ -85,26 +88,24 @@ class VedtakendringerService(
         return inntektsendringer.size
     }
 
-    fun harNyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): Boolean {
+    fun nyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): List<String>? {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt =
             inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1))
         val nestNyesteRegistrerteInntekt =
             inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2))
 
-        val antallOffentligeYtelserForNyeste = antallOffentligeYtelser(nyesteRegistrerteInntekt)
-        val antallOffentligeYtelserForNestNyeste = antallOffentligeYtelser(nestNyesteRegistrerteInntekt)
+        val offentligeYtelserForNyesteMåned = offentligeYtelser(nyesteRegistrerteInntekt) ?: emptyList()
+        val offentligeYtelserForNestNyesteMåned = offentligeYtelser(nestNyesteRegistrerteInntekt) ?: emptyList()
 
-        return antallOffentligeYtelserForNyeste > antallOffentligeYtelserForNestNyeste
+        return offentligeYtelserForNyesteMåned.minus(offentligeYtelserForNestNyesteMåned)
     }
 
-    private fun antallOffentligeYtelser(nyesteRegistrerteInntekt: List<InntektVersjon>?): Int {
+    private fun offentligeYtelser(nyesteRegistrerteInntekt: List<InntektVersjon>?): List<String>? {
         val offentligYtelseInntekt = nyesteRegistrerteInntekt?.filter {
             it.arbeidsInntektInformasjon.inntektListe?.any { offentligYtelse ->
                 offentligYtelse.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
-                    offentligYtelse.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
-                    offentligYtelse.beskrivelse != "sykepenger" &&
-                    offentligYtelse.beskrivelse != "foreldrepenger"
+                    offentligYtelse.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
             }
                 ?: false
         }
@@ -116,10 +117,8 @@ class VedtakendringerService(
         return inntektListe?.filter {
             it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
                 it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
-                it.beskrivelse != "sykepenger" &&
-                it.beskrivelse != "foreldrepenger" &&
                 it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType != "ETTERBETALINGSPERIODE"
-        }?.groupBy { it.beskrivelse }?.size ?: 0
+        }?.groupBy { it.beskrivelse }?.map { it.key }
     }
 
     private fun hentInntektshistorikk(fnr: String): InntektshistorikkResponse? {
