@@ -60,8 +60,8 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         assignments.keys.stream()
             .filter { it.topic() == "teamfamilie.aapen-kontantstotte-vedtak-v1" }
             .forEach {
-                callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
-                // callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
+                //callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
+                 callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
             }
     }
 }
