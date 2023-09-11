@@ -48,20 +48,4 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
             )
         }
     }
-
-    /**
-     * TODO : Kommenter ut / slett etter første deploy og deploy på nytt for å ikke trigge seekToEnd igjen senere.
-     */
-    override fun onPartitionsAssigned(
-        assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
-        callback: ConsumerSeekAware.ConsumerSeekCallback,
-    ) {
-        logger.info("overrided onPartitionsAssigned seekToBeginning")
-        assignments.keys.stream()
-            .filter { it.topic() == "teamfamilie.aapen-kontantstotte-vedtak-v1" }
-            .forEach {
-                //callback.seekToBeginning("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
-                 callback.seekToEnd("teamfamilie.aapen-kontantstotte-vedtak-v1", it.partition())
-            }
-    }
 }
