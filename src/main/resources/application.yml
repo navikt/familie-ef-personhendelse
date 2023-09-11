@@ -130,3 +130,4 @@ EF_SAK_URL: http://familie-ef-sak
 EF_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ef-sak/.default
 
 FAMILIE_EF_VEDTAK_TOPIC: teamfamilie.aapen-ensligforsorger-iverksatt-vedtak
+FAMILIE_KS_VEDTAK_TOPIC: teamfamilie.aapen-kontantstotte-vedtak-v1
