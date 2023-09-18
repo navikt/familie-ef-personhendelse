@@ -31,12 +31,12 @@
         <kotlin.version>1.9.10</kotlin.version>
         <kafka-avro-serializer.version>7.5.0</kafka-avro-serializer.version>
         <avro.version>1.11.2</avro.version>
-        <graphql-kotlin-spring-client.version>6.5.3</graphql-kotlin-spring-client.version>
-        <graphql-kotlin-maven-plugin.version>6.5.3</graphql-kotlin-maven-plugin.version>
+        <graphql-kotlin-spring-client.version>6.5.6</graphql-kotlin-spring-client.version>
+        <graphql-kotlin-maven-plugin.version>6.5.6</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
-        <kontrakter.version>3.0_20230817140529_df3e9ab</kontrakter.version>
-        <eksterne-kontrakter.version>2.0_20230330120047_dfdd4f2</eksterne-kontrakter.version>
+        <kontrakter.version>3.0_20230911133621_c5918cb</kontrakter.version>
+        <eksterne-kontrakter.version>2.0_20230825103733_1ac52c2</eksterne-kontrakter.version>
         <felles.version>2.20230905101454_06fa3d7</felles.version>
         <token-validation-spring-test.version>3.0.4</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
