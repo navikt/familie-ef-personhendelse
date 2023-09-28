@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
+import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,11 +24,12 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         topics = ["\${FAMILIE_KS_VEDTAK_TOPIC}"],
         containerFactory = "kafkaKontantstøtteVedtakListenerContainerFactory",
     )
-    fun listen(consumerRecord: ConsumerRecord<String, String>) {
+    fun listen(consumerRecord: ConsumerRecord<String, String>, ack: Acknowledgment) {
         val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
         try {
             logger.info("Leser vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
             opprettOppgaveHvisPersonHarLøpendeBarnetilsyn(vedtakhendelse.person.personIdent)
+            ack.acknowledge()
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av kontantstøttevedtak - se securelogs for mer detaljer")
             securelogger.error(
