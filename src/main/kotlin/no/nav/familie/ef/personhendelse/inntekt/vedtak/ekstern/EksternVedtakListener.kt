@@ -6,6 +6,7 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
@@ -23,7 +24,7 @@ class EksternVedtakListener(
         containerFactory = "kafkaVedtakListenerContainerFactory",
         groupId = "familie-ef-personhendelse-vedtak",
     )
-    fun listen(consumerRecord: ConsumerRecord<String, String>) {
+    fun listen(consumerRecord: ConsumerRecord<String, String>, ack: Acknowledgment) {
         val vedtakhendelse = objectMapper.readValue<Vedtakhendelse>(consumerRecord.value())
         try {
             if (eksternVedtakService.mottarEfStønad(vedtakhendelse)) {
@@ -34,6 +35,7 @@ class EksternVedtakListener(
                 )
                 // Skal opprette oppgaver automatisk her, men starter med logging for å observere først
             }
+            ack.acknowledge()
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av vedtakhendelse: ${vedtakhendelse.ytelse} - se securelogs for mer detaljer")
             securelogger.error(
