@@ -74,6 +74,8 @@ class VedtakendringerService(
             endretInntekt.toMånederTilbake,
             endretInntekt.forrigeMåned,
             nyeVedtak?.joinToString(),
+            endretInntekt.beløpToMånederTilbake,
+            endretInntekt.beløpForrigeMåned,
         )
     }
 

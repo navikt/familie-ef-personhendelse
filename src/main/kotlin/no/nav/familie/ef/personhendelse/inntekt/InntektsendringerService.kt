@@ -13,7 +13,7 @@ class InntektsendringerService(
     val sakClient: SakClient,
 ) {
 
-    private val halvtGrunnbeløpMånedlig = (111477 / 2) / 12
+    private val halvtGrunnbeløpMånedlig = (118620 / 2) / 12
 
     fun beregnEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, forventetInntektForPerson: ForventetInntektForPerson): Inntektsendring {
         // hent alle registrerte vedtak som var på personen sist beregning
@@ -42,17 +42,19 @@ class InntektsendringerService(
 
         return Inntektsendring(
             treMånederTilbake = inntektsendringTreMånederTilbake,
-            toMånederTilbake = inntektsendringToMånederTilbake,
-            forrigeMåned = inntektsendringForrigeMåned,
+            toMånederTilbake = inntektsendringToMånederTilbake.prosent,
+            beløpToMånederTilbake = inntektsendringToMånederTilbake.beløp,
+            forrigeMåned = inntektsendringForrigeMåned.prosent,
+            beløpForrigeMåned = inntektsendringForrigeMåned.beløp,
         )
     }
 
-    private fun beregnInntektsendring(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Int {
+    private fun beregnInntektsendring(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): BeregningResultat {
         if (forventetInntekt == null || nyesteRegistrerteInntekt?.maxOfOrNull { it.versjon } == null) {
             secureLogger.warn("Ingen gjeldende inntekt funnet på person $ident har personen løpende stønad?")
-            return 0
+            return BeregningResultat(0, 0)
         }
-        if (forventetInntekt > 585000) return 0 // Ignorer alle med over 585000 i årsinntekt, da de har 0 i utbetaling.
+        if (forventetInntekt > 585000) return BeregningResultat(0, 0) // Ignorer alle med over 585000 i årsinntekt, da de har 0 i utbetaling.
         val månedligForventetInntekt = (forventetInntekt / 12)
 
         val orgNrToNyesteVersjonMap = nyesteRegistrerteInntekt.associate { it.opplysningspliktig to it.versjon }
@@ -64,12 +66,13 @@ class InntektsendringerService(
                 (it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE && it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType == "ETTERBETALINGSPERIODE")
         }.sumOf { it.beløp }
 
-        if (samletInntekt < halvtGrunnbeløpMånedlig) return 0
-        if (månedligForventetInntekt == 0) return 100 // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
+        if (samletInntekt < halvtGrunnbeløpMånedlig) return BeregningResultat(0, 0)
 
         secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident")
-        val inntektsendring = (((samletInntekt - månedligForventetInntekt) / månedligForventetInntekt.toDouble()) * 100).toInt()
-        return inntektsendring
+        val inntektsendringProsent = (((samletInntekt - månedligForventetInntekt) / månedligForventetInntekt.toDouble()) * 100).toInt()
+        val beløp = samletInntekt - månedligForventetInntekt
+        if (månedligForventetInntekt == 0) return BeregningResultat(beløp, 100) // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
+        return BeregningResultat(beløp, inntektsendringProsent)
     }
 
     // Ignorterte ytelser: AAP og Dagpenger er ignorert fordi de er variable. Alle uføre går under annet regelverk (samordning) og skal derfor ignoreres.
@@ -83,3 +86,8 @@ class InntektsendringerService(
         "ufoerepensjonFraAndreEnnFolketrygden",
     )
 }
+
+data class BeregningResultat(
+    val beløp: Int,
+    val prosent: Int,
+)

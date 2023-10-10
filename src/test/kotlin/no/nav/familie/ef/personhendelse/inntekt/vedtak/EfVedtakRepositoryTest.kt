@@ -66,7 +66,7 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre inntektsendringer`() {
-        efVedtakRepository.lagreInntektsendring("1", true, 15, 10, 5, "SYKEPENGER, UFØRETRYGD")
+        efVedtakRepository.lagreInntektsendring("1", true, 15, 10, 5, "SYKEPENGER, UFØRETRYGD", 150, 250)
         var hentInntektsendringer = efVedtakRepository.hentInntektsendringer()
         Assertions.assertThat(hentInntektsendringer.size).isEqualTo(1)
 
@@ -77,6 +77,8 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
         Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake).isEqualTo(10)
         Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned).isEqualTo(5)
         Assertions.assertThat(inntektsendring.nyYtelse).isEqualTo("SYKEPENGER, UFØRETRYGD")
+        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbakeBeløp).isEqualTo(150)
+        Assertions.assertThat(inntektsendring.inntektsendringForrigeMånedBeløp).isEqualTo(250)
 
         efVedtakRepository.clearInntektsendringer()
         hentInntektsendringer = efVedtakRepository.hentInntektsendringer()
