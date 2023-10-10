@@ -85,19 +85,19 @@ class InntektsendringerServiceTest {
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("1", forventetLønnsinntekt, forventetLønnsinntekt),
             ),
-        ).isEqualTo(Inntektsendring(0, 0))
+        ).isEqualTo(Inntektsendring(0, 0, 0, 0))
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
             ),
-        ).isEqualTo(Inntektsendring(11, 11))
+        ).isEqualTo(Inntektsendring(11, 11, 3500, 3500))
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere),
             ),
-        ).isEqualTo(Inntektsendring(9, 9))
+        ).isEqualTo(Inntektsendring(9, 9, 3150, 3150))
     }
 
     @Test
