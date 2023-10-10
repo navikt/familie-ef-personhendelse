@@ -41,10 +41,11 @@ class InntektsendringerService(
         )
 
         return Inntektsendring(
-            treMånederTilbake = inntektsendringTreMånederTilbake,
+            treMånederTilbake = inntektsendringTreMånederTilbake.prosent,
             toMånederTilbake = inntektsendringToMånederTilbake.prosent,
-            beløpToMånederTilbake = inntektsendringToMånederTilbake.beløp,
             forrigeMåned = inntektsendringForrigeMåned.prosent,
+            beløpTreMånederTilbake = inntektsendringTreMånederTilbake.beløp,
+            beløpToMånederTilbake = inntektsendringToMånederTilbake.beløp,
             beløpForrigeMåned = inntektsendringForrigeMåned.beløp,
         )
     }

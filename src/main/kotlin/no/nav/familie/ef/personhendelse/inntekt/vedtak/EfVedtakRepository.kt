@@ -77,7 +77,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         val sql =
             "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :prosessertTid, " +
                 ":inntektsendringToMånederTilbake, :inntektsendringForrigeMåned, :nyYtelse, " +
-                "0, :inntektsendringToMånederTilbakeBeløp, :inntektsendringForrigeMånedBeløp)" +
+                ":inntektsendringTreMånederTilbakeBeløp, :inntektsendringToMånederTilbakeBeløp, :inntektsendringForrigeMånedBeløp, :inntektsendringTreMånederTilbake)" +
                 " ON CONFLICT DO NOTHING"
         val params = MapSqlParameterSource(
             mapOf(

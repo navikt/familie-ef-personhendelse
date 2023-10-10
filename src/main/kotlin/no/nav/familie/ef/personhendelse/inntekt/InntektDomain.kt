@@ -58,6 +58,7 @@ data class Inntektsendring(
     val treMånederTilbake: Int,
     val toMånederTilbake: Int,
     val forrigeMåned: Int,
+    val beløpTreMånederTilbake: Int,
     val beløpToMånederTilbake: Int,
     val beløpForrigeMåned: Int,
 ) {
