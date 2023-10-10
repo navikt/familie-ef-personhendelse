@@ -36,7 +36,7 @@ class VedtakendringerService(
     @Async
     fun beregnInntektsendringerOgLagreIDb(skalOppretteOppgave: Boolean = false) {
         logger.info("Starter beregning av inntektsendringer")
-        val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønadIkkeManueltRevurdertSisteToMåneder()
+        val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønadIkkeManueltRevurdertSisteTreMåneder()
         efVedtakRepository.clearInntektsendringer()
         logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
         var counter = 0
@@ -70,9 +70,11 @@ class VedtakendringerService(
         efVedtakRepository.lagreInntektsendring(
             forventetInntektForPerson.personIdent,
             nyeVedtak?.isNotEmpty() ?: false,
+            endretInntekt.treMånederTilbake,
             endretInntekt.toMånederTilbake,
             endretInntekt.forrigeMåned,
             nyeVedtak?.joinToString(),
+            endretInntekt.beløpTreMånederTilbake,
             endretInntekt.beløpToMånederTilbake,
             endretInntekt.beløpForrigeMåned,
         )

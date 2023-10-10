@@ -21,7 +21,14 @@ class InntektsendringerService(
             inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1))
         val nestNyesteRegistrerteInntekt =
             inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2))
+        val inntektTreMånederTilbake =
+            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(3))
 
+        val inntektsendringTreMånederTilbake = beregnInntektsendring(
+            inntektTreMånederTilbake,
+            forventetInntektForPerson.personIdent,
+            forventetInntektForPerson.forventetInntektTreMånederTilbake,
+        )
         val inntektsendringToMånederTilbake = beregnInntektsendring(
             nestNyesteRegistrerteInntekt,
             forventetInntektForPerson.personIdent,
@@ -34,9 +41,11 @@ class InntektsendringerService(
         )
 
         return Inntektsendring(
+            treMånederTilbake = inntektsendringTreMånederTilbake.prosent,
             toMånederTilbake = inntektsendringToMånederTilbake.prosent,
-            beløpToMånederTilbake = inntektsendringToMånederTilbake.beløp,
             forrigeMåned = inntektsendringForrigeMåned.prosent,
+            beløpTreMånederTilbake = inntektsendringTreMånederTilbake.beløp,
+            beløpToMånederTilbake = inntektsendringToMånederTilbake.beløp,
             beløpForrigeMåned = inntektsendringForrigeMåned.beløp,
         )
     }

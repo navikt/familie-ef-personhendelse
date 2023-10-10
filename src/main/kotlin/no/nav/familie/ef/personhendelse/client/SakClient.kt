@@ -56,9 +56,9 @@ class SakClient(
             ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
     }
 
-    fun hentPersonerMedAktivStønadIkkeManueltRevurdertSisteToMåneder(): List<String> {
+    fun hentPersonerMedAktivStønadIkkeManueltRevurdertSisteTreMåneder(): List<String> {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
-            .pathSegment("api/vedtak/personerMedAktivStonadIkkeManueltRevurdertSisteToMaaneder")
+            .pathSegment("api/vedtak/personerMedAktivStonadIkkeManueltRevurdertSisteTreMaaneder")
         val response = getForEntity<Ressurs<List<String>>>(uriComponentsBuilder.build().toUri())
         return response.data
             ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
@@ -84,4 +84,5 @@ data class ForventetInntektForPerson(
     val personIdent: String,
     val forventetInntektForrigeMåned: Int?,
     val forventetInntektToMånederTilbake: Int?,
+    val forventetInntektTreMånederTilbake: Int?,
 )
