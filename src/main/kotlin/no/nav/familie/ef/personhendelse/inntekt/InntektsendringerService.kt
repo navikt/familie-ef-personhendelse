@@ -21,7 +21,14 @@ class InntektsendringerService(
             inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1))
         val nestNyesteRegistrerteInntekt =
             inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2))
+        val inntektTreMånederTilbake =
+            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(3))
 
+        val inntektsendringTreMånederTilbake = beregnInntektsendring(
+            inntektTreMånederTilbake,
+            forventetInntektForPerson.personIdent,
+            forventetInntektForPerson.forventetInntektTreMånederTilbake,
+        )
         val inntektsendringToMånederTilbake = beregnInntektsendring(
             nestNyesteRegistrerteInntekt,
             forventetInntektForPerson.personIdent,
@@ -33,7 +40,11 @@ class InntektsendringerService(
             forventetInntektForPerson.forventetInntektForrigeMåned,
         )
 
-        return Inntektsendring(toMånederTilbake = inntektsendringToMånederTilbake, forrigeMåned = inntektsendringForrigeMåned)
+        return Inntektsendring(
+            treMånederTilbake = inntektsendringTreMånederTilbake,
+            toMånederTilbake = inntektsendringToMånederTilbake,
+            forrigeMåned = inntektsendringForrigeMåned,
+        )
     }
 
     private fun beregnInntektsendring(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): Int {

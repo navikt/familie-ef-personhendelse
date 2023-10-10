@@ -84,4 +84,5 @@ data class ForventetInntektForPerson(
     val personIdent: String,
     val forventetInntektForrigeMåned: Int?,
     val forventetInntektToMånederTilbake: Int?,
+    val forventetInntektTreMånederTilbake: Int?,
 )

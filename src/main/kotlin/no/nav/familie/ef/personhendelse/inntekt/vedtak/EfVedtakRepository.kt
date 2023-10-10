@@ -63,9 +63,16 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         namedParameterJdbcTemplate.update(sql, mapSqlParameterSource)
     }
 
-    fun lagreInntektsendring(personIdent: String, harNyeVedtak: Boolean, inntektsendringToMånederTilbake: Int, inntektsendringForrigeMåned: Int, nyYtelse: String?) {
+    fun lagreInntektsendring(
+        personIdent: String,
+        harNyeVedtak: Boolean,
+        inntektsendringTreMånederTilbake: Int,
+        inntektsendringToMånederTilbake: Int,
+        inntektsendringForrigeMåned: Int,
+        nyYtelse: String?,
+    ) {
         val sql =
-            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :prosessertTid, :inntektsendringToMånederTilbake, :inntektsendringForrigeMåned, :nyYtelse)" +
+            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :prosessertTid, :inntektsendringToMånederTilbake, :inntektsendringForrigeMåned, :nyYtelse, :inntektsendringTreMånederTilbake)" +
                 " ON CONFLICT DO NOTHING"
         val params = MapSqlParameterSource(
             mapOf(
@@ -73,6 +80,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
                 "personIdent" to personIdent,
                 "harNyeVedtak" to harNyeVedtak,
                 "prosessertTid" to LocalDateTime.now(),
+                "inntektsendringTreMånederTilbake" to inntektsendringTreMånederTilbake,
                 "inntektsendringToMånederTilbake" to inntektsendringToMånederTilbake,
                 "inntektsendringForrigeMåned" to inntektsendringForrigeMåned,
                 "nyYtelse" to nyYtelse,
@@ -82,7 +90,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
     }
 
     fun hentInntektsendringer(): List<Inntektsendring> {
-        val sql = "SELECT * FROM inntektsendringer WHERE harNyttVedtak = true OR (inntekt_endret_to_maaneder_tilbake >= 10 AND inntekt_endret_forrige_maaned >= 10)"
+        val sql = "SELECT * FROM inntektsendringer WHERE harNyttVedtak = true OR (inntekt_endret_tre_maaneder_tilbake >= 10 AND inntekt_endret_to_maaneder_tilbake >= 10 AND inntekt_endret_forrige_maaned >= 10)"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
@@ -91,6 +99,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
             rs.getString("person_ident"),
             rs.getBoolean("harNyttVedtak"),
             rs.getObject("prosessert_tid", LocalDateTime::class.java),
+            rs.getInt("inntekt_endret_tre_maaneder_tilbake"),
             rs.getInt("inntekt_endret_to_maaneder_tilbake"),
             rs.getInt("inntekt_endret_forrige_maaned"),
             rs.getString("ny_ytelse_type"),
@@ -107,6 +116,7 @@ data class Inntektsendring(
     val personIdent: String,
     val harNyttVedtak: Boolean,
     val prosessertTid: LocalDateTime,
+    val inntektsendringTreMånederTilbake: Int,
     val inntektsendringToMånederTilbake: Int,
     val inntektsendringForrigeMåned: Int,
     val nyYtelse: String?,

@@ -70,6 +70,7 @@ class VedtakendringerService(
         efVedtakRepository.lagreInntektsendring(
             forventetInntektForPerson.personIdent,
             nyeVedtak?.isNotEmpty() ?: false,
+            endretInntekt.treMånederTilbake,
             endretInntekt.toMånederTilbake,
             endretInntekt.forrigeMåned,
             nyeVedtak?.joinToString(),
