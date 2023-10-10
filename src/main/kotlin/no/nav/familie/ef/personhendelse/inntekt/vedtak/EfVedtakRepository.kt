@@ -63,10 +63,21 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         namedParameterJdbcTemplate.update(sql, mapSqlParameterSource)
     }
 
-    fun lagreInntektsendring(personIdent: String, harNyeVedtak: Boolean, inntektsendringToMånederTilbake: Int, inntektsendringForrigeMåned: Int, nyYtelse: String?) {
+    fun lagreInntektsendring(
+        personIdent: String,
+        harNyeVedtak: Boolean,
+        inntektsendringToMånederTilbake: Int,
+        inntektsendringForrigeMåned: Int,
+        nyYtelse: String?,
+        inntektsendringToMånederTilbakeBeløp: Int,
+        inntektsendringForrigeMånedBeløp: Int,
+    ) {
         val sql =
-            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :prosessertTid, :inntektsendringToMånederTilbake, :inntektsendringForrigeMåned, :nyYtelse)" +
+            "INSERT INTO inntektsendringer VALUES(:id, :personIdent, :harNyeVedtak, :prosessertTid, " +
+                ":inntektsendringToMånederTilbake, :inntektsendringForrigeMåned, :nyYtelse, " +
+                "0, :inntektsendringToMånederTilbakeBeløp, :inntektsendringForrigeMånedBeløp)" +
                 " ON CONFLICT DO NOTHING"
+
         val params = MapSqlParameterSource(
             mapOf(
                 "id" to UUID.randomUUID(),
@@ -76,6 +87,8 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
                 "inntektsendringToMånederTilbake" to inntektsendringToMånederTilbake,
                 "inntektsendringForrigeMåned" to inntektsendringForrigeMåned,
                 "nyYtelse" to nyYtelse,
+                "inntektsendringToMånederTilbakeBeløp" to inntektsendringToMånederTilbakeBeløp,
+                "inntektsendringForrigeMånedBeløp" to inntektsendringForrigeMånedBeløp,
             ),
         )
         namedParameterJdbcTemplate.update(sql, params)
@@ -94,6 +107,8 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
             rs.getInt("inntekt_endret_to_maaneder_tilbake"),
             rs.getInt("inntekt_endret_forrige_maaned"),
             rs.getString("ny_ytelse_type"),
+            rs.getInt("inntekt_endret_to_maaneder_tilbake_belop"),
+            rs.getInt("inntekt_endret_forrige_maaned_belop"),
         )
     }
 
@@ -110,4 +125,6 @@ data class Inntektsendring(
     val inntektsendringToMånederTilbake: Int,
     val inntektsendringForrigeMåned: Int,
     val nyYtelse: String?,
+    val inntektsendringToMånederTilbakeBeløp: Int,
+    val inntektsendringForrigeMånedBeløp: Int,
 )

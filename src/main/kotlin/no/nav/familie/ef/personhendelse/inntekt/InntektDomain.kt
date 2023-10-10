@@ -57,6 +57,8 @@ data class Tilleggsinformasjon(
 data class Inntektsendring(
     val toMånederTilbake: Int,
     val forrigeMåned: Int,
+    val beløpToMånederTilbake: Int,
+    val beløpForrigeMåned: Int,
 ) {
     fun harEndretInntekt() = toMånederTilbake >= 10 && forrigeMåned >= 10
 }
