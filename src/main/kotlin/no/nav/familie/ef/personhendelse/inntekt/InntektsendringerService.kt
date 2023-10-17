@@ -76,7 +76,7 @@ class InntektsendringerService(
         return BeregningResultat(beløp, inntektsendringProsent)
     }
 
-    // Ignorterte ytelser: AAP og Dagpenger er ignorert fordi de er variable. Alle uføre går under annet regelverk (samordning) og skal derfor ignoreres.
+    // Ignorterte ytelser: Alle uføre går under annet regelverk (samordning) og skal derfor ignoreres.
     val ignorerteYtelserOgUtbetalinger = listOf(
         "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere",
         "ufoeretrygd",
