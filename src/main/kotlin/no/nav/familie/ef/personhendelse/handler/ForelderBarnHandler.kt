@@ -34,21 +34,52 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
         secureLogger.info("Nye barn for bruker er ${nyeBarnForBruker.nyeBarn}, hendelseId : ${personhendelse.hendelseId}")
 
         val barnFødtFørTermin = nyeBarnForBruker.filtrerÅrsak(NyttBarnÅrsak.FØDT_FØR_TERMIN)
+        val barnFødtEtterTermin = nyeBarnForBruker.filtrerÅrsak(NyttBarnÅrsak.FØDT_ETTER_TERMIN)
         val nyeBarnSomIkkeFinnesPåBehandlingen = nyeBarnForBruker.filtrerÅrsak(NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
+
         if (barnFødtFørTermin.isNotEmpty()) {
-            val nyeBarnTekst = if (nyeBarnSomIkkeFinnesPåBehandlingen.isNotEmpty()) {
-                "Bruker har også fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()}. "
-            } else {
-                ""
-            }
-            return OpprettOppgave(
-                "Bruker er innvilget stønad for ufødt(e) barn ${barnFødtFørTermin.separerteIdenterMedStønadstype()}. " +
-                    "Barnet er registrert født i måneden før oppgitt termindato. " +
-                    nyeBarnTekst +
-                    "Vurder saken.",
-            )
+            return opprettOppgaveBarnFødtFørTermin(nyeBarnSomIkkeFinnesPåBehandlingen, barnFødtFørTermin)
         }
+        if (barnFødtEtterTermin.isNotEmpty()) {
+            return opprettOppgaveBarnFødtEtterTermin(nyeBarnSomIkkeFinnesPåBehandlingen, barnFødtEtterTermin)
+        }
+
         return OpprettOppgave("Bruker har fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()} som ikke finnes på behandling.")
+    }
+
+    private fun opprettOppgaveBarnFødtFørTermin(
+        nyeBarnSomIkkeFinnesPåBehandlingen: List<NyttBarn>,
+        barnFødtFørTermin: List<NyttBarn>,
+    ): OpprettOppgave {
+        val nyeBarnTekst = nyeBarnTekst(nyeBarnSomIkkeFinnesPåBehandlingen)
+        return OpprettOppgave(
+            "Bruker er innvilget stønad for ufødt(e) barn ${barnFødtFørTermin.separerteIdenterMedStønadstype()}. " +
+                "Barnet er registrert født i måneden før oppgitt termindato. " +
+                nyeBarnTekst +
+                "Vurder saken.",
+        )
+    }
+
+    private fun opprettOppgaveBarnFødtEtterTermin(
+        nyeBarnSomIkkeFinnesPåBehandlingen: List<NyttBarn>,
+        barnFødtEtterTermin: List<NyttBarn>,
+    ): OpprettOppgave {
+        val nyeBarnTekst = nyeBarnTekst(nyeBarnSomIkkeFinnesPåBehandlingen)
+        return OpprettOppgave(
+            "Bruker er innvilget stønad for ufødt(e) barn ${barnFødtEtterTermin.separerteIdenterMedStønadstype()}. " +
+                "Barnet er registrert født i måneden etter oppgitt termindato. " +
+                nyeBarnTekst +
+                "Vurder saken.",
+        )
+    }
+
+    private fun nyeBarnTekst(nyeBarnSomIkkeFinnesPåBehandlingen: List<NyttBarn>): String {
+        val nyeBarnTekst = if (nyeBarnSomIkkeFinnesPåBehandlingen.isNotEmpty()) {
+            "Bruker har også fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()}. "
+        } else {
+            ""
+        }
+        return nyeBarnTekst
     }
 
     private fun NyeBarnDto.filtrerÅrsak(årsak: NyttBarnÅrsak) = this.nyeBarn.filter { it.årsak == årsak }
