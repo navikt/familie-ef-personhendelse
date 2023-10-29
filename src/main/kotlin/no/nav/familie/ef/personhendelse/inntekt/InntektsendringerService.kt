@@ -5,6 +5,8 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.secureLogger
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.YearMonth
 
 @Service
@@ -13,7 +15,9 @@ class InntektsendringerService(
     val sakClient: SakClient,
 ) {
 
-    private val halvtGrunnbeløpMånedlig = (118620 / 2) / 12
+    private val grunnbeløp = 118_620
+    private val halvtGrunnbeløpMånedlig = (grunnbeløp / 2) / 12
+    private val reduksjonsfaktor = BigDecimal(0.45)
 
     fun beregnEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, forventetInntektForPerson: ForventetInntektForPerson): Inntektsendring {
         // hent alle registrerte vedtak som var på personen sist beregning
@@ -23,6 +27,14 @@ class InntektsendringerService(
             inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2))
         val inntektTreMånederTilbake =
             inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(3))
+        val inntektFireMånederTilbake =
+            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(4))
+
+        val inntektsendringFireMånederTilbake = beregnInntektsendring(
+            inntektFireMånederTilbake,
+            forventetInntektForPerson.personIdent,
+            forventetInntektForPerson.forventetInntektTreMånederTilbake,
+        )
 
         val inntektsendringTreMånederTilbake = beregnInntektsendring(
             inntektTreMånederTilbake,
@@ -41,21 +53,20 @@ class InntektsendringerService(
         )
 
         return Inntektsendring(
-            treMånederTilbake = inntektsendringTreMånederTilbake.prosent,
-            toMånederTilbake = inntektsendringToMånederTilbake.prosent,
-            forrigeMåned = inntektsendringForrigeMåned.prosent,
-            beløpTreMånederTilbake = inntektsendringTreMånederTilbake.beløp,
-            beløpToMånederTilbake = inntektsendringToMånederTilbake.beløp,
-            beløpForrigeMåned = inntektsendringForrigeMåned.beløp,
+            fireMånederTilbake = inntektsendringFireMånederTilbake,
+            treMånederTilbake = inntektsendringTreMånederTilbake,
+            toMånederTilbake = inntektsendringToMånederTilbake,
+            forrigeMåned = inntektsendringForrigeMåned,
         )
     }
 
     private fun beregnInntektsendring(nyesteRegistrerteInntekt: List<InntektVersjon>?, ident: String, forventetInntekt: Int?): BeregningResultat {
         if (forventetInntekt == null || nyesteRegistrerteInntekt?.maxOfOrNull { it.versjon } == null) {
             secureLogger.warn("Ingen gjeldende inntekt funnet på person $ident har personen løpende stønad?")
-            return BeregningResultat(0, 0)
+            return BeregningResultat(0, 0, 0)
         }
-        if (forventetInntekt > 585000) return BeregningResultat(0, 0) // Ignorer alle med over 585000 i årsinntekt, da de har 0 i utbetaling.
+
+        if (forventetInntekt > 652000) return BeregningResultat(0, 0, 0) // Ignorer alle med over 652000 i årsinntekt, da de har 0 i utbetaling.
         val månedligForventetInntekt = (forventetInntekt / 12)
 
         val orgNrToNyesteVersjonMap = nyesteRegistrerteInntekt.associate { it.opplysningspliktig to it.versjon }
@@ -67,13 +78,38 @@ class InntektsendringerService(
                 (it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE && it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType == "ETTERBETALINGSPERIODE")
         }.sumOf { it.beløp }
 
-        if (samletInntekt < halvtGrunnbeløpMånedlig) return BeregningResultat(0, 0)
+        if (samletInntekt < halvtGrunnbeløpMånedlig) return BeregningResultat(0, 0, 0)
 
         secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident")
         val inntektsendringProsent = (((samletInntekt - månedligForventetInntekt) / månedligForventetInntekt.toDouble()) * 100).toInt()
-        val beløp = samletInntekt - månedligForventetInntekt
-        if (månedligForventetInntekt == 0) return BeregningResultat(beløp, 100) // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
-        return BeregningResultat(beløp, inntektsendringProsent)
+        val endretInntektBeløp = samletInntekt - månedligForventetInntekt
+        val feilutbetaling = beregnFeilutbetaling(månedligForventetInntekt, samletInntekt)
+        if (månedligForventetInntekt == 0) return BeregningResultat(endretInntektBeløp, 100, feilutbetaling) // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
+        return BeregningResultat(endretInntektBeløp, inntektsendringProsent, feilutbetaling)
+    }
+
+    fun beregnFeilutbetaling(forventetInntekt: Int, samletInntekt: Int): Int {
+        return beregnUtbetaling(samletInntekt) - beregnUtbetaling(forventetInntekt)
+    }
+
+    private fun beregnUtbetaling(inntekt: Int): Int {
+        val avkortningPerMåned = beregnAvkortning(inntekt).setScale(0, RoundingMode.HALF_DOWN)
+
+        val fullOvergangsstønadPerMåned =
+            BigDecimal(grunnbeløp).multiply(BigDecimal(2.25)).divide(BigDecimal(12)).setScale(0, RoundingMode.HALF_EVEN)
+
+        val utbetaling = fullOvergangsstønadPerMåned.subtract(avkortningPerMåned).setScale(0, RoundingMode.HALF_UP)
+
+        return if (utbetaling <= BigDecimal.ZERO) 0 else utbetaling.intValueExact()
+    }
+
+    private fun beregnAvkortning(inntekt: Int): BigDecimal {
+        val inntektOverHalveGrunnbeløp = BigDecimal(inntekt).subtract(BigDecimal(grunnbeløp).multiply(BigDecimal(0.5)))
+        return if (inntektOverHalveGrunnbeløp > BigDecimal.ZERO) {
+            inntektOverHalveGrunnbeløp.multiply(reduksjonsfaktor).setScale(5, RoundingMode.HALF_DOWN)
+        } else {
+            BigDecimal.ZERO
+        }
     }
 
     // Ignorterte ytelser: Alle uføre går under annet regelverk (samordning) og skal derfor ignoreres.
@@ -86,7 +122,17 @@ class InntektsendringerService(
     )
 }
 
+data class Inntektsendring(
+    val fireMånederTilbake: BeregningResultat,
+    val treMånederTilbake: BeregningResultat,
+    val toMånederTilbake: BeregningResultat,
+    val forrigeMåned: BeregningResultat,
+) {
+    fun harEndretInntekt() = fireMånederTilbake.prosent >= 10 && treMånederTilbake.prosent >= 10 && toMånederTilbake.prosent >= 10 && forrigeMåned.prosent >= 10
+}
+
 data class BeregningResultat(
     val beløp: Int,
     val prosent: Int,
+    val feilutbetaling: Int,
 )

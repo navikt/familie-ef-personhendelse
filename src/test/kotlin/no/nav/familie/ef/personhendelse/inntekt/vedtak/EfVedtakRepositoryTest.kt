@@ -1,6 +1,8 @@
 package no.nav.familie.ef.personhendelse.inntekt.vedtak
 
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.personhendelse.inntekt.BeregningResultat
+import no.nav.familie.ef.personhendelse.inntekt.Inntektsendring
 import no.nav.familie.kontrakter.felles.ef.EnsligForsørgerVedtakhendelse
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import org.assertj.core.api.Assertions
@@ -66,23 +68,39 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre inntektsendringer`() {
-        efVedtakRepository.lagreInntektsendring("1", true, 15, 10, 5, "SYKEPENGER, UFØRETRYGD", 150, 250, 350)
-        var hentInntektsendringer = efVedtakRepository.hentInntektsendringer()
+        efVedtakRepository.lagreVedtakOgInntektsendringForPersonIdent(
+            "1",
+            true,
+            "SYKEPENGER, UFØRETRYGD",
+            Inntektsendring(
+                BeregningResultat(150, 15, 100),
+                BeregningResultat(250, 10, 50),
+                BeregningResultat(350, 5, 25),
+                BeregningResultat(500, 1, 12),
+            ),
+        )
+        var hentInntektsendringer = efVedtakRepository.hentInntektOgVedtakEndring()
         Assertions.assertThat(hentInntektsendringer.size).isEqualTo(1)
 
         val inntektsendring = hentInntektsendringer.first()
         Assertions.assertThat(inntektsendring.personIdent).isEqualTo("1")
-        Assertions.assertThat(inntektsendring.harNyttVedtak).isTrue
-        Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbake).isEqualTo(15)
-        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake).isEqualTo(10)
-        Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned).isEqualTo(5)
-        Assertions.assertThat(inntektsendring.nyYtelse).isEqualTo("SYKEPENGER, UFØRETRYGD")
-        Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbakeBeløp).isEqualTo(150)
-        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbakeBeløp).isEqualTo(250)
-        Assertions.assertThat(inntektsendring.inntektsendringForrigeMånedBeløp).isEqualTo(350)
+        Assertions.assertThat(inntektsendring.harNyeVedtak).isTrue
+        Assertions.assertThat(inntektsendring.nyeYtelser).isEqualTo("SYKEPENGER, UFØRETRYGD")
+        Assertions.assertThat(inntektsendring.inntektsendringFireMånederTilbake.beløp).isEqualTo(150)
+        Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbake.beløp).isEqualTo(250)
+        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake.beløp).isEqualTo(350)
+        Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.beløp).isEqualTo(500)
+        Assertions.assertThat(inntektsendring.inntektsendringFireMånederTilbake.prosent).isEqualTo(15)
+        Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbake.prosent).isEqualTo(10)
+        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake.prosent).isEqualTo(5)
+        Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.prosent).isEqualTo(1)
+        Assertions.assertThat(inntektsendring.inntektsendringFireMånederTilbake.feilutbetaling).isEqualTo(100)
+        Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbake.feilutbetaling).isEqualTo(50)
+        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake.feilutbetaling).isEqualTo(25)
+        Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.feilutbetaling).isEqualTo(12)
 
         efVedtakRepository.clearInntektsendringer()
-        hentInntektsendringer = efVedtakRepository.hentInntektsendringer()
+        hentInntektsendringer = efVedtakRepository.hentInntektOgVedtakEndring()
         Assertions.assertThat(hentInntektsendringer.isEmpty()).isTrue
     }
 }
