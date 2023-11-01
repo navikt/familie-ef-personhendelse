@@ -36,7 +36,7 @@ class VedtakendringerService(
     @Async
     fun beregnInntektsendringerOgLagreIDb(skalOppretteOppgave: Boolean = false) {
         logger.info("Starter beregning av inntektsendringer")
-        val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønadIkkeManueltRevurdertSisteMåneder()
+        val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønadIkkeManueltRevurdertSisteMåneder(4)
         efVedtakRepository.clearInntektsendringer()
         logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
         var counter = 0
@@ -67,24 +67,19 @@ class VedtakendringerService(
     ) {
         val nyeVedtak = nyeVedtak(response)
         val endretInntekt = inntektsendringerService.beregnEndretInntekt(response, forventetInntektForPerson)
-        efVedtakRepository.lagreInntektsendring(
+        efVedtakRepository.lagreVedtakOgInntektsendringForPersonIdent(
             forventetInntektForPerson.personIdent,
             nyeVedtak?.isNotEmpty() ?: false,
-            endretInntekt.treMånederTilbake,
-            endretInntekt.toMånederTilbake,
-            endretInntekt.forrigeMåned,
             nyeVedtak?.joinToString(),
-            endretInntekt.beløpTreMånederTilbake,
-            endretInntekt.beløpToMånederTilbake,
-            endretInntekt.beløpForrigeMåned,
+            endretInntekt,
         )
     }
 
     fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {
-        val inntektsendringer = efVedtakRepository.hentInntektsendringer()
+        val inntektsendringer = efVedtakRepository.hentInntektOgVedtakEndring()
         if (skalOppretteOppgave) {
             inntektsendringer.forEach {
-                opprettOppgave(it.harNyttVedtak, it.inntektsendringToMånederTilbake, it.inntektsendringForrigeMåned, it.personIdent)
+                opprettOppgave(it.harNyeVedtak, it.inntektsendringToMånederTilbake.prosent, it.inntektsendringForrigeMåned.prosent, it.personIdent)
             }
         } else {
             logger.info("Ville opprettet inntektsendring-oppgave for ${inntektsendringer.size} personer")
@@ -129,7 +124,7 @@ class VedtakendringerService(
         try {
             return inntektClient.hentInntektshistorikk(
                 fnr,
-                YearMonth.now().minusMonths(4),
+                YearMonth.now().minusMonths(5),
                 null,
             )
         } catch (e: Exception) {
