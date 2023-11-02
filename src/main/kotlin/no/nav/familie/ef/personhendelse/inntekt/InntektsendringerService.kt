@@ -80,7 +80,7 @@ class InntektsendringerService(
         secureLogger.info("Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident")
         val inntektsendringProsent = (((samletInntekt - månedligForventetInntekt) / månedligForventetInntekt.toDouble()) * 100).toInt()
         val endretInntektBeløp = samletInntekt - månedligForventetInntekt
-        val feilutbetaling = beregnFeilutbetaling(månedligForventetInntekt, samletInntekt)
+        val feilutbetaling = beregnFeilutbetalingForMåned(månedligForventetInntekt, samletInntekt)
         if (månedligForventetInntekt == 0) return BeregningResultat(endretInntektBeløp, 100, feilutbetaling) // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
         return BeregningResultat(endretInntektBeløp, inntektsendringProsent, feilutbetaling)
     }
