@@ -110,6 +110,7 @@ class ForelderBarnHandlerTest {
                     "Vurder saken.",
             )
     }
+
     @Test
     internal fun `finnNyeBarnForBruker inneholder for sent født terminbarn og nytt barn, forvent at oppgave opprettes`() {
         mockNyeBarn(
@@ -127,6 +128,7 @@ class ForelderBarnHandlerTest {
                     "Vurder saken.",
             )
     }
+
     @Test
     internal fun `finnNyeBarnForBruker inneholder for sent født terminbarn, forvent at oppgave opprettes`() {
         mockNyeBarn(

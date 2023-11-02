@@ -5,8 +5,6 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.secureLogger
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.YearMonth
 
 @Service
@@ -17,7 +15,6 @@ class InntektsendringerService(
 
     private val grunnbeløp = 118_620
     private val halvtGrunnbeløpMånedlig = (grunnbeløp / 2) / 12
-    private val reduksjonsfaktor = BigDecimal(0.45)
 
     fun beregnEndretInntekt(inntektshistorikkResponse: InntektshistorikkResponse, forventetInntektForPerson: ForventetInntektForPerson): Inntektsendring {
         // hent alle registrerte vedtak som var på personen sist beregning
@@ -86,30 +83,6 @@ class InntektsendringerService(
         val feilutbetaling = beregnFeilutbetaling(månedligForventetInntekt, samletInntekt)
         if (månedligForventetInntekt == 0) return BeregningResultat(endretInntektBeløp, 100, feilutbetaling) // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
         return BeregningResultat(endretInntektBeløp, inntektsendringProsent, feilutbetaling)
-    }
-
-    fun beregnFeilutbetaling(forventetInntekt: Int, samletInntekt: Int): Int {
-        return beregnUtbetaling(samletInntekt) - beregnUtbetaling(forventetInntekt)
-    }
-
-    private fun beregnUtbetaling(inntekt: Int): Int {
-        val avkortningPerMåned = beregnAvkortning(inntekt).setScale(0, RoundingMode.HALF_DOWN)
-
-        val fullOvergangsstønadPerMåned =
-            BigDecimal(grunnbeløp).multiply(BigDecimal(2.25)).divide(BigDecimal(12)).setScale(0, RoundingMode.HALF_EVEN)
-
-        val utbetaling = fullOvergangsstønadPerMåned.subtract(avkortningPerMåned).setScale(0, RoundingMode.HALF_UP)
-
-        return if (utbetaling <= BigDecimal.ZERO) 0 else utbetaling.intValueExact()
-    }
-
-    private fun beregnAvkortning(inntekt: Int): BigDecimal {
-        val inntektOverHalveGrunnbeløp = BigDecimal(inntekt).subtract(BigDecimal(grunnbeløp).multiply(BigDecimal(0.5)))
-        return if (inntektOverHalveGrunnbeløp > BigDecimal.ZERO) {
-            inntektOverHalveGrunnbeløp.multiply(reduksjonsfaktor).setScale(5, RoundingMode.HALF_DOWN)
-        } else {
-            BigDecimal.ZERO
-        }
     }
 
     // Ignorterte ytelser: Alle uføre går under annet regelverk (samordning) og skal derfor ignoreres.
