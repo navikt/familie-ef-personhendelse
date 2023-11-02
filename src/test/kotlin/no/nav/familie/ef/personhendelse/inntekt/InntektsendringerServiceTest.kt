@@ -125,14 +125,14 @@ class InntektsendringerServiceTest {
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
             ),
-        ).isEqualTo(inntektsendring(3500, 11))
+        ).isEqualTo(inntektsendring(3500, 11, 1575))
 
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
                 ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere, forventetInntektNiProsentLavere, forventetInntektNiProsentLavere),
             ),
-        ).isEqualTo(inntektsendring(3150, 9))
+        ).isEqualTo(inntektsendring(3150, 9, 1417))
     }
 
     @Test
@@ -432,12 +432,12 @@ class InntektsendringerServiceTest {
         return this::class.java.classLoader.getResource(name)!!.readText(StandardCharsets.UTF_8)
     }
 
-    fun inntektsendring(beløp: Int = 0, prosent: Int = 0): Inntektsendring {
-        val beregningsResultat = beregningResultat(beløp, prosent)
+    fun inntektsendring(beløp: Int = 0, prosent: Int = 0, feilutbetaling: Int = 0): Inntektsendring {
+        val beregningsResultat = beregningResultat(beløp, prosent, feilutbetaling)
         return Inntektsendring(beregningsResultat, beregningsResultat, beregningsResultat, beregningsResultat)
     }
 
-    fun beregningResultat(beløp: Int = 0, prosent: Int = 0): BeregningResultat {
-        return BeregningResultat(beløp, prosent, 0)
+    fun beregningResultat(beløp: Int = 0, prosent: Int = 0, feilutbetaling: Int = 0): BeregningResultat {
+        return BeregningResultat(beløp, prosent, feilutbetaling)
     }
 }
