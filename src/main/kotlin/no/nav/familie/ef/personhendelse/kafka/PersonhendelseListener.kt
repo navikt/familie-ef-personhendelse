@@ -42,9 +42,7 @@ class PersonhendelseListener(
                 "Leser personhendelse med hendelseId=${personhendelse.hendelseId} " +
                     "tidligereHendelseId=${personhendelse.tidligereHendelseId}",
             )
-            if (!personidenter.firstOrNull().isNullOrBlank() &&
-                !personhendelseService.harHåndtertHendelse(personhendelse.hendelseId)
-            ) {
+            if (!personidenter.firstOrNull().isNullOrBlank()) {
                 personhendelseService.håndterPersonhendelse(personhendelse)
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
