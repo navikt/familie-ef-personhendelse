@@ -157,7 +157,7 @@ class VedtakendringerService(
             ),
         )
         secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
-        oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") //Inntektskontroll
+        oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
     fun lagOppgavetekstForInntektsendring(inntektOgVedtakEndring: InntektOgVedtakEndring): String {
