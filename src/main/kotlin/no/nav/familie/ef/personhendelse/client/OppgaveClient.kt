@@ -69,6 +69,7 @@ class OppgaveClient(
         oppgave: Oppgave,
         mappenavnInneholder: String = "Hendelser",
     ) {
+        log.info("Mapper: ${mapperResponse.mapper}")
         val mappe = mapperResponse.mapper.find {
             it.navn.contains(mappenavnInneholder, true)
             !it.navn.contains("EF Sak", true)
