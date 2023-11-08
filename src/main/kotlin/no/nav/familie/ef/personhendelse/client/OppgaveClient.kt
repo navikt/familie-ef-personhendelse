@@ -51,12 +51,12 @@ class OppgaveClient(
         return response.getDataOrThrow()
     }
 
-    fun leggOppgaveIMappe(oppgaveId: Long) {
+    fun leggOppgaveIMappe(oppgaveId: Long, mappenavnInneholder: String = "Hendelser") {
         val oppgave = finnOppgaveMedId(oppgaveId)
         if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { // Skjermede personer skal ikke puttes i mappe
             val mapperResponse = finnMapper(oppgave.tildeltEnhetsnr!!)
             try {
-                oppdaterOppgaveMedMappe(mapperResponse, oppgave)
+                oppdaterOppgaveMedMappe(mapperResponse, oppgave, mappenavnInneholder)
             } catch (e: Exception) {
                 log.error("Feil under knytning av mappe til oppgave - se securelogs for stacktrace")
                 secureLogger.error("Feil under knytning av mappe til oppgave", e)
@@ -67,12 +67,12 @@ class OppgaveClient(
     private fun oppdaterOppgaveMedMappe(
         mapperResponse: FinnMappeResponseDto,
         oppgave: Oppgave,
+        mappenavnInneholder: String = "Hendelser",
     ) {
         val mappe = mapperResponse.mapper.find {
-            it.navn.contains("62") &&
-                it.navn.contains("Hendelser") &&
-                !it.navn.contains("EF Sak", true)
-        } ?: error("Fant ikke mappe 62 Hendelser for uplassert oppgave")
+            it.navn.contains(mappenavnInneholder, true)
+            !it.navn.contains("EF Sak", true)
+        } ?: error("Fant ikke mappe som inneholder mappenavn $mappenavnInneholder for uplassert oppgave")
         oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
     }
 
