@@ -67,19 +67,31 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
     }
 
     @Test
-    fun `lagre inntektsendringer`() {
+    fun `lagre inntektsendringer og hent ut de som skal ha oppgave`() {
         efVedtakRepository.lagreVedtakOgInntektsendringForPersonIdent(
             "1",
             true,
             "SYKEPENGER, UFØRETRYGD",
             Inntektsendring(
-                BeregningResultat(150, 15, 100),
-                BeregningResultat(250, 10, 50),
-                BeregningResultat(350, 5, 25),
-                BeregningResultat(500, 1, 12),
+                BeregningResultat(150, 15, 10000),
+                BeregningResultat(250, 10, 5000),
+                BeregningResultat(350, 25, 2500),
+                BeregningResultat(500, 35, 12000),
             ),
         )
-        var hentInntektsendringer = efVedtakRepository.hentInntektOgVedtakEndring()
+
+        efVedtakRepository.lagreVedtakOgInntektsendringForPersonIdent(
+            "2",
+            false,
+            null,
+            Inntektsendring(
+                BeregningResultat(1500, 15, 100),
+                BeregningResultat(2500, 5, 50),
+                BeregningResultat(3500, 25, 25),
+                BeregningResultat(15000, 35, 12),
+            ),
+        )
+        var hentInntektsendringer = efVedtakRepository.hentInntektsendringerSomSkalHaOppgave()
         Assertions.assertThat(hentInntektsendringer.size).isEqualTo(1)
 
         val inntektsendring = hentInntektsendringer.first()
@@ -92,15 +104,15 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
         Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.beløp).isEqualTo(500)
         Assertions.assertThat(inntektsendring.inntektsendringFireMånederTilbake.prosent).isEqualTo(15)
         Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbake.prosent).isEqualTo(10)
-        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake.prosent).isEqualTo(5)
-        Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.prosent).isEqualTo(1)
-        Assertions.assertThat(inntektsendring.inntektsendringFireMånederTilbake.feilutbetaling).isEqualTo(100)
-        Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbake.feilutbetaling).isEqualTo(50)
-        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake.feilutbetaling).isEqualTo(25)
-        Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.feilutbetaling).isEqualTo(12)
+        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake.prosent).isEqualTo(25)
+        Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.prosent).isEqualTo(35)
+        Assertions.assertThat(inntektsendring.inntektsendringFireMånederTilbake.feilutbetaling).isEqualTo(10000)
+        Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbake.feilutbetaling).isEqualTo(5000)
+        Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake.feilutbetaling).isEqualTo(2500)
+        Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.feilutbetaling).isEqualTo(12000)
 
         efVedtakRepository.clearInntektsendringer()
-        hentInntektsendringer = efVedtakRepository.hentInntektOgVedtakEndring()
+        hentInntektsendringer = efVedtakRepository.hentInntektsendringerSomSkalHaOppgave()
         Assertions.assertThat(hentInntektsendringer.isEmpty()).isTrue
     }
 }
