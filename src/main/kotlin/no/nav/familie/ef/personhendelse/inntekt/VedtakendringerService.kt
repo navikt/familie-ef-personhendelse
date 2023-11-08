@@ -157,7 +157,7 @@ class VedtakendringerService(
             ),
         )
         secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
-        oppgaveClient.leggOppgaveIMappe(oppgaveId, "Inntektskontroll")
+        oppgaveClient.leggOppgaveIMappe(oppgaveId, "63 Inntektskontroll")
     }
 
     fun lagOppgavetekstForInntektsendring(inntektOgVedtakEndring: InntektOgVedtakEndring): String {
@@ -170,7 +170,7 @@ class VedtakendringerService(
 
         val periodeTekst =
             "FOM ${årMånedProsessert.minusMonths(5).norskFormat()} - TOM ${årMånedProsessert.minusMonths(1).norskFormat()}"
-        val oppgavetekst = " Uttrekksperiode: $periodeTekst \n" +
+        val oppgavetekst = "Uttrekksperiode: $periodeTekst \n" +
             "Beregnet feilutbetaling i uttrekksperioden: ${totalFeilutbetaling.tusenskille()} kroner "
         return oppgavetekst
     }
