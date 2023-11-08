@@ -71,7 +71,7 @@ class OppgaveClient(
     ) {
         log.info("Mapper: ${mapperResponse.mapper}")
         val mappe = mapperResponse.mapper.find {
-            it.navn.contains(mappenavnInneholder, true)
+            it.navn.contains(mappenavnInneholder, true) &&
             !it.navn.contains("EF Sak", true)
         } ?: error("Fant ikke mappe som inneholder mappenavn $mappenavnInneholder for uplassert oppgave")
         oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
