@@ -6,12 +6,14 @@ import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
+import no.nav.familie.ef.personhendelse.inntekt.vedtak.InntektOgVedtakEndring
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
+import java.time.LocalDateTime
 import java.time.YearMonth
 
 class VedtakendringerServiceTest {
@@ -150,6 +152,25 @@ class VedtakendringerServiceTest {
     @Test
     fun `map stønadtype til behandlingstema`() {
         Assertions.assertThat(StønadType.OVERGANGSSTØNAD.tilBehandlingstemaValue()).isEqualTo(Behandlingstema.Overgangsstønad.value)
+    }
+
+    @Test
+    fun `lagOppgavetekstForInntektsendring - sjekk tusenskille på feiltubetalingsbeløp og norsk format på år-måned`() {
+        val oppgavetekst = vedtakendringer.lagOppgavetekstForInntektsendring(
+            InntektOgVedtakEndring(
+                "1",
+                false,
+                LocalDateTime.of(2023, 11, 8, 5, 0),
+                BeregningResultat(1, 1, 1),
+                BeregningResultat(2, 2, 2),
+                BeregningResultat(3, 3, 3),
+                BeregningResultat(4, 4, 40000),
+                null,
+            ),
+        )
+
+        Assertions.assertThat(oppgavetekst.contains("Beregnet feilutbetaling i uttrekksperioden: 40 006 kroner "))
+        Assertions.assertThat(oppgavetekst.contains("FOM 06.2023 - TOM 10.2023"))
     }
 
     fun oppdatertInntektshistorikkResponseTilNyereDato(inntektshistorikkResponse: InntektshistorikkResponse): InntektshistorikkResponse {
