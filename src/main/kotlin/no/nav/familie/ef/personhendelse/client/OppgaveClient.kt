@@ -5,13 +5,7 @@ import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.getDataOrThrow
-import no.nav.familie.kontrakter.felles.oppgave.FinnMappeResponseDto
-import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
-import no.nav.familie.kontrakter.felles.oppgave.Oppgave
-import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
-import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
-import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.familie.kontrakter.felles.oppgave.*
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -49,6 +43,18 @@ class OppgaveClient(
             HttpHeaders().medContentTypeJsonUTF8(),
         )
         return response.getDataOrThrow()
+    }
+
+    fun hentOppgaver(finnOppgaveRequest: FinnOppgaveRequest): FinnOppgaveResponseDto {
+        val uri = URI.create("$oppgaveUrl/v4")
+
+        val respons =
+            postForEntity<Ressurs<FinnOppgaveResponseDto>>(
+                uri,
+                finnOppgaveRequest,
+                HttpHeaders().medContentTypeJsonUTF8(),
+            )
+        return respons.getDataOrThrow()
     }
 
     fun leggOppgaveIMappe(oppgaveId: Long, mappenavnInneholder: String = "Hendelser") {

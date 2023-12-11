@@ -5,15 +5,15 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
+import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
+import no.nav.familie.ef.personhendelse.client.pdl.PdlNotFoundException
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
 import no.nav.familie.ef.personhendelse.inntekt.vedtak.InntektOgVedtakEndring
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.ef.StønadType
-import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
-import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
-import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import no.nav.familie.kontrakter.felles.oppgave.*
+import no.nav.familie.kontrakter.felles.oppgave.FinnOppgaveRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
@@ -30,6 +30,7 @@ class VedtakendringerService(
     val sakClient: SakClient,
     val arbeidsfordelingClient: ArbeidsfordelingClient,
     val inntektsendringerService: InntektsendringerService,
+    val pdlClient: PdlClient,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -87,6 +88,33 @@ class VedtakendringerService(
             logger.info("Ville opprettet inntektsendring-oppgave for ${inntektsendringer.size} personer")
         }
         return inntektsendringer.size
+    }
+
+    fun harPersonInntektsoppgaveFraFør(personIdent: String): Boolean {
+        val aktørId = pdlClient.hentIdenter(personIdent, "AKTORID", false).firstOrNull()
+
+        if (aktørId == null) {
+            secureLogger.error("Fant ikke aktørId for personIdent $personIdent")
+            throw PdlNotFoundException()
+        }
+
+        val request = FinnOppgaveRequest(
+            aktørId = aktørId,
+            tema = Tema.ENF,
+            opprettetFomTidspunkt = YearMonth.now().minusMonths(1).atDay(1).atStartOfDay(),
+            oppgavetype = Oppgavetype.VurderInntekt,
+        )
+
+        val oppgaver = oppgaveClient.hentOppgaver(request)
+
+        if (oppgaver.oppgaver.any { it.status == StatusEnum.AAPNET || it.status == StatusEnum.OPPRETTET || it.status == StatusEnum.UNDER_BEHANDLING }) {
+            return true
+        } else {
+//            if (oppgaver.oppgaver.any{ it.status == StatusEnum.FERDIGSTILT && it.opprettetTidspunkt > YearMonth.now().minusMonths(1).atDay(1).atStartOfDay().toLocalTime().toString() }) {
+//                return true
+//            }
+            return false
+        }
     }
 
     fun nyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): List<String>? {

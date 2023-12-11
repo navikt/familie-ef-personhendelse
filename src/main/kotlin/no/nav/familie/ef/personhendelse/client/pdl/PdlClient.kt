@@ -37,9 +37,9 @@ class PdlClient(
         return feilsjekkOgReturnerData(fnr, pdlResponse) { it.hentPerson }
     }
 
-    fun hentIdenter(personIdent: String): Set<String> {
+    fun hentIdenter(personIdent: String, gruppe: String = "FOLKEREGISTERIDENT", historikk: Boolean = true): Set<String> {
         val pdlPersonRequest = PdlPersonRequest(
-            variables = PdlIdentRequestVariables(personIdent),
+            variables = PdlIdentRequestVariables(personIdent, gruppe, historikk),
             query = hentIdenter,
         )
 
