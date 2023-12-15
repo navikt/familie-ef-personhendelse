@@ -111,6 +111,40 @@ class ForelderBarnHandlerTest {
             )
     }
 
+    @Test
+    internal fun `finnNyeBarnForBruker inneholder for sent født terminbarn og nytt barn, forvent at oppgave opprettes`() {
+        mockNyeBarn(
+            NyttBarn(barn1Fnr, StønadType.OVERGANGSSTØNAD, NyttBarnÅrsak.FØDT_ETTER_TERMIN),
+            NyttBarn(barn2Fnr, StønadType.SKOLEPENGER, NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING),
+        )
+        every { pdlClient.hentPerson(personIdent) } returns person
+        service.håndterPersonhendelse(personhendelse)
+        verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
+        assertThat(slot.captured.beskrivelse)
+            .isEqualTo(
+                "Personhendelse: Bruker er innvilget stønad for ufødt(e) barn fnr (Overgangsstønad). " +
+                    "Barnet er registrert født i måneden etter oppgitt termindato. " +
+                    "Bruker har også fått et nytt/nye barn fnr2 (Skolepenger). " +
+                    "Vurder saken.",
+            )
+    }
+
+    @Test
+    internal fun `finnNyeBarnForBruker inneholder for sent født terminbarn, forvent at oppgave opprettes`() {
+        mockNyeBarn(
+            NyttBarn(barn1Fnr, StønadType.OVERGANGSSTØNAD, NyttBarnÅrsak.FØDT_ETTER_TERMIN),
+        )
+        every { pdlClient.hentPerson(personIdent) } returns person
+        service.håndterPersonhendelse(personhendelse)
+        verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
+        assertThat(slot.captured.beskrivelse)
+            .isEqualTo(
+                "Personhendelse: Bruker er innvilget stønad for ufødt(e) barn fnr (Overgangsstønad). " +
+                    "Barnet er registrert født i måneden etter oppgitt termindato. " +
+                    "Vurder saken.",
+            )
+    }
+
     private fun mockNyeBarn(vararg nyeBarn: NyttBarn) {
         every { sakClient.finnNyeBarnForBruker(any()) } returns NyeBarnDto(nyeBarn.toList())
     }

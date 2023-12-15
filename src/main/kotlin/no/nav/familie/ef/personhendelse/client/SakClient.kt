@@ -59,7 +59,7 @@ class SakClient(
     fun hentPersonerMedAktivStønadIkkeManueltRevurdertSisteMåneder(antallMåneder: Int = 3): List<String> {
         val uriComponentsBuilder = UriComponentsBuilder.fromUri(uri)
             .pathSegment("api/vedtak/personerMedAktivStonadIkkeManueltRevurdertSisteMaaneder")
-            .queryParam("antallMaaneder", 4)
+            .queryParam("antallMaaneder", antallMåneder)
         val response = getForEntity<Ressurs<List<String>>>(uriComponentsBuilder.build().toUri())
         return response.data
             ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
@@ -86,4 +86,5 @@ data class ForventetInntektForPerson(
     val forventetInntektForrigeMåned: Int?,
     val forventetInntektToMånederTilbake: Int?,
     val forventetInntektTreMånederTilbake: Int?,
+    val forventetInntektFireMånederTilbake: Int?,
 )

@@ -91,6 +91,23 @@ class InntektsendringerServiceTest {
                         ),
                     ),
                 ),
+                Pair(
+                    YearMonth.now().minusMonths(4),
+                    mapOf(
+                        Pair(
+                            "1",
+                            listOf(
+                                InntektVersjon(
+                                    nestNyesteArbeidsInntektInformasjonIEksempelJson,
+                                    null,
+                                    "innleveringstidspunkt",
+                                    "opplysningspliktig",
+                                    1,
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
             ),
         )
 
@@ -100,21 +117,22 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("1", forventetLønnsinntekt, forventetLønnsinntekt, forventetLønnsinntekt),
+                ForventetInntektForPerson("1", forventetLønnsinntekt, forventetLønnsinntekt, forventetLønnsinntekt, forventetLønnsinntekt),
             ),
-        ).isEqualTo(Inntektsendring(0, 0, 0, 0, 0, 0))
+        ).isEqualTo(inntektsendring())
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
+                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
             ),
-        ).isEqualTo(Inntektsendring(11, 11, 11, 3500, 3500, 3500))
+        ).isEqualTo(inntektsendring(3500, 11, 1575))
+
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere, forventetInntektNiProsentLavere),
+                ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere, forventetInntektNiProsentLavere, forventetInntektNiProsentLavere),
             ),
-        ).isEqualTo(Inntektsendring(9, 9, 9, 3150, 3150, 3150))
+        ).isEqualTo(inntektsendring(3150, 9, 1417))
     }
 
     @Test
@@ -152,7 +170,7 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
+                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
             ).harEndretInntekt(),
         ).isFalse
     }
@@ -174,7 +192,7 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("2", forventetInntekt, forventetInntekt, forventetInntekt),
+                ForventetInntektForPerson("2", forventetInntekt, forventetInntekt, forventetInntekt, forventetInntekt),
             ).harEndretInntekt(),
         ).isFalse
     }
@@ -232,7 +250,7 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("1", forHøyInntekt, forHøyInntekt, forHøyInntekt),
+                ForventetInntektForPerson("1", forHøyInntekt, forHøyInntekt, forHøyInntekt, forHøyInntekt),
             ).harEndretInntekt(),
         ).isFalse
     }
@@ -290,7 +308,7 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("1", forventetInntekt, forventetInntekt, forventetInntekt),
+                ForventetInntektForPerson("1", forventetInntekt, forventetInntekt, forventetInntekt, forventetInntekt),
             ).harEndretInntekt(),
         ).isFalse
     }
@@ -312,7 +330,7 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("1", forventetInntekt, forventetInntekt, forventetInntekt),
+                ForventetInntektForPerson("1", forventetInntekt, forventetInntekt, forventetInntekt, forventetInntekt),
             ).harEndretInntekt(),
         ).isFalse
     }
@@ -369,7 +387,7 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("3", forventetLønnsinntekt, forventetLønnsinntekt, forventetLønnsinntekt),
+                ForventetInntektForPerson("3", forventetLønnsinntekt, forventetLønnsinntekt, forventetLønnsinntekt, forventetLønnsinntekt),
             ).harEndretInntekt(),
         ).isFalse
     }
@@ -394,6 +412,10 @@ class InntektsendringerServiceTest {
                     YearMonth.now().minusMonths(3),
                     mapOf(Pair("1", treMånederTilbakeArbeidsInntektInformasjonIEksempelJson)),
                 ),
+                Pair(
+                    YearMonth.now().minusMonths(4),
+                    mapOf(Pair("1", treMånederTilbakeArbeidsInntektInformasjonIEksempelJson)),
+                ),
             ),
         )
 
@@ -401,12 +423,21 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("3", forventetInntekt, forventetInntekt, forventetInntekt),
+                ForventetInntektForPerson("3", forventetInntekt, forventetInntekt, forventetInntekt, forventetInntekt),
             ).harEndretInntekt(),
         ).isTrue
     }
 
     fun readResource(name: String): String {
         return this::class.java.classLoader.getResource(name)!!.readText(StandardCharsets.UTF_8)
+    }
+
+    fun inntektsendring(beløp: Int = 0, prosent: Int = 0, feilutbetaling: Int = 0): Inntektsendring {
+        val beregningsResultat = beregningResultat(beløp, prosent, feilutbetaling)
+        return Inntektsendring(beregningsResultat, beregningsResultat, beregningsResultat, beregningsResultat)
+    }
+
+    fun beregningResultat(beløp: Int = 0, prosent: Int = 0, feilutbetaling: Int = 0): BeregningResultat {
+        return BeregningResultat(beløp, prosent, feilutbetaling)
     }
 }
