@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teamfamilie
 spec:
-  image: {{ image }}
+  image: "{{ image }}"
   ingresses:
     - https://familie-ef-personhendelse.intern.nav.no
   liveness:
@@ -56,9 +56,8 @@ spec:
   gcp:
     sqlInstances:
       - type: POSTGRES_14 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
-        databases:
-          - name: familie-ef-personhendelse
-            envVarPrefix: DB
-            diskAutoresize: true
-            tier: db-g1-small
-            cascadingDelete: false
+        name: familie-ef-personhendelse
+        envVarPrefix: DB
+        diskAutoresize: true
+        tier: db-g1-small
+        cascadingDelete: false
