@@ -13,10 +13,7 @@ class InntektsendringerScheduler(val vedtakendringerService: VedtakendringerServ
     @Scheduled(cron = "\${INNTEKTSKONTROLL_CRON_EXPRESSION}") // kl 04:00 den 6. hver måned
     fun inntektskontroll() {
         logger.info("Cron scheduler starter inntektskontroll")
-        if (LeaderClient.isLeader() == true) {
-            logger.info("Leader-pod starter inntektskontroll")
-            vedtakendringerService.beregnInntektsendringerOgLagreIDb()
-            vedtakendringerService.opprettOppgaverForInntektsendringer(true)
-        }
+        vedtakendringerService.beregnInntektsendringerOgLagreIDb()
+        vedtakendringerService.opprettOppgaverForInntektsendringer(true)
     }
 }
