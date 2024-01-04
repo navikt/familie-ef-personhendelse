@@ -131,3 +131,5 @@ EF_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ef-sak/.default
 
 FAMILIE_EF_VEDTAK_TOPIC: teamfamilie.aapen-ensligforsorger-iverksatt-vedtak
 FAMILIE_KS_VEDTAK_TOPIC: teamfamilie.aapen-kontantstotte-vedtak-v1
+
+INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 4 6 * * # kl 04:00 den 6. hver måned
