@@ -35,7 +35,6 @@ class VedtakendringerService(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
-    @Async
     fun beregnInntektsendringerOgLagreIDb() {
         logger.info("Starter beregning av inntektsendringer")
         val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønadIkkeManueltRevurdertSisteMåneder(3)
