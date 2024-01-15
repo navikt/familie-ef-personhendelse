@@ -49,7 +49,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       max-poll-records: 1
-      auto-offset-reset: earliest
+      auto-offset-reset: latest
       enable-auto-commit: false
 
 no.nav.security.jwt:

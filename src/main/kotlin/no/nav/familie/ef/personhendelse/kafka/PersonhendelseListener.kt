@@ -64,6 +64,7 @@ class PersonhendelseListener(
         }
     }
 
+    /*
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
         callback: ConsumerSeekAware.ConsumerSeekCallback
@@ -76,4 +77,5 @@ class PersonhendelseListener(
                 callback.seekToBeginning("leesah-v1", it.partition())
             }
     }
+     */
 }
