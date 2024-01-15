@@ -29,7 +29,7 @@ class PersonhendelseListener(
 
     @KafkaListener(
         id = "familie-ef-personhendelse-aiven",
-        groupId = "familie-ef-personhendelse-leesah-1",
+        groupId = "familie-ef-personhendelse-leesah-2",
         topics = ["pdl.leesah-v1"],
         containerFactory = "kafkaAivenPersonhendelseListenerContainerFactory",
     )
