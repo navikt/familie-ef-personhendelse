@@ -45,6 +45,8 @@ class PersonhendelseListener(
             if (!personidenter.firstOrNull().isNullOrBlank()) {
                 if (!personhendelseService.harHåndtertHendelse(personhendelse.hendelseId)) {
                     personhendelseService.håndterPersonhendelse(personhendelse)
+                } else {
+                    logger.info("Har håndtert hendelse: ${personhendelse.hendelseId} - går videre")
                 }
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
@@ -62,18 +64,16 @@ class PersonhendelseListener(
         }
     }
 
-    /* -- Behold denne utkommenterte koden! Kjekt å kunne lese fra start ved behov for debugging i preprod
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
         callback: ConsumerSeekAware.ConsumerSeekCallback
     ) {
         logger.info("overrided onPartitionsAssigned seekToBeginning")
         assignments.keys.stream()
-            .filter { it.topic() == "aapen-person-pdl-leesah-v1" }
+            .filter { it.topic() == "leesah-v1" }
             .forEach {
-                callback.seekToEnd("aapen-person-pdl-leesah-v1", it.partition())
-                // callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
+                //callback.seekToEnd("aapen-person-pdl-leesah-v1", it.partition())
+                callback.seekToBeginning("aapen-person-pdl-leesah-v1", it.partition())
             }
     }
-     */
 }
