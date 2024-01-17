@@ -181,7 +181,7 @@
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-validation-spring-test</artifactId>
-            <version>${no.nav.security}</version>
+            <version>${nav.security.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
