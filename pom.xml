@@ -38,7 +38,7 @@
         <kontrakter.version>3.0_20240109111848_d97569f</kontrakter.version>
         <eksterne-kontrakter.version>2.0_20231204084919_2a567e5</eksterne-kontrakter.version>
         <felles.version>2.20240112101059_13c2d3f</felles.version>
-        <token-validation-spring-test.version>3.0.4</token-validation-spring-test.version> <!-- Denne burde være samme versjon som i felles -->
+        <nav.security.version>3.2.0</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.1</wiremock.version>
         <mockk-jvm.version>1.13.9</mockk-jvm.version>
@@ -133,6 +133,16 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-client-core</artifactId>
+            <version>${nav.security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-client-spring</artifactId>
+            <version>${nav.security.version}</version>
+        </dependency>
         <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -171,7 +181,7 @@
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-validation-spring-test</artifactId>
-            <version>${token-validation-spring-test.version}</version>
+            <version>${no.nav.security}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
