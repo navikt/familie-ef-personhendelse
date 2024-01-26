@@ -17,6 +17,6 @@ En allerede opprettet oppgave oppdateres hvis det for eksempel oppstår en korre
 | Dødsfall | Oppretter oppgave hvis det har oppstått dødsfall ifm person eller fødsel.                                                                                                                            |  
 | Opphør, annulering, og korreksjon | Hvis det er registrert en tidligere personhendelse, og hvis tilknyttet oppgave er åpen, så oppdateres tilhørende oppgave hvis endringstypen er opphør, annulering, eller korreksjon. Dette gjelder ikke sivilstand. |  
 
-##### Kode generert av GitHub Copilot
+### Kode generert av GitHub Copilot
 
 Dette repoet kan ha brukt GitHub Copilot til å generere kode.
