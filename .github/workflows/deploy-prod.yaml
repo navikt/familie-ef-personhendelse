@@ -6,6 +6,11 @@ on:
 env:
   IMAGE: ghcr.io/navikt/familie-ef-personhendelse:${{ github.sha }}
 
+permissions:
+  contents: "read"
+  id-token: "write"
+  packages: "write"
+
 jobs:
   build:
     name: Build and push docker image
@@ -40,14 +45,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Deploy til dev-gcp
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: .deploy/preprod.yaml
       - name: Deploy til prod-gcp
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: .deploy/prod.yaml
