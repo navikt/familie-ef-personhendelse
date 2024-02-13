@@ -7,7 +7,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class KontantstøtteVedtakService(val efSakClient: SakClient, val oppgaveClient: OppgaveClient) {
+class KontantstøtteVedtakService(
+    private val efSakClient: SakClient,
+    private val oppgaveClient: OppgaveClient,
+    private val kontantstøtteVedtakRepository: KontantstøtteVedtakRepository,
+) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -23,5 +27,13 @@ class KontantstøtteVedtakService(val efSakClient: SakClient, val oppgaveClient:
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
         oppgaveClient.leggOppgaveIMappe(oppgaveId)
         logger.info("Oppgave for kontantstøttevedtak opprettet med oppgaveId=$oppgaveId")
+    }
+
+    fun lagreKontantstøttehendelse(behandlingId: String) {
+        kontantstøtteVedtakRepository.lagreKontantstøttevedtak(behandlingId)
+    }
+    
+    fun erAlleredeHåndtert(behandlingId: String): Boolean {
+        return kontantstøtteVedtakRepository.harAlleredeProsessertKontantstøttevedtak(behandlingId)
     }
 }
