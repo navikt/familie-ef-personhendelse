@@ -5,7 +5,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.ZonedDateTime
 import no.nav.familie.eksterne.kontrakter.BehandlingType
 import no.nav.familie.eksterne.kontrakter.BehandlingÅrsak
 import no.nav.familie.eksterne.kontrakter.Kategori
@@ -16,6 +15,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.kafka.support.Acknowledgment
+import java.time.ZonedDateTime
 
 class KontantstøtteVedtakListenerTest {
     private val kontantstøtteVedtakServiceMock = mockk<KontantstøtteVedtakService>()
@@ -32,7 +32,7 @@ class KontantstøtteVedtakListenerTest {
         kompetanseperioder = listOf(),
         funksjonellId = "veri",
         behandlingÅrsak = BehandlingÅrsak.SØKNAD,
-        vilkårResultater = listOf()
+        vilkårResultater = listOf(),
     )
 
     val vedtakDvhAsJson = objectMapper.writeValueAsString(vedtakDvh)

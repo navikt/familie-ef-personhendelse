@@ -1,10 +1,10 @@
 package no.nav.familie.ef.personhendelse.kontantstøtte.vedtak
 
-import java.util.UUID
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.UUID
 
 class KontantstøtteVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
@@ -19,12 +19,12 @@ class KontantstøtteVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
         assertThat(
             kontantstøtteVedtakRepository.harAlleredeProsessertKontantstøttevedtak(
-                behandlingAlleredeHåndtert
-            )
+                behandlingAlleredeHåndtert,
+            ),
         ).isTrue()
 
         assertThat(
-            kontantstøtteVedtakRepository.harAlleredeProsessertKontantstøttevedtak(behandlingIkkeHåndtert)
+            kontantstøtteVedtakRepository.harAlleredeProsessertKontantstøttevedtak(behandlingIkkeHåndtert),
         ).isFalse()
     }
 }

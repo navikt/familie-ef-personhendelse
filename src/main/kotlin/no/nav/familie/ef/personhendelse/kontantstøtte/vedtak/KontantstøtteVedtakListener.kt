@@ -29,7 +29,7 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         try {
             logger.info("Leser vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
             if (erAlleredeHåndtert(vedtakhendelse)) {
-               logger.info("Har allerede håndtert kontantstøttevedtak med behandlingId=${vedtakhendelse.behandlingsId}")
+                logger.info("Har allerede håndtert kontantstøttevedtak med behandlingId=${vedtakhendelse.behandlingsId}")
             } else {
                 opprettOppgaveHvisPersonHarLøpendeBarnetilsyn(vedtakhendelse.person.personIdent, vedtakhendelse.behandlingsId)
             }

@@ -18,7 +18,7 @@ class IntegrasjonstestConfig {
     fun oAuth2AccessTokenServiceMock(): OAuth2AccessTokenService {
         val tokenMockService = mockk<OAuth2AccessTokenService>()
         every { tokenMockService.getAccessToken(any()) }
-            .returns(OAuth2AccessTokenResponse("Mock-token-response", 60, 60, null))
+            .returns(OAuth2AccessTokenResponse("Mock-token-response", 60, 60, emptyMap()))
         return tokenMockService
     }
 }
