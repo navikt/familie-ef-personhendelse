@@ -32,7 +32,7 @@ class KontantstøtteVedtakService(
     fun lagreKontantstøttehendelse(behandlingId: String) {
         kontantstøtteVedtakRepository.lagreKontantstøttevedtak(behandlingId)
     }
-    
+
     fun erAlleredeHåndtert(behandlingId: String): Boolean {
         return kontantstøtteVedtakRepository.harAlleredeProsessertKontantstøttevedtak(behandlingId)
     }
