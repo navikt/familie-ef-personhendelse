@@ -25,10 +25,10 @@ spec:
     max: 2
   resources:
     limits:
-      memory: 1024Mi
+      memory: 768Mi
     requests:
-      memory: 512Mi
-      cpu: 500m
+      memory: 256Mi
+      cpu: 50m
   secureLogs:
     enabled: true
   env:
