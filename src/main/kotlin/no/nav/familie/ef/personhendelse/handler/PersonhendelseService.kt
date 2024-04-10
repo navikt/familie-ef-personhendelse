@@ -156,13 +156,11 @@ class PersonhendelseService(
                     oppgave.opphørtEllerAnnullertBeskrivelse(),
                     StatusEnum.FEILREGISTRERT,
                 )
-
                 Endringstype.OPPHOERT -> oppdater(
                     oppgave,
                     oppgave.opphørtEllerAnnullertBeskrivelse(),
                     StatusEnum.FERDIGSTILT,
                 )
-
                 Endringstype.KORRIGERT -> oppdater(oppgave, oppgave.korrigertBeskrivelse(), oppgave.status)
                 else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
             }
