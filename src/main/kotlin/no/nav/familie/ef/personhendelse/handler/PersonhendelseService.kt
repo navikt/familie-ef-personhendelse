@@ -84,6 +84,7 @@ class PersonhendelseService(
                 oppgaveInformasjon.beskrivelse,
                 personIdent,
             )
+
             is UtsettDødsfallOppgave -> dødsfallOppgaveService.lagreDødsfallOppgave(
                 personhendelse,
                 handlers[personhendelse.opplysningstype]?.type ?: error("Kunne ikke finne personopplysningstype"),
@@ -156,11 +157,13 @@ class PersonhendelseService(
                     oppgave.opphørtEllerAnnullertBeskrivelse(),
                     StatusEnum.FEILREGISTRERT,
                 )
+
                 Endringstype.OPPHOERT -> oppdater(
                     oppgave,
                     oppgave.opphørtEllerAnnullertBeskrivelse(),
                     StatusEnum.FERDIGSTILT,
                 )
+
                 Endringstype.KORRIGERT -> oppdater(oppgave, oppgave.korrigertBeskrivelse(), oppgave.status)
                 else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
             }
@@ -171,7 +174,11 @@ class PersonhendelseService(
             logger.info("Ny oppgave=$nyOppgaveId ifm en allerede lukket oppgave er opprettet med oppgaveId=${oppgave.id}")
             oppgaveClient.leggOppgaveIMappe(nyOppgaveId)
         }
-        lagreHendelse(UUID.fromString(personhendelse.hendelseId), oppgave.id!!, personhendelse.endringstype)
+        lagreHendelse(
+            UUID.fromString(personhendelse.hendelseId),
+            oppgave.id ?: error("Kunne ikke finne oppgaveId for personhendelse: ${personhendelse.hendelseId}"),
+            personhendelse.endringstype,
+        )
     }
 
     private fun oppdater(oppgave: Oppgave, beskrivelse: String, status: StatusEnum?): Long {
