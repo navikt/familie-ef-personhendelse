@@ -5,15 +5,16 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
+import io.mockk.verify
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
+import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
 import no.nav.familie.ef.personhendelse.generated.hentperson.Foedsel
 import no.nav.familie.ef.personhendelse.generated.hentperson.ForelderBarnRelasjon
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
@@ -24,15 +25,16 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.UUID
 
-class DodsfallHandlerTest {
+class DødsfallHandlerTest {
 
     private val sakClient = mockk<SakClient>()
     private val pdlClient = mockk<PdlClient>()
     private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
+    private val dødsfallOppgaveService = mockk<DødsfallOppgaveService>()
 
     private val handler = DodsfallHandler(pdlClient)
-    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository)
+    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, dødsfallOppgaveService)
 
     private val personIdentUtenRelasjoner = "12345612344"
     private val personIdentMor = "12345612345"
@@ -60,7 +62,7 @@ class DodsfallHandlerTest {
     }
 
     @Test
-    fun `Opprett oppgave dersom person har sak i ef-sak uavhengig av relasjoner`() {
+    fun `lagre hendelse for senere opprettelse dersom person har sak i ef-sak uavhengig av relasjoner`() {
         val personhendelse = Personhendelse()
         personhendelse.doedsfall = Doedsfall(LocalDate.of(2021, 8, 1))
         personhendelse.opplysningstype = PersonhendelseType.DØDSFALL.hendelsetype
@@ -71,16 +73,16 @@ class DodsfallHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
+        every { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) } just runs
 
         service.håndterPersonhendelse(personhendelse)
 
-        assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
-        assertThat(oppgaveRequestSlot.captured.beskrivelse).isEqualTo("Personhendelse: Dødsfall med dødsdato: 01.08.2021")
-        assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdentUtenRelasjoner)
+        assertThat(oppgaveRequestSlot.isCaptured).isFalse()
+        verify { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) }
     }
 
     @Test
-    fun `Opprett oppgave ved dødsfall for personer under 19 med forelder med løpende ef-sak`() {
+    fun `lagre hendelse for senere opprettelse ved dødsfall for personer under 19 med forelder med løpende ef-sak`() {
         val personhendelse = Personhendelse()
         personhendelse.doedsfall = Doedsfall(LocalDate.of(2021, 8, 1))
         personhendelse.opplysningstype = PersonhendelseType.DØDSFALL.hendelsetype
@@ -92,14 +94,14 @@ class DodsfallHandlerTest {
         every { sakClient.harLøpendeStønad(setOf(personIdentBarn)) } returns false
         every { sakClient.harLøpendeStønad(setOf(personIdentMor)) } returns true
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
+        every { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) } just runs
 
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
 
         service.håndterPersonhendelse(personhendelse)
 
-        assertThat(oppgaveRequestSlot.captured.oppgavetype).isEqualTo(Oppgavetype.VurderLivshendelse)
-        assertThat(oppgaveRequestSlot.captured.beskrivelse).isEqualTo("Personhendelse: Dødsfall med dødsdato: 01.08.2021")
-        assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdentMor)
+        assertThat(oppgaveRequestSlot.isCaptured).isFalse()
+        verify { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) }
     }
 }

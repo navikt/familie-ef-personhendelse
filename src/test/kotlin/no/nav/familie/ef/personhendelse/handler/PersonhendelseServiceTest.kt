@@ -11,6 +11,8 @@ import io.mockk.verify
 import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgave
+import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
@@ -30,10 +32,11 @@ internal class PersonhendelseServiceTest {
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
+    private val dødsfallOppgaveService = mockk<DødsfallOppgaveService>()
     private val dummyHandler: DummyHandler = DummyHandler()
 
     private val personhendelseService =
-        PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository)
+        PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository, dødsfallOppgaveService)
 
     private val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
 
@@ -70,7 +73,7 @@ internal class PersonhendelseServiceTest {
 
         personhendelseService.håndterPersonhendelse(personhendelse)
 
-        assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(dummyHandler.lagOppgaveBeskrivelse(personhendelse).beskrivelse)
+        assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(dummyHandler.lagOppgaveInformasjon(personhendelse).beskrivelse)
     }
 
     @Test
@@ -125,6 +128,23 @@ internal class PersonhendelseServiceTest {
     }
 
     @Test
+    fun `henting og opprettelse av ukesgammel hendelse`() {
+        val dødsfallOppgave = DødsfallOppgave(UUID.randomUUID(), "123", "beskrivelse", PersonhendelseType.DØDSFALL, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1), null)
+
+        every { dødsfallOppgaveService.hentAlleDødsfallsOppgaver() } returns listOf(dødsfallOppgave)
+        every { dødsfallOppgaveService.settDødsfalloppgaverTilUtført(any()) } just runs
+
+        personhendelseService.opprettOppgaverAvUkesgamleDødsfallhendelser()
+
+        verify { dødsfallOppgaveService.hentAlleDødsfallsOppgaver() }
+        verify { dødsfallOppgaveService.settDødsfalloppgaverTilUtført(any()) }
+
+        assertThat(oppgaveRequestSlot.captured.ident!!.ident).isEqualTo(dødsfallOppgave.personId)
+        assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(dødsfallOppgave.beskrivelse)
+        verify { oppgaveClient.opprettOppgave(any()) }
+    }
+
+    @Test
     internal fun `korrigert hendelse skal opprette oppgave på forrige oppgave sin ident`() {
         val personhendelse = personhendelse(Endringstype.KORRIGERT)
         val hendelse = Hendelse(UUID.randomUUID(), 100L, Endringstype.OPPRETTET, LocalDateTime.now())
@@ -150,7 +170,7 @@ internal class PersonhendelseServiceTest {
 
         override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
 
-        override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OpprettOppgave {
+        override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OpprettOppgave {
             return OpprettOppgave(beskrivelse = "Dummy handler")
         }
     }

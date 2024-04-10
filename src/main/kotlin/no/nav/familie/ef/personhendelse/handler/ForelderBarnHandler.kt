@@ -19,7 +19,7 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
 
     override val type = PersonhendelseType.FORELDERBARNRELASJON
 
-    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveInformasjon {
+    override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon {
         val personIdent = personhendelse.identerUtenAktørId().first()
         val nyeBarnForBruker = sakClient.finnNyeBarnForBruker(PersonIdent(personIdent))
         if (nyeBarnForBruker.nyeBarn.isEmpty() || personhendelse.forelderBarnRelasjon.relatertPersonsRolle != "BARN") {

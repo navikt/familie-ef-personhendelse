@@ -133,3 +133,4 @@ FAMILIE_EF_VEDTAK_TOPIC: teamfamilie.aapen-ensligforsorger-iverksatt-vedtak
 FAMILIE_KS_VEDTAK_TOPIC: teamfamilie.aapen-kontantstotte-vedtak-v1
 
 INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 4 6 * * # kl 04:00 den 6. hver måned
+OPPGAVERDØDSFALL_CRON_EXPRESSION: 0 5 * * 1 * # kl 05:00 på mandager

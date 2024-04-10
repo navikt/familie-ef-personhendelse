@@ -5,13 +5,14 @@ import no.nav.person.pdl.leesah.Personhendelse
 
 sealed class OppgaveInformasjon
 data class OpprettOppgave(val beskrivelse: String) : OppgaveInformasjon()
+data class UtsettDødsfallOppgave(val beskrivelse: String) : OppgaveInformasjon()
 object IkkeOpprettOppgave : OppgaveInformasjon()
 
 interface PersonhendelseHandler {
 
     val type: PersonhendelseType
 
-    fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveInformasjon
+    fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon
 
     /**
      * Returnerer en liste med personidenter for hver person som vi skal kontrollere

@@ -5,11 +5,11 @@ import no.nav.person.pdl.leesah.Personhendelse
 import org.springframework.stereotype.Component
 
 @Component
-class DøfødtBarnHandler : PersonhendelseHandler {
+class DødfødtBarnHandler : PersonhendelseHandler {
 
     override val type = PersonhendelseType.DØDFØDT_BARN
 
-    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveInformasjon {
-        return OpprettOppgave(beskrivelse = "Døfødt barn ${personhendelse.doedfoedtBarn.dato.tilNorskDatoformat()}")
+    override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon {
+        return UtsettDødsfallOppgave(beskrivelse = "Dødfødt barn ${personhendelse.doedfoedtBarn.dato.tilNorskDatoformat()}")
     }
 }
