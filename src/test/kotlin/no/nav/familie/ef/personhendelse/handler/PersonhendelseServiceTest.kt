@@ -131,12 +131,12 @@ internal class PersonhendelseServiceTest {
     fun `henting og opprettelse av ukesgammel hendelse`() {
         val dødsfallOppgave = DødsfallOppgave(UUID.randomUUID(), "123", "beskrivelse", PersonhendelseType.DØDSFALL, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1), null)
 
-        every { dødsfallOppgaveService.hentAlleDødsfallsOppgaver() } returns listOf(dødsfallOppgave)
+        every { dødsfallOppgaveService.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid() } returns listOf(dødsfallOppgave)
         every { dødsfallOppgaveService.settDødsfalloppgaverTilUtført(any()) } just runs
 
         personhendelseService.opprettOppgaverAvUkesgamleDødsfallhendelser()
 
-        verify { dødsfallOppgaveService.hentAlleDødsfallsOppgaver() }
+        verify { dødsfallOppgaveService.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid() }
         verify { dødsfallOppgaveService.settDødsfalloppgaverTilUtført(any()) }
 
         assertThat(oppgaveRequestSlot.captured.ident!!.ident).isEqualTo(dødsfallOppgave.personId)

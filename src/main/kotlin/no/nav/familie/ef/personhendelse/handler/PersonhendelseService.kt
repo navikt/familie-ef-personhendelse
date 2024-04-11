@@ -96,7 +96,7 @@ class PersonhendelseService(
 
     @Transactional
     fun opprettOppgaverAvUkesgamleDødsfallhendelser() {
-        val dødsfallOppgaver = dødsfallOppgaveService.hentAlleDødsfallsOppgaver()
+        val dødsfallOppgaver = dødsfallOppgaveService.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid()
         dødsfallOppgaver.forEach { dødsfallOppgave ->
             opprettOppgave(
                 dødsfallOppgave.hendelsesId,

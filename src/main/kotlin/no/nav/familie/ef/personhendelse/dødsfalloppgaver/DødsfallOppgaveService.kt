@@ -20,7 +20,7 @@ class DødsfallOppgaveService(
             LocalDateTime.now(),
         )
     }
-    fun hentAlleDødsfallsOppgaver(): List<DødsfallOppgave> {
+    fun hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid(): List<DødsfallOppgave> {
         return dødsfallOppgaveRepository.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid()
     }
     fun settDødsfalloppgaverTilUtført(oppgaver: List<DødsfallOppgave>) {
