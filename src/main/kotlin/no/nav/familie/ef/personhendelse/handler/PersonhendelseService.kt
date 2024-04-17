@@ -84,7 +84,6 @@ class PersonhendelseService(
                 oppgaveInformasjon.beskrivelse,
                 personIdent,
             )
-
             is UtsettDødsfallOppgave -> dødsfallOppgaveService.lagreDødsfallOppgave(
                 personhendelse,
                 handlers[personhendelse.opplysningstype]?.type ?: error("Kunne ikke finne personopplysningstype"),
