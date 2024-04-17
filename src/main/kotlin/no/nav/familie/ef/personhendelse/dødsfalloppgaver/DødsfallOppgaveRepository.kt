@@ -54,7 +54,7 @@ class DødsfallOppgaveRepository(val namedParameterJdbcTemplate: NamedParameterJ
 
     fun hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid(): List<DødsfallOppgave> {
         val sql =
-            "SELECT * FROM dødsfalloppgave WHERE hendelsestid <= (NOW() - INTERVAL '1 week') AND opprettetoppgavetid IS NULL"
+            "SELECT * FROM dødsfalloppgave WHERE hendelsestid <= (NOW() - INTERVAL '10 minutes') AND opprettetoppgavetid IS NULL"
         return namedParameterJdbcTemplate.query(sql, dødsfallOppgaveMapper)
     }
 
