@@ -46,6 +46,7 @@ abstract class IntegrasjonSpringRunnerTest {
     private fun resetDatabase() {
         namedParameterJdbcTemplate.update("TRUNCATE TABLE hendelse CASCADE", MapSqlParameterSource())
         namedParameterJdbcTemplate.update("TRUNCATE TABLE efvedtakhendelse CASCADE", MapSqlParameterSource())
+        namedParameterJdbcTemplate.update("TRUNCATE TABLE dødsfalloppgave CASCADE", MapSqlParameterSource())
     }
 
     private fun resetWiremockServers() {

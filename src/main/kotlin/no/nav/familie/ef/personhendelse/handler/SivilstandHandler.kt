@@ -16,7 +16,7 @@ class SivilstandHandler : PersonhendelseHandler {
 
     override val type = PersonhendelseType.SIVILSTAND
 
-    override fun lagOppgaveBeskrivelse(personhendelse: Personhendelse): OppgaveInformasjon {
+    override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon {
         val sivilstand = personhendelse.sivilstand
         val gyldigFraOgMed = sivilstand.gyldigFraOgMed ?: sivilstand.bekreftelsesdato
         if (personhendelse.sivilstandNotNull()) {

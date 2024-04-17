@@ -64,3 +64,4 @@ spec:
         databases:
           - name: familie-ef-personhendelse
             envVarPrefix: DB
+  leaderElection: true

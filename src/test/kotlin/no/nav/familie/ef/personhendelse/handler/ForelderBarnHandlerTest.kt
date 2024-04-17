@@ -7,6 +7,7 @@ import io.mockk.verify
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
+import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.ef.personhendelse.NyeBarnDto
@@ -30,9 +31,10 @@ class ForelderBarnHandlerTest {
     private val person = mockk<Person>()
     private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>(relaxed = true)
+    private val dødsfallOppgaveService = mockk<DødsfallOppgaveService>()
 
     private val handler = ForelderBarnHandler(sakClient)
-    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository)
+    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, dødsfallOppgaveService)
 
     private val personIdent = "12345612344"
 
