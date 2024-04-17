@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.dødsfalloppgaver
 
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
+import no.nav.familie.leader.LeaderClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -13,7 +14,9 @@ class DødsfallOppgaveScheduler(val personhendelseService: PersonhendelseService
 
     @Scheduled(cron = "\${OPPGAVERDØDSFALL_CRON_EXPRESSION}")
     fun opprettForsinkedeOppgaver() {
-        logger.info("Cron scheduler starter for opprettelse av oppgaver ifm dødsfall")
-        personhendelseService.opprettOppgaverAvUkesgamleDødsfallhendelser()
+        if (LeaderClient.isLeader() == true) {
+            logger.info("Cron scheduler starter for opprettelse av oppgaver ifm dødsfall")
+            personhendelseService.opprettOppgaverAvUkesgamleDødsfallhendelser()
+        }
     }
 }
