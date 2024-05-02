@@ -115,4 +115,32 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
         hentInntektsendringer = efVedtakRepository.hentInntektsendringerSomSkalHaOppgave()
         Assertions.assertThat(hentInntektsendringer.isEmpty()).isTrue
     }
+
+    @Test
+    fun `lagre inntektsendringer og hent vedtak for uføretrygd`() {
+        val inntektsendring = Inntektsendring(
+            BeregningResultat(150, 15, 10000),
+            BeregningResultat(250, 10, 5000),
+            BeregningResultat(350, 25, 2500),
+            BeregningResultat(500, 35, 12000),
+        )
+        efVedtakRepository.lagreVedtakOgInntektsendringForPersonIdent(
+            "1",
+            true,
+            "sykepenger, ufoeretrygd",
+            inntektsendring,
+        )
+        efVedtakRepository.lagreVedtakOgInntektsendringForPersonIdent(
+            "2",
+            true,
+            "sykepenger",
+            inntektsendring,
+        )
+
+        var hentInntektsendringer = efVedtakRepository.hentInntektsendringerForUføretrygd()
+        Assertions.assertThat(hentInntektsendringer.size).isEqualTo(1)
+
+        val inntektsendringMedNyYtelseForUføretrygd = hentInntektsendringer.first()
+        Assertions.assertThat(inntektsendringMedNyYtelseForUføretrygd.nyeYtelser).contains("ufoeretrygd")
+    }
 }

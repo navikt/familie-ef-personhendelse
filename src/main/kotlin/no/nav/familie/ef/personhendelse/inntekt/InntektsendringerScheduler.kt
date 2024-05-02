@@ -15,5 +15,6 @@ class InntektsendringerScheduler(val vedtakendringerService: VedtakendringerServ
         logger.info("Cron scheduler starter inntektskontroll")
         vedtakendringerService.beregnInntektsendringerOgLagreIDb()
         vedtakendringerService.opprettOppgaverForInntektsendringer(true)
+        vedtakendringerService.opprettOppgaverForNyeVedtakUføretrygd()
     }
 }

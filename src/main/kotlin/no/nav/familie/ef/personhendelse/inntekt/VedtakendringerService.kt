@@ -79,12 +79,19 @@ class VedtakendringerService(
         val inntektsendringer = efVedtakRepository.hentInntektsendringerSomSkalHaOppgave()
         if (skalOppretteOppgave) {
             inntektsendringer.forEach {
-                opprettOppgaveForInntektsendring(it)
+                opprettOppgaveForInntektsendring(it, lagOppgavetekstForInntektsendring(it))
             }
         } else {
             logger.info("Ville opprettet inntektsendring-oppgave for ${inntektsendringer.size} personer")
         }
         return inntektsendringer.size
+    }
+
+    fun opprettOppgaverForNyeVedtakUføretrygd() {
+        val nyeUføretrygdVedtak = efVedtakRepository.hentInntektsendringerForUføretrygd()
+        nyeUføretrygdVedtak.forEach {
+            opprettOppgaveForInntektsendring(it, lagOppgavetekstVedNyYtelseUføretrygd())
+        }
     }
 
     fun nyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): List<String>? {
@@ -135,6 +142,7 @@ class VedtakendringerService(
 
     private fun opprettOppgaveForInntektsendring(
         inntektOgVedtakEndring: InntektOgVedtakEndring,
+        beskrivelse: String,
     ) {
         // val oppgavetekst = lagOppgavetekst(harNyeVedtak, inntektsendringToMånederInntekt >= 10 && inntektsendringForrigeMåned >= 10)
         val oppgaveId = oppgaveClient.opprettOppgave(
@@ -147,7 +155,7 @@ class VedtakendringerService(
                 tema = Tema.ENF,
                 oppgavetype = Oppgavetype.VurderInntekt,
                 fristFerdigstillelse = fristFerdigstillelse(),
-                beskrivelse = lagOppgavetekstForInntektsendring(inntektOgVedtakEndring),
+                beskrivelse = beskrivelse,
                 enhetsnummer = arbeidsfordelingClient.hentArbeidsfordelingEnhetId(inntektOgVedtakEndring.personIdent),
                 behandlingstema = null, // Gjelder-feltet i Gosys
                 tilordnetRessurs = null,
@@ -171,6 +179,10 @@ class VedtakendringerService(
         val oppgavetekst = "Uttrekksperiode: $periodeTekst \n" +
             "Beregnet feilutbetaling i uttrekksperioden: ${totalFeilutbetaling.tusenskille()} kroner "
         return oppgavetekst
+    }
+
+    fun lagOppgavetekstVedNyYtelseUføretrygd(): String {
+        return "Bruker har fått utbetalt uføretrygd. Vurder samordning."
     }
 
     private fun YearMonth.norskFormat() = this.format(DateTimeFormatter.ofPattern("MM.yyyy"))
