@@ -136,6 +136,12 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
             "sykepenger",
             inntektsendring,
         )
+        efVedtakRepository.lagreVedtakOgInntektsendringForPersonIdent(
+            "2",
+            false,
+            "sykepenger, ufoeretrygd",
+            inntektsendring,
+        )
 
         var hentInntektsendringer = efVedtakRepository.hentInntektsendringerForUføretrygd()
         Assertions.assertThat(hentInntektsendringer.size).isEqualTo(1)

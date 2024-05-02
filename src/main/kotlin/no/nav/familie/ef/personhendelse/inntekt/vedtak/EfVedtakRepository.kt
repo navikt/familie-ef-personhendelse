@@ -117,7 +117,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
     }
 
     fun hentInntektsendringerForUføretrygd(): List<InntektOgVedtakEndring> {
-        val sql = "select * from inntektsendringer where ny_ytelse_type like '%ufoeretrygd%'"
+        val sql = "SELECT * FROM inntektsendringer WHERE harnyttvedtak is TRUE AND ny_ytelse_type like '%ufoeretrygd%'"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
