@@ -21,6 +21,7 @@ class InntektController(val vedtakendringer: VedtakendringerService) {
     @GetMapping("/opprettOppgaver")
     fun opprettOppgaverForInntektsendringer(@RequestParam skalOppretteOppgaver: Boolean): ResponseEntity<Int> {
         val antallOppgaver = vedtakendringer.opprettOppgaverForInntektsendringer(skalOppretteOppgaver)
+        vedtakendringer.opprettOppgaverForNyeVedtakUføretrygd()
         return ResponseEntity.ok(antallOppgaver)
     }
 }
