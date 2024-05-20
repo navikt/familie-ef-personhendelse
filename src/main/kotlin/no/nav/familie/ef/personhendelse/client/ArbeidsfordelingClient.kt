@@ -14,11 +14,11 @@ class ArbeidsfordelingClient(
     @Qualifier("azure") restOperations: RestOperations,
     @Value("\${FAMILIE_INTEGRASJONER_API_URL}") private val integrasjonUri: String,
 ) : AbstractRestClient(restOperations, "familie.integrasjoner") {
-
     private val hentBehandlendeEnhetMedRelasjonerUrl = "$integrasjonUri/api/arbeidsfordeling/enhet/ENF/med-relasjoner"
 
     fun hentArbeidsfordelingEnhetId(ident: String): String? {
-        val response = postForEntity<Ressurs<List<Arbeidsfordelingsenhet>>>(URI.create(hentBehandlendeEnhetMedRelasjonerUrl), PersonIdent(ident))
+        val response =
+            postForEntity<Ressurs<List<Arbeidsfordelingsenhet>>>(URI.create(hentBehandlendeEnhetMedRelasjonerUrl), PersonIdent(ident))
         return response.data?.firstOrNull()?.enhetId
     }
 }

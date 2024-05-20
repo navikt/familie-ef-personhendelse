@@ -30,7 +30,6 @@ class VedtakendringerService(
     val arbeidsfordelingClient: ArbeidsfordelingClient,
     val inntektsendringerService: InntektsendringerService,
 ) {
-
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
@@ -108,13 +107,14 @@ class VedtakendringerService(
     }
 
     private fun offentligeYtelser(nyesteRegistrerteInntekt: List<InntektVersjon>?): List<String>? {
-        val offentligYtelseInntekt = nyesteRegistrerteInntekt?.filter {
-            it.arbeidsInntektInformasjon.inntektListe?.any { offentligYtelse ->
-                offentligYtelse.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
-                    offentligYtelse.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
+        val offentligYtelseInntekt =
+            nyesteRegistrerteInntekt?.filter {
+                it.arbeidsInntektInformasjon.inntektListe?.any { offentligYtelse ->
+                    offentligYtelse.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
+                        offentligYtelse.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
+                }
+                    ?: false
             }
-                ?: false
-        }
 
         val nyesteVersjon = offentligYtelseInntekt?.maxOfOrNull { it.versjon }
 
@@ -145,39 +145,43 @@ class VedtakendringerService(
         beskrivelse: String,
     ) {
         // val oppgavetekst = lagOppgavetekst(harNyeVedtak, inntektsendringToMånederInntekt >= 10 && inntektsendringForrigeMåned >= 10)
-        val oppgaveId = oppgaveClient.opprettOppgave(
-            OpprettOppgaveRequest(
-                ident = OppgaveIdentV2(
-                    ident = inntektOgVedtakEndring.personIdent,
-                    gruppe = IdentGruppe.FOLKEREGISTERIDENT,
+        val oppgaveId =
+            oppgaveClient.opprettOppgave(
+                OpprettOppgaveRequest(
+                    ident =
+                        OppgaveIdentV2(
+                            ident = inntektOgVedtakEndring.personIdent,
+                            gruppe = IdentGruppe.FOLKEREGISTERIDENT,
+                        ),
+                    saksId = null,
+                    tema = Tema.ENF,
+                    oppgavetype = Oppgavetype.VurderInntekt,
+                    fristFerdigstillelse = fristFerdigstillelse(),
+                    beskrivelse = beskrivelse,
+                    enhetsnummer = arbeidsfordelingClient.hentArbeidsfordelingEnhetId(inntektOgVedtakEndring.personIdent),
+                    behandlingstema = null, // Gjelder-feltet i Gosys
+                    tilordnetRessurs = null,
+                    behandlesAvApplikasjon = null,
                 ),
-                saksId = null,
-                tema = Tema.ENF,
-                oppgavetype = Oppgavetype.VurderInntekt,
-                fristFerdigstillelse = fristFerdigstillelse(),
-                beskrivelse = beskrivelse,
-                enhetsnummer = arbeidsfordelingClient.hentArbeidsfordelingEnhetId(inntektOgVedtakEndring.personIdent),
-                behandlingstema = null, // Gjelder-feltet i Gosys
-                tilordnetRessurs = null,
-                behandlesAvApplikasjon = null,
-            ),
-        )
+            )
         secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
     fun lagOppgavetekstForInntektsendring(inntektOgVedtakEndring: InntektOgVedtakEndring): String {
-        val totalFeilutbetaling = inntektOgVedtakEndring.inntektsendringFireMånederTilbake.feilutbetaling +
-            inntektOgVedtakEndring.inntektsendringTreMånederTilbake.feilutbetaling +
-            inntektOgVedtakEndring.inntektsendringToMånederTilbake.feilutbetaling +
-            inntektOgVedtakEndring.inntektsendringForrigeMåned.feilutbetaling
+        val totalFeilutbetaling =
+            inntektOgVedtakEndring.inntektsendringFireMånederTilbake.feilutbetaling +
+                inntektOgVedtakEndring.inntektsendringTreMånederTilbake.feilutbetaling +
+                inntektOgVedtakEndring.inntektsendringToMånederTilbake.feilutbetaling +
+                inntektOgVedtakEndring.inntektsendringForrigeMåned.feilutbetaling
 
         val årMånedProsessert = YearMonth.from(inntektOgVedtakEndring.prosessertTid)
 
         val periodeTekst =
             "FOM ${årMånedProsessert.minusMonths(4).norskFormat()} - TOM ${årMånedProsessert.minusMonths(1).norskFormat()}"
-        val oppgavetekst = "Uttrekksperiode: $periodeTekst \n" +
-            "Beregnet feilutbetaling i uttrekksperioden: ${totalFeilutbetaling.tusenskille()} kroner "
+        val oppgavetekst =
+            "Uttrekksperiode: $periodeTekst \n" +
+                "Beregnet feilutbetaling i uttrekksperioden: ${totalFeilutbetaling.tusenskille()} kroner "
         return oppgavetekst
     }
 
@@ -186,8 +190,13 @@ class VedtakendringerService(
     }
 
     private fun YearMonth.norskFormat() = this.format(DateTimeFormatter.ofPattern("MM.yyyy"))
+
     private fun Int.tusenskille() = String.format("%,d", this).replace(",", " ")
-    private fun lagOppgavetekst(harNyeVedtak: Boolean, harEndretInntekt: Boolean): String {
+
+    private fun lagOppgavetekst(
+        harNyeVedtak: Boolean,
+        harEndretInntekt: Boolean,
+    ): String {
         val forrigeMåned = YearMonth.now().minusMonths(1).month.tilNorsk()
         val toMånederTilbake = YearMonth.now().minusMonths(2).month.tilNorsk()
 

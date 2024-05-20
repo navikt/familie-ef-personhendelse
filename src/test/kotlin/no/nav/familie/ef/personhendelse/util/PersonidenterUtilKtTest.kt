@@ -5,7 +5,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class PersonidenterUtilKtTest {
-
     private val fnr = "11111154321"
     private val aktørId = "1245678901245"
 

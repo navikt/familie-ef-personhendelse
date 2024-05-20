@@ -23,7 +23,6 @@ class PersonhendelseListener(
     private val env: String,
     private val personhendelseService: PersonhendelseService,
 ) : ConsumerSeekAware {
-
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
@@ -33,7 +32,9 @@ class PersonhendelseListener(
         topics = ["pdl.leesah-v1"],
         containerFactory = "kafkaAivenPersonhendelseListenerContainerFactory",
     )
-    fun listen(@Payload personhendelse: Personhendelse) {
+    fun listen(
+        @Payload personhendelse: Personhendelse,
+    ) {
         try {
             MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
             val personidenter = personhendelse.identerUtenAktørId()

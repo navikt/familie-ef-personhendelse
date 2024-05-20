@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class KontantstøtteVedtakListener(val kontantstøtteVedtakService: KontantstøtteVedtakService) : ConsumerSeekAware {
-
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
     private val vurderKonsekvensOppgaveBeskrivelse =
@@ -24,7 +23,10 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         topics = ["\${FAMILIE_KS_VEDTAK_TOPIC}"],
         containerFactory = "kafkaKontantstøtteVedtakListenerContainerFactory",
     )
-    fun listen(consumerRecord: ConsumerRecord<String, String>, ack: Acknowledgment) {
+    fun listen(
+        consumerRecord: ConsumerRecord<String, String>,
+        ack: Acknowledgment,
+    ) {
         val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
         try {
             logger.info("Leser vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
@@ -50,7 +52,10 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         return kontantstøtteVedtakService.erAlleredeHåndtert(vedtakhendelse.behandlingsId)
     }
 
-    private fun opprettOppgaveHvisPersonHarLøpendeBarnetilsyn(personIdent: String, behandlingId: String) {
+    private fun opprettOppgaveHvisPersonHarLøpendeBarnetilsyn(
+        personIdent: String,
+        behandlingId: String,
+    ) {
         if (kontantstøtteVedtakService.harLøpendeBarnetilsyn(personIdent)) {
             kontantstøtteVedtakService.opprettVurderKonsekvensOppgaveForBarnetilsyn(
                 personIdent = personIdent,

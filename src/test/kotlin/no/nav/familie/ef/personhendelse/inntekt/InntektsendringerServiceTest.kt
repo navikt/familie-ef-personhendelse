@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets
 import java.time.YearMonth
 
 class InntektsendringerServiceTest {
-
     private val oppgaveClient = mockk<OppgaveClient>()
     private val sakClient = mockk<SakClient>()
 
@@ -38,78 +37,79 @@ class InntektsendringerServiceTest {
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
             inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
-        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
-            linkedMapOf(
-                Pair(
-                    YearMonth.now().minusMonths(1),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
+        val oppdatertDatoInntektshistorikkResponse =
+            InntektshistorikkResponse(
+                linkedMapOf(
+                    Pair(
+                        YearMonth.now().minusMonths(1),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    Pair(
+                        YearMonth.now().minusMonths(2),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nestNyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    Pair(
+                        YearMonth.now().minusMonths(3),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nestNyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    Pair(
+                        YearMonth.now().minusMonths(4),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nestNyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
                                 ),
                             ),
                         ),
                     ),
                 ),
-                Pair(
-                    YearMonth.now().minusMonths(2),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nestNyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                Pair(
-                    YearMonth.now().minusMonths(3),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nestNyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                Pair(
-                    YearMonth.now().minusMonths(4),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nestNyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        )
+            )
 
         val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
         val forventetInntektNiProsentLavere = (forventetLønnsinntekt * 0.91).toInt()
@@ -123,14 +123,26 @@ class InntektsendringerServiceTest {
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
+                ForventetInntektForPerson(
+                    "2",
+                    forventetInntektTiProsentLavere,
+                    forventetInntektTiProsentLavere,
+                    forventetInntektTiProsentLavere,
+                    forventetInntektTiProsentLavere,
+                ),
             ),
         ).isEqualTo(inntektsendring(3500, 11, 1575))
 
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("3", forventetInntektNiProsentLavere, forventetInntektNiProsentLavere, forventetInntektNiProsentLavere, forventetInntektNiProsentLavere),
+                ForventetInntektForPerson(
+                    "3",
+                    forventetInntektNiProsentLavere,
+                    forventetInntektNiProsentLavere,
+                    forventetInntektNiProsentLavere,
+                    forventetInntektNiProsentLavere,
+                ),
             ),
         ).isEqualTo(inntektsendring(3150, 9, 1417))
     }
@@ -143,34 +155,41 @@ class InntektsendringerServiceTest {
         val inntektInformasjonIEksempelJson =
             inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
-        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
-            linkedMapOf(
-                Pair(
-                    YearMonth.now().minusMonths(1),
-                    mapOf(
-                        Pair(
-                            "5",
-                            listOf(
-                                InntektVersjon(
-                                    inntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
+        val oppdatertDatoInntektshistorikkResponse =
+            InntektshistorikkResponse(
+                linkedMapOf(
+                    Pair(
+                        YearMonth.now().minusMonths(1),
+                        mapOf(
+                            Pair(
+                                "5",
+                                listOf(
+                                    InntektVersjon(
+                                        inntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
                                 ),
                             ),
                         ),
                     ),
                 ),
-            ),
-        )
+            )
 
         val forventetInntektTiProsentLavere = (forventetLønnsinntekt * 0.9).toInt()
 
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
                 oppdatertDatoInntektshistorikkResponse,
-                ForventetInntektForPerson("2", forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere, forventetInntektTiProsentLavere),
+                ForventetInntektForPerson(
+                    "2",
+                    forventetInntektTiProsentLavere,
+                    forventetInntektTiProsentLavere,
+                    forventetInntektTiProsentLavere,
+                    forventetInntektTiProsentLavere,
+                ),
             ).harEndretInntekt(),
         ).isFalse
     }
@@ -182,11 +201,12 @@ class InntektsendringerServiceTest {
 
         val inntektVersjonForNyesteMåned = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 2))
 
-        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
-            linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", inntektVersjonForNyesteMåned))),
-            ),
-        )
+        val oppdatertDatoInntektshistorikkResponse =
+            InntektshistorikkResponse(
+                linkedMapOf(
+                    Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", inntektVersjonForNyesteMåned))),
+                ),
+            )
         val forventetInntekt = 172_000
 
         Assertions.assertThat(
@@ -207,44 +227,45 @@ class InntektsendringerServiceTest {
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
             inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
-        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
-            linkedMapOf(
-                Pair(
-                    YearMonth.now().minusMonths(1),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
+        val oppdatertDatoInntektshistorikkResponse =
+            InntektshistorikkResponse(
+                linkedMapOf(
+                    Pair(
+                        YearMonth.now().minusMonths(1),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    Pair(
+                        YearMonth.now().minusMonths(2),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nestNyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
                                 ),
                             ),
                         ),
                     ),
                 ),
-                Pair(
-                    YearMonth.now().minusMonths(2),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nestNyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        )
+            )
 
         val forHøyInntekt = 585001
         Assertions.assertThat(
@@ -265,44 +286,45 @@ class InntektsendringerServiceTest {
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
             inntektshistorikkResponse.inntektForMåned(YearMonth.of(2021, 12)).first().arbeidsInntektInformasjon
 
-        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
-            linkedMapOf(
-                Pair(
-                    YearMonth.now().minusMonths(1),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
+        val oppdatertDatoInntektshistorikkResponse =
+            InntektshistorikkResponse(
+                linkedMapOf(
+                    Pair(
+                        YearMonth.now().minusMonths(1),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    Pair(
+                        YearMonth.now().minusMonths(2),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nestNyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
                                 ),
                             ),
                         ),
                     ),
                 ),
-                Pair(
-                    YearMonth.now().minusMonths(2),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nestNyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        )
+            )
 
         val forventetInntekt = 30000
         Assertions.assertThat(
@@ -320,11 +342,12 @@ class InntektsendringerServiceTest {
 
         val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1))
 
-        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
-            linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
-            ),
-        )
+        val oppdatertDatoInntektshistorikkResponse =
+            InntektshistorikkResponse(
+                linkedMapOf(
+                    Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+                ),
+            )
 
         val forventetInntekt = 5000
         Assertions.assertThat(
@@ -345,44 +368,45 @@ class InntektsendringerServiceTest {
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
             inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1)).first().arbeidsInntektInformasjon
 
-        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
-            linkedMapOf(
-                Pair(
-                    YearMonth.now().minusMonths(1),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
+        val oppdatertDatoInntektshistorikkResponse =
+            InntektshistorikkResponse(
+                linkedMapOf(
+                    Pair(
+                        YearMonth.now().minusMonths(1),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    Pair(
+                        YearMonth.now().minusMonths(2),
+                        mapOf(
+                            Pair(
+                                "1",
+                                listOf(
+                                    InntektVersjon(
+                                        nestNyesteArbeidsInntektInformasjonIEksempelJson,
+                                        null,
+                                        "innleveringstidspunkt",
+                                        "opplysningspliktig",
+                                        1,
+                                    ),
                                 ),
                             ),
                         ),
                     ),
                 ),
-                Pair(
-                    YearMonth.now().minusMonths(2),
-                    mapOf(
-                        Pair(
-                            "1",
-                            listOf(
-                                InntektVersjon(
-                                    nestNyesteArbeidsInntektInformasjonIEksempelJson,
-                                    null,
-                                    "innleveringstidspunkt",
-                                    "opplysningspliktig",
-                                    1,
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        )
+            )
 
         Assertions.assertThat(
             inntektsendringerService.beregnEndretInntekt(
@@ -401,23 +425,24 @@ class InntektsendringerServiceTest {
         val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 3))
         val treMånederTilbakeArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 3))
 
-        val oppdatertDatoInntektshistorikkResponse = InntektshistorikkResponse(
-            linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
-                Pair(
-                    YearMonth.now().minusMonths(2),
-                    mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson)),
+        val oppdatertDatoInntektshistorikkResponse =
+            InntektshistorikkResponse(
+                linkedMapOf(
+                    Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
+                    Pair(
+                        YearMonth.now().minusMonths(2),
+                        mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson)),
+                    ),
+                    Pair(
+                        YearMonth.now().minusMonths(3),
+                        mapOf(Pair("1", treMånederTilbakeArbeidsInntektInformasjonIEksempelJson)),
+                    ),
+                    Pair(
+                        YearMonth.now().minusMonths(4),
+                        mapOf(Pair("1", treMånederTilbakeArbeidsInntektInformasjonIEksempelJson)),
+                    ),
                 ),
-                Pair(
-                    YearMonth.now().minusMonths(3),
-                    mapOf(Pair("1", treMånederTilbakeArbeidsInntektInformasjonIEksempelJson)),
-                ),
-                Pair(
-                    YearMonth.now().minusMonths(4),
-                    mapOf(Pair("1", treMånederTilbakeArbeidsInntektInformasjonIEksempelJson)),
-                ),
-            ),
-        )
+            )
 
         val forventetInntekt = 70000
         Assertions.assertThat(
@@ -432,12 +457,20 @@ class InntektsendringerServiceTest {
         return this::class.java.classLoader.getResource(name)!!.readText(StandardCharsets.UTF_8)
     }
 
-    fun inntektsendring(beløp: Int = 0, prosent: Int = 0, feilutbetaling: Int = 0): Inntektsendring {
+    fun inntektsendring(
+        beløp: Int = 0,
+        prosent: Int = 0,
+        feilutbetaling: Int = 0,
+    ): Inntektsendring {
         val beregningsResultat = beregningResultat(beløp, prosent, feilutbetaling)
         return Inntektsendring(beregningsResultat, beregningsResultat, beregningsResultat, beregningsResultat)
     }
 
-    fun beregningResultat(beløp: Int = 0, prosent: Int = 0, feilutbetaling: Int = 0): BeregningResultat {
+    fun beregningResultat(
+        beløp: Int = 0,
+        prosent: Int = 0,
+        feilutbetaling: Int = 0,
+    ): BeregningResultat {
         return BeregningResultat(beløp, prosent, feilutbetaling)
     }
 }

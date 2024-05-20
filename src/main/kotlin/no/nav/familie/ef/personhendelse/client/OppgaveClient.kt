@@ -29,7 +29,6 @@ class OppgaveClient(
     @Value("\${FAMILIE_INTEGRASJONER_API_URL}") private val integrasjonUrl: String,
     @Qualifier("azure") restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "familie.integrasjoner") {
-
     val oppgaveUrl = "$integrasjonUrl/api/oppgave"
 
     fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long {
@@ -44,14 +43,18 @@ class OppgaveClient(
     }
 
     fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
-        val response = getForEntity<Ressurs<Oppgave>>(
-            URI.create("$oppgaveUrl/$oppgaveId"),
-            HttpHeaders().medContentTypeJsonUTF8(),
-        )
+        val response =
+            getForEntity<Ressurs<Oppgave>>(
+                URI.create("$oppgaveUrl/$oppgaveId"),
+                HttpHeaders().medContentTypeJsonUTF8(),
+            )
         return response.getDataOrThrow()
     }
 
-    fun leggOppgaveIMappe(oppgaveId: Long, mappenavnInneholder: String = "Hendelser") {
+    fun leggOppgaveIMappe(
+        oppgaveId: Long,
+        mappenavnInneholder: String = "Hendelser",
+    ) {
         val oppgave = finnOppgaveMedId(oppgaveId)
         if (oppgave.tildeltEnhetsnr == EF_ENHETNUMMER) { // Skjermede personer skal ikke puttes i mappe
             val mapperResponse = finnMapper(oppgave.tildeltEnhetsnr!!)
@@ -69,30 +72,36 @@ class OppgaveClient(
         oppgave: Oppgave,
         mappenavnInneholder: String = "Hendelser",
     ) {
-        val mappe = mapperResponse.mapper.find {
-            it.navn.contains(mappenavnInneholder, true) &&
-                !it.navn.contains("EF Sak", true)
-        } ?: error("Fant ikke mappe som inneholder mappenavn $mappenavnInneholder for uplassert oppgave")
+        val mappe =
+            mapperResponse.mapper.find {
+                it.navn.contains(mappenavnInneholder, true) &&
+                    !it.navn.contains("EF Sak", true)
+            } ?: error("Fant ikke mappe som inneholder mappenavn $mappenavnInneholder for uplassert oppgave")
         oppdaterOppgave(oppgave.copy(mappeId = mappe.id.toLong()))
     }
 
-    private fun finnMapper(enhetsnummer: String, limit: Int = 1000): FinnMappeResponseDto {
-        val response = getForEntity<Ressurs<FinnMappeResponseDto>>(
-            UriComponentsBuilder.fromUri(URI.create("$oppgaveUrl/mappe/sok"))
-                .queryParam("enhetsnr", enhetsnummer)
-                .queryParam("limit", limit)
-                .build()
-                .toUri(),
-        )
+    private fun finnMapper(
+        enhetsnummer: String,
+        limit: Int = 1000,
+    ): FinnMappeResponseDto {
+        val response =
+            getForEntity<Ressurs<FinnMappeResponseDto>>(
+                UriComponentsBuilder.fromUri(URI.create("$oppgaveUrl/mappe/sok"))
+                    .queryParam("enhetsnr", enhetsnummer)
+                    .queryParam("limit", limit)
+                    .build()
+                    .toUri(),
+            )
         return response.getDataOrThrow()
     }
 
     fun oppdaterOppgave(oppgave: Oppgave): Long {
-        val response = patchForEntity<Ressurs<OppgaveResponse>>(
-            URI.create("$oppgaveUrl".plus("/${oppgave.id!!}/oppdater")),
-            oppgave,
-            HttpHeaders().medContentTypeJsonUTF8(),
-        )
+        val response =
+            patchForEntity<Ressurs<OppgaveResponse>>(
+                URI.create("$oppgaveUrl".plus("/${oppgave.id!!}/oppdater")),
+                oppgave,
+                HttpHeaders().medContentTypeJsonUTF8(),
+            )
         return response.getDataOrThrow().oppgaveId
     }
 
@@ -101,33 +110,37 @@ class OppgaveClient(
     }
 }
 
-fun opprettVurderLivshendelseoppgave(personIdent: String, beskrivelse: String) =
-    OpprettOppgaveRequest(
-        ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
-        saksId = null,
-        tema = Tema.ENF,
-        oppgavetype = Oppgavetype.VurderLivshendelse,
-        fristFerdigstillelse = fristFerdigstillelse(),
-        beskrivelse = beskrivelse,
-        enhetsnummer = null,
-        behandlingstema = Behandlingstema.Overgangsstønad.value,
-        tilordnetRessurs = null,
-        behandlesAvApplikasjon = null,
-    )
+fun opprettVurderLivshendelseoppgave(
+    personIdent: String,
+    beskrivelse: String,
+) = OpprettOppgaveRequest(
+    ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
+    saksId = null,
+    tema = Tema.ENF,
+    oppgavetype = Oppgavetype.VurderLivshendelse,
+    fristFerdigstillelse = fristFerdigstillelse(),
+    beskrivelse = beskrivelse,
+    enhetsnummer = null,
+    behandlingstema = Behandlingstema.Overgangsstønad.value,
+    tilordnetRessurs = null,
+    behandlesAvApplikasjon = null,
+)
 
-fun lagVurderKonsekvensoppgaveForBarnetilsyn(personIdent: String, beskrivelse: String) =
-    OpprettOppgaveRequest(
-        ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
-        saksId = null,
-        tema = Tema.ENF,
-        oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
-        fristFerdigstillelse = fristFerdigstillelse(),
-        beskrivelse = beskrivelse,
-        enhetsnummer = null,
-        behandlingstema = Behandlingstema.Barnetilsyn.value,
-        tilordnetRessurs = null,
-        behandlesAvApplikasjon = null,
-    )
+fun lagVurderKonsekvensoppgaveForBarnetilsyn(
+    personIdent: String,
+    beskrivelse: String,
+) = OpprettOppgaveRequest(
+    ident = OppgaveIdentV2(ident = personIdent, gruppe = IdentGruppe.FOLKEREGISTERIDENT),
+    saksId = null,
+    tema = Tema.ENF,
+    oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
+    fristFerdigstillelse = fristFerdigstillelse(),
+    beskrivelse = beskrivelse,
+    enhetsnummer = null,
+    behandlingstema = Behandlingstema.Barnetilsyn.value,
+    tilordnetRessurs = null,
+    behandlesAvApplikasjon = null,
+)
 
 fun HttpHeaders.medContentTypeJsonUTF8(): HttpHeaders {
     this.add("Content-Type", "application/json;charset=UTF-8")

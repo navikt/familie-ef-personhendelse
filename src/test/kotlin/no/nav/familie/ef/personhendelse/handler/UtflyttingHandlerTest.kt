@@ -20,7 +20,6 @@ import java.time.LocalDate
 import java.util.UUID
 
 internal class UtflyttingHandlerTest {
-
     val sakClient = mockk<SakClient>()
     val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     val personhendelseRepository = mockk<PersonhendelseRepository>()

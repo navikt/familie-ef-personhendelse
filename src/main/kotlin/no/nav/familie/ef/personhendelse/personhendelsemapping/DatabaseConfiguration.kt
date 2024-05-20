@@ -7,7 +7,6 @@ import javax.sql.DataSource
 
 @Configuration
 class DatabaseConfiguration {
-
     @Bean
     fun namedParameterJdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate {
         return NamedParameterJdbcTemplate(dataSource)

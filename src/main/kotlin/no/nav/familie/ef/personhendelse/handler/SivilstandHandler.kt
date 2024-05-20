@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class SivilstandHandler : PersonhendelseHandler {
-
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     override val type = PersonhendelseType.SIVILSTAND
@@ -23,7 +22,9 @@ class SivilstandHandler : PersonhendelseHandler {
             logger.info("Mottatt sivilstand hendelse med verdi ${sivilstand.type} gyldigFraOgMed=$gyldigFraOgMed")
         } else {
             if (personhendelse.endringstype == Endringstype.OPPHOERT) {
-                secureLogger.error("Opphør av sivilstand uten type. HendelseId: ${personhendelse.hendelseId} tidligere hendelseId: ${personhendelse.tidligereHendelseId}")
+                secureLogger.error(
+                    "Opphør av sivilstand uten type. HendelseId: ${personhendelse.hendelseId} tidligere hendelseId: ${personhendelse.tidligereHendelseId}",
+                )
             }
             return IkkeOpprettOppgave
         }
@@ -32,8 +33,9 @@ class SivilstandHandler : PersonhendelseHandler {
             return IkkeOpprettOppgave
         }
 
-        val beskrivelse = personhendelse.endringstype.tilTekst() + " sivilstand av type \"${sivilstand.type.enumToReadable()}\", " +
-            "gyldig fra og med dato: ${gyldigFraOgMed.tilNorskDatoformat()}"
+        val beskrivelse =
+            personhendelse.endringstype.tilTekst() + " sivilstand av type \"${sivilstand.type.enumToReadable()}\", " +
+                "gyldig fra og med dato: ${gyldigFraOgMed.tilNorskDatoformat()}"
         return OpprettOppgave(beskrivelse = beskrivelse)
     }
 
@@ -41,6 +43,7 @@ class SivilstandHandler : PersonhendelseHandler {
         (personhendelse.sivilstand.type == Sivilstandstype.SKILT.name || personhendelse.sivilstand.type == Sivilstandstype.SEPARERT.name) &&
             personhendelse.endringstype == Endringstype.OPPRETTET
 }
+
 private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this.sivilstand.type != null
 
 fun Endringstype.tilTekst(): String {

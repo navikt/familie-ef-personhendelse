@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(path = ["/api/inntekt"])
 @ProtectedWithClaims(issuer = "azuread")
 class InntektController(val vedtakendringer: VedtakendringerService) {
-
     @GetMapping("/sjekkEndringer")
     fun sjekkEndringer(): ResponseEntity<Any> {
         vedtakendringer.beregnInntektsendringerOgLagreIDb()
@@ -19,7 +18,9 @@ class InntektController(val vedtakendringer: VedtakendringerService) {
     }
 
     @GetMapping("/opprettOppgaver")
-    fun opprettOppgaverForInntektsendringer(@RequestParam skalOppretteOppgaver: Boolean): ResponseEntity<Int> {
+    fun opprettOppgaverForInntektsendringer(
+        @RequestParam skalOppretteOppgaver: Boolean,
+    ): ResponseEntity<Int> {
         val antallOppgaver = vedtakendringer.opprettOppgaverForInntektsendringer(skalOppretteOppgaver)
         vedtakendringer.opprettOppgaverForNyeVedtakUføretrygd()
         return ResponseEntity.ok(antallOppgaver)

@@ -11,15 +11,15 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class PersonhendelseRepositoryTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired lateinit var personhendelseRepository: PersonhendelseRepository
 
-    private val hendelse = Hendelse(
-        hendelsesId = UUID.randomUUID(),
-        oppgaveId = 1L,
-        endringstype = Endringstype.OPPRETTET,
-        opprettetTid = LocalDateTime.now(),
-    )
+    private val hendelse =
+        Hendelse(
+            hendelsesId = UUID.randomUUID(),
+            oppgaveId = 1L,
+            endringstype = Endringstype.OPPRETTET,
+            opprettetTid = LocalDateTime.now(),
+        )
 
     @BeforeEach
     internal fun beforeEach() {

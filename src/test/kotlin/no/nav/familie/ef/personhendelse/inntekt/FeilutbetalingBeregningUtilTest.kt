@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class FeilutbetalingBeregningUtilTest {
-
     @Test
     fun `beregn feilutbetaling - max feilutbetaling`() {
         val feilutbetaling = beregnFeilutbetalingForMåned(0, 60_000)

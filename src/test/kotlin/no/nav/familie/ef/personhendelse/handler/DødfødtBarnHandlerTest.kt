@@ -20,7 +20,6 @@ import java.time.LocalDate
 import java.util.UUID
 
 internal class DødfødtBarnHandlerTest {
-
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>(relaxed = true)

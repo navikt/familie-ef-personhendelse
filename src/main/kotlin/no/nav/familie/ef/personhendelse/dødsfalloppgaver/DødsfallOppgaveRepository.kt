@@ -13,7 +13,6 @@ import java.util.UUID
 
 @Repository
 class DødsfallOppgaveRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
-
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun lagreOppgave(
@@ -26,29 +25,31 @@ class DødsfallOppgaveRepository(val namedParameterJdbcTemplate: NamedParameterJ
     ) {
         val sql =
             "INSERT INTO dødsfalloppgave VALUES(:hendelsesId, :personIdent, :beskrivelse, :personhendelseType, :endringstype, :hendelsestid, :opprettetoppgavetid) ON CONFLICT DO NOTHING"
-        val params = MapSqlParameterSource(
-            mapOf(
-                "hendelsesId" to hendelseId,
-                "personIdent" to personIdent,
-                "beskrivelse" to beskrivelse,
-                "personhendelseType" to personhendelseType.name,
-                "endringstype" to endringstype,
-                "hendelsestid" to hendelsesTid,
-                "opprettetoppgavetid" to null,
-            ),
-        )
+        val params =
+            MapSqlParameterSource(
+                mapOf(
+                    "hendelsesId" to hendelseId,
+                    "personIdent" to personIdent,
+                    "beskrivelse" to beskrivelse,
+                    "personhendelseType" to personhendelseType.name,
+                    "endringstype" to endringstype,
+                    "hendelsestid" to hendelsesTid,
+                    "opprettetoppgavetid" to null,
+                ),
+            )
         namedParameterJdbcTemplate.update(sql, params)
     }
 
     fun settOppgaveTilUtført(hendelseId: UUID) {
         val sql =
             "UPDATE dødsfalloppgave SET opprettetoppgavetid = :opprettetoppgavetid WHERE hendelse_id=:hendelseId"
-        val params = MapSqlParameterSource(
-            mapOf(
-                "hendelseId" to hendelseId,
-                "opprettetoppgavetid" to LocalDateTime.now(),
-            ),
-        )
+        val params =
+            MapSqlParameterSource(
+                mapOf(
+                    "hendelseId" to hendelseId,
+                    "opprettetoppgavetid" to LocalDateTime.now(),
+                ),
+            )
         namedParameterJdbcTemplate.update(sql, params)
     }
 

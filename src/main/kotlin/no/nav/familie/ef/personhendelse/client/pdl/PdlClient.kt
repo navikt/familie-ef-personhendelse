@@ -21,27 +21,28 @@ class PdlClient(
     @Value("\${PDL_URL}")
     val url: URI,
 ) : AbstractRestClient(restOperations, "pdl") {
-
     val pdlUri: URI = UriComponentsBuilder.fromUri(url).build().toUri()
 
     val hentPersonQuery = javaClass.getResource("/pdl/queries/hentPerson.graphql").readText().graphqlCompatible()
     val hentIdenter = javaClass.getResource("/pdl/queries/hentIdenter.graphql").readText().graphqlCompatible()
 
     fun hentPerson(fnr: String): Person {
-        val pdlPersonRequest = PdlPersonRequest(
-            variables = PdlPersonRequestVariables(fnr),
-            query = hentPersonQuery,
-        )
+        val pdlPersonRequest =
+            PdlPersonRequest(
+                variables = PdlPersonRequestVariables(fnr),
+                query = hentPersonQuery,
+            )
 
         val pdlResponse: PdlResponse<HentPerson.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
         return feilsjekkOgReturnerData(fnr, pdlResponse) { it.hentPerson }
     }
 
     fun hentIdenter(personIdent: String): Set<String> {
-        val pdlPersonRequest = PdlPersonRequest(
-            variables = PdlIdentRequestVariables(personIdent),
-            query = hentIdenter,
-        )
+        val pdlPersonRequest =
+            PdlPersonRequest(
+                variables = PdlIdentRequestVariables(personIdent),
+                query = hentIdenter,
+            )
 
         val pdlResponse: PdlResponse<HentIdenter.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
         return feilsjekkOgReturnerData(personIdent, pdlResponse) { it.hentIdenter }.identer.map(IdentInformasjon::ident).toSet()

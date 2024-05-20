@@ -18,9 +18,7 @@ import java.net.URI
 import java.time.YearMonth
 
 class InntektClientTest {
-
     companion object {
-
         private val restOperations: RestOperations = RestTemplateBuilder().build()
         lateinit var inntektClient: InntektClient
         lateinit var wiremockServerItem: WireMockServer
@@ -90,7 +88,8 @@ class InntektClientTest {
         Assertions.assertEquals(2, inntektsversjon)
     }
 
-    private val gyldigResponse = """
+    private val gyldigResponse =
+        """
         {
             "arbeidsInntektMaaned": [
                 {
@@ -137,9 +136,10 @@ class InntektClientTest {
                 "aktoerType": "NATURLIG_IDENT"
             }
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    private val gyldigInntekthistorikkResponse = """
+    private val gyldigInntekthistorikkResponse =
+        """
         {
             "aarMaanedHistorikk": {
                 "2020-01": {
@@ -459,5 +459,5 @@ class InntektClientTest {
                 }
             }
         }
-    """.trimIndent()
+        """.trimIndent()
 }

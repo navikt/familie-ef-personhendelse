@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 
 class KontantstøtteVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     lateinit var kontantstøtteVedtakRepository: KontantstøtteVedtakRepository
 

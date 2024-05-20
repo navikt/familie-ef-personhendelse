@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class LoadHandlersTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     private lateinit var handlers: List<PersonhendelseHandler>
 

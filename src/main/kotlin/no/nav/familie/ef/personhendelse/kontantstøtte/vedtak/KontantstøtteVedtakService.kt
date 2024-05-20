@@ -12,18 +12,21 @@ class KontantstøtteVedtakService(
     private val oppgaveClient: OppgaveClient,
     private val kontantstøtteVedtakRepository: KontantstøtteVedtakRepository,
 ) {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun harLøpendeBarnetilsyn(personIdent: String): Boolean {
         return efSakClient.harLøpendeBarnetilsyn(personIdent)
     }
 
-    fun opprettVurderKonsekvensOppgaveForBarnetilsyn(personIdent: String, beskrivelse: String) {
-        val opprettOppgaveRequest = lagVurderKonsekvensoppgaveForBarnetilsyn(
-            personIdent = personIdent,
-            beskrivelse = beskrivelse,
-        )
+    fun opprettVurderKonsekvensOppgaveForBarnetilsyn(
+        personIdent: String,
+        beskrivelse: String,
+    ) {
+        val opprettOppgaveRequest =
+            lagVurderKonsekvensoppgaveForBarnetilsyn(
+                personIdent = personIdent,
+                beskrivelse = beskrivelse,
+            )
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
         oppgaveClient.leggOppgaveIMappe(oppgaveId)
         logger.info("Oppgave for kontantstøttevedtak opprettet med oppgaveId=$oppgaveId")

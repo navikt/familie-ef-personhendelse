@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class PersonhendelseListenerTest {
-
     private val sakClient = mockk<SakClient>()
     private val personhendelseService = mockk<PersonhendelseService>(relaxed = true)
 

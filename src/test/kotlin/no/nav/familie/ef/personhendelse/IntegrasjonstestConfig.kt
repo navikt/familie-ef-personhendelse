@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Profile
 @Profile("integrasjonstest")
 @Configuration
 class IntegrasjonstestConfig {
-
     @Bean
     @Primary
     fun oAuth2AccessTokenServiceMock(): OAuth2AccessTokenService {

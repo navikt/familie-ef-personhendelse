@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class KontantstøtteVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
-
     fun lagreKontantstøttevedtak(behandlingId: String) {
         val sql = "INSERT INTO kontantstotte_vedtakhendelse VALUES(:behandlingId)"
         val params = MapSqlParameterSource(mapOf("behandlingId" to behandlingId))

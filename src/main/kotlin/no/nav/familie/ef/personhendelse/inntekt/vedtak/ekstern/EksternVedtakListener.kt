@@ -14,7 +14,6 @@ import java.time.LocalDate
 class EksternVedtakListener(
     val eksternVedtakService: EksternVedtakService,
 ) {
-
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
@@ -24,7 +23,10 @@ class EksternVedtakListener(
         containerFactory = "kafkaVedtakListenerContainerFactory",
         groupId = "familie-ef-personhendelse-vedtak",
     )
-    fun listen(consumerRecord: ConsumerRecord<String, String>, ack: Acknowledgment) {
+    fun listen(
+        consumerRecord: ConsumerRecord<String, String>,
+        ack: Acknowledgment,
+    ) {
         val vedtakhendelse = objectMapper.readValue<Vedtakhendelse>(consumerRecord.value())
         try {
             if (eksternVedtakService.mottarEfStønad(vedtakhendelse)) {

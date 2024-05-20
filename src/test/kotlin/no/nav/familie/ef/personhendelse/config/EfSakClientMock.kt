@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Profile
 
 @Configuration
 class EfSakClientMock {
-
     @Bean
     @Profile("mock-efsak")
     @Primary

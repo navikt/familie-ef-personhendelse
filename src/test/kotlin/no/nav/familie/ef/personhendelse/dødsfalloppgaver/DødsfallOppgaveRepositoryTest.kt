@@ -10,13 +10,21 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class DødsfallOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     lateinit var dødsfallOppgaveRepository: DødsfallOppgaveRepository
 
     @Test
     fun `lagre og hent dødsfalloppgave, forvent like felter`() {
-        val dødsfallOppgave = DødsfallOppgave(UUID.randomUUID(), "123", "beskrivelse", PersonhendelseType.DØDFØDT_BARN, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1).minusDays(1), null)
+        val dødsfallOppgave =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "123",
+                "beskrivelse",
+                PersonhendelseType.DØDFØDT_BARN,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now().minusWeeks(1).minusDays(1),
+                null,
+            )
 
         lagreOppgave(dødsfallOppgave)
 
@@ -33,8 +41,26 @@ class DødsfallOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre og hent flere dødsfallOppgaver`() {
-        val dødsfallOppgave = DødsfallOppgave(UUID.randomUUID(), "123", "beskrivelse", PersonhendelseType.DØDFØDT_BARN, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1).minusDays(1), null)
-        val dødsfallOppgave2 = DødsfallOppgave(UUID.randomUUID(), "456", "beskrivelse2", PersonhendelseType.DØDSFALL, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1).minusDays(1), null)
+        val dødsfallOppgave =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "123",
+                "beskrivelse",
+                PersonhendelseType.DØDFØDT_BARN,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now().minusWeeks(1).minusDays(1),
+                null,
+            )
+        val dødsfallOppgave2 =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "456",
+                "beskrivelse2",
+                PersonhendelseType.DØDSFALL,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now().minusWeeks(1).minusDays(1),
+                null,
+            )
 
         lagreOppgave(dødsfallOppgave)
         lagreOppgave(dødsfallOppgave2)
@@ -46,9 +72,36 @@ class DødsfallOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre og hent kun dødsfallOppgaver som er over en uke gammel`() {
-        val dødsfallOppgave = DødsfallOppgave(UUID.randomUUID(), "123", "beskrivelse", PersonhendelseType.DØDFØDT_BARN, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1).minusDays(1), null)
-        val dødsfallOppgave2 = DødsfallOppgave(UUID.randomUUID(), "456", "beskrivelse2", PersonhendelseType.DØDSFALL, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(2), null)
-        val dødsfallOppgave3 = DødsfallOppgave(UUID.randomUUID(), "456", "beskrivelse3", PersonhendelseType.DØDFØDT_BARN, Endringstype.OPPRETTET, LocalDateTime.now(), null)
+        val dødsfallOppgave =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "123",
+                "beskrivelse",
+                PersonhendelseType.DØDFØDT_BARN,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now().minusWeeks(1).minusDays(1),
+                null,
+            )
+        val dødsfallOppgave2 =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "456",
+                "beskrivelse2",
+                PersonhendelseType.DØDSFALL,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now().minusWeeks(2),
+                null,
+            )
+        val dødsfallOppgave3 =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "456",
+                "beskrivelse3",
+                PersonhendelseType.DØDFØDT_BARN,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now(),
+                null,
+            )
 
         lagreOppgave(dødsfallOppgave)
         lagreOppgave(dødsfallOppgave2)
@@ -63,8 +116,26 @@ class DødsfallOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre og hent kun dødsfallOppgaver som ikke har blitt utført`() {
-        val dødsfallOppgaveIkkeOpprettet = DødsfallOppgave(UUID.randomUUID(), "123", "beskrivelse", PersonhendelseType.DØDFØDT_BARN, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1).minusDays(1), null)
-        val dødsfallOppgaveOpprettet = DødsfallOppgave(UUID.randomUUID(), "456", "beskrivelse2", PersonhendelseType.DØDSFALL, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1), null)
+        val dødsfallOppgaveIkkeOpprettet =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "123",
+                "beskrivelse",
+                PersonhendelseType.DØDFØDT_BARN,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now().minusWeeks(1).minusDays(1),
+                null,
+            )
+        val dødsfallOppgaveOpprettet =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "456",
+                "beskrivelse2",
+                PersonhendelseType.DØDSFALL,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now().minusWeeks(1),
+                null,
+            )
 
         lagreOppgave(dødsfallOppgaveIkkeOpprettet)
         lagreOppgave(dødsfallOppgaveOpprettet)
@@ -78,7 +149,16 @@ class DødsfallOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `ikke lagre duplikate dødsfallOppgaver`() {
-        val dødsfallOppgave = DødsfallOppgave(UUID.randomUUID(), "123", "beskrivelse", PersonhendelseType.DØDFØDT_BARN, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1).minusDays(1), null)
+        val dødsfallOppgave =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "123",
+                "beskrivelse",
+                PersonhendelseType.DØDFØDT_BARN,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now().minusWeeks(1).minusDays(1),
+                null,
+            )
 
         lagreOppgave(dødsfallOppgave)
         lagreOppgave(dødsfallOppgave)
@@ -89,6 +169,13 @@ class DødsfallOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
     }
 
     private fun lagreOppgave(dødsfallOppgave: DødsfallOppgave) {
-        dødsfallOppgaveRepository.lagreOppgave(dødsfallOppgave.hendelsesId, dødsfallOppgave.personhendelseType, dødsfallOppgave.endringstype.name, dødsfallOppgave.personId, dødsfallOppgave.beskrivelse, dødsfallOppgave.hendelsesTid)
+        dødsfallOppgaveRepository.lagreOppgave(
+            dødsfallOppgave.hendelsesId,
+            dødsfallOppgave.personhendelseType,
+            dødsfallOppgave.endringstype.name,
+            dødsfallOppgave.personId,
+            dødsfallOppgave.beskrivelse,
+            dødsfallOppgave.hendelsesTid,
+        )
     }
 }

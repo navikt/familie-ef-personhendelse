@@ -14,19 +14,23 @@ import java.util.UUID
 
 @Repository
 class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
-
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    fun lagrePersonhendelse(hendelsesId: UUID, oppgaveId: Long, endringstype: Endringstype) {
+    fun lagrePersonhendelse(
+        hendelsesId: UUID,
+        oppgaveId: Long,
+        endringstype: Endringstype,
+    ) {
         val sql = "INSERT INTO hendelse VALUES(:hendelsesId, :oppgaveId, :endringsType, :timestamp)"
-        val params = MapSqlParameterSource(
-            mapOf(
-                "hendelsesId" to hendelsesId,
-                "oppgaveId" to oppgaveId,
-                "endringsType" to endringstype.name,
-                "timestamp" to LocalDateTime.now(),
-            ),
-        )
+        val params =
+            MapSqlParameterSource(
+                mapOf(
+                    "hendelsesId" to hendelsesId,
+                    "oppgaveId" to oppgaveId,
+                    "endringsType" to endringstype.name,
+                    "timestamp" to LocalDateTime.now(),
+                ),
+            )
         namedParameterJdbcTemplate.update(sql, params)
     }
 
