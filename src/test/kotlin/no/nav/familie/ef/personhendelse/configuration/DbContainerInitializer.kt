@@ -7,7 +7,6 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.testcontainers.containers.PostgreSQLContainer
 
 class DbContainerInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun initialize(applicationContext: ConfigurableApplicationContext) {
@@ -22,7 +21,6 @@ class DbContainerInitializer : ApplicationContextInitializer<ConfigurableApplica
     }
 
     companion object {
-
         // Lazy because we only want it to be initialized when accessed
         private val postgres: KPostgreSQLContainer by lazy {
             KPostgreSQLContainer("postgres:14.6")

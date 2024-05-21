@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class ForelderBarnHandlerTest {
-
     private val sakClient = mockk<SakClient>()
     private val pdlClient = mockk<PdlClient>()
     private val person = mockk<Person>()
@@ -67,7 +66,9 @@ class ForelderBarnHandlerTest {
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
-        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt/nye barn fnr (Overgangsstønad) som ikke finnes på behandling.")
+        assertThat(
+            slot.captured.beskrivelse,
+        ).isEqualTo("Personhendelse: Bruker har fått et nytt/nye barn fnr (Overgangsstønad) som ikke finnes på behandling.")
     }
 
     @Test
@@ -79,7 +80,11 @@ class ForelderBarnHandlerTest {
         every { pdlClient.hentPerson(personIdent) } returns person
         service.håndterPersonhendelse(personhendelse)
         verify(exactly = 1) { oppgaveClient.opprettOppgave(any()) }
-        assertThat(slot.captured.beskrivelse).isEqualTo("Personhendelse: Bruker har fått et nytt/nye barn fnr (Overgangsstønad), fnr (Barnetilsyn) som ikke finnes på behandling.")
+        assertThat(
+            slot.captured.beskrivelse,
+        ).isEqualTo(
+            "Personhendelse: Bruker har fått et nytt/nye barn fnr (Overgangsstønad), fnr (Barnetilsyn) som ikke finnes på behandling.",
+        )
     }
 
     @Test
@@ -155,12 +160,13 @@ class ForelderBarnHandlerTest {
         val personhendelse = Personhendelse()
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.opplysningstype = PersonhendelseType.FORELDERBARNRELASJON.hendelsetype
-        personhendelse.forelderBarnRelasjon = no.nav.person.pdl.leesah.forelderbarnrelasjon.ForelderBarnRelasjon(
-            personIdent,
-            "BARN",
-            "MOR",
-            null,
-        )
+        personhendelse.forelderBarnRelasjon =
+            no.nav.person.pdl.leesah.forelderbarnrelasjon.ForelderBarnRelasjon(
+                personIdent,
+                "BARN",
+                "MOR",
+                null,
+            )
         personhendelse.hendelseId = UUID.randomUUID().toString()
         personhendelse.endringstype = Endringstype.OPPRETTET
         return personhendelse

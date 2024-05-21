@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.YearMonth
 
 class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
-
     @Autowired
     lateinit var efVedtakRepository: EfVedtakRepository
 
@@ -118,12 +117,13 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
 
     @Test
     fun `lagre inntektsendringer og hent vedtak for uføretrygd`() {
-        val inntektsendring = Inntektsendring(
-            BeregningResultat(150, 15, 10000),
-            BeregningResultat(250, 10, 5000),
-            BeregningResultat(350, 25, 2500),
-            BeregningResultat(500, 35, 12000),
-        )
+        val inntektsendring =
+            Inntektsendring(
+                BeregningResultat(150, 15, 10000),
+                BeregningResultat(250, 10, 5000),
+                BeregningResultat(350, 25, 2500),
+                BeregningResultat(500, 35, 12000),
+            )
         efVedtakRepository.lagreVedtakOgInntektsendringForPersonIdent(
             "1",
             true,

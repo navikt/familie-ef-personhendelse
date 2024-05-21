@@ -21,19 +21,20 @@ class KontantstøtteVedtakListenerTest {
     private val kontantstøtteVedtakServiceMock = mockk<KontantstøtteVedtakService>()
     private val kontantstøtteVedtakListener = KontantstøtteVedtakListener(kontantstøtteVedtakServiceMock)
 
-    private val vedtakDvh = VedtakDVH(
-        fagsakId = "platea",
-        behandlingsId = "utroque",
-        tidspunktVedtak = ZonedDateTime.now(),
-        person = PersonDVH("123", "", emptyList(), "", 100),
-        kategori = Kategori.NASJONAL,
-        behandlingType = BehandlingType.REVURDERING,
-        utbetalingsperioder = listOf(),
-        kompetanseperioder = listOf(),
-        funksjonellId = "veri",
-        behandlingÅrsak = BehandlingÅrsak.SØKNAD,
-        vilkårResultater = listOf(),
-    )
+    private val vedtakDvh =
+        VedtakDVH(
+            fagsakId = "platea",
+            behandlingsId = "utroque",
+            tidspunktVedtak = ZonedDateTime.now(),
+            person = PersonDVH("123", "", emptyList(), "", 100),
+            kategori = Kategori.NASJONAL,
+            behandlingType = BehandlingType.REVURDERING,
+            utbetalingsperioder = listOf(),
+            kompetanseperioder = listOf(),
+            funksjonellId = "veri",
+            behandlingÅrsak = BehandlingÅrsak.SØKNAD,
+            vilkårResultater = listOf(),
+        )
 
     val vedtakDvhAsJson = objectMapper.writeValueAsString(vedtakDvh)
     val ack = mockk<Acknowledgment>()

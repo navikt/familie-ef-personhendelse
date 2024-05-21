@@ -16,9 +16,11 @@ import org.springframework.kafka.listener.ContainerProperties
 @EnableKafka
 @Configuration
 class KafkaConfig {
-
     @Bean
-    fun kafkaAivenPersonhendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
+    fun kafkaAivenPersonhendelseListenerContainerFactory(
+        properties: KafkaProperties,
+        kafkaErrorHandler: KafkaErrorHandler,
+    ): ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> {
         properties.properties[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = "true"
         val factory = ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>()
         factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
@@ -27,7 +29,10 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaVedtakListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> {
+    fun kafkaVedtakListenerContainerFactory(
+        properties: KafkaProperties,
+        kafkaErrorHandler: KafkaErrorHandler,
+    ): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
         factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
         val props = properties.buildConsumerProperties()
@@ -40,7 +45,10 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaKontantstøtteVedtakListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler): ConcurrentKafkaListenerContainerFactory<String, String> {
+    fun kafkaKontantstøtteVedtakListenerContainerFactory(
+        properties: KafkaProperties,
+        kafkaErrorHandler: KafkaErrorHandler,
+    ): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
         factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
         val props = properties.buildConsumerProperties()

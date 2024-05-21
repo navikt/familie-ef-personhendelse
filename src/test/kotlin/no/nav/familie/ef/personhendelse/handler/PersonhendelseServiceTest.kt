@@ -28,7 +28,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class PersonhendelseServiceTest {
-
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
@@ -42,11 +41,12 @@ internal class PersonhendelseServiceTest {
 
     private val personHendelseIdent = "11111111111"
     private val annenIdent = "2"
-    private val oppgave = Oppgave(
-        id = 0L,
-        status = StatusEnum.OPPRETTET,
-        identer = listOf(OppgaveIdentV2(annenIdent, IdentGruppe.FOLKEREGISTERIDENT)),
-    )
+    private val oppgave =
+        Oppgave(
+            id = 0L,
+            status = StatusEnum.OPPRETTET,
+            identer = listOf(OppgaveIdentV2(annenIdent, IdentGruppe.FOLKEREGISTERIDENT)),
+        )
 
     @BeforeEach
     internal fun setUp() {
@@ -129,7 +129,16 @@ internal class PersonhendelseServiceTest {
 
     @Test
     fun `henting og opprettelse av ukesgammel hendelse`() {
-        val dødsfallOppgave = DødsfallOppgave(UUID.randomUUID(), "123", "beskrivelse", PersonhendelseType.DØDSFALL, Endringstype.OPPRETTET, LocalDateTime.now().minusWeeks(1), null)
+        val dødsfallOppgave =
+            DødsfallOppgave(
+                UUID.randomUUID(),
+                "123",
+                "beskrivelse",
+                PersonhendelseType.DØDSFALL,
+                Endringstype.OPPRETTET,
+                LocalDateTime.now().minusWeeks(1),
+                null,
+            )
 
         every { dødsfallOppgaveService.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid() } returns listOf(dødsfallOppgave)
         every { dødsfallOppgaveService.settDødsfalloppgaverTilUtført(any()) } just runs
@@ -158,16 +167,16 @@ internal class PersonhendelseServiceTest {
         verify(exactly = 1) { oppgaveClient.leggOppgaveIMappe(any()) }
     }
 
-    private fun personhendelse(endringstype: Endringstype): Personhendelse = Personhendelse().apply {
-        personidenter = listOf(personHendelseIdent)
-        this.endringstype = endringstype
-        hendelseId = UUID.randomUUID().toString()
-        tidligereHendelseId = UUID.randomUUID().toString()
-        opplysningstype = PersonhendelseType.UTFLYTTING_FRA_NORGE.name
-    }
+    private fun personhendelse(endringstype: Endringstype): Personhendelse =
+        Personhendelse().apply {
+            personidenter = listOf(personHendelseIdent)
+            this.endringstype = endringstype
+            hendelseId = UUID.randomUUID().toString()
+            tidligereHendelseId = UUID.randomUUID().toString()
+            opplysningstype = PersonhendelseType.UTFLYTTING_FRA_NORGE.name
+        }
 
     class DummyHandler : PersonhendelseHandler {
-
         override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
 
         override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OpprettOppgave {

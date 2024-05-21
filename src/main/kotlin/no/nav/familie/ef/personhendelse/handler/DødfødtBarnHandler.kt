@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class DødfødtBarnHandler : PersonhendelseHandler {
-
     override val type = PersonhendelseType.DØDFØDT_BARN
 
     override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon {

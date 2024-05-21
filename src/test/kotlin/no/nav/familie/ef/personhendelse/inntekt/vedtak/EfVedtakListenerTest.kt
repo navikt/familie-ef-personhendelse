@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class EfVedtakListenerTest {
-
     @MockK
     lateinit var efVedtakRepository: EfVedtakRepository
 

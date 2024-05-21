@@ -26,7 +26,6 @@ import java.time.LocalDate
 import java.util.UUID
 
 class DødsfallHandlerTest {
-
     private val sakClient = mockk<SakClient>()
     private val pdlClient = mockk<PdlClient>()
     private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)

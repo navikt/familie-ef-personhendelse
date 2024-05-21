@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
-
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
@@ -44,7 +43,9 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
             return opprettOppgaveBarnFødtEtterTermin(nyeBarnSomIkkeFinnesPåBehandlingen, barnFødtEtterTermin)
         }
 
-        return OpprettOppgave("Bruker har fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()} som ikke finnes på behandling.")
+        return OpprettOppgave(
+            "Bruker har fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()} som ikke finnes på behandling.",
+        )
     }
 
     private fun opprettOppgaveBarnFødtFørTermin(
@@ -74,15 +75,19 @@ class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
     }
 
     private fun nyeBarnTekst(nyeBarnSomIkkeFinnesPåBehandlingen: List<NyttBarn>): String {
-        val nyeBarnTekst = if (nyeBarnSomIkkeFinnesPåBehandlingen.isNotEmpty()) {
-            "Bruker har også fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()}. "
-        } else {
-            ""
-        }
+        val nyeBarnTekst =
+            if (nyeBarnSomIkkeFinnesPåBehandlingen.isNotEmpty()) {
+                "Bruker har også fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()}. "
+            } else {
+                ""
+            }
         return nyeBarnTekst
     }
 
     private fun NyeBarnDto.filtrerÅrsak(årsak: NyttBarnÅrsak) = this.nyeBarn.filter { it.årsak == årsak }
 
-    private fun List<NyttBarn>.separerteIdenterMedStønadstype() = this.joinToString(", ") { it.personIdent + " (${it.stønadstype.name.enumToReadable()})" }
+    private fun List<NyttBarn>.separerteIdenterMedStønadstype() =
+        this.joinToString(", ") {
+            it.personIdent + " (${it.stønadstype.name.enumToReadable()})"
+        }
 }

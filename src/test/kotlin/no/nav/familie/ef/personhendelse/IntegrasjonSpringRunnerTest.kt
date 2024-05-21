@@ -24,7 +24,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @EnableMockOAuth2Server
 @ActiveProfiles("integrasjonstest")
 abstract class IntegrasjonSpringRunnerTest {
-
     protected val listAppender = initLoggingEventListAppender()
     protected var loggingEvents: MutableList<ILoggingEvent> = listAppender.list
     protected val restTemplate = TestRestTemplate()
@@ -54,7 +53,6 @@ abstract class IntegrasjonSpringRunnerTest {
     }
 
     companion object {
-
         protected fun initLoggingEventListAppender(): ListAppender<ILoggingEvent> {
             val listAppender = ListAppender<ILoggingEvent>()
             listAppender.start()

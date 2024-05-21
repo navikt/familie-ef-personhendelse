@@ -35,7 +35,6 @@ import java.time.temporal.ChronoUnit
 )
 @EnableOAuth2Client(cacheEnabled = true)
 class ApplicationConfig {
-
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Bean

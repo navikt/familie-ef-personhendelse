@@ -18,9 +18,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class PdlClientTest {
-
     companion object {
-
         private val restOperations: RestOperations = RestTemplateBuilder().build()
         lateinit var pdlClient: PdlClient
         lateinit var wiremockServerItem: WireMockServer
@@ -50,10 +48,11 @@ class PdlClientTest {
     @Test
     fun `HentPerson query skal returnere person`() {
         val hentPersonQuery = javaClass.getResource("/pdl/queries/hentPerson.graphql").readText().graphqlCompatible()
-        val pdlPersonRequest = PdlPersonRequest(
-            variables = PdlPersonRequestVariables(personIdent),
-            query = hentPersonQuery,
-        )
+        val pdlPersonRequest =
+            PdlPersonRequest(
+                variables = PdlPersonRequestVariables(personIdent),
+                query = hentPersonQuery,
+            )
 
         wiremockServerItem.stubFor(
             WireMock.post(WireMock.urlMatching("/graphql"))
@@ -75,53 +74,53 @@ class PdlClientTest {
 
     private fun pdlResponse(): String =
         """
-            {
-              "data": {
-                "hentPerson": {
-                  "forelderBarnRelasjon": [],
-                  "statsborgerskap": [
-                    {
-                      "land": "NOR",
-                      "gyldigFraOgMed": "1999-01-01",
-                      "gyldigTilOgMed": null,
-                      "metadata": {
-                        "historisk": false
-                      }
-                    }
-                  ],
-                  "sivilstand": [
-                    {
-                      "type": "UGIFT",
-                      "gyldigFraOgMed": null,
-                      "bekreftelsesdato": null,
-                      "relatertVedSivilstand": null
-                    }
-                  ],
-                  "adressebeskyttelse": [],
-                  "bostedsadresse": [
-                    {
-                      "angittFlyttedato": "1997-01-01",
-                      "gyldigFraOgMed": "1997-01-01T00:00",
-                      "gyldigTilOgMed": null,
-                      "vegadresse": {
-                        "postnummer": "0557"
-                      },
-                      "matrikkeladresse": null,
-                      "ukjentBosted": null,
-                      "utenlandskAdresse": null,
-                      "metadata": {
-                        "historisk": false
-                      }
-                    }
-                  ],
-                  "doedsfall": [],
-                  "foedsel": [
-                    {
-                      "foedselsdato": "1980-03-22"
-                    }
-                  ]
+        {
+          "data": {
+            "hentPerson": {
+              "forelderBarnRelasjon": [],
+              "statsborgerskap": [
+                {
+                  "land": "NOR",
+                  "gyldigFraOgMed": "1999-01-01",
+                  "gyldigTilOgMed": null,
+                  "metadata": {
+                    "historisk": false
+                  }
                 }
-              }
+              ],
+              "sivilstand": [
+                {
+                  "type": "UGIFT",
+                  "gyldigFraOgMed": null,
+                  "bekreftelsesdato": null,
+                  "relatertVedSivilstand": null
+                }
+              ],
+              "adressebeskyttelse": [],
+              "bostedsadresse": [
+                {
+                  "angittFlyttedato": "1997-01-01",
+                  "gyldigFraOgMed": "1997-01-01T00:00",
+                  "gyldigTilOgMed": null,
+                  "vegadresse": {
+                    "postnummer": "0557"
+                  },
+                  "matrikkeladresse": null,
+                  "ukjentBosted": null,
+                  "utenlandskAdresse": null,
+                  "metadata": {
+                    "historisk": false
+                  }
+                }
+              ],
+              "doedsfall": [],
+              "foedsel": [
+                {
+                  "foedselsdato": "1980-03-22"
+                }
+              ]
             }
+          }
+        }
         """.trimIndent()
 }

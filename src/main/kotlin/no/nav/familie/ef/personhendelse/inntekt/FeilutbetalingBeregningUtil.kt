@@ -7,7 +7,10 @@ private val grunnbeløp = 118_620
 private val halvtGrunnbeløp = 59_310
 private val reduksjonsfaktor = BigDecimal(0.45)
 
-fun beregnFeilutbetalingForMåned(forventetInntekt: Int, samletInntekt: Int): Int {
+fun beregnFeilutbetalingForMåned(
+    forventetInntekt: Int,
+    samletInntekt: Int,
+): Int {
     return beregnUtbetaling(forventetInntekt) - beregnUtbetaling(samletInntekt)
 }
 

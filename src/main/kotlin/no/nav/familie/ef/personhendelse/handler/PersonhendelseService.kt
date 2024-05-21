@@ -26,7 +26,6 @@ class PersonhendelseService(
     private val personhendelseRepository: PersonhendelseRepository,
     private val dødsfallOppgaveService: DødsfallOppgaveService,
 ) {
-
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
     private val handlers: Map<String, PersonhendelseHandler> =
@@ -54,7 +53,11 @@ class PersonhendelseService(
         return personhendelseRepository.hentHendelse(UUID.fromString(hendelseId)) != null
     }
 
-    private fun handle(handler: PersonhendelseHandler, personhendelse: Personhendelse, personidenter: Set<String>) {
+    private fun handle(
+        handler: PersonhendelseHandler,
+        personhendelse: Personhendelse,
+        personidenter: Set<String>,
+    ) {
         val harLøpendeStønad = sakClient.harLøpendeStønad(personidenter)
         logger.info(
             "Personhendelse av opplysningstype=${personhendelse.opplysningstype} av type=${personhendelse.endringstype.name} - " +
@@ -78,18 +81,20 @@ class PersonhendelseService(
         logHendelse(personhendelse, oppgaveInformasjon, personIdent)
         when (oppgaveInformasjon) {
             is IkkeOpprettOppgave -> return
-            is OpprettOppgave -> opprettOppgave(
-                UUID.fromString(personhendelse.hendelseId),
-                personhendelse.endringstype,
-                oppgaveInformasjon.beskrivelse,
-                personIdent,
-            )
-            is UtsettDødsfallOppgave -> dødsfallOppgaveService.lagreDødsfallOppgave(
-                personhendelse,
-                handlers[personhendelse.opplysningstype]?.type ?: error("Kunne ikke finne personopplysningstype"),
-                personIdent,
-                oppgaveInformasjon.beskrivelse,
-            )
+            is OpprettOppgave ->
+                opprettOppgave(
+                    UUID.fromString(personhendelse.hendelseId),
+                    personhendelse.endringstype,
+                    oppgaveInformasjon.beskrivelse,
+                    personIdent,
+                )
+            is UtsettDødsfallOppgave ->
+                dødsfallOppgaveService.lagreDødsfallOppgave(
+                    personhendelse,
+                    handlers[personhendelse.opplysningstype]?.type ?: error("Kunne ikke finne personopplysningstype"),
+                    personIdent,
+                    oppgaveInformasjon.beskrivelse,
+                )
         }
     }
 
@@ -112,10 +117,11 @@ class PersonhendelseService(
         oppgaveBeskrivelse: OppgaveInformasjon,
         personIdent: String?,
     ) {
-        val logMessage = "Finnes sak for opplysningstype=${personhendelse.opplysningstype}" +
-            " hendelseId=${personhendelse.hendelseId}" +
-            " endringstype=${personhendelse.endringstype}" +
-            " skalOppretteOppgave=${oppgaveBeskrivelse is OpprettOppgave}"
+        val logMessage =
+            "Finnes sak for opplysningstype=${personhendelse.opplysningstype}" +
+                " hendelseId=${personhendelse.hendelseId}" +
+                " endringstype=${personhendelse.endringstype}" +
+                " skalOppretteOppgave=${oppgaveBeskrivelse is OpprettOppgave}"
         logger.info(logMessage)
         secureLogger.info("$logMessage personIdent=$personIdent")
     }
@@ -127,10 +133,11 @@ class PersonhendelseService(
         personIdent: String,
     ) {
         val beskrivelse = beskrivelse
-        val opprettOppgaveRequest = opprettVurderLivshendelseoppgave(
-            personIdent = personIdent,
-            beskrivelse = "Personhendelse: $beskrivelse",
-        )
+        val opprettOppgaveRequest =
+            opprettVurderLivshendelseoppgave(
+                personIdent = personIdent,
+                beskrivelse = "Personhendelse: $beskrivelse",
+            )
         val oppgaveId = oppgaveClient.opprettOppgave(opprettOppgaveRequest)
 
         oppgaveClient.leggOppgaveIMappe(oppgaveId)
@@ -150,22 +157,25 @@ class PersonhendelseService(
         }
         val oppgave = hentOppgave(hendelse)
         if (oppgave.erÅpen()) {
-            val nyOppgave = when (personhendelse.endringstype) {
-                Endringstype.ANNULLERT -> oppdater(
-                    oppgave,
-                    oppgave.opphørtEllerAnnullertBeskrivelse(),
-                    StatusEnum.FEILREGISTRERT,
-                )
+            val nyOppgave =
+                when (personhendelse.endringstype) {
+                    Endringstype.ANNULLERT ->
+                        oppdater(
+                            oppgave,
+                            oppgave.opphørtEllerAnnullertBeskrivelse(),
+                            StatusEnum.FEILREGISTRERT,
+                        )
 
-                Endringstype.OPPHOERT -> oppdater(
-                    oppgave,
-                    oppgave.opphørtEllerAnnullertBeskrivelse(),
-                    StatusEnum.FERDIGSTILT,
-                )
+                    Endringstype.OPPHOERT ->
+                        oppdater(
+                            oppgave,
+                            oppgave.opphørtEllerAnnullertBeskrivelse(),
+                            StatusEnum.FERDIGSTILT,
+                        )
 
-                Endringstype.KORRIGERT -> oppdater(oppgave, oppgave.korrigertBeskrivelse(), oppgave.status)
-                else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
-            }
+                    Endringstype.KORRIGERT -> oppdater(oppgave, oppgave.korrigertBeskrivelse(), oppgave.status)
+                    else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
+                }
             logger.info("Oppgave oppdatert med oppgaveId=$nyOppgave for endringstype : ${personhendelse.endringstype.name}")
         } else {
             val ident = identFraOppgaveEllerPersonhendelse(oppgave, personhendelse)
@@ -180,7 +190,11 @@ class PersonhendelseService(
         )
     }
 
-    private fun oppdater(oppgave: Oppgave, beskrivelse: String, status: StatusEnum?): Long {
+    private fun oppdater(
+        oppgave: Oppgave,
+        beskrivelse: String,
+        status: StatusEnum?,
+    ): Long {
         val nyOppgave = oppgave.copy(beskrivelse = oppgave.beskrivelse.plus(beskrivelse), status = status)
         return oppgaveClient.oppdaterOppgave(nyOppgave)
     }
@@ -201,7 +215,11 @@ class PersonhendelseService(
         return personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.tidligereHendelseId))
     }
 
-    private fun lagreHendelse(hendelseId: UUID, oppgaveId: Long, endringstype: Endringstype) {
+    private fun lagreHendelse(
+        hendelseId: UUID,
+        oppgaveId: Long,
+        endringstype: Endringstype,
+    ) {
         personhendelseRepository.lagrePersonhendelse(
             hendelseId,
             oppgaveId,
@@ -213,7 +231,10 @@ class PersonhendelseService(
         return oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId)
     }
 
-    private fun opprettOppgaveMedBeskrivelse(personIdent: String, beskrivelse: String): Long {
+    private fun opprettOppgaveMedBeskrivelse(
+        personIdent: String,
+        beskrivelse: String,
+    ): Long {
         return oppgaveClient.opprettOppgave(
             opprettVurderLivshendelseoppgave(
                 personIdent = personIdent,

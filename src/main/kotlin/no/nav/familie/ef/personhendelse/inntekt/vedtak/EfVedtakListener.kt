@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component
 class EfVedtakListener(
     private val efVedtakRepository: EfVedtakRepository,
 ) : ConsumerSeekAware {
-
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 

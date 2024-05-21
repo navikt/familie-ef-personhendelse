@@ -14,7 +14,6 @@ import java.util.UUID
 
 @Repository
 class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
-
     fun lagreEfVedtakshendelse(
         vedtakshendelse: EnsligForsørgerVedtakhendelse,
         aarMaanedProsessert: YearMonth = YearMonth.now(),
@@ -22,15 +21,16 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         val sql =
             "INSERT INTO efvedtakhendelse VALUES(:behandlingId, :personIdent, :stønadType, :aar_maaned_prosessert, :versjon)" +
                 " ON CONFLICT DO NOTHING"
-        val params = MapSqlParameterSource(
-            mapOf(
-                "behandlingId" to vedtakshendelse.behandlingId,
-                "personIdent" to vedtakshendelse.personIdent,
-                "stønadType" to vedtakshendelse.stønadType.toString(),
-                "aar_maaned_prosessert" to aarMaanedProsessert.toString(),
-                "versjon" to 1,
-            ),
-        )
+        val params =
+            MapSqlParameterSource(
+                mapOf(
+                    "behandlingId" to vedtakshendelse.behandlingId,
+                    "personIdent" to vedtakshendelse.personIdent,
+                    "stønadType" to vedtakshendelse.stønadType.toString(),
+                    "aar_maaned_prosessert" to aarMaanedProsessert.toString(),
+                    "versjon" to 1,
+                ),
+            )
         namedParameterJdbcTemplate.update(sql, params)
     }
 
@@ -56,11 +56,16 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
         )
     }
 
-    fun oppdaterAarMaanedProsessert(personIdent: String, yearMonth: YearMonth = YearMonth.now()) {
-        val sql = "UPDATE efvedtakhendelse SET aar_maaned_prosessert = :yearMonth " +
-            "WHERE person_ident = :personIdent"
-        val mapSqlParameterSource = MapSqlParameterSource("personIdent", personIdent)
-            .addValue("yearMonth", yearMonth.toString())
+    fun oppdaterAarMaanedProsessert(
+        personIdent: String,
+        yearMonth: YearMonth = YearMonth.now(),
+    ) {
+        val sql =
+            "UPDATE efvedtakhendelse SET aar_maaned_prosessert = :yearMonth " +
+                "WHERE person_ident = :personIdent"
+        val mapSqlParameterSource =
+            MapSqlParameterSource("personIdent", personIdent)
+                .addValue("yearMonth", yearMonth.toString())
 
         namedParameterJdbcTemplate.update(sql, mapSqlParameterSource)
     }
@@ -83,36 +88,38 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
                 ":inntektsendringFireMånederTilbakeBeløp, :inntektsendringTreMånederTilbakeBeløp, :inntektsendringToMånederTilbakeBeløp, :inntektsendringForrigeMånedBeløp, " +
                 ":feilutbetalingFireMånederTilbake, :feilutbetalingTreMånederTilbake, :feilutbetalingToMånederTilbake, :feilutbetalingForrigeMåned) " +
                 "ON CONFLICT DO NOTHING"
-        val params = MapSqlParameterSource(
-            mapOf(
-                "id" to UUID.randomUUID(),
-                "personIdent" to personIdent,
-                "harNyeVedtak" to harNyeVedtak,
-                "nyeYtelser" to nyeYtelser,
-                "prosessertTid" to LocalDateTime.now(),
-                "inntektsendringFireMånederTilbake" to inntektsendring.fireMånederTilbake.prosent,
-                "inntektsendringTreMånederTilbake" to inntektsendring.treMånederTilbake.prosent,
-                "inntektsendringToMånederTilbake" to inntektsendring.toMånederTilbake.prosent,
-                "inntektsendringForrigeMåned" to inntektsendring.forrigeMåned.prosent,
-                "inntektsendringFireMånederTilbakeBeløp" to inntektsendring.fireMånederTilbake.beløp,
-                "inntektsendringTreMånederTilbakeBeløp" to inntektsendring.treMånederTilbake.beløp,
-                "inntektsendringToMånederTilbakeBeløp" to inntektsendring.toMånederTilbake.beløp,
-                "inntektsendringForrigeMånedBeløp" to inntektsendring.forrigeMåned.beløp,
-                "feilutbetalingFireMånederTilbake" to inntektsendring.fireMånederTilbake.feilutbetaling,
-                "feilutbetalingTreMånederTilbake" to inntektsendring.treMånederTilbake.feilutbetaling,
-                "feilutbetalingToMånederTilbake" to inntektsendring.toMånederTilbake.feilutbetaling,
-                "feilutbetalingForrigeMåned" to inntektsendring.forrigeMåned.feilutbetaling,
-            ),
-        )
+        val params =
+            MapSqlParameterSource(
+                mapOf(
+                    "id" to UUID.randomUUID(),
+                    "personIdent" to personIdent,
+                    "harNyeVedtak" to harNyeVedtak,
+                    "nyeYtelser" to nyeYtelser,
+                    "prosessertTid" to LocalDateTime.now(),
+                    "inntektsendringFireMånederTilbake" to inntektsendring.fireMånederTilbake.prosent,
+                    "inntektsendringTreMånederTilbake" to inntektsendring.treMånederTilbake.prosent,
+                    "inntektsendringToMånederTilbake" to inntektsendring.toMånederTilbake.prosent,
+                    "inntektsendringForrigeMåned" to inntektsendring.forrigeMåned.prosent,
+                    "inntektsendringFireMånederTilbakeBeløp" to inntektsendring.fireMånederTilbake.beløp,
+                    "inntektsendringTreMånederTilbakeBeløp" to inntektsendring.treMånederTilbake.beløp,
+                    "inntektsendringToMånederTilbakeBeløp" to inntektsendring.toMånederTilbake.beløp,
+                    "inntektsendringForrigeMånedBeløp" to inntektsendring.forrigeMåned.beløp,
+                    "feilutbetalingFireMånederTilbake" to inntektsendring.fireMånederTilbake.feilutbetaling,
+                    "feilutbetalingTreMånederTilbake" to inntektsendring.treMånederTilbake.feilutbetaling,
+                    "feilutbetalingToMånederTilbake" to inntektsendring.toMånederTilbake.feilutbetaling,
+                    "feilutbetalingForrigeMåned" to inntektsendring.forrigeMåned.feilutbetaling,
+                ),
+            )
         namedParameterJdbcTemplate.update(sql, params)
     }
 
     fun hentInntektsendringerSomSkalHaOppgave(): List<InntektOgVedtakEndring> {
-        val sql = "SELECT * FROM inntektsendringer WHERE " +
-            "(inntekt_endret_tre_maaneder_tilbake >= 10 AND " +
-            "inntekt_endret_to_maaneder_tilbake >= 10 AND " +
-            "inntekt_endret_forrige_maaned >= 10) AND " +
-            "(feilutbetaling_fire_maaneder_tilbake + feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) > 20000"
+        val sql =
+            "SELECT * FROM inntektsendringer WHERE " +
+                "(inntekt_endret_tre_maaneder_tilbake >= 10 AND " +
+                "inntekt_endret_to_maaneder_tilbake >= 10 AND " +
+                "inntekt_endret_forrige_maaned >= 10) AND " +
+                "(feilutbetaling_fire_maaneder_tilbake + feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) > 20000"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 

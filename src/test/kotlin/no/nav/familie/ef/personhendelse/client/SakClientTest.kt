@@ -20,9 +20,7 @@ import java.net.URI
 import java.time.LocalDate
 
 internal class SakClientTest {
-
     companion object {
-
         private val restOperations: RestOperations = RestTemplateBuilder().build()
         lateinit var sakClient: SakClient
         lateinit var wiremockServerItem: WireMockServer
@@ -94,23 +92,26 @@ internal class SakClientTest {
         Assertions.assertThat(response.first().forventetInntektForrigeMåned).isEqualTo(100_000)
     }
 
-    private val harStoenadGyldigResponse = """
+    private val harStoenadGyldigResponse =
+        """
         {
             "data": true,
             "status": "SUKSESS",
             "melding": "Innhenting av data var vellykket"
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    private val inntektGyldigResponse = """
+    private val inntektGyldigResponse =
+        """
         {
             "data": 400000,
             "status": "SUKSESS",
             "melding": "Innhenting av data var vellykket"
         }
-    """.trimIndent()
+        """.trimIndent()
 
-    private val gjeldendeIverksatteBehandlingerGyldigResponse = """
+    private val gjeldendeIverksatteBehandlingerGyldigResponse =
+        """
         {
             "data": [
                 {
@@ -129,5 +130,5 @@ internal class SakClientTest {
             "frontendFeilmelding": null,
             "stacktrace": null
         }
-    """.trimIndent()
+        """.trimIndent()
 }

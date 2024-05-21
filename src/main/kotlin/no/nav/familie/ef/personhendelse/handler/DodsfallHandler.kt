@@ -10,7 +10,6 @@ import java.time.LocalDate
 
 @Component
 class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHandler {
-
     override val type = PersonhendelseType.DØDSFALL
 
     override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon {
@@ -27,11 +26,12 @@ class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHandler {
 
         val fødselsdatoList = pdlPersonData.foedsel.mapNotNull { it.foedselsdato }
         if (fødselsdatoList.isEmpty() || fødselsdatoList.first().isAfter(LocalDate.now().minusYears(19))) {
-            val identerTilForelderer = familierelasjoner
-                .filter { it.minRolleForPerson == ForelderBarnRelasjonRolle.BARN }
-                .mapNotNull { it.relatertPersonsIdent }
-                .map { pdlClient.hentIdenter(it) }
-                .filterNot { it.isEmpty() }
+            val identerTilForelderer =
+                familierelasjoner
+                    .filter { it.minRolleForPerson == ForelderBarnRelasjonRolle.BARN }
+                    .mapNotNull { it.relatertPersonsIdent }
+                    .map { pdlClient.hentIdenter(it) }
+                    .filterNot { it.isEmpty() }
             identerTilSøk.addAll(identerTilForelderer)
         }
         return identerTilSøk

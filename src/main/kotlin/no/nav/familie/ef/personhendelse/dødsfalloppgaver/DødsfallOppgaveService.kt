@@ -10,7 +10,12 @@ import java.util.UUID
 class DødsfallOppgaveService(
     private val dødsfallOppgaveRepository: DødsfallOppgaveRepository,
 ) {
-    fun lagreDødsfallOppgave(personhendelse: Personhendelse, personhendelseType: PersonhendelseType, personIdent: String, beskrivelse: String) {
+    fun lagreDødsfallOppgave(
+        personhendelse: Personhendelse,
+        personhendelseType: PersonhendelseType,
+        personIdent: String,
+        beskrivelse: String,
+    ) {
         dødsfallOppgaveRepository.lagreOppgave(
             UUID.fromString(personhendelse.hendelseId),
             personhendelseType,
@@ -20,9 +25,11 @@ class DødsfallOppgaveService(
             LocalDateTime.now(),
         )
     }
+
     fun hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid(): List<DødsfallOppgave> {
         return dødsfallOppgaveRepository.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid()
     }
+
     fun settDødsfalloppgaverTilUtført(oppgaver: List<DødsfallOppgave>) {
         oppgaver.forEach { dødsfallOppgaveRepository.settOppgaveTilUtført(it.hendelsesId) }
     }

@@ -26,7 +26,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class SivilstandHandlerTest {
-
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
@@ -87,7 +86,11 @@ class SivilstandHandlerTest {
 
     @Test
     fun `Korrigering av separasjon-hendelse`() {
-        every { personhendelseRepository.hentHendelse(any()) } returns Hendelse(UUID.randomUUID(), 1, Endringstype.OPPRETTET, LocalDateTime.now())
+        every {
+            personhendelseRepository.hentHendelse(
+                any(),
+            )
+        } returns Hendelse(UUID.randomUUID(), 1, Endringstype.OPPRETTET, LocalDateTime.now())
         val personhendelse = createSivilstandHendelse(Sivilstandstype.SEPARERT, Endringstype.KORRIGERT)
         personhendelse.tidligereHendelseId = UUID.randomUUID().toString()
         service.håndterPersonhendelse(personhendelse)
@@ -98,7 +101,11 @@ class SivilstandHandlerTest {
 
     @Test
     fun `Opprett oppgave der brukers separasjon opphører`() {
-        every { personhendelseRepository.hentHendelse(any()) } returns Hendelse(UUID.randomUUID(), 1, Endringstype.OPPRETTET, LocalDateTime.now())
+        every {
+            personhendelseRepository.hentHendelse(
+                any(),
+            )
+        } returns Hendelse(UUID.randomUUID(), 1, Endringstype.OPPRETTET, LocalDateTime.now())
 
         val personhendelse = createSivilstandHendelse(Sivilstandstype.SEPARERT, Endringstype.OPPHOERT)
         service.håndterPersonhendelse(personhendelse)
@@ -110,14 +117,18 @@ class SivilstandHandlerTest {
         assertThat(oppgaveRequestSlot.captured.ident?.ident).isEqualTo(personIdent)
     }
 
-    private fun createSivilstandHendelse(sivilstandstype: Sivilstandstype, endringstype: Endringstype): Personhendelse {
+    private fun createSivilstandHendelse(
+        sivilstandstype: Sivilstandstype,
+        endringstype: Endringstype,
+    ): Personhendelse {
         val personhendelse = Personhendelse()
-        personhendelse.sivilstand = Sivilstand(
-            sivilstandstype.name,
-            LocalDate.now(),
-            partnerPersonIdent,
-            LocalDate.now(),
-        )
+        personhendelse.sivilstand =
+            Sivilstand(
+                sivilstandstype.name,
+                LocalDate.now(),
+                partnerPersonIdent,
+                LocalDate.now(),
+            )
         personhendelse.opplysningstype = PersonhendelseType.SIVILSTAND.hendelsetype
         personhendelse.personidenter = listOf(personIdent)
         personhendelse.endringstype = endringstype
