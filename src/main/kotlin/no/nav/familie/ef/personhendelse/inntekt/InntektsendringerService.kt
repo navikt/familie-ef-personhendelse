@@ -12,7 +12,7 @@ class InntektsendringerService(
     val oppgaveClient: OppgaveClient,
     val sakClient: SakClient,
 ) {
-    private val grunnbeløp = 118_620
+    private val grunnbeløp = 124_028
     private val halvtGrunnbeløpMånedlig = (grunnbeløp / 2) / 12
 
     fun beregnEndretInntekt(
