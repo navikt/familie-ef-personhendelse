@@ -12,8 +12,9 @@ class InntektsendringerService(
     val oppgaveClient: OppgaveClient,
     val sakClient: SakClient,
 ) {
-    private val grunnbeløp = 118_620
+    private val grunnbeløp = 124_028
     private val halvtGrunnbeløpMånedlig = (grunnbeløp / 2) / 12
+    private val maxInntekt = Math.floor((grunnbeløp * 5.5) / 1000L) * 1000L // Ingen utbetaling av OS ved inntekt på over 5.5 rundet ned til nærmeste 1000
 
     fun beregnEndretInntekt(
         inntektshistorikkResponse: InntektshistorikkResponse,
@@ -73,7 +74,7 @@ class InntektsendringerService(
             return BeregningResultat(0, 0, 0)
         }
 
-        if (forventetInntekt > 652000) return BeregningResultat(0, 0, 0) // Ignorer alle med over 652000 i årsinntekt, da de har 0 i utbetaling.
+        if (forventetInntekt > maxInntekt) return BeregningResultat(0, 0, 0) // Ignorer alle med over 652000 i årsinntekt, da de har 0 i utbetaling.
         val månedligForventetInntekt = (forventetInntekt / 12)
 
         val orgNrToNyesteVersjonMap = nyesteRegistrerteInntekt.associate { it.opplysningspliktig to it.versjon }
