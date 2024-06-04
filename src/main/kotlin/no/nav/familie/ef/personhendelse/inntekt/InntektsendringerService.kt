@@ -106,7 +106,6 @@ class InntektsendringerService(
             "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere",
             "ufoeretrygd",
             "ufoereytelseEtteroppgjoer",
-            "feriepenger",
             "ufoerepensjonFraAndreEnnFolketrygden",
         )
 }
