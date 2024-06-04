@@ -119,7 +119,7 @@ class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTempl
                 "(inntekt_endret_tre_maaneder_tilbake >= 10 AND " +
                 "inntekt_endret_to_maaneder_tilbake >= 10 AND " +
                 "inntekt_endret_forrige_maaned >= 10) AND " +
-                "(feilutbetaling_fire_maaneder_tilbake + feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) > 20000"
+                "(feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) > 20000"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 

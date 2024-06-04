@@ -170,15 +170,14 @@ class VedtakendringerService(
 
     fun lagOppgavetekstForInntektsendring(inntektOgVedtakEndring: InntektOgVedtakEndring): String {
         val totalFeilutbetaling =
-            inntektOgVedtakEndring.inntektsendringFireMånederTilbake.feilutbetaling +
-                inntektOgVedtakEndring.inntektsendringTreMånederTilbake.feilutbetaling +
+            inntektOgVedtakEndring.inntektsendringTreMånederTilbake.feilutbetaling +
                 inntektOgVedtakEndring.inntektsendringToMånederTilbake.feilutbetaling +
                 inntektOgVedtakEndring.inntektsendringForrigeMåned.feilutbetaling
 
         val årMånedProsessert = YearMonth.from(inntektOgVedtakEndring.prosessertTid)
 
         val periodeTekst =
-            "FOM ${årMånedProsessert.minusMonths(4).norskFormat()} - TOM ${årMånedProsessert.minusMonths(1).norskFormat()}"
+            "FOM ${årMånedProsessert.minusMonths(3).norskFormat()} - TOM ${årMånedProsessert.minusMonths(1).norskFormat()}"
         val oppgavetekst =
             "Uttrekksperiode: $periodeTekst \n" +
                 "Beregnet feilutbetaling i uttrekksperioden: ${totalFeilutbetaling.tusenskille()} kroner "
@@ -234,3 +233,10 @@ fun Month.tilNorsk(): String =
         Month.DECEMBER.name -> "desember"
         else -> this.name
     }
+
+fun main() {
+    val periodeTekst =
+        "FOM ${YearMonth.now().minusMonths(4)} - TOM ${YearMonth.now().minusMonths(1)}"
+
+    println("tekst: " + periodeTekst)
+}
