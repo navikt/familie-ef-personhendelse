@@ -73,7 +73,7 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
             "SYKEPENGER, UFØRETRYGD",
             Inntektsendring(
                 BeregningResultat(150, 15, 10000),
-                BeregningResultat(250, 10, 5000),
+                BeregningResultat(250, 10, 7500),
                 BeregningResultat(350, 25, 2500),
                 BeregningResultat(500, 35, 12000),
             ),
@@ -84,10 +84,10 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
             false,
             null,
             Inntektsendring(
-                BeregningResultat(1500, 15, 100),
-                BeregningResultat(2500, 5, 50),
-                BeregningResultat(3500, 25, 25),
-                BeregningResultat(15000, 35, 12),
+                BeregningResultat(1500, 15, 10000),
+                BeregningResultat(2500, 5, 5000),
+                BeregningResultat(3500, 25, 2500),
+                BeregningResultat(15000, 35, 1200),
             ),
         )
         var hentInntektsendringer = efVedtakRepository.hentInntektsendringerSomSkalHaOppgave()
@@ -106,7 +106,7 @@ class EfVedtakRepositoryTest : IntegrasjonSpringRunnerTest() {
         Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake.prosent).isEqualTo(25)
         Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.prosent).isEqualTo(35)
         Assertions.assertThat(inntektsendring.inntektsendringFireMånederTilbake.feilutbetaling).isEqualTo(10000)
-        Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbake.feilutbetaling).isEqualTo(5000)
+        Assertions.assertThat(inntektsendring.inntektsendringTreMånederTilbake.feilutbetaling).isEqualTo(7500)
         Assertions.assertThat(inntektsendring.inntektsendringToMånederTilbake.feilutbetaling).isEqualTo(2500)
         Assertions.assertThat(inntektsendring.inntektsendringForrigeMåned.feilutbetaling).isEqualTo(12000)
 
