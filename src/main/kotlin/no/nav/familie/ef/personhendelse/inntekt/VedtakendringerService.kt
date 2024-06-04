@@ -17,7 +17,6 @@ import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.time.Month
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
@@ -191,22 +190,6 @@ class VedtakendringerService(
     private fun YearMonth.norskFormat() = this.format(DateTimeFormatter.ofPattern("MM.yyyy"))
 
     private fun Int.tusenskille() = String.format("%,d", this).replace(",", " ")
-
-    private fun lagOppgavetekst(
-        harNyeVedtak: Boolean,
-        harEndretInntekt: Boolean,
-    ): String {
-        val forrigeMåned = YearMonth.now().minusMonths(1).month.tilNorsk()
-        val toMånederTilbake = YearMonth.now().minusMonths(2).month.tilNorsk()
-
-        if (harNyeVedtak && harEndretInntekt) {
-            return "Person har fått utbetalt ny stønad fra NAV og har økt inntekt i $toMånederTilbake og $forrigeMåned. Vurder om overgangsstønaden skal revurderes."
-        } else if (harNyeVedtak) {
-            return "Person har fått utbetalt ny stønad fra NAV i $forrigeMåned. Vurder om overgangsstønaden skal revurderes."
-        } else {
-            return "Person har økt inntekt i $toMånederTilbake og $forrigeMåned. Vurder om overgangsstønaden skal revurderes."
-        }
-    }
 }
 
 fun StønadType.tilBehandlingstemaValue(): String {
@@ -215,28 +198,4 @@ fun StønadType.tilBehandlingstemaValue(): String {
         StønadType.BARNETILSYN -> Behandlingstema.Barnetilsyn.value
         StønadType.SKOLEPENGER -> Behandlingstema.Skolepenger.value
     }
-}
-
-fun Month.tilNorsk(): String =
-    when (this.name) {
-        Month.JANUARY.name -> "januar"
-        Month.FEBRUARY.name -> "februar"
-        Month.MARCH.name -> "mars"
-        Month.APRIL.name -> "april"
-        Month.MAY.name -> "mai"
-        Month.JUNE.name -> "juni"
-        Month.JULY.name -> "juli"
-        Month.AUGUST.name -> "august"
-        Month.SEPTEMBER.name -> "september"
-        Month.OCTOBER.name -> "oktober"
-        Month.NOVEMBER.name -> "november"
-        Month.DECEMBER.name -> "desember"
-        else -> this.name
-    }
-
-fun main() {
-    val periodeTekst =
-        "FOM ${YearMonth.now().minusMonths(4)} - TOM ${YearMonth.now().minusMonths(1)}"
-
-    println("tekst: " + periodeTekst)
 }
