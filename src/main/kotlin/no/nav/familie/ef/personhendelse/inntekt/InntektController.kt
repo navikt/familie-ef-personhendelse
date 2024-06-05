@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 class InntektController(val vedtakendringer: VedtakendringerService) {
     @GetMapping("/sjekkEndringer")
     fun sjekkEndringer(): ResponseEntity<Any> {
-        vedtakendringer.beregnInntektsendringerOgLagreIDb()
+        vedtakendringer.beregnInntektsendringerAsync()
         return ResponseEntity.ok().build()
     }
 
