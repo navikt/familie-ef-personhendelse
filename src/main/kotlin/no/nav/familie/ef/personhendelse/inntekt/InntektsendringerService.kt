@@ -84,8 +84,7 @@ class InntektsendringerService(
             }.flatMap { it.arbeidsInntektInformasjon.inntektListe!! }
         val samletInntekt =
             inntektListe.filterNot {
-                ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse) ||
-                    (it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE && it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType == "ETTERBETALINGSPERIODE")
+                ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse)
             }.sumOf { it.beløp }
 
         if (samletInntekt < halvtGrunnbeløpMånedlig) return BeregningResultat(0, 0, 0)
