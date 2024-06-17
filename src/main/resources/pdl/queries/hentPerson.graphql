@@ -1,4 +1,4 @@
-query($ident: ID!, $bostedHistorikk: Boolean = true, $statsborgerskapHistorikk: Boolean = true){
+query($ident: ID!, $bostedHistorikk: Boolean = true, $statsborgerskapHistorikk: Boolean = true) {
     hentPerson(ident: $ident) {
         forelderBarnRelasjon {
             relatertPersonsIdent
@@ -41,7 +41,7 @@ query($ident: ID!, $bostedHistorikk: Boolean = true, $statsborgerskapHistorikk: 
     	doedsfall {
             doedsdato
   		},
-  		foedsel {
+  		foedselsdato {
             foedselsdato
   		}
     }

@@ -114,7 +114,7 @@ class PdlClientTest {
                 }
               ],
               "doedsfall": [],
-              "foedsel": [
+              "foedselsdato": [
                 {
                   "foedselsdato": "1980-03-22"
                 }

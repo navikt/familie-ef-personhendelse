@@ -24,7 +24,7 @@ class DodsfallHandler(val pdlClient: PdlClient) : PersonhendelseHandler {
 
         val familierelasjoner = pdlPersonData.forelderBarnRelasjon
 
-        val fødselsdatoList = pdlPersonData.foedsel.mapNotNull { it.foedselsdato }
+        val fødselsdatoList = pdlPersonData.foedselsdato.mapNotNull { it.foedselsdato }
         if (fødselsdatoList.isEmpty() || fødselsdatoList.first().isAfter(LocalDate.now().minusYears(19))) {
             val identerTilForelderer =
                 familierelasjoner

@@ -11,7 +11,7 @@ import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
-import no.nav.familie.ef.personhendelse.generated.hentperson.Foedsel
+import no.nav.familie.ef.personhendelse.generated.hentperson.Foedselsdato
 import no.nav.familie.ef.personhendelse.generated.hentperson.ForelderBarnRelasjon
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
@@ -50,7 +50,7 @@ class DødsfallHandlerTest {
             emptyList(),
             emptyList(),
             emptyList(),
-            listOf(Foedsel(foedselsdato = LocalDate.parse("2009-09-09"))),
+            listOf(Foedselsdato(foedselsdato = LocalDate.parse("2009-09-09"))),
         )
 
     @BeforeEach
