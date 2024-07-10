@@ -6,7 +6,9 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class InntektsendringerScheduler(val vedtakendringerService: VedtakendringerService) {
+class InntektsendringerScheduler(
+    val vedtakendringerService: VedtakendringerService,
+) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @Scheduled(cron = "\${INNTEKTSKONTROLL_CRON_EXPRESSION}") // kl 04:00 den 6. hver måned

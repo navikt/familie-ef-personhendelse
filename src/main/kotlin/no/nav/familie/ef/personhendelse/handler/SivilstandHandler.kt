@@ -46,15 +46,12 @@ class SivilstandHandler : PersonhendelseHandler {
 
 private fun Personhendelse.sivilstandNotNull() = this.sivilstand != null && this.sivilstand.type != null
 
-fun Endringstype.tilTekst(): String {
-    return when (this) {
+fun Endringstype.tilTekst(): String =
+    when (this) {
         Endringstype.OPPRETTET -> "Ny"
         Endringstype.KORRIGERT -> "Korrigering av"
         Endringstype.ANNULLERT -> "Annullering av"
         Endringstype.OPPHOERT -> "Opphør av"
     }
-}
 
-fun String.enumToReadable(): String {
-    return this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
-}
+fun String.enumToReadable(): String = this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }

@@ -10,9 +10,7 @@ private val reduksjonsfaktor = BigDecimal(0.45)
 fun beregnFeilutbetalingForMåned(
     forventetInntekt: Int,
     samletInntekt: Int,
-): Int {
-    return beregnUtbetaling(forventetInntekt) - beregnUtbetaling(samletInntekt)
-}
+): Int = beregnUtbetaling(forventetInntekt) - beregnUtbetaling(samletInntekt)
 
 private fun beregnUtbetaling(inntekt: Int): Int {
     val avkortning = beregnAvkortning(inntekt).setScale(0, RoundingMode.HALF_DOWN)

@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(path = ["/api/oppgave"])
 @ProtectedWithClaims(issuer = "azuread")
-class OppgaveController(val oppgaveClient: OppgaveClient, val personhendelseRepository: PersonhendelseRepository) {
+class OppgaveController(
+    val oppgaveClient: OppgaveClient,
+    val personhendelseRepository: PersonhendelseRepository,
+) {
     @PostMapping("/logOpprettedeOppgaver")
     fun logOpprettedeOppgaver() {
         val oppgaveIds = personhendelseRepository.hentAlleOppgaveIds()

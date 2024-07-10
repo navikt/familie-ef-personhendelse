@@ -125,11 +125,13 @@ class VedtakendringerService(
 
         val inntektListe =
             offentligYtelseInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
-        return inntektListe?.filter {
-            it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
-                it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
-                it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType != "ETTERBETALINGSPERIODE"
-        }?.groupBy { it.beskrivelse }?.map { it.key }
+        return inntektListe
+            ?.filter {
+                it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
+                    it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
+                    it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType != "ETTERBETALINGSPERIODE"
+            }?.groupBy { it.beskrivelse }
+            ?.map { it.key }
     }
 
     private fun hentInntektshistorikk(fnr: String): InntektshistorikkResponse? {
@@ -189,19 +191,16 @@ class VedtakendringerService(
         return oppgavetekst
     }
 
-    fun lagOppgavetekstVedNyYtelseUføretrygd(): String {
-        return "Bruker har fått utbetalt uføretrygd. Vurder samordning."
-    }
+    fun lagOppgavetekstVedNyYtelseUføretrygd(): String = "Bruker har fått utbetalt uføretrygd. Vurder samordning."
 
     private fun YearMonth.norskFormat() = this.format(DateTimeFormatter.ofPattern("MM.yyyy"))
 
     private fun Int.tusenskille() = String.format("%,d", this).replace(",", " ")
 }
 
-fun StønadType.tilBehandlingstemaValue(): String {
-    return when (this) {
+fun StønadType.tilBehandlingstemaValue(): String =
+    when (this) {
         StønadType.OVERGANGSSTØNAD -> Behandlingstema.Overgangsstønad.value
         StønadType.BARNETILSYN -> Behandlingstema.Barnetilsyn.value
         StønadType.SKOLEPENGER -> Behandlingstema.Skolepenger.value
     }
-}

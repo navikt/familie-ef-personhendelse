@@ -55,10 +55,12 @@ class PdlClientTest {
             )
 
         wiremockServerItem.stubFor(
-            WireMock.post(WireMock.urlMatching("/graphql"))
+            WireMock
+                .post(WireMock.urlMatching("/graphql"))
                 .withRequestBody(equalToJson(objectMapper.writeValueAsString(pdlPersonRequest)))
                 .willReturn(
-                    WireMock.aResponse()
+                    WireMock
+                        .aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(pdlResponse()),
                 ),

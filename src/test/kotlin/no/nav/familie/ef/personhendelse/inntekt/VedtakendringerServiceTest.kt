@@ -39,13 +39,17 @@ class VedtakendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned(
-                YearMonth.of(2022, 1),
-            ).first().arbeidsInntektInformasjon
+            inntektshistorikkResponse
+                .inntektForMåned(
+                    YearMonth.of(2022, 1),
+                ).first()
+                .arbeidsInntektInformasjon
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned(
-                YearMonth.of(2021, 12),
-            ).first().arbeidsInntektInformasjon
+            inntektshistorikkResponse
+                .inntektForMåned(
+                    YearMonth.of(2021, 12),
+                ).first()
+                .arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse =
             InntektshistorikkResponse(
@@ -134,13 +138,17 @@ class VedtakendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned(
-                YearMonth.of(2021, 12),
-            ).first().arbeidsInntektInformasjon
+            inntektshistorikkResponse
+                .inntektForMåned(
+                    YearMonth.of(2021, 12),
+                ).first()
+                .arbeidsInntektInformasjon
         val nestNyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned(
-                YearMonth.of(2021, 11),
-            ).first().arbeidsInntektInformasjon
+            inntektshistorikkResponse
+                .inntektForMåned(
+                    YearMonth.of(2021, 11),
+                ).first()
+                .arbeidsInntektInformasjon
 
         val oppdatertDatoInntektshistorikkResponse =
             InntektshistorikkResponse(
@@ -191,9 +199,11 @@ class VedtakendringerServiceTest {
         val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
 
         val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse.inntektForMåned(
-                YearMonth.of(2021, 12),
-            ).first().arbeidsInntektInformasjon
+            inntektshistorikkResponse
+                .inntektForMåned(
+                    YearMonth.of(2021, 12),
+                ).first()
+                .arbeidsInntektInformasjon
 
         val toUtbetalingerSammeYtelse =
             listOf(
@@ -296,7 +306,8 @@ class VedtakendringerServiceTest {
         )
     }
 
-    fun readResource(name: String): String {
-        return this::class.java.classLoader.getResource(name)!!.readText(StandardCharsets.UTF_8)
-    }
+    fun readResource(name: String): String =
+        this::class.java.classLoader
+            .getResource(name)!!
+            .readText(StandardCharsets.UTF_8)
 }

@@ -5,6 +5,4 @@ import java.time.format.DateTimeFormatter
 
 private val DATO_FORMAT_NORSK = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-fun LocalDate?.tilNorskDatoformat(): String {
-    return this?.format(DATO_FORMAT_NORSK) ?: "ukjent dato"
-}
+fun LocalDate?.tilNorskDatoformat(): String = this?.format(DATO_FORMAT_NORSK) ?: "ukjent dato"

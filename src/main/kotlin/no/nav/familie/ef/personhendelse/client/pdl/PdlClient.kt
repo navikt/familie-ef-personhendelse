@@ -49,13 +49,10 @@ class PdlClient(
     }
 }
 
-private fun httpHeadersPdl(): HttpHeaders {
-    return HttpHeaders().apply {
+private fun httpHeadersPdl(): HttpHeaders =
+    HttpHeaders().apply {
         add("Tema", "ENF")
         add("behandlingsnummer", Tema.ENF.behandlingsnummer)
     }
-}
 
-fun String.graphqlCompatible(): String {
-    return StringUtils.normalizeSpace(this.replace("\n", ""))
-}
+fun String.graphqlCompatible(): String = StringUtils.normalizeSpace(this.replace("\n", ""))

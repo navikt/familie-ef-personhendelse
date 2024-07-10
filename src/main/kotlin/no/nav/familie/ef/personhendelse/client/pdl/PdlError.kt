@@ -5,6 +5,8 @@ data class PdlError(
     val extensions: PdlErrorExtensions?,
 )
 
-data class PdlErrorExtensions(val code: String?) {
+data class PdlErrorExtensions(
+    val code: String?,
+) {
     fun notFound() = code == "not_found"
 }

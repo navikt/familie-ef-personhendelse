@@ -26,9 +26,7 @@ class DødsfallOppgaveService(
         )
     }
 
-    fun hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid(): List<DødsfallOppgave> {
-        return dødsfallOppgaveRepository.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid()
-    }
+    fun hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid(): List<DødsfallOppgave> = dødsfallOppgaveRepository.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid()
 
     fun settDødsfalloppgaverTilUtført(oppgaver: List<DødsfallOppgave>) {
         oppgaver.forEach { dødsfallOppgaveRepository.settOppgaveTilUtført(it.hendelsesId) }
