@@ -11,7 +11,9 @@ import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 
 @Component
-class KontantstøtteVedtakListener(val kontantstøtteVedtakService: KontantstøtteVedtakService) : ConsumerSeekAware {
+class KontantstøtteVedtakListener(
+    val kontantstøtteVedtakService: KontantstøtteVedtakService,
+) : ConsumerSeekAware {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val securelogger = LoggerFactory.getLogger("secureLogger")
     private val vurderKonsekvensOppgaveBeskrivelse =
@@ -48,9 +50,7 @@ class KontantstøtteVedtakListener(val kontantstøtteVedtakService: Kontantstøt
         }
     }
 
-    private fun erAlleredeHåndtert(vedtakhendelse: VedtakDVH): Boolean {
-        return kontantstøtteVedtakService.erAlleredeHåndtert(vedtakhendelse.behandlingsId)
-    }
+    private fun erAlleredeHåndtert(vedtakhendelse: VedtakDVH): Boolean = kontantstøtteVedtakService.erAlleredeHåndtert(vedtakhendelse.behandlingsId)
 
     private fun opprettOppgaveHvisPersonHarLøpendeBarnetilsyn(
         personIdent: String,

@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class ForelderBarnHandler(val sakClient: SakClient) : PersonhendelseHandler {
+class ForelderBarnHandler(
+    val sakClient: SakClient,
+) : PersonhendelseHandler {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 

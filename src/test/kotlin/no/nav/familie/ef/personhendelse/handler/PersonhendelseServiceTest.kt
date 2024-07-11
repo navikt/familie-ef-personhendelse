@@ -179,8 +179,6 @@ internal class PersonhendelseServiceTest {
     class DummyHandler : PersonhendelseHandler {
         override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
 
-        override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OpprettOppgave {
-            return OpprettOppgave(beskrivelse = "Dummy handler")
-        }
+        override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OpprettOppgave = OpprettOppgave(beskrivelse = "Dummy handler")
     }
 }

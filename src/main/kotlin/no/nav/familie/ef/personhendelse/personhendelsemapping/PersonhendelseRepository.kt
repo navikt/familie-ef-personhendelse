@@ -13,7 +13,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
-class PersonhendelseRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
+class PersonhendelseRepository(
+    val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
+) {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun lagrePersonhendelse(

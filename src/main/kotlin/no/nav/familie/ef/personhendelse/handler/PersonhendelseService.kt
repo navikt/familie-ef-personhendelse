@@ -49,9 +49,7 @@ class PersonhendelseService(
         }
     }
 
-    fun harHåndtertHendelse(hendelseId: String): Boolean {
-        return personhendelseRepository.hentHendelse(UUID.fromString(hendelseId)) != null
-    }
+    fun harHåndtertHendelse(hendelseId: String): Boolean = personhendelseRepository.hentHendelse(UUID.fromString(hendelseId)) != null
 
     private fun handle(
         handler: PersonhendelseHandler,
@@ -211,9 +209,7 @@ class PersonhendelseService(
             ?: personhendelse.identerUtenAktørId().firstOrNull()
             ?: error("Finner ikke ident for personHendelse=${personhendelse.hendelseId}")
 
-    private fun hentTidligereHendelse(personhendelse: Personhendelse): Hendelse? {
-        return personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.tidligereHendelseId))
-    }
+    private fun hentTidligereHendelse(personhendelse: Personhendelse): Hendelse? = personhendelseRepository.hentHendelse(UUID.fromString(personhendelse.tidligereHendelseId))
 
     private fun lagreHendelse(
         hendelseId: UUID,
@@ -227,21 +223,18 @@ class PersonhendelseService(
         )
     }
 
-    private fun hentOppgave(hendelse: Hendelse): Oppgave {
-        return oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId)
-    }
+    private fun hentOppgave(hendelse: Hendelse): Oppgave = oppgaveClient.finnOppgaveMedId(hendelse.oppgaveId)
 
     private fun opprettOppgaveMedBeskrivelse(
         personIdent: String,
         beskrivelse: String,
-    ): Long {
-        return oppgaveClient.opprettOppgave(
+    ): Long =
+        oppgaveClient.opprettOppgave(
             opprettVurderLivshendelseoppgave(
                 personIdent = personIdent,
                 beskrivelse = beskrivelse,
             ),
         )
-    }
 }
 
 private fun Personhendelse.ferdigstiltBeskrivelse() =

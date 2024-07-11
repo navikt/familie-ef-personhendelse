@@ -12,7 +12,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
-class DødsfallOppgaveRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
+class DødsfallOppgaveRepository(
+    val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
+) {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun lagreOppgave(

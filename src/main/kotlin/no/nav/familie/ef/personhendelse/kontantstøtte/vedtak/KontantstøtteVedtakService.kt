@@ -14,9 +14,7 @@ class KontantstøtteVedtakService(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun harLøpendeBarnetilsyn(personIdent: String): Boolean {
-        return efSakClient.harLøpendeBarnetilsyn(personIdent)
-    }
+    fun harLøpendeBarnetilsyn(personIdent: String): Boolean = efSakClient.harLøpendeBarnetilsyn(personIdent)
 
     fun opprettVurderKonsekvensOppgaveForBarnetilsyn(
         personIdent: String,
@@ -36,7 +34,5 @@ class KontantstøtteVedtakService(
         kontantstøtteVedtakRepository.lagreKontantstøttevedtak(behandlingId)
     }
 
-    fun erAlleredeHåndtert(behandlingId: String): Boolean {
-        return kontantstøtteVedtakRepository.harAlleredeProsessertKontantstøttevedtak(behandlingId)
-    }
+    fun erAlleredeHåndtert(behandlingId: String): Boolean = kontantstøtteVedtakRepository.harAlleredeProsessertKontantstøttevedtak(behandlingId)
 }

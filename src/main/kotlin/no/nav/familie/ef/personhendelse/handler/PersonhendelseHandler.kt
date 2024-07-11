@@ -5,9 +5,13 @@ import no.nav.person.pdl.leesah.Personhendelse
 
 sealed class OppgaveInformasjon
 
-data class OpprettOppgave(val beskrivelse: String) : OppgaveInformasjon()
+data class OpprettOppgave(
+    val beskrivelse: String,
+) : OppgaveInformasjon()
 
-data class UtsettDødsfallOppgave(val beskrivelse: String) : OppgaveInformasjon()
+data class UtsettDødsfallOppgave(
+    val beskrivelse: String,
+) : OppgaveInformasjon()
 
 object IkkeOpprettOppgave : OppgaveInformasjon()
 

@@ -18,32 +18,34 @@ class InntektClient(
     private fun lagInntektUri(
         fom: YearMonth,
         tom: YearMonth,
-    ) = UriComponentsBuilder.fromUri(uri).pathSegment("api/inntekt")
+    ) = UriComponentsBuilder
+        .fromUri(uri)
+        .pathSegment("api/inntekt")
         .queryParam("fom", fom)
         .queryParam("tom", tom)
-        .build().toUri()
+        .build()
+        .toUri()
 
     private fun lagInntekthistorikkUri(
         fom: YearMonth,
         tom: YearMonth?,
-    ) = UriComponentsBuilder.fromUri(uri).pathSegment("api/inntekt/historikk")
+    ) = UriComponentsBuilder
+        .fromUri(uri)
+        .pathSegment("api/inntekt/historikk")
         .queryParam("fom", fom)
         .queryParam("tom", tom)
-        .build().toUri()
+        .build()
+        .toUri()
 
     fun hentInntekt(
         personIdent: String,
         fom: YearMonth,
         tom: YearMonth,
-    ): HentInntektListeResponse {
-        return postForEntity(lagInntektUri(fom, tom), PersonIdent(personIdent))
-    }
+    ): HentInntektListeResponse = postForEntity(lagInntektUri(fom, tom), PersonIdent(personIdent))
 
     fun hentInntektshistorikk(
         personIdent: String,
         fom: YearMonth,
         tom: YearMonth?,
-    ): InntektshistorikkResponse {
-        return postForEntity(lagInntekthistorikkUri(fom, tom), PersonIdent(personIdent))
-    }
+    ): InntektshistorikkResponse = postForEntity(lagInntekthistorikkUri(fom, tom), PersonIdent(personIdent))
 }

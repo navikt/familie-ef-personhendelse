@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component
 class UtflyttingHandler : PersonhendelseHandler {
     override val type = PersonhendelseType.UTFLYTTING_FRA_NORGE
 
-    override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon {
-        return OpprettOppgave(personhendelse.utflyttingsBeskrivelse())
-    }
+    override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon = OpprettOppgave(personhendelse.utflyttingsBeskrivelse())
 }
 
 private fun Personhendelse.utflyttingsBeskrivelse() =

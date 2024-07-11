@@ -140,6 +140,7 @@ type Person {
     foedsel: [Foedsel!]! @deprecated(reason: "Erstattet av foedselsdato & foedested")
     foedselsdato: [Foedselsdato!]!
     foedested: [Foedested!]!
+    navspersonidentifikator(historikk: Boolean = false): [Navspersonidentifikator!]!
     folkeregisteridentifikator(historikk: Boolean = false): [Folkeregisteridentifikator!]!
     folkeregisterpersonstatus(historikk: Boolean = false): [Folkeregisterpersonstatus!]!
     forelderBarnRelasjon: [ForelderBarnRelasjon!]!
@@ -551,6 +552,10 @@ type Folkeregisteridentifikator {
     status: String!
     type: String!
     folkeregistermetadata: Folkeregistermetadata!
+    metadata: Metadata!
+}
+type Navspersonidentifikator {
+    identifikasjonsnummer: String!
     metadata: Metadata!
 }
 

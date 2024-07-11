@@ -13,7 +13,9 @@ import java.time.YearMonth
 import java.util.UUID
 
 @Repository
-class EfVedtakRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
+class EfVedtakRepository(
+    val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
+) {
     fun lagreEfVedtakshendelse(
         vedtakshendelse: EnsligForsørgerVedtakhendelse,
         aarMaanedProsessert: YearMonth = YearMonth.now(),

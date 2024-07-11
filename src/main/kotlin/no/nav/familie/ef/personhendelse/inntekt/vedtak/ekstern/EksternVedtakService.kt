@@ -7,7 +7,5 @@ import org.springframework.stereotype.Service
 class EksternVedtakService(
     val sakClient: SakClient,
 ) {
-    fun mottarEfStønad(vedtakhendelse: Vedtakhendelse): Boolean {
-        return sakClient.harLøpendeStønad(setOf(vedtakhendelse.fødselsnummer))
-    }
+    fun mottarEfStønad(vedtakhendelse: Vedtakhendelse): Boolean = sakClient.harLøpendeStønad(setOf(vedtakhendelse.fødselsnummer))
 }

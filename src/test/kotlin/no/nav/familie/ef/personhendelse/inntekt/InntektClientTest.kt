@@ -48,10 +48,12 @@ class InntektClientTest {
     @Test
     fun `tester inntektsresponse`() {
         wiremockServerItem.stubFor(
-            WireMock.post(WireMock.urlEqualTo("/api/inntekt?fom=2020-11&tom=2021-11"))
+            WireMock
+                .post(WireMock.urlEqualTo("/api/inntekt?fom=2020-11&tom=2021-11"))
                 .withRequestBody(equalToJson(objectMapper.writeValueAsString(PersonIdent(personIdent))))
                 .willReturn(
-                    WireMock.aResponse()
+                    WireMock
+                        .aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(gyldigResponse),
                 ),
@@ -59,8 +61,20 @@ class InntektClientTest {
 
         val response = runBlocking { inntektClient.hentInntekt(personIdent, YearMonth.of(2020, 11), YearMonth.of(2021, 11)) }
 
-        val inntektType = response.arbeidsinntektMåned?.first()?.arbeidsInntektInformasjon?.inntektListe?.first()?.inntektType
-        val beløp = response.arbeidsinntektMåned?.first()?.arbeidsInntektInformasjon?.inntektListe?.first()?.beløp
+        val inntektType =
+            response.arbeidsinntektMåned
+                ?.first()
+                ?.arbeidsInntektInformasjon
+                ?.inntektListe
+                ?.first()
+                ?.inntektType
+        val beløp =
+            response.arbeidsinntektMåned
+                ?.first()
+                ?.arbeidsInntektInformasjon
+                ?.inntektListe
+                ?.first()
+                ?.beløp
         Assertions.assertEquals(InntektType.LOENNSINNTEKT, inntektType)
         Assertions.assertEquals(40000, beløp)
     }
@@ -68,10 +82,12 @@ class InntektClientTest {
     @Test
     fun `tester inntektshistorikk response`() {
         wiremockServerItem.stubFor(
-            WireMock.post(WireMock.urlEqualTo("/api/inntekt/historikk?fom=2020-01&tom=2020-07"))
+            WireMock
+                .post(WireMock.urlEqualTo("/api/inntekt/historikk?fom=2020-01&tom=2020-07"))
                 .withRequestBody(equalToJson(objectMapper.writeValueAsString(PersonIdent(personIdent))))
                 .willReturn(
-                    WireMock.aResponse()
+                    WireMock
+                        .aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(gyldigInntekthistorikkResponse),
                 ),
@@ -79,9 +95,31 @@ class InntektClientTest {
 
         val response = runBlocking { inntektClient.hentInntektshistorikk(personIdent, YearMonth.of(2020, 1), YearMonth.of(2020, 7)) }
 
-        val inntektType = response.aarMaanedHistorikk.values.first().values.first().first().arbeidsInntektInformasjon.inntektListe?.first()?.inntektType
-        val beløp = response.aarMaanedHistorikk.values.first().values.first().first().arbeidsInntektInformasjon.inntektListe?.first()?.beløp
-        val inntektsversjon = response.aarMaanedHistorikk.values.first().values.first().first().versjon
+        val inntektType =
+            response.aarMaanedHistorikk.values
+                .first()
+                .values
+                .first()
+                .first()
+                .arbeidsInntektInformasjon.inntektListe
+                ?.first()
+                ?.inntektType
+        val beløp =
+            response.aarMaanedHistorikk.values
+                .first()
+                .values
+                .first()
+                .first()
+                .arbeidsInntektInformasjon.inntektListe
+                ?.first()
+                ?.beløp
+        val inntektsversjon =
+            response.aarMaanedHistorikk.values
+                .first()
+                .values
+                .first()
+                .first()
+                .versjon
 
         Assertions.assertEquals(InntektType.LOENNSINNTEKT, inntektType)
         Assertions.assertEquals(35000, beløp)

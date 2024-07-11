@@ -5,7 +5,9 @@ data class PdlPersonRequest<T>(
     val query: String,
 )
 
-data class PdlPersonRequestVariables(val ident: String)
+data class PdlPersonRequestVariables(
+    val ident: String,
+)
 
 data class PdlIdentRequestVariables(
     val ident: String,

@@ -8,7 +8,5 @@ import org.springframework.stereotype.Component
 class DødfødtBarnHandler : PersonhendelseHandler {
     override val type = PersonhendelseType.DØDFØDT_BARN
 
-    override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon {
-        return UtsettDødsfallOppgave(beskrivelse = "Dødfødt barn ${personhendelse.doedfoedtBarn.dato.tilNorskDatoformat()}")
-    }
+    override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon = UtsettDødsfallOppgave(beskrivelse = "Dødfødt barn ${personhendelse.doedfoedtBarn.dato.tilNorskDatoformat()}")
 }

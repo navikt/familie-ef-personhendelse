@@ -79,13 +79,15 @@ class InntektsendringerService(
 
         val orgNrToNyesteVersjonMap = nyesteRegistrerteInntekt.associate { it.opplysningspliktig to it.versjon }
         val inntektListe =
-            nyesteRegistrerteInntekt.filter {
-                it.versjon == orgNrToNyesteVersjonMap[it.opplysningspliktig] && it.arbeidsInntektInformasjon.inntektListe != null
-            }.flatMap { it.arbeidsInntektInformasjon.inntektListe!! }
+            nyesteRegistrerteInntekt
+                .filter {
+                    it.versjon == orgNrToNyesteVersjonMap[it.opplysningspliktig] && it.arbeidsInntektInformasjon.inntektListe != null
+                }.flatMap { it.arbeidsInntektInformasjon.inntektListe!! }
         val samletInntekt =
-            inntektListe.filterNot {
-                ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse)
-            }.sumOf { it.beløp }
+            inntektListe
+                .filterNot {
+                    ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse)
+                }.sumOf { it.beløp }
 
         if (samletInntekt < halvtGrunnbeløpMånedlig) return BeregningResultat(0, 0, 0)
 
