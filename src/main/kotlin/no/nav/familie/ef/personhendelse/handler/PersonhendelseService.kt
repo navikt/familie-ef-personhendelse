@@ -72,7 +72,7 @@ class PersonhendelseService(
         personIdent: String,
     ) {
         if (personhendelse.skalOpphøreEllerKorrigeres() && personhendelse.erIkkeOpphørAvSivilstand()) {
-            opphørEllerKorrigerOppgave(personhendelse)
+            opphørEllerKorrigerOppgave(personhendelse, handler.type)
             return
         }
         val oppgaveInformasjon = handler.lagOppgaveInformasjon(personhendelse)
@@ -144,7 +144,10 @@ class PersonhendelseService(
         logger.info("Oppgave opprettet med oppgaveId=$oppgaveId")
     }
 
-    private fun opphørEllerKorrigerOppgave(personhendelse: Personhendelse) {
+    private fun opphørEllerKorrigerOppgave(
+        personhendelse: Personhendelse,
+        personhendelseType: PersonhendelseType,
+    ) {
         val hendelse = hentTidligereHendelse(personhendelse)
         if (hendelse == null) {
             logger.warn(
@@ -177,7 +180,7 @@ class PersonhendelseService(
             logger.info("Oppgave oppdatert med oppgaveId=$nyOppgave for endringstype : ${personhendelse.endringstype.name}")
         } else {
             val ident = identFraOppgaveEllerPersonhendelse(oppgave, personhendelse)
-            val nyOppgaveId = opprettOppgaveMedBeskrivelse(ident, personhendelse.ferdigstiltBeskrivelse())
+            val nyOppgaveId = opprettOppgaveMedBeskrivelse(ident, personhendelse.ferdigstiltBeskrivelse(personhendelseType))
             logger.info("Ny oppgave=$nyOppgaveId ifm en allerede lukket oppgave er opprettet med oppgaveId=${oppgave.id}")
             oppgaveClient.leggOppgaveIMappe(nyOppgaveId)
         }
@@ -237,8 +240,8 @@ class PersonhendelseService(
         )
 }
 
-private fun Personhendelse.ferdigstiltBeskrivelse() =
-    "En hendelse av typen ${this.endringstype.name} har oppstått for en ferdigstilt oppgave"
+private fun Personhendelse.ferdigstiltBeskrivelse(personhendelseType: PersonhendelseType) =
+    "En hendelse av typen ${this.endringstype.name} har oppstått for en ferdigstilt oppgave med hendelsestype ${personhendelseType.name}"
 
 private fun Personhendelse.finnesIngenHendelseBeskrivelse() =
     "Det har oppstått en personhendelse som det ikke finnes noen tidligere hendelse eller oppgave for. " +
