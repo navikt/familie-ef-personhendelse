@@ -28,16 +28,16 @@
         <revision>1.0</revision>
         <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
-        <kotlin.version>2.0.0</kotlin.version>
+        <kotlin.version>2.0.10</kotlin.version>
         <kafka-avro-serializer.version>7.7.0</kafka-avro-serializer.version>
-        <avro.version>1.11.3</avro.version>
+        <avro.version>1.12.0</avro.version>
         <graphql-kotlin-spring-client.version>7.1.4</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>7.1.4</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
-        <exec-maven-plugin.version>3.3.0</exec-maven-plugin.version>
+        <exec-maven-plugin.version>3.4.0</exec-maven-plugin.version>
         <kontrakter.version>3.0_20240801145104_f611578</kontrakter.version>
-        <eksterne-kontrakter.version>2.0_20240131125409_e3d0f6d</eksterne-kontrakter.version>
-        <felles.version>3.20240715145751_fc025c1</felles.version>
+        <eksterne-kontrakter.version>2.0_20240806120744_a042aa1</eksterne-kontrakter.version>
+        <felles.version>3.20240806111424_fff2930</felles.version>
         <nav.security.version>5.0.1</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.2</wiremock.version>
