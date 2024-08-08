@@ -33,242 +33,148 @@ class VedtakendringerServiceTest {
             inntektsendringerService,
         )
 
+    val enMndTilbake = YearMonth.now().minusMonths(1)
+    val toMndTilbake = YearMonth.now().minusMonths(2)
+    val treMndTilbake = YearMonth.now().minusMonths(3)
+    val fireMndTilbake = YearMonth.now().minusMonths(4)
+
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {
-        val json: String = readResource("inntekt/InntekthistorikkLoennsinntektEksempel.json")
-        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+        val json: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
+        val inntektResponse = objectMapper.readValue<HentInntektListeResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse
-                .inntektForMåned(
-                    YearMonth.of(2022, 1),
-                ).first()
-                .arbeidsInntektInformasjon
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse
-                .inntektForMåned(
-                    YearMonth.of(2021, 12),
-                ).first()
-                .arbeidsInntektInformasjon
+        val arbeidsinntektMåned =
+            inntektResponse.arbeidsinntektMåned
+                ?.first() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoInntektshistorikkResponse =
-            InntektshistorikkResponse(
-                linkedMapOf(
-                    Pair(
-                        YearMonth.now().minusMonths(1),
-                        mapOf(
-                            Pair(
-                                "1",
-                                listOf(
-                                    InntektVersjon(
-                                        nyesteArbeidsInntektInformasjonIEksempelJson,
-                                        null,
-                                        "innleveringstidspunkt",
-                                        "opplysningspliktig",
-                                        1,
-                                    ),
-                                ),
-                            ),
-                        ),
+        val oppdatertDatoHentInntektListeResponse =
+            inntektResponse.copy(
+                arbeidsinntektMåned =
+                    listOf(
+                        arbeidsinntektMåned.copy(årMåned = enMndTilbake),
+                        arbeidsinntektMåned.copy(årMåned = toMndTilbake),
+                        arbeidsinntektMåned.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMåned.copy(årMåned = fireMndTilbake),
                     ),
-                    Pair(
-                        YearMonth.now().minusMonths(2),
-                        mapOf(
-                            Pair(
-                                "1",
-                                listOf(
-                                    InntektVersjon(
-                                        nestNyesteArbeidsInntektInformasjonIEksempelJson,
-                                        null,
-                                        "innleveringstidspunkt",
-                                        "opplysningspliktig",
-                                        1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
             )
 
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isFalse
-    }
-
-    @Test
-    fun `Etterbetaling av sykepenger skal ignoreres ved vedtaksendringer`() {
-        val json: String = readResource("inntekt/InntekthistorikkEtterbetalingSkalIgnoreres.json")
-        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
-
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 2))
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 1))
-
-        val oppdatertDatoInntektshistorikkResponse =
-            InntektshistorikkResponse(
-                linkedMapOf(
-                    Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
-                    Pair(YearMonth.now().minusMonths(2), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson))),
-                ),
-            )
-
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isFalse
-    }
-
-    @Test
-    fun `Bruker har fått foreldrepenger i nyeste måned`() {
-        val json: String = readResource("inntekt/InntekthistorikkMedForeldrepenger.json")
-        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
-
-        val nyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2023, 1))
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson = inntektshistorikkResponse.inntektForMåned(YearMonth.of(2022, 12))
-
-        val oppdatertDatoInntektshistorikkResponse =
-            InntektshistorikkResponse(
-                linkedMapOf(
-                    Pair(YearMonth.now().minusMonths(1), mapOf(Pair("1", nyesteArbeidsInntektInformasjonIEksempelJson))),
-                    Pair(YearMonth.now().minusMonths(2), mapOf(Pair("1", nestNyesteArbeidsInntektInformasjonIEksempelJson))),
-                ),
-            )
-
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isTrue
+        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
     }
 
     @Test
     fun `Bruker har lønnsinntekt frem til forrige måned`() {
-        val json: String = readResource("inntekt/InntekthistorikkLoennsinntektTilOffentligYtelseEksempel.json")
-        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+        val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
+        val inntektResponseMedLønn = objectMapper.readValue<HentInntektListeResponse>(jsonMedLønn)
+        val json: String = readResource("inntekt/InntektLoennsinntektTilOffentligYtelseEksempel.json")
+        val inntektResponseMedVedtak = objectMapper.readValue<HentInntektListeResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse
-                .inntektForMåned(
-                    YearMonth.of(2021, 12),
-                ).first()
-                .arbeidsInntektInformasjon
-        val nestNyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse
-                .inntektForMåned(
-                    YearMonth.of(2021, 11),
-                ).first()
-                .arbeidsInntektInformasjon
+        val arbeidsinntektMånedMedLønn =
+            inntektResponseMedLønn.arbeidsinntektMåned
+                ?.first() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoInntektshistorikkResponse =
-            InntektshistorikkResponse(
-                linkedMapOf(
-                    Pair(
-                        YearMonth.now().minusMonths(1),
-                        mapOf(
-                            Pair(
-                                "1",
-                                listOf(
-                                    InntektVersjon(
-                                        nyesteArbeidsInntektInformasjonIEksempelJson,
-                                        null,
-                                        "innleveringstidspunkt",
-                                        "opplysningspliktig",
-                                        1,
-                                    ),
-                                ),
-                            ),
-                        ),
+        val arbeidsinntektMedOffentligYtelse =
+            inntektResponseMedVedtak.arbeidsinntektMåned
+                ?.first() ?: Assertions.fail("Inntekt mangler")
+
+        val oppdatertDatoHentInntektListeResponse =
+            inntektResponseMedLønn.copy(
+                arbeidsinntektMåned =
+                    listOf(
+                        arbeidsinntektMedOffentligYtelse.copy(årMåned = enMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = toMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = fireMndTilbake),
                     ),
-                    Pair(
-                        YearMonth.now().minusMonths(2),
-                        mapOf(
-                            Pair(
-                                "1",
-                                listOf(
-                                    InntektVersjon(
-                                        nestNyesteArbeidsInntektInformasjonIEksempelJson,
-                                        null,
-                                        "innleveringstidspunkt",
-                                        "opplysningspliktig",
-                                        1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
             )
 
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isTrue
+        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isTrue
     }
 
     @Test
-    fun `Bruker har flere utbetalinger på ytelse en måned`() {
-        val json: String = readResource("inntekt/InntekthistorikkLoennsinntektTilOffentligYtelseEksempel.json")
-        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
+    fun `Etterbetaling av sykepenger skal ignoreres ved vedtaksendringer`() {
+        val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
+        val inntektResponseMedLønn = objectMapper.readValue<HentInntektListeResponse>(jsonMedLønn)
+        val json: String = readResource("inntekt/InntektEtterbetalingSkalIgnoreres.json")
+        val inntektResponseMedVedtak = objectMapper.readValue<HentInntektListeResponse>(json)
 
-        val nyesteArbeidsInntektInformasjonIEksempelJson =
-            inntektshistorikkResponse
-                .inntektForMåned(
-                    YearMonth.of(2021, 12),
-                ).first()
-                .arbeidsInntektInformasjon
+        val arbeidsinntektMånedMedLønn =
+            inntektResponseMedLønn.arbeidsinntektMåned
+                ?.first() ?: Assertions.fail("Inntekt mangler")
 
-        val toUtbetalingerSammeYtelse =
-            listOf(
-                nyesteArbeidsInntektInformasjonIEksempelJson.inntektListe!!.first(),
-                nyesteArbeidsInntektInformasjonIEksempelJson.inntektListe?.first()!!.copy(beløp = 10000),
+        val arbeidsinntektMedEtterbetalingAvSykepenger =
+            inntektResponseMedVedtak.arbeidsinntektMåned
+                ?.first() ?: Assertions.fail("Inntekt mangler")
+
+        val oppdatertDatoHentInntektListeResponse =
+            inntektResponseMedLønn.copy(
+                arbeidsinntektMåned =
+                    listOf(
+                        arbeidsinntektMedEtterbetalingAvSykepenger.copy(årMåned = enMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = toMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = fireMndTilbake),
+                    ),
             )
 
-        val oppdatertDatoInntektshistorikkResponse =
-            InntektshistorikkResponse(
-                linkedMapOf(
-                    Pair(
-                        YearMonth.now().minusMonths(1),
-                        mapOf(
-                            Pair(
-                                "1",
-                                listOf(
-                                    InntektVersjon(
-                                        ArbeidsInntekthistorikkInformasjon(null, null, null, toUtbetalingerSammeYtelse),
-                                        null,
-                                        "innleveringstidspunkt",
-                                        "opplysningspliktig",
-                                        1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    Pair(
-                        YearMonth.now().minusMonths(2),
-                        mapOf(
-                            Pair(
-                                "1",
-                                listOf(
-                                    InntektVersjon(
-                                        nyesteArbeidsInntektInformasjonIEksempelJson,
-                                        null,
-                                        "innleveringstidspunkt",
-                                        "opplysningspliktig",
-                                        1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            )
-
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoInntektshistorikkResponse)).isFalse
+        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
     }
 
     @Test
-    fun `Bruker har overgangsstønad`() {
-        val json: String = readResource("inntekt/InntekthistorikkMedOvergangsstønad.json")
-        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
-        val oppdatertInntektshistorikkResponse = oppdatertInntektshistorikkResponseTilNyereDato(inntektshistorikkResponse)
+    fun `Bruker har fått foreldrepenger i nyeste måned`() {
+        val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
+        val inntektResponseMedLønn = objectMapper.readValue<HentInntektListeResponse>(jsonMedLønn)
+        val json: String = readResource("inntekt/InntektMedForeldrepenger.json")
+        val inntektResponseMedVedtak = objectMapper.readValue<HentInntektListeResponse>(json)
 
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertInntektshistorikkResponse)).isFalse
+        val arbeidsinntektMånedMedLønn =
+            inntektResponseMedLønn.arbeidsinntektMåned
+                ?.first() ?: Assertions.fail("Inntekt mangler")
+
+        val arbeidsinntektMedForeldrepenger =
+            inntektResponseMedVedtak.arbeidsinntektMåned
+                ?.first() ?: Assertions.fail("Inntekt mangler")
+
+        val oppdatertDatoHentInntektListeResponse =
+            inntektResponseMedLønn.copy(
+                arbeidsinntektMåned =
+                    listOf(
+                        arbeidsinntektMedForeldrepenger.copy(årMåned = enMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = toMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = fireMndTilbake),
+                    ),
+            )
+
+        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isTrue
     }
 
     @Test
-    fun `Bruker har flere utbetalinger fra overgangsstønad`() {
-        val json: String = readResource("inntekt/InntekthistorikkFlereUtbetalingerOvergangsstønad.json")
-        val inntektshistorikkResponse = objectMapper.readValue<InntektshistorikkResponse>(json)
-        val oppdatertInntektshistorikkResponse = oppdatertInntektshistorikkResponseTilNyereDato(inntektshistorikkResponse)
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertInntektshistorikkResponse)).isFalse
+    fun `Bruker får overgangsstønad - skal ignoreres`() {
+        val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
+        val inntektResponseMedLønn = objectMapper.readValue<HentInntektListeResponse>(jsonMedLønn)
+        val json: String = readResource("inntekt/InntektMedOvergangsstønad.json")
+        val inntektResponseMedVedtak = objectMapper.readValue<HentInntektListeResponse>(json)
+
+        val arbeidsinntektMånedMedLønn =
+            inntektResponseMedLønn.arbeidsinntektMåned
+                ?.first() ?: Assertions.fail("Inntekt mangler")
+
+        val arbeidsinntektMedOvergangsstønad =
+            inntektResponseMedVedtak.arbeidsinntektMåned
+                ?.first() ?: Assertions.fail("Inntekt mangler")
+
+        val oppdatertDatoHentInntektListeResponse =
+            inntektResponseMedLønn.copy(
+                arbeidsinntektMåned =
+                    listOf(
+                        arbeidsinntektMedOvergangsstønad.copy(årMåned = enMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = toMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(årMåned = fireMndTilbake),
+                    ),
+            )
+
+        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
     }
 
     @Test
@@ -294,16 +200,6 @@ class VedtakendringerServiceTest {
 
         Assertions.assertThat(oppgavetekst.contains("Beregnet feilutbetaling i uttrekksperioden: 40 006 kroner "))
         Assertions.assertThat(oppgavetekst.contains("FOM 06.2023 - TOM 10.2023"))
-    }
-
-    fun oppdatertInntektshistorikkResponseTilNyereDato(inntektshistorikkResponse: InntektshistorikkResponse): InntektshistorikkResponse {
-        val keys = inntektshistorikkResponse.aarMaanedHistorikk.keys.sortedBy { it }
-        return InntektshistorikkResponse(
-            linkedMapOf(
-                Pair(YearMonth.now().minusMonths(1), inntektshistorikkResponse.inntektEntryForMåned(keys.first())),
-                Pair(YearMonth.now().minusMonths(2), inntektshistorikkResponse.inntektEntryForMåned(keys.last())),
-            ),
-        )
     }
 
     fun readResource(name: String): String =
