@@ -146,11 +146,13 @@ class VedtakendringerService(
 
     private fun hentInntekt(fnr: String): HentInntektListeResponse? {
         try {
-            return inntektClient.hentInntekt(
+            val inntektReponse = inntektClient.hentInntekt(
                 fnr,
                 YearMonth.now().minusMonths(5),
                 YearMonth.now(),
             )
+            secureLogger.info("InntektResponse: $inntektReponse")
+            return inntektReponse
         } catch (e: Exception) {
             secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person $fnr. Message: ${e.message} Cause: ${e.cause}")
         }
