@@ -46,7 +46,7 @@ class VedtakendringerService(
         var counter = 0
         personerMedAktivStønad.chunked(500).forEach {
             sakClient.hentForventetInntektForIdenter(it).forEach { forventetInntektForPerson ->
-                val response = hentInntektshistorikk(forventetInntektForPerson.personIdent)
+                val response = hentInntekt(forventetInntektForPerson.personIdent)
                 if (response != null &&
                     forventetInntektForPerson.forventetInntektForrigeMåned != null &&
                     forventetInntektForPerson.forventetInntektToMånederTilbake != null
@@ -63,11 +63,11 @@ class VedtakendringerService(
         logger.info("Vedtak- og inntektsendringer ferdig")
     }
 
-    fun harNyeVedtak(response: InntektshistorikkResponse) = nyeVedtak(response)?.isNotEmpty() ?: false
+    fun harNyeVedtak(response: HentInntektListeResponse) = nyeVedtak(response)?.isNotEmpty() ?: false
 
     private fun lagreInntektsendringForPerson(
         forventetInntektForPerson: ForventetInntektForPerson,
-        response: InntektshistorikkResponse,
+        response: HentInntektListeResponse,
     ) {
         val nyeVedtak = nyeVedtak(response)
         val endretInntekt = inntektsendringerService.beregnEndretInntekt(response, forventetInntektForPerson)
@@ -98,12 +98,12 @@ class VedtakendringerService(
         }
     }
 
-    fun nyeVedtak(inntektshistorikkResponse: InntektshistorikkResponse): List<String>? {
+    fun nyeVedtak(inntektResponse: HentInntektListeResponse): List<String>? {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1))
+            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(1) }
         val nestNyesteRegistrerteInntekt =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2))
+            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(2) }
 
         val offentligeYtelserForNyesteMåned = offentligeYtelser(nyesteRegistrerteInntekt) ?: emptyList()
         val offentligeYtelserForNestNyesteMåned = offentligeYtelser(nestNyesteRegistrerteInntekt) ?: emptyList()
@@ -111,27 +111,24 @@ class VedtakendringerService(
         return offentligeYtelserForNyesteMåned.minus(offentligeYtelserForNestNyesteMåned)
     }
 
-    private fun offentligeYtelser(nyesteRegistrerteInntekt: List<InntektVersjon>?): List<String>? {
+    private fun offentligeYtelser(nyesteRegistrerteInntekt: List<ArbeidsinntektMåned>?): List<String>? {
         val offentligYtelseInntekt =
             nyesteRegistrerteInntekt?.filter {
-                it.arbeidsInntektInformasjon.inntektListe?.any { offentligYtelse ->
+                it.arbeidsInntektInformasjon?.inntektListe?.any { offentligYtelse ->
                     offentligYtelse.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
                         offentligYtelse.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
                 }
                     ?: false
             }
 
-        val nyesteVersjon = offentligYtelseInntekt?.maxOfOrNull { it.versjon }
-
-        val inntektListe =
-            offentligYtelseInntekt?.firstOrNull { it.versjon == nyesteVersjon }?.arbeidsInntektInformasjon?.inntektListe
+        val inntektListe = offentligYtelseInntekt?.firstOrNull()?.arbeidsInntektInformasjon?.inntektListe
         return inntektListe
             ?.filter {
                 it.inntektType == InntektType.YTELSE_FRA_OFFENTLIGE &&
                     it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
                     it.tilleggsinformasjon?.tilleggsinformasjonDetaljer?.detaljerType != "ETTERBETALINGSPERIODE"
             }?.groupBy { it.beskrivelse }
-            ?.map { it.key }
+            ?.mapNotNull { it.key }
     }
 
     private fun hentInntektshistorikk(fnr: String): InntektshistorikkResponse? {
@@ -140,6 +137,19 @@ class VedtakendringerService(
                 fnr,
                 YearMonth.now().minusMonths(5),
                 null,
+            )
+        } catch (e: Exception) {
+            secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person $fnr. Message: ${e.message} Cause: ${e.cause}")
+        }
+        return null
+    }
+
+    private fun hentInntekt(fnr: String): HentInntektListeResponse? {
+        try {
+            return inntektClient.hentInntekt(
+                fnr,
+                YearMonth.now().minusMonths(5),
+                YearMonth.now(),
             )
         } catch (e: Exception) {
             secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person $fnr. Message: ${e.message} Cause: ${e.cause}")

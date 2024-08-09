@@ -1,0 +1,75 @@
+{
+  "arbeidsInntektMaaned": [
+    {
+      "aarMaaned": "2024-06",
+      "arbeidsInntektInformasjon": {
+        "inntektListe": [
+          {
+            "inntektType": "YTELSE_FRA_OFFENTLIGE",
+            "beloep": 20000,
+            "fordel": "kontantytelse",
+            "inntektskilde": "A-ordningen",
+            "inntektsperiodetype": "Maaned",
+            "inntektsstatus": "LoependeInnrapportert",
+            "leveringstidspunkt": "2022-03",
+            "utbetaltIMaaned": "2022-02",
+            "opplysningspliktig": {
+              "identifikator": "1",
+              "aktoerType": "ORGANISASJON"
+            },
+            "virksomhet": {
+              "identifikator": "2",
+              "aktoerType": "ORGANISASJON"
+            },
+            "tilleggsinformasjon": {
+              "kategori": "Periode",
+              "tilleggsinformasjonDetaljer": {
+                "detaljerType": "ETTERBETALINGSPERIODE",
+                "etterbetalingsperiodeFom": "2021-12-01",
+                "etterbetalingsperiodeTom": "2021-12-31"
+              }
+            },
+            "inntektsmottaker": {
+              "identifikator": "3",
+              "aktoerType": "NATURLIG_IDENT"
+            },
+            "inngaarIGrunnlagForTrekk": true,
+            "utloeserArbeidsgiveravgift": false,
+            "informasjonsstatus": "InngaarAlltid",
+            "beskrivelse": "sykepenger"
+          },
+          {
+            "inntektType": "LOENNSINNTEKT",
+            "beloep": 60000,
+            "fordel": "kontantytelse",
+            "inntektskilde": "A-ordningen",
+            "inntektsperiodetype": "Maaned",
+            "inntektsstatus": "LoependeInnrapportert",
+            "leveringstidspunkt": "2022-03",
+            "utbetaltIMaaned": "2022-03",
+            "opplysningspliktig": {
+              "identifikator": "1",
+              "aktoerType": "ORGANISASJON"
+            },
+            "virksomhet": {
+              "identifikator": "2",
+              "aktoerType": "ORGANISASJON"
+            },
+            "inntektsmottaker": {
+              "identifikator": "3",
+              "aktoerType": "NATURLIG_IDENT"
+            },
+            "inngaarIGrunnlagForTrekk": true,
+            "utloeserArbeidsgiveravgift": false,
+            "informasjonsstatus": "InngaarAlltid",
+            "beskrivelse": "feriepenger"
+          }
+        ]
+      }
+    }
+  ],
+  "ident": {
+    "identifikator": "31439222118",
+    "aktoerType": "NATURLIG_IDENT"
+  }
+}

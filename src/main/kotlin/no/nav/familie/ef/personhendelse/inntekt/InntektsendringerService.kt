@@ -17,18 +17,18 @@ class InntektsendringerService(
     private val maxInntekt = Math.floor((grunnbeløp * 5.5) / 1000L) * 1000L // Ingen utbetaling av OS ved inntekt på over 5.5 rundet ned til nærmeste 1000
 
     fun beregnEndretInntekt(
-        inntektshistorikkResponse: InntektshistorikkResponse,
+        inntektResponse: HentInntektListeResponse,
         forventetInntektForPerson: ForventetInntektForPerson,
     ): Inntektsendring {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(1))
+            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(1) }
         val nestNyesteRegistrerteInntekt =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(2))
+            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(2) }
         val inntektTreMånederTilbake =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(3))
+            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(3) }
         val inntektFireMånederTilbake =
-            inntektshistorikkResponse.inntektForMåned(YearMonth.now().minusMonths(4))
+            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(4) }
 
         val inntektsendringFireMånederTilbake =
             beregnInntektsendring(
@@ -65,11 +65,18 @@ class InntektsendringerService(
     }
 
     private fun beregnInntektsendring(
-        nyesteRegistrerteInntekt: List<InntektVersjon>?,
+        nyesteRegistrerteInntekt: List<ArbeidsinntektMåned>?,
         ident: String,
         forventetInntekt: Int?,
     ): BeregningResultat {
-        if (forventetInntekt == null || nyesteRegistrerteInntekt?.maxOfOrNull { it.versjon } == null) {
+        if (forventetInntekt == null ||
+            nyesteRegistrerteInntekt.isNullOrEmpty() ||
+            nyesteRegistrerteInntekt
+                .firstOrNull()
+                ?.arbeidsInntektInformasjon
+                ?.inntektListe
+                .isNullOrEmpty()
+        ) {
             secureLogger.warn("Ingen gjeldende inntekt funnet på person $ident har personen løpende stønad?")
             return BeregningResultat(0, 0, 0)
         }
@@ -77,12 +84,7 @@ class InntektsendringerService(
         if (forventetInntekt > maxInntekt) return BeregningResultat(0, 0, 0) // Ignorer alle med over 652000 i årsinntekt, da de har 0 i utbetaling.
         val månedligForventetInntekt = (forventetInntekt / 12)
 
-        val orgNrToNyesteVersjonMap = nyesteRegistrerteInntekt.associate { it.opplysningspliktig to it.versjon }
-        val inntektListe =
-            nyesteRegistrerteInntekt
-                .filter {
-                    it.versjon == orgNrToNyesteVersjonMap[it.opplysningspliktig] && it.arbeidsInntektInformasjon.inntektListe != null
-                }.flatMap { it.arbeidsInntektInformasjon.inntektListe!! }
+        val inntektListe = nyesteRegistrerteInntekt.firstOrNull()?.arbeidsInntektInformasjon?.inntektListe ?: emptyList()
         val samletInntekt =
             inntektListe
                 .filterNot {
@@ -118,7 +120,7 @@ data class Inntektsendring(
     val forrigeMåned: BeregningResultat,
 ) {
     fun harEndretInntekt() =
-        fireMånederTilbake.prosent >= 10 && treMånederTilbake.prosent >= 10 && toMånederTilbake.prosent >= 10 && forrigeMåned.prosent >= 10
+        treMånederTilbake.prosent >= 10 && toMånederTilbake.prosent >= 10 && forrigeMåned.prosent >= 10
 }
 
 data class BeregningResultat(
