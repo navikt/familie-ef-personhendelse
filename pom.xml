@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
+        <version>3.3.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.familie.ef</groupId>
@@ -28,7 +28,7 @@
         <revision>1.0</revision>
         <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
-        <kotlin.version>2.0.10</kotlin.version>
+        <kotlin.version>2.0.20</kotlin.version>
         <kafka-avro-serializer.version>7.7.0</kafka-avro-serializer.version>
         <avro.version>1.12.0</avro.version>
         <graphql-kotlin-spring-client.version>7.1.4</graphql-kotlin-spring-client.version>
@@ -159,7 +159,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>10.17.1</version>
+            <version>10.17.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
