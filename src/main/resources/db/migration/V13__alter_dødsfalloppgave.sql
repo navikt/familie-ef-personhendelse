@@ -1,0 +1,1 @@
+ALTER TABLE dødsfalloppgave RENAME TO forsinketoppgave;

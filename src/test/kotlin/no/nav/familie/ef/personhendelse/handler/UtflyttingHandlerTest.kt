@@ -7,7 +7,7 @@ import io.mockk.runs
 import io.mockk.slot
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
+import no.nav.familie.ef.personhendelse.forsinketoppgave.ForsinketOppgaveService
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
@@ -23,10 +23,10 @@ internal class UtflyttingHandlerTest {
     val sakClient = mockk<SakClient>()
     val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     val personhendelseRepository = mockk<PersonhendelseRepository>()
-    private val dødsfallOppgaveService = mockk<DødsfallOppgaveService>()
+    private val forsinketOppgaveService = mockk<ForsinketOppgaveService>()
 
     private val handler = UtflyttingHandler()
-    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, dødsfallOppgaveService)
+    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, forsinketOppgaveService)
 
     private val personIdent = "12345612344"
 

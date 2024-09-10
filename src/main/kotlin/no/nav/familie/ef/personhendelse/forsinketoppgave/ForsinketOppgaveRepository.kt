@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.dødsfalloppgaver
+package no.nav.familie.ef.personhendelse.forsinketoppgave
 
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseType
 import no.nav.person.pdl.leesah.Endringstype
@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
-class DødsfallOppgaveRepository(
+class ForsinketOppgaveRepository(
     val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
 ) {
     val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -26,7 +26,7 @@ class DødsfallOppgaveRepository(
         hendelsesTid: LocalDateTime,
     ) {
         val sql =
-            "INSERT INTO dødsfalloppgave VALUES(:hendelsesId, :personIdent, :beskrivelse, :personhendelseType, :endringstype, :hendelsestid, :opprettetoppgavetid) ON CONFLICT DO NOTHING"
+            "INSERT INTO forsinketoppgave VALUES(:hendelsesId, :personIdent, :beskrivelse, :personhendelseType, :endringstype, :hendelsestid, :opprettetoppgavetid) ON CONFLICT DO NOTHING"
         val params =
             MapSqlParameterSource(
                 mapOf(
@@ -44,7 +44,7 @@ class DødsfallOppgaveRepository(
 
     fun settOppgaveTilUtført(hendelseId: UUID) {
         val sql =
-            "UPDATE dødsfalloppgave SET opprettetoppgavetid = :opprettetoppgavetid WHERE hendelse_id=:hendelseId"
+            "UPDATE forsinketoppgave SET opprettetoppgavetid = :opprettetoppgavetid WHERE hendelse_id=:hendelseId"
         val params =
             MapSqlParameterSource(
                 mapOf(
@@ -55,14 +55,14 @@ class DødsfallOppgaveRepository(
         namedParameterJdbcTemplate.update(sql, params)
     }
 
-    fun hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid(): List<DødsfallOppgave> {
+    fun hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid(): List<ForsinketOppgave> {
         val sql =
-            "SELECT * FROM dødsfalloppgave WHERE hendelsestid <= (NOW() - INTERVAL '1 week') AND opprettetoppgavetid IS NULL"
-        return namedParameterJdbcTemplate.query(sql, dødsfallOppgaveMapper)
+            "SELECT * FROM forsinketoppgave WHERE hendelsestid <= (NOW() - INTERVAL '1 week') AND opprettetoppgavetid IS NULL"
+        return namedParameterJdbcTemplate.query(sql, forsinketOppgaveMapper)
     }
 
-    private val dødsfallOppgaveMapper = { rs: ResultSet, _: Int ->
-        DødsfallOppgave(
+    private val forsinketOppgaveMapper = { rs: ResultSet, _: Int ->
+        ForsinketOppgave(
             UUID.fromString(rs.getString("hendelse_id")),
             rs.getString("person_id"),
             rs.getString("beskrivelse"),

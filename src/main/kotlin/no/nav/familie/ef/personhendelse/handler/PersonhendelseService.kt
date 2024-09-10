@@ -5,7 +5,7 @@ import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.opprettVurderLivshendelseoppgave
-import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
+import no.nav.familie.ef.personhendelse.forsinketoppgave.ForsinketOppgaveService
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
@@ -24,7 +24,7 @@ class PersonhendelseService(
     private val sakClient: SakClient,
     private val oppgaveClient: OppgaveClient,
     private val personhendelseRepository: PersonhendelseRepository,
-    private val dødsfallOppgaveService: DødsfallOppgaveService,
+    private val forsinketOppgaveService: ForsinketOppgaveService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -86,8 +86,8 @@ class PersonhendelseService(
                     oppgaveInformasjon.beskrivelse,
                     personIdent,
                 )
-            is UtsettDødsfallOppgave ->
-                dødsfallOppgaveService.lagreDødsfallOppgave(
+            is UtsettOppgave ->
+                forsinketOppgaveService.lagreForsinketOppgave(
                     personhendelse,
                     handlers[personhendelse.opplysningstype]?.type ?: error("Kunne ikke finne personopplysningstype"),
                     personIdent,
@@ -97,17 +97,17 @@ class PersonhendelseService(
     }
 
     @Transactional
-    fun opprettOppgaverAvUkesgamleDødsfallhendelser() {
-        val dødsfallOppgaver = dødsfallOppgaveService.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid()
-        dødsfallOppgaver.forEach { dødsfallOppgave ->
+    fun opprettOppgaverAvUkesgamleHendelser() {
+        val forsinkedeOppgaver = forsinketOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+        forsinkedeOppgaver.forEach { forsinketoppgave ->
             opprettOppgave(
-                dødsfallOppgave.hendelsesId,
-                dødsfallOppgave.endringstype,
-                dødsfallOppgave.beskrivelse,
-                dødsfallOppgave.personId,
+                forsinketoppgave.hendelsesId,
+                forsinketoppgave.endringstype,
+                forsinketoppgave.beskrivelse,
+                forsinketoppgave.personId,
             )
         }
-        dødsfallOppgaveService.settDødsfalloppgaverTilUtført(dødsfallOppgaver)
+        forsinketOppgaveService.settForsinkedeOppgaverTilUtført(forsinkedeOppgaver)
     }
 
     private fun logHendelse(

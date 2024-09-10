@@ -45,7 +45,7 @@ class ForelderBarnHandler(
             return opprettOppgaveBarnFødtEtterTermin(nyeBarnSomIkkeFinnesPåBehandlingen, barnFødtEtterTermin)
         }
 
-        return OpprettOppgave(
+        return UtsettOppgave(
             "Bruker har fått et nytt/nye barn ${nyeBarnSomIkkeFinnesPåBehandlingen.separerteIdenterMedStønadstype()} som ikke finnes på behandling.",
         )
     }
@@ -53,9 +53,9 @@ class ForelderBarnHandler(
     private fun opprettOppgaveBarnFødtFørTermin(
         nyeBarnSomIkkeFinnesPåBehandlingen: List<NyttBarn>,
         barnFødtFørTermin: List<NyttBarn>,
-    ): OpprettOppgave {
+    ): UtsettOppgave {
         val nyeBarnTekst = nyeBarnTekst(nyeBarnSomIkkeFinnesPåBehandlingen)
-        return OpprettOppgave(
+        return UtsettOppgave(
             "Bruker er innvilget stønad for ufødt(e) barn ${barnFødtFørTermin.separerteIdenterMedStønadstype()}. " +
                 "Barnet er registrert født i måneden før oppgitt termindato. " +
                 nyeBarnTekst +
@@ -66,9 +66,9 @@ class ForelderBarnHandler(
     private fun opprettOppgaveBarnFødtEtterTermin(
         nyeBarnSomIkkeFinnesPåBehandlingen: List<NyttBarn>,
         barnFødtEtterTermin: List<NyttBarn>,
-    ): OpprettOppgave {
+    ): UtsettOppgave {
         val nyeBarnTekst = nyeBarnTekst(nyeBarnSomIkkeFinnesPåBehandlingen)
-        return OpprettOppgave(
+        return UtsettOppgave(
             "Bruker er innvilget stønad for ufødt(e) barn ${barnFødtEtterTermin.separerteIdenterMedStønadstype()}. " +
                 "Barnet er registrert født i måneden etter oppgitt termindato. " +
                 nyeBarnTekst +

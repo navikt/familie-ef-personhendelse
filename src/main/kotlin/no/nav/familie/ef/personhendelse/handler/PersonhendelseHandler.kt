@@ -9,7 +9,7 @@ data class OpprettOppgave(
     val beskrivelse: String,
 ) : OppgaveInformasjon()
 
-data class UtsettDødsfallOppgave(
+data class UtsettOppgave(
     val beskrivelse: String,
 ) : OppgaveInformasjon()
 

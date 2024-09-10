@@ -14,7 +14,7 @@ class DodsfallHandler(
 ) : PersonhendelseHandler {
     override val type = PersonhendelseType.DØDSFALL
 
-    override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon = UtsettDødsfallOppgave(beskrivelse = "Dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}")
+    override fun lagOppgaveInformasjon(personhendelse: Personhendelse): OppgaveInformasjon = UtsettOppgave(beskrivelse = "Dødsfall med dødsdato: ${personhendelse.doedsfall.doedsdato.tilNorskDatoformat()}")
 
     override fun personidenterPerPersonSomSkalKontrolleres(personhendelse: Personhendelse): List<Set<String>> {
         val personIdenter = personhendelse.identerUtenAktørId()
