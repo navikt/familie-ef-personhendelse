@@ -39,7 +39,6 @@ class ForelderBarnHandlerTest {
 
     private val personIdent = "12345612344"
 
-    private val slot = slot<OpprettOppgaveRequest>()
     private val beskrivelseSlot = slot<String>()
     private val personhendelse = forelderBarnRelasjonHendelse()
 
@@ -50,7 +49,7 @@ class ForelderBarnHandlerTest {
     internal fun setUp() {
         every { oppgaveClient.finnOppgaveMedId(any()) }.returns(Oppgave(id = 0L, status = StatusEnum.OPPRETTET))
         every { sakClient.harLøpendeStønad(any()) } returns true
-        every { oppgaveClient.opprettOppgave(capture(slot)) } returns 1L
+        every { oppgaveClient.opprettOppgave(any()) } returns 1L
         every { pdlClient.hentPerson(any()) } returns person
         every { utsattOppgaveService.lagreUtsattOppgave(any(), any(), any(), capture(beskrivelseSlot)) } just runs
     }
