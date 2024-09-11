@@ -140,13 +140,13 @@ internal class PersonhendelseServiceTest {
                 null,
             )
 
-        every { utsattOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid() } returns listOf(utsattOppgave)
-        every { utsattOppgaveService.settForsinkedeOppgaverTilUtført(any()) } just runs
+        every { utsattOppgaveService.hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke() } returns listOf(utsattOppgave)
+        every { utsattOppgaveService.settUtsatteOppgaverTilUtført(any()) } just runs
 
         personhendelseService.opprettOppgaverAvUkesgamleHendelser()
 
-        verify { utsattOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid() }
-        verify { utsattOppgaveService.settForsinkedeOppgaverTilUtført(any()) }
+        verify { utsattOppgaveService.hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke() }
+        verify { utsattOppgaveService.settUtsatteOppgaverTilUtført(any()) }
 
         assertThat(oppgaveRequestSlot.captured.ident!!.ident).isEqualTo(utsattOppgave.personId)
         assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(utsattOppgave.beskrivelse)

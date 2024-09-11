@@ -98,7 +98,7 @@ class PersonhendelseService(
 
     @Transactional
     fun opprettOppgaverAvUkesgamleHendelser() {
-        val utsatteOppgaver = utsattOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+        val utsatteOppgaver = utsattOppgaveService.hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke()
         utsatteOppgaver.forEach { utsattOppgave ->
             opprettOppgave(
                 utsattOppgave.hendelsesId,
@@ -107,7 +107,7 @@ class PersonhendelseService(
                 utsattOppgave.personId,
             )
         }
-        utsattOppgaveService.settForsinkedeOppgaverTilUtført(utsatteOppgaver)
+        utsattOppgaveService.settUtsatteOppgaverTilUtført(utsatteOppgaver)
     }
 
     private fun logHendelse(

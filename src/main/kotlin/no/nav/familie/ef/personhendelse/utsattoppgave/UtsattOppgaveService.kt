@@ -26,9 +26,9 @@ class UtsattOppgaveService(
         )
     }
 
-    fun hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid(): List<UtsattOppgave> = utsattOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+    fun hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke(): List<UtsattOppgave> = utsattOppgaveRepository.hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke()
 
-    fun settForsinkedeOppgaverTilUtført(oppgaver: List<UtsattOppgave>) {
+    fun settUtsatteOppgaverTilUtført(oppgaver: List<UtsattOppgave>) {
         oppgaver.forEach { utsattOppgaveRepository.settOppgaveTilUtført(it.hendelsesId) }
     }
 }

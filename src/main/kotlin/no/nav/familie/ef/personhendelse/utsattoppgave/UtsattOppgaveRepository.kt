@@ -55,7 +55,7 @@ class UtsattOppgaveRepository(
         namedParameterJdbcTemplate.update(sql, params)
     }
 
-    fun hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid(): List<UtsattOppgave> {
+    fun hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke(): List<UtsattOppgave> {
         val sql =
             "SELECT * FROM utsattoppgave WHERE hendelsestid <= (NOW() - INTERVAL '1 week') AND opprettetoppgavetid IS NULL"
         return namedParameterJdbcTemplate.query(sql, utsattOppgaveMapper)
