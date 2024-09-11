@@ -17,7 +17,6 @@ import no.nav.familie.kontrakter.ef.personhendelse.NyttBarn
 import no.nav.familie.kontrakter.ef.personhendelse.NyttBarnÅrsak
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
-import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
