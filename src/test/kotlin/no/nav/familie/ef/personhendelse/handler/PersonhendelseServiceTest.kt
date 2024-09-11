@@ -11,9 +11,9 @@ import io.mockk.verify
 import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.forsinketoppgave.ForsinketOppgave
-import no.nav.familie.ef.personhendelse.forsinketoppgave.ForsinketOppgaveService
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
+import no.nav.familie.ef.personhendelse.utsattoppgave.UtsattOppgave
+import no.nav.familie.ef.personhendelse.utsattoppgave.UtsattOppgaveService
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -31,11 +31,11 @@ internal class PersonhendelseServiceTest {
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
-    private val forsinketOppgaveService = mockk<ForsinketOppgaveService>()
+    private val utsattOppgaveService = mockk<UtsattOppgaveService>()
     private val dummyHandler: DummyHandler = DummyHandler()
 
     private val personhendelseService =
-        PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository, forsinketOppgaveService)
+        PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository, utsattOppgaveService)
 
     private val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
 
@@ -129,8 +129,8 @@ internal class PersonhendelseServiceTest {
 
     @Test
     fun `henting og opprettelse av ukesgammel hendelse`() {
-        val forsinketOppgave =
-            ForsinketOppgave(
+        val utsattOppgave =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "123",
                 "beskrivelse",
@@ -140,16 +140,16 @@ internal class PersonhendelseServiceTest {
                 null,
             )
 
-        every { forsinketOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid() } returns listOf(forsinketOppgave)
-        every { forsinketOppgaveService.settForsinkedeOppgaverTilUtført(any()) } just runs
+        every { utsattOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid() } returns listOf(utsattOppgave)
+        every { utsattOppgaveService.settForsinkedeOppgaverTilUtført(any()) } just runs
 
         personhendelseService.opprettOppgaverAvUkesgamleHendelser()
 
-        verify { forsinketOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid() }
-        verify { forsinketOppgaveService.settForsinkedeOppgaverTilUtført(any()) }
+        verify { utsattOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid() }
+        verify { utsattOppgaveService.settForsinkedeOppgaverTilUtført(any()) }
 
-        assertThat(oppgaveRequestSlot.captured.ident!!.ident).isEqualTo(forsinketOppgave.personId)
-        assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(forsinketOppgave.beskrivelse)
+        assertThat(oppgaveRequestSlot.captured.ident!!.ident).isEqualTo(utsattOppgave.personId)
+        assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(utsattOppgave.beskrivelse)
         verify { oppgaveClient.opprettOppgave(any()) }
     }
 

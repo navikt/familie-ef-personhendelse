@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.forsinketoppgave
+package no.nav.familie.ef.personhendelse.utsattoppgave
 
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseType
 import no.nav.person.pdl.leesah.Personhendelse
@@ -7,16 +7,16 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
-class ForsinketOppgaveService(
-    private val forsinketOppgaveRepository: ForsinketOppgaveRepository,
+class UtsattOppgaveService(
+    private val utsattOppgaveRepository: UtsattOppgaveRepository,
 ) {
-    fun lagreForsinketOppgave(
+    fun lagreUtsattOppgave(
         personhendelse: Personhendelse,
         personhendelseType: PersonhendelseType,
         personIdent: String,
         beskrivelse: String,
     ) {
-        forsinketOppgaveRepository.lagreOppgave(
+        utsattOppgaveRepository.lagreOppgave(
             UUID.fromString(personhendelse.hendelseId),
             personhendelseType,
             personhendelse.endringstype.name,
@@ -26,9 +26,9 @@ class ForsinketOppgaveService(
         )
     }
 
-    fun hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid(): List<ForsinketOppgave> = forsinketOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+    fun hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid(): List<UtsattOppgave> = utsattOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
 
-    fun settForsinkedeOppgaverTilUtført(oppgaver: List<ForsinketOppgave>) {
-        oppgaver.forEach { forsinketOppgaveRepository.settOppgaveTilUtført(it.hendelsesId) }
+    fun settForsinkedeOppgaverTilUtført(oppgaver: List<UtsattOppgave>) {
+        oppgaver.forEach { utsattOppgaveRepository.settOppgaveTilUtført(it.hendelsesId) }
     }
 }

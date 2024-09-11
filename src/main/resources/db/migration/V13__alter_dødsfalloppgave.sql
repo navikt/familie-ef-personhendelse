@@ -1,1 +1,1 @@
-ALTER TABLE dødsfalloppgave RENAME TO forsinketoppgave;
+ALTER TABLE dødsfalloppgave RENAME TO utsattoppgave;

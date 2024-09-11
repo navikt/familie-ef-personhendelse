@@ -5,9 +5,9 @@ import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.opprettVurderLivshendelseoppgave
-import no.nav.familie.ef.personhendelse.forsinketoppgave.ForsinketOppgaveService
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
+import no.nav.familie.ef.personhendelse.utsattoppgave.UtsattOppgaveService
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.StatusEnum
@@ -24,7 +24,7 @@ class PersonhendelseService(
     private val sakClient: SakClient,
     private val oppgaveClient: OppgaveClient,
     private val personhendelseRepository: PersonhendelseRepository,
-    private val forsinketOppgaveService: ForsinketOppgaveService,
+    private val utsattOppgaveService: UtsattOppgaveService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -87,7 +87,7 @@ class PersonhendelseService(
                     personIdent,
                 )
             is UtsettOppgave ->
-                forsinketOppgaveService.lagreForsinketOppgave(
+                utsattOppgaveService.lagreUtsattOppgave(
                     personhendelse,
                     handlers[personhendelse.opplysningstype]?.type ?: error("Kunne ikke finne personopplysningstype"),
                     personIdent,
@@ -98,16 +98,16 @@ class PersonhendelseService(
 
     @Transactional
     fun opprettOppgaverAvUkesgamleHendelser() {
-        val forsinkedeOppgaver = forsinketOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
-        forsinkedeOppgaver.forEach { forsinketoppgave ->
+        val utsatteOppgaver = utsattOppgaveService.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+        utsatteOppgaver.forEach { utsattOppgave ->
             opprettOppgave(
-                forsinketoppgave.hendelsesId,
-                forsinketoppgave.endringstype,
-                forsinketoppgave.beskrivelse,
-                forsinketoppgave.personId,
+                utsattOppgave.hendelsesId,
+                utsattOppgave.endringstype,
+                utsattOppgave.beskrivelse,
+                utsattOppgave.personId,
             )
         }
-        forsinketOppgaveService.settForsinkedeOppgaverTilUtført(forsinkedeOppgaver)
+        utsattOppgaveService.settForsinkedeOppgaverTilUtført(utsatteOppgaver)
     }
 
     private fun logHendelse(

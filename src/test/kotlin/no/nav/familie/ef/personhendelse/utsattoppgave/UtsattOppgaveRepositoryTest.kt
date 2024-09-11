@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.forsinketoppgave
+package no.nav.familie.ef.personhendelse.utsattoppgave
 
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseType
@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDateTime
 import java.util.UUID
 
-class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
+class UtsattOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
     @Autowired
-    lateinit var forsinketOppgaveRepository: ForsinketOppgaveRepository
+    lateinit var utsattOppgaveRepository: UtsattOppgaveRepository
 
     @Test
-    fun `lagre og hent forsinket oppgave, forvent like felter`() {
-        val forsinketOppgave =
-            ForsinketOppgave(
+    fun `lagre og hent utsatt oppgave, forvent like felter`() {
+        val utsattOppgave =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "123",
                 "beskrivelse",
@@ -26,23 +26,23 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 null,
             )
 
-        lagreOppgave(forsinketOppgave)
+        lagreOppgave(utsattOppgave)
 
-        val forsinkedeOppgaver = forsinketOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+        val forsinkedeOppgaver = utsattOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
 
-        assertThat(forsinkedeOppgaver.first().hendelsesId).isEqualTo(forsinketOppgave.hendelsesId)
-        assertThat(forsinkedeOppgaver.first().personId).isEqualTo(forsinketOppgave.personId)
-        assertThat(forsinkedeOppgaver.first().personhendelseType).isEqualTo(forsinketOppgave.personhendelseType)
-        assertThat(forsinkedeOppgaver.first().beskrivelse).isEqualTo(forsinketOppgave.beskrivelse)
-        assertThat(forsinkedeOppgaver.first().endringstype).isEqualTo(forsinketOppgave.endringstype)
+        assertThat(forsinkedeOppgaver.first().hendelsesId).isEqualTo(utsattOppgave.hendelsesId)
+        assertThat(forsinkedeOppgaver.first().personId).isEqualTo(utsattOppgave.personId)
+        assertThat(forsinkedeOppgaver.first().personhendelseType).isEqualTo(utsattOppgave.personhendelseType)
+        assertThat(forsinkedeOppgaver.first().beskrivelse).isEqualTo(utsattOppgave.beskrivelse)
+        assertThat(forsinkedeOppgaver.first().endringstype).isEqualTo(utsattOppgave.endringstype)
         assertThat(forsinkedeOppgaver.first().hendelsesTid).isNotNull()
         assertThat(forsinkedeOppgaver.first().opprettetOppgaveTid).isNull()
     }
 
     @Test
     fun `lagre og hent flere forsinkede oppgaver`() {
-        val forsinketOppgave =
-            ForsinketOppgave(
+        val utsattOppgave =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "123",
                 "beskrivelse",
@@ -51,8 +51,8 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 LocalDateTime.now().minusWeeks(1).minusDays(1),
                 null,
             )
-        val forsinketOppgave2 =
-            ForsinketOppgave(
+        val utsattOppgave2 =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "456",
                 "beskrivelse2",
@@ -61,8 +61,8 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 LocalDateTime.now().minusWeeks(1).minusDays(1),
                 null,
             )
-        val forsinketOppgave3 =
-            ForsinketOppgave(
+        val utsattOppgave3 =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "456",
                 "beskrivelse2",
@@ -71,19 +71,19 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 LocalDateTime.now().minusWeeks(1).minusDays(1),
                 null,
             )
-        lagreOppgave(forsinketOppgave)
-        lagreOppgave(forsinketOppgave2)
-        lagreOppgave(forsinketOppgave3)
+        lagreOppgave(utsattOppgave)
+        lagreOppgave(utsattOppgave2)
+        lagreOppgave(utsattOppgave3)
 
-        val forsinkedeOppgaver = forsinketOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+        val forsinkedeOppgaver = utsattOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
 
         assertThat(forsinkedeOppgaver).hasSize(3)
     }
 
     @Test
     fun `lagre og hent kun forsinkede oppgaver som er over en uke gammel`() {
-        val forsinketOppgave =
-            ForsinketOppgave(
+        val utsattOppgave =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "123",
                 "beskrivelse",
@@ -92,8 +92,8 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 LocalDateTime.now().minusWeeks(1).minusDays(1),
                 null,
             )
-        val forsinketOppgave2 =
-            ForsinketOppgave(
+        val utsattOppgave2 =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "456",
                 "beskrivelse2",
@@ -102,8 +102,8 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 LocalDateTime.now().minusWeeks(2),
                 null,
             )
-        val forsinketOppgave3 =
-            ForsinketOppgave(
+        val utsattOppgave3 =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "456",
                 "beskrivelse3",
@@ -113,21 +113,21 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 null,
             )
 
-        lagreOppgave(forsinketOppgave)
-        lagreOppgave(forsinketOppgave2)
-        lagreOppgave(forsinketOppgave3)
+        lagreOppgave(utsattOppgave)
+        lagreOppgave(utsattOppgave2)
+        lagreOppgave(utsattOppgave3)
 
-        val forsinkedeOppgaver = forsinketOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+        val forsinkedeOppgaver = utsattOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
 
         assertThat(forsinkedeOppgaver).hasSize(2)
-        assertThat(forsinkedeOppgaver.firstOrNull { it.hendelsesId == forsinketOppgave.hendelsesId }).isNotNull()
-        assertThat(forsinkedeOppgaver.firstOrNull { it.hendelsesId == forsinketOppgave2.hendelsesId }).isNotNull()
+        assertThat(forsinkedeOppgaver.firstOrNull { it.hendelsesId == utsattOppgave.hendelsesId }).isNotNull()
+        assertThat(forsinkedeOppgaver.firstOrNull { it.hendelsesId == utsattOppgave2.hendelsesId }).isNotNull()
     }
 
     @Test
     fun `lagre og hent kun forsinkede oppgaver som ikke har blitt utført`() {
-        val forsinketOppgaveIkkeOpprettet =
-            ForsinketOppgave(
+        val utsattOppgaveIkkeOpprettet =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "123",
                 "beskrivelse",
@@ -136,8 +136,8 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 LocalDateTime.now().minusWeeks(1).minusDays(1),
                 null,
             )
-        val forsinketOppgaveOpprettet =
-            ForsinketOppgave(
+        val utsattOppgaveOpprettet =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "456",
                 "beskrivelse2",
@@ -147,20 +147,20 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 null,
             )
 
-        lagreOppgave(forsinketOppgaveIkkeOpprettet)
-        lagreOppgave(forsinketOppgaveOpprettet)
-        forsinketOppgaveRepository.settOppgaveTilUtført(forsinketOppgaveOpprettet.hendelsesId)
+        lagreOppgave(utsattOppgaveIkkeOpprettet)
+        lagreOppgave(utsattOppgaveOpprettet)
+        utsattOppgaveRepository.settOppgaveTilUtført(utsattOppgaveOpprettet.hendelsesId)
 
-        val forsinkedeOppgaver = forsinketOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+        val forsinkedeOppgaver = utsattOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
 
         assertThat(forsinkedeOppgaver).hasSize(1)
-        assertThat(forsinkedeOppgaver.first().hendelsesId).isEqualTo(forsinketOppgaveIkkeOpprettet.hendelsesId)
+        assertThat(forsinkedeOppgaver.first().hendelsesId).isEqualTo(utsattOppgaveIkkeOpprettet.hendelsesId)
     }
 
     @Test
     fun `ikke lagre duplikate forsinkede oppgaver`() {
-        val forsinketOppgave =
-            ForsinketOppgave(
+        val utsattOppgave =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "123",
                 "beskrivelse",
@@ -170,22 +170,22 @@ class ForsinketOppgaveRepositoryTest : IntegrasjonSpringRunnerTest() {
                 null,
             )
 
-        lagreOppgave(forsinketOppgave)
-        lagreOppgave(forsinketOppgave)
+        lagreOppgave(utsattOppgave)
+        lagreOppgave(utsattOppgave)
 
-        val forsinkedeOppgaver = forsinketOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
+        val forsinkedeOppgaver = utsattOppgaveRepository.hentIkkeOpprettedeForsinkedeOppgaverOverEnUkeTilbakeITid()
 
         assertThat(forsinkedeOppgaver).hasSize(1)
     }
 
-    private fun lagreOppgave(forsinketOppgave: ForsinketOppgave) {
-        forsinketOppgaveRepository.lagreOppgave(
-            forsinketOppgave.hendelsesId,
-            forsinketOppgave.personhendelseType,
-            forsinketOppgave.endringstype.name,
-            forsinketOppgave.personId,
-            forsinketOppgave.beskrivelse,
-            forsinketOppgave.hendelsesTid,
+    private fun lagreOppgave(utsattOppgave: UtsattOppgave) {
+        utsattOppgaveRepository.lagreOppgave(
+            utsattOppgave.hendelsesId,
+            utsattOppgave.personhendelseType,
+            utsattOppgave.endringstype.name,
+            utsattOppgave.personId,
+            utsattOppgave.beskrivelse,
+            utsattOppgave.hendelsesTid,
         )
     }
 }

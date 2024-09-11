@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.forsinketoppgave
+package no.nav.familie.ef.personhendelse.utsattoppgave
 
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.leader.LeaderClient
@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class ForsinketOppgaveScheduler(
+class UtsattOppgaveScheduler(
     val personhendelseService: PersonhendelseService,
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
