@@ -39,10 +39,10 @@ class ForelderBarnHandler(
         val nyeBarnSomIkkeFinnesPåBehandlingen = nyeBarnForBruker.filtrerÅrsak(NyttBarnÅrsak.BARN_FINNES_IKKE_PÅ_BEHANDLING)
 
         if (barnFødtFørTermin.isNotEmpty()) {
-            return opprettOppgaveBarnFødtFørTermin(nyeBarnSomIkkeFinnesPåBehandlingen, barnFødtFørTermin)
+            return opprettOppgaveInformasjonBarnFødtFørTermin(nyeBarnSomIkkeFinnesPåBehandlingen, barnFødtFørTermin)
         }
         if (barnFødtEtterTermin.isNotEmpty()) {
-            return opprettOppgaveBarnFødtEtterTermin(nyeBarnSomIkkeFinnesPåBehandlingen, barnFødtEtterTermin)
+            return opprettOppgaveInformasjonBarnFødtEtterTermin(nyeBarnSomIkkeFinnesPåBehandlingen, barnFødtEtterTermin)
         }
 
         return UtsettOppgave(
@@ -50,10 +50,10 @@ class ForelderBarnHandler(
         )
     }
 
-    private fun opprettOppgaveBarnFødtFørTermin(
+    private fun opprettOppgaveInformasjonBarnFødtFørTermin(
         nyeBarnSomIkkeFinnesPåBehandlingen: List<NyttBarn>,
         barnFødtFørTermin: List<NyttBarn>,
-    ): UtsettOppgave {
+    ): OppgaveInformasjon {
         val nyeBarnTekst = nyeBarnTekst(nyeBarnSomIkkeFinnesPåBehandlingen)
         return UtsettOppgave(
             "Bruker er innvilget stønad for ufødt(e) barn ${barnFødtFørTermin.separerteIdenterMedStønadstype()}. " +
@@ -63,10 +63,10 @@ class ForelderBarnHandler(
         )
     }
 
-    private fun opprettOppgaveBarnFødtEtterTermin(
+    private fun opprettOppgaveInformasjonBarnFødtEtterTermin(
         nyeBarnSomIkkeFinnesPåBehandlingen: List<NyttBarn>,
         barnFødtEtterTermin: List<NyttBarn>,
-    ): UtsettOppgave {
+    ): OppgaveInformasjon {
         val nyeBarnTekst = nyeBarnTekst(nyeBarnSomIkkeFinnesPåBehandlingen)
         return UtsettOppgave(
             "Bruker er innvilget stønad for ufødt(e) barn ${barnFødtEtterTermin.separerteIdenterMedStønadstype()}. " +
