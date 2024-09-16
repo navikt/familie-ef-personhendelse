@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.dødsfalloppgaver
+package no.nav.familie.ef.personhendelse.utsattoppgave
 
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseType
 import no.nav.person.pdl.leesah.Personhendelse
@@ -7,16 +7,16 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
-class DødsfallOppgaveService(
-    private val dødsfallOppgaveRepository: DødsfallOppgaveRepository,
+class UtsattOppgaveService(
+    private val utsattOppgaveRepository: UtsattOppgaveRepository,
 ) {
-    fun lagreDødsfallOppgave(
+    fun lagreUtsattOppgave(
         personhendelse: Personhendelse,
         personhendelseType: PersonhendelseType,
         personIdent: String,
         beskrivelse: String,
     ) {
-        dødsfallOppgaveRepository.lagreOppgave(
+        utsattOppgaveRepository.lagreOppgave(
             UUID.fromString(personhendelse.hendelseId),
             personhendelseType,
             personhendelse.endringstype.name,
@@ -26,9 +26,9 @@ class DødsfallOppgaveService(
         )
     }
 
-    fun hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid(): List<DødsfallOppgave> = dødsfallOppgaveRepository.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid()
+    fun hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke(): List<UtsattOppgave> = utsattOppgaveRepository.hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke()
 
-    fun settDødsfalloppgaverTilUtført(oppgaver: List<DødsfallOppgave>) {
-        oppgaver.forEach { dødsfallOppgaveRepository.settOppgaveTilUtført(it.hendelsesId) }
+    fun settUtsatteOppgaverTilUtført(oppgaver: List<UtsattOppgave>) {
+        oppgaver.forEach { utsattOppgaveRepository.settOppgaveTilUtført(it.hendelsesId) }
     }
 }

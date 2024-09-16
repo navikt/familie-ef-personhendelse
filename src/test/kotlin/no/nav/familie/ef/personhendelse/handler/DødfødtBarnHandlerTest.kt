@@ -8,8 +8,8 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
+import no.nav.familie.ef.personhendelse.utsattoppgave.UtsattOppgaveService
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import no.nav.person.pdl.leesah.doedfoedtbarn.DoedfoedtBarn
@@ -23,10 +23,10 @@ internal class DødfødtBarnHandlerTest {
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>(relaxed = true)
-    private val dødsfallOppgaveService = mockk<DødsfallOppgaveService>()
+    private val utsattOppgaveService = mockk<UtsattOppgaveService>()
 
     private val handler = DødfødtBarnHandler()
-    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, dødsfallOppgaveService)
+    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, utsattOppgaveService)
 
     private val personIdent = "12345612344"
 
@@ -35,7 +35,7 @@ internal class DødfødtBarnHandlerTest {
     @BeforeEach
     internal fun setUp() {
         every { sakClient.harLøpendeStønad(any()) } returns true
-        every { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), capture(slot)) } just runs
+        every { utsattOppgaveService.lagreUtsattOppgave(any(), any(), any(), capture(slot)) } just runs
     }
 
     @Test
@@ -45,7 +45,7 @@ internal class DødfødtBarnHandlerTest {
         service.håndterPersonhendelse(personhendelse)
 
         verify(exactly = 0) { oppgaveClient.opprettOppgave(any()) }
-        verify { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) }
+        verify { utsattOppgaveService.lagreUtsattOppgave(any(), any(), any(), any()) }
         Assertions.assertThat(slot.isCaptured).isTrue()
         Assertions.assertThat(slot.captured).contains("Dødfødt barn ukjent dato")
     }
@@ -57,7 +57,7 @@ internal class DødfødtBarnHandlerTest {
         service.håndterPersonhendelse(personhendelse)
 
         verify(exactly = 0) { oppgaveClient.opprettOppgave(any()) }
-        verify { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) }
+        verify { utsattOppgaveService.lagreUtsattOppgave(any(), any(), any(), any()) }
         Assertions.assertThat(slot.isCaptured).isTrue()
         Assertions.assertThat(slot.captured).contains("Dødfødt barn 01.10.2021")
     }

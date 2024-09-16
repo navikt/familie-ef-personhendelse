@@ -10,9 +10,9 @@ import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.datoutil.tilNorskDatoformat
-import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
 import no.nav.familie.ef.personhendelse.generated.enums.Sivilstandstype
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
+import no.nav.familie.ef.personhendelse.utsattoppgave.UtsattOppgaveService
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.person.pdl.leesah.Endringstype
@@ -29,9 +29,9 @@ class SivilstandHandlerTest {
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
-    private val dødsfallOppgaveService = mockk<DødsfallOppgaveService>()
+    private val utsattOppgaveService = mockk<UtsattOppgaveService>()
     private val handler = SivilstandHandler()
-    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, dødsfallOppgaveService)
+    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, utsattOppgaveService)
     private val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
 
     private val personIdent = "12345612344"

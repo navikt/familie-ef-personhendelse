@@ -11,9 +11,9 @@ import io.mockk.verify
 import no.nav.familie.ef.personhendelse.Hendelse
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgave
-import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
+import no.nav.familie.ef.personhendelse.utsattoppgave.UtsattOppgave
+import no.nav.familie.ef.personhendelse.utsattoppgave.UtsattOppgaveService
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.Oppgave
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -31,11 +31,11 @@ internal class PersonhendelseServiceTest {
     private val sakClient = mockk<SakClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
-    private val dødsfallOppgaveService = mockk<DødsfallOppgaveService>()
+    private val utsattOppgaveService = mockk<UtsattOppgaveService>()
     private val dummyHandler: DummyHandler = DummyHandler()
 
     private val personhendelseService =
-        PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository, dødsfallOppgaveService)
+        PersonhendelseService(listOf(dummyHandler), sakClient, oppgaveClient, personhendelseRepository, utsattOppgaveService)
 
     private val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
 
@@ -129,8 +129,8 @@ internal class PersonhendelseServiceTest {
 
     @Test
     fun `henting og opprettelse av ukesgammel hendelse`() {
-        val dødsfallOppgave =
-            DødsfallOppgave(
+        val utsattOppgave =
+            UtsattOppgave(
                 UUID.randomUUID(),
                 "123",
                 "beskrivelse",
@@ -140,16 +140,16 @@ internal class PersonhendelseServiceTest {
                 null,
             )
 
-        every { dødsfallOppgaveService.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid() } returns listOf(dødsfallOppgave)
-        every { dødsfallOppgaveService.settDødsfalloppgaverTilUtført(any()) } just runs
+        every { utsattOppgaveService.hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke() } returns listOf(utsattOppgave)
+        every { utsattOppgaveService.settUtsatteOppgaverTilUtført(any()) } just runs
 
-        personhendelseService.opprettOppgaverAvUkesgamleDødsfallhendelser()
+        personhendelseService.opprettOppgaverAvUkesgamleHendelser()
 
-        verify { dødsfallOppgaveService.hentIkkeOpprettedeDødsfalloppgaverOverEnUkeTilbakeITid() }
-        verify { dødsfallOppgaveService.settDødsfalloppgaverTilUtført(any()) }
+        verify { utsattOppgaveService.hentIkkeOpprettedeUtsatteOppgaverEldreEnnEnUke() }
+        verify { utsattOppgaveService.settUtsatteOppgaverTilUtført(any()) }
 
-        assertThat(oppgaveRequestSlot.captured.ident!!.ident).isEqualTo(dødsfallOppgave.personId)
-        assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(dødsfallOppgave.beskrivelse)
+        assertThat(oppgaveRequestSlot.captured.ident!!.ident).isEqualTo(utsattOppgave.personId)
+        assertThat(oppgaveRequestSlot.captured.beskrivelse).contains(utsattOppgave.beskrivelse)
         verify { oppgaveClient.opprettOppgave(any()) }
     }
 

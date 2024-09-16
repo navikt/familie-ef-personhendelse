@@ -9,12 +9,12 @@ import io.mockk.verify
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
-import no.nav.familie.ef.personhendelse.dødsfalloppgaver.DødsfallOppgaveService
 import no.nav.familie.ef.personhendelse.generated.enums.ForelderBarnRelasjonRolle
 import no.nav.familie.ef.personhendelse.generated.hentperson.Foedselsdato
 import no.nav.familie.ef.personhendelse.generated.hentperson.ForelderBarnRelasjon
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
+import no.nav.familie.ef.personhendelse.utsattoppgave.UtsattOppgaveService
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
@@ -30,10 +30,10 @@ class DødsfallHandlerTest {
     private val pdlClient = mockk<PdlClient>()
     private val oppgaveClient = mockk<OppgaveClient>(relaxed = true)
     private val personhendelseRepository = mockk<PersonhendelseRepository>()
-    private val dødsfallOppgaveService = mockk<DødsfallOppgaveService>()
+    private val utsattOppgaveService = mockk<UtsattOppgaveService>()
 
     private val handler = DodsfallHandler(pdlClient)
-    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, dødsfallOppgaveService)
+    private val service = PersonhendelseService(listOf(handler), sakClient, oppgaveClient, personhendelseRepository, utsattOppgaveService)
 
     private val personIdentUtenRelasjoner = "12345612344"
     private val personIdentMor = "12345612345"
@@ -72,12 +72,12 @@ class DødsfallHandlerTest {
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
-        every { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) } just runs
+        every { utsattOppgaveService.lagreUtsattOppgave(any(), any(), any(), any()) } just runs
 
         service.håndterPersonhendelse(personhendelse)
 
         assertThat(oppgaveRequestSlot.isCaptured).isFalse()
-        verify { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) }
+        verify { utsattOppgaveService.lagreUtsattOppgave(any(), any(), any(), any()) }
     }
 
     @Test
@@ -93,7 +93,7 @@ class DødsfallHandlerTest {
         every { sakClient.harLøpendeStønad(setOf(personIdentBarn)) } returns false
         every { sakClient.harLøpendeStønad(setOf(personIdentMor)) } returns true
         every { personhendelseRepository.lagrePersonhendelse(any(), any(), any()) } just runs
-        every { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) } just runs
+        every { utsattOppgaveService.lagreUtsattOppgave(any(), any(), any(), any()) } just runs
 
         val oppgaveRequestSlot = slot<OpprettOppgaveRequest>()
         every { oppgaveClient.opprettOppgave(capture(oppgaveRequestSlot)) } returns 123L
@@ -101,6 +101,6 @@ class DødsfallHandlerTest {
         service.håndterPersonhendelse(personhendelse)
 
         assertThat(oppgaveRequestSlot.isCaptured).isFalse()
-        verify { dødsfallOppgaveService.lagreDødsfallOppgave(any(), any(), any(), any()) }
+        verify { utsattOppgaveService.lagreUtsattOppgave(any(), any(), any(), any()) }
     }
 }
