@@ -5,8 +5,6 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
-import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
-import no.nav.familie.ef.personhendelse.inntekt.vedtak.InntektOgVedtakEndring
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.ef.StønadType

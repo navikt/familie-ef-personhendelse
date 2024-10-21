@@ -5,8 +5,6 @@ import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
-import no.nav.familie.ef.personhendelse.inntekt.vedtak.InntektOgVedtakEndring
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
