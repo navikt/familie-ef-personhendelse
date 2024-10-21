@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 import java.time.YearMonth
 
 class VedtakendringerServiceTest {
-    private val efVedtakRepository = mockk<EfVedtakRepository>()
+    private val inntektsendringerRepository = mockk<InntektsendringerRepository>()
     private val inntektClient = mockk<InntektClient>()
     private val oppgaveClient = mockk<OppgaveClient>()
     private val sakClient = mockk<SakClient>()
@@ -23,7 +23,7 @@ class VedtakendringerServiceTest {
     private val inntektsendringerService = mockk<InntektsendringerService>()
     private val vedtakendringer =
         VedtakendringerService(
-            efVedtakRepository,
+            inntektsendringerRepository,
             inntektClient,
             oppgaveClient,
             sakClient,

@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
-class EfVedtakRepository(
+class InntektsendringerRepository(
     val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
 ) {
     fun lagreVedtakOgInntektsendringForPersonIdent(
