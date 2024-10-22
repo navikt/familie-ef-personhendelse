@@ -5,8 +5,6 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
-import no.nav.familie.ef.personhendelse.inntekt.vedtak.EfVedtakRepository
-import no.nav.familie.ef.personhendelse.inntekt.vedtak.InntektOgVedtakEndring
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.ef.StønadType
@@ -23,7 +21,7 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class VedtakendringerService(
-    val efVedtakRepository: EfVedtakRepository,
+    val inntektsendringerRepository: InntektsendringerRepository,
     val inntektClient: InntektClient,
     val oppgaveClient: OppgaveClient,
     val sakClient: SakClient,
@@ -41,7 +39,7 @@ class VedtakendringerService(
     fun beregnInntektsendringerOgLagreIDb() {
         logger.info("Starter beregning av inntektsendringer")
         val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønadIkkeManueltRevurdertSisteMåneder(3)
-        efVedtakRepository.clearInntektsendringer()
+        inntektsendringerRepository.clearInntektsendringer()
         logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
         var counter = 0
         personerMedAktivStønad.chunked(500).forEach {
@@ -71,7 +69,7 @@ class VedtakendringerService(
     ) {
         val nyeVedtak = nyeVedtak(response)
         val endretInntekt = inntektsendringerService.beregnEndretInntekt(response, forventetInntektForPerson)
-        efVedtakRepository.lagreVedtakOgInntektsendringForPersonIdent(
+        inntektsendringerRepository.lagreVedtakOgInntektsendringForPersonIdent(
             forventetInntektForPerson.personIdent,
             nyeVedtak?.isNotEmpty() ?: false,
             nyeVedtak?.joinToString(),
@@ -80,7 +78,7 @@ class VedtakendringerService(
     }
 
     fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {
-        val inntektsendringer = efVedtakRepository.hentInntektsendringerSomSkalHaOppgave()
+        val inntektsendringer = inntektsendringerRepository.hentInntektsendringerSomSkalHaOppgave()
         if (skalOppretteOppgave) {
             inntektsendringer.forEach {
                 opprettOppgaveForInntektsendring(it, lagOppgavetekstForInntektsendring(it))
@@ -92,7 +90,7 @@ class VedtakendringerService(
     }
 
     fun opprettOppgaverForNyeVedtakUføretrygd() {
-        val nyeUføretrygdVedtak = efVedtakRepository.hentInntektsendringerForUføretrygd()
+        val nyeUføretrygdVedtak = inntektsendringerRepository.hentInntektsendringerForUføretrygd()
         nyeUføretrygdVedtak.forEach {
             opprettOppgaveForInntektsendring(it, lagOppgavetekstVedNyYtelseUføretrygd())
         }
