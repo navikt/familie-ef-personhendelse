@@ -11,12 +11,13 @@ import no.nav.person.pdl.leesah.Personhendelse
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.kafka.support.Acknowledgment
 import java.util.UUID
 
 internal class PersonhendelseListenerTest {
     private val sakClient = mockk<SakClient>()
     private val personhendelseService = mockk<PersonhendelseService>(relaxed = true)
-
+    private val ack = mockk<Acknowledgment>(relaxed = true)
     private lateinit var listener: PersonhendelseListener
 
     private val personMedSak = "11111111111"
@@ -31,7 +32,7 @@ internal class PersonhendelseListenerTest {
 
     @Test
     internal fun `skal kalle på personhendelseService for hendelse`() {
-        listener.listen(lagPersonhendelse(personIdent = personUtenSak))
+        listener.listen(lagPersonhendelse(personIdent = personUtenSak), ack)
 
         verify(exactly = 1) { personhendelseService.håndterPersonhendelse(any()) }
     }
@@ -39,7 +40,7 @@ internal class PersonhendelseListenerTest {
     @Test
     internal fun `skal kaste feil når hendelse mangler personidenter`() {
         val personhendelse = lagPersonhendelse(personIdent = "")
-        assertThatThrownBy { listener.listen(personhendelse) }.hasMessageContaining("Hendelse uten personIdent")
+        assertThatThrownBy { listener.listen(personhendelse, ack) }.hasMessageContaining("Hendelse uten personIdent")
 
         verify(exactly = 0) { personhendelseService.håndterPersonhendelse(any()) }
     }

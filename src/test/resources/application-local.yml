@@ -15,13 +15,6 @@ spring:
       sasl:
         mechanism: PLAIN
         jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="username" password="password";
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      group-id: srvfamilie-ef-person
-      max-poll-records: 1
-      auto-offset-reset: latest
-      enable-auto-commit: false
 
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
