@@ -9,13 +9,7 @@ spring:
       schema.registry.url: http://localhost:8081
       security:
         protocol: PLAINTEXT
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      group-id: srvc01
-      max-poll-records: 1
-      auto-offset-reset: latest
-      enable-auto-commit: false
+
 
 AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth/v2.0/token

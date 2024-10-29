@@ -10,6 +10,7 @@ import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
+import org.springframework.kafka.support.Acknowledgment
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 import java.util.UUID
@@ -34,6 +35,7 @@ class PersonhendelseListener(
     )
     fun listen(
         @Payload personhendelse: Personhendelse,
+        ack: Acknowledgment,
     ) {
         try {
             MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
@@ -52,6 +54,7 @@ class PersonhendelseListener(
             } else {
                 if (env != "dev") throw RuntimeException("Hendelse uten personIdent mottatt for hendelseId: ${personhendelse.hendelseId}")
             }
+            ack.acknowledge()
         } catch (e: Exception) {
             logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}")
             securelogger.error(
