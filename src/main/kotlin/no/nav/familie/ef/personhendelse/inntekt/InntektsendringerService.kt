@@ -119,8 +119,7 @@ data class Inntektsendring(
     val toMånederTilbake: BeregningResultat,
     val forrigeMåned: BeregningResultat,
 ) {
-    fun harEndretInntekt() =
-        treMånederTilbake.prosent >= 10 && toMånederTilbake.prosent >= 10 && forrigeMåned.prosent >= 10
+    fun harEndretInntekt() = treMånederTilbake.prosent >= 10 && toMånederTilbake.prosent >= 10 && forrigeMåned.prosent >= 10
 }
 
 data class BeregningResultat(
