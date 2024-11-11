@@ -240,8 +240,7 @@ class PersonhendelseService(
         )
 }
 
-private fun Personhendelse.ferdigstiltBeskrivelse(personhendelseType: PersonhendelseType) =
-    "En hendelse av typen ${this.endringstype.name} har oppstått for en ferdigstilt oppgave med hendelsestype ${personhendelseType.name}"
+private fun Personhendelse.ferdigstiltBeskrivelse(personhendelseType: PersonhendelseType) = "En hendelse av typen ${this.endringstype.name} har oppstått for en ferdigstilt oppgave med hendelsestype ${personhendelseType.name}"
 
 private fun Personhendelse.finnesIngenHendelseBeskrivelse() =
     "Det har oppstått en personhendelse som det ikke finnes noen tidligere hendelse eller oppgave for. " +
@@ -253,8 +252,6 @@ private fun Oppgave.opphørtEllerAnnullertBeskrivelse() = "\n\nDenne oppgaven ha
 
 private fun Oppgave.korrigertBeskrivelse() = "\n\nDenne oppgaven har blitt korrigert."
 
-private fun Personhendelse.skalOpphøreEllerKorrigeres() =
-    listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT, Endringstype.OPPHOERT).contains(this.endringstype)
+private fun Personhendelse.skalOpphøreEllerKorrigeres() = listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT, Endringstype.OPPHOERT).contains(this.endringstype)
 
-private fun Personhendelse.erIkkeOpphørAvSivilstand() =
-    !(this.opplysningstype == PersonhendelseType.SIVILSTAND.hendelsetype && this.endringstype == Endringstype.OPPHOERT)
+private fun Personhendelse.erIkkeOpphørAvSivilstand() = !(this.opplysningstype == PersonhendelseType.SIVILSTAND.hendelsetype && this.endringstype == Endringstype.OPPHOERT)
