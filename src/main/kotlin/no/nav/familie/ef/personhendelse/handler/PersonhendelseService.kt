@@ -163,18 +163,18 @@ class PersonhendelseService(
                     Endringstype.ANNULLERT ->
                         oppdater(
                             oppgave,
-                            oppgave.opphørtEllerAnnullertBeskrivelse(),
+                            opphørtEllerAnnullertBeskrivelse(),
                             StatusEnum.FEILREGISTRERT,
                         )
 
                     Endringstype.OPPHOERT ->
                         oppdater(
                             oppgave,
-                            oppgave.opphørtEllerAnnullertBeskrivelse(),
+                            opphørtEllerAnnullertBeskrivelse(),
                             StatusEnum.FERDIGSTILT,
                         )
 
-                    Endringstype.KORRIGERT -> oppdater(oppgave, oppgave.korrigertBeskrivelse(), oppgave.status)
+                    Endringstype.KORRIGERT -> oppdater(oppgave, korrigertBeskrivelse(), oppgave.status)
                     else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
                 }
             logger.info("Oppgave oppdatert med oppgaveId=$nyOppgave for endringstype : ${personhendelse.endringstype.name}")
@@ -248,9 +248,9 @@ private fun Personhendelse.finnesIngenHendelseBeskrivelse() =
 
 private fun Oppgave.erÅpen() = !listOf(StatusEnum.FERDIGSTILT, StatusEnum.FEILREGISTRERT).contains(this.status)
 
-private fun Oppgave.opphørtEllerAnnullertBeskrivelse() = "\n\nDenne oppgaven har opphørt eller blitt annullert."
+private fun opphørtEllerAnnullertBeskrivelse() = "\n\nDenne oppgaven har opphørt eller blitt annullert."
 
-private fun Oppgave.korrigertBeskrivelse() = "\n\nDenne oppgaven har blitt korrigert."
+private fun korrigertBeskrivelse() = "\n\nDenne oppgaven har blitt korrigert."
 
 private fun Personhendelse.skalOpphøreEllerKorrigeres() = listOf(Endringstype.ANNULLERT, Endringstype.KORRIGERT, Endringstype.OPPHOERT).contains(this.endringstype)
 
