@@ -9,7 +9,7 @@ data class PdlResponse<T>(
 
     fun harAdvarsel(): Boolean = !extensions?.warnings.isNullOrEmpty()
 
-    fun errorMessages(): String = errors?.joinToString { it -> it.message } ?: ""
+    fun errorMessages(): String = errors?.joinToString { it.message } ?: ""
 }
 
 data class PdlExtensions(
