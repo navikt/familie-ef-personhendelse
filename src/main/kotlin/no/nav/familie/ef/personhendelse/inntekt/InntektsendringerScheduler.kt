@@ -15,6 +15,7 @@ class InntektsendringerScheduler(
     fun inntektskontroll() {
         logger.info("Cron scheduler starter inntektskontroll")
         vedtakendringerService.beregnInntektsendringerOgLagreIDb()
+        // EF-sak: Send med kandidater til automatisk behandling
         vedtakendringerService.opprettOppgaverForInntektsendringer(true)
         vedtakendringerService.opprettOppgaverForNyeVedtakUføretrygd()
     }
