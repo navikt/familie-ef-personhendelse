@@ -31,11 +31,11 @@
         <kotlin.version>2.1.0</kotlin.version>
         <kafka-avro-serializer.version>7.8.0</kafka-avro-serializer.version>
         <avro.version>1.12.0</avro.version>
-        <graphql-kotlin-spring-client.version>8.2.1</graphql-kotlin-spring-client.version>
-        <graphql-kotlin-maven-plugin.version>8.2.1</graphql-kotlin-maven-plugin.version>
+        <graphql-kotlin-spring-client.version>8.3.0</graphql-kotlin-spring-client.version>
+        <graphql-kotlin-maven-plugin.version>8.3.0</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
-        <kontrakter.version>3.0_20250110083551_c4fbcaf</kontrakter.version>
+        <kontrakter.version>3.0_20250113155636_bb71360</kontrakter.version>
         <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20241202154750_04e0171</eksterne-kontrakter.version.stonadsstatistikk.ks>
         <felles.version>3.20250106100611_6ae49d2</felles.version>
         <nav.security.version>5.0.14</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
@@ -159,7 +159,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.1.1</version>
+            <version>11.2.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
