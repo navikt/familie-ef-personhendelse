@@ -3,6 +3,7 @@ package no.nav.familie.ef.personhendelse.inntekt
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
@@ -11,13 +12,17 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
+import java.time.LocalDateTime
 import java.time.YearMonth
 
 class InntektsendringerServiceTest {
     private val oppgaveClient = mockk<OppgaveClient>()
     private val sakClient = mockk<SakClient>()
+    private val arbeidsfordelingClient = mockk<ArbeidsfordelingClient>()
+    private val inntektsendringerRepository = mockk<InntektsendringerRepository>()
+    private val inntektClient = mockk<InntektClient>()
 
-    val inntektsendringerService = InntektsendringerService(oppgaveClient, sakClient)
+    val inntektsendringerService = InntektsendringerService(oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerRepository, inntektClient)
     val forventetÅrligInntekt = 420000 // 35k pr mnd i eksempel json-fil
 
     val enMndTilbake = YearMonth.now().minusMonths(1)
@@ -251,6 +256,26 @@ class InntektsendringerServiceTest {
                         forventetInntektForPerson(forventetÅrligInntekt),
                     ).harEndretInntekt(),
             ).isTrue
+    }
+
+    @Test
+    fun `lagOppgavetekstForInntektsendring - sjekk tusenskille på feiltubetalingsbeløp og norsk format på år-måned`() {
+        val oppgavetekst =
+            inntektsendringerService.lagOppgavetekstForInntektsendring(
+                InntektOgVedtakEndring(
+                    "1",
+                    false,
+                    LocalDateTime.of(2023, 11, 8, 5, 0),
+                    BeregningResultat(1, 1, 1),
+                    BeregningResultat(2, 2, 2),
+                    BeregningResultat(3, 3, 3),
+                    BeregningResultat(4, 4, 40000),
+                    null,
+                ),
+            )
+
+        Assertions.assertThat(oppgavetekst.contains("Beregnet feilutbetaling i uttrekksperioden: 40 006 kroner "))
+        Assertions.assertThat(oppgavetekst.contains("FOM 06.2023 - TOM 10.2023"))
     }
 
     fun readResource(name: String): String =

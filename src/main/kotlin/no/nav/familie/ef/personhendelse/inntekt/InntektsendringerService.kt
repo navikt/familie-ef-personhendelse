@@ -1,20 +1,163 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
 import no.nav.familie.ef.personhendelse.client.pdl.secureLogger
+import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
+import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
+import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
+import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 
 @Service
 class InntektsendringerService(
     val oppgaveClient: OppgaveClient,
     val sakClient: SakClient,
+    val arbeidsfordelingClient: ArbeidsfordelingClient,
+    val inntektsendringerRepository: InntektsendringerRepository,
+    val inntektClient: InntektClient,
 ) {
     private val grunnbeløp = 124_028
     private val halvtGrunnbeløpMånedlig = (grunnbeløp / 2) / 12
     private val maxInntekt = Math.floor((grunnbeløp * 5.5) / 1000L) * 1000L // Ingen utbetaling av OS ved inntekt på over 5.5 rundet ned til nærmeste 1000
+
+    val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
+
+    @Async
+    fun beregnInntektsendringerAsync() {
+        beregnInntektsendringerOgLagreIDb()
+    }
+
+    fun beregnInntektsendringerOgLagreIDb() {
+        logger.info("Starter beregning av inntektsendringer")
+        val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønadIkkeManueltRevurdertSisteMåneder(3)
+        inntektsendringerRepository.clearInntektsendringer()
+        logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
+        var counter = 0
+        personerMedAktivStønad.chunked(500).forEach {
+            sakClient.hentForventetInntektForIdenter(it).forEach { forventetInntektForPerson ->
+                val response = hentInntekt(forventetInntektForPerson.personIdent)
+                if (response != null &&
+                    forventetInntektForPerson.forventetInntektForrigeMåned != null &&
+                    forventetInntektForPerson.forventetInntektToMånederTilbake != null
+                ) {
+                    lagreInntektsendringForPerson(forventetInntektForPerson, response)
+                }
+                counter++
+                if (counter % 500 == 0) {
+                    logger.info("Antall personer sjekket: $counter (av ${personerMedAktivStønad.size}")
+                }
+            }
+        }
+
+        logger.info("Vedtak- og inntektsendringer ferdig")
+    }
+
+    private fun lagreInntektsendringForPerson(
+        forventetInntektForPerson: ForventetInntektForPerson,
+        response: HentInntektListeResponse,
+    ) {
+        val nyeVedtak = VedtakendringerUtil.nyeVedtak(response)
+        val endretInntekt = beregnEndretInntekt(response, forventetInntektForPerson)
+        inntektsendringerRepository.lagreVedtakOgInntektsendringForPersonIdent(
+            forventetInntektForPerson.personIdent,
+            nyeVedtak?.isNotEmpty() ?: false,
+            nyeVedtak?.joinToString(),
+            endretInntekt,
+        )
+    }
+
+    fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {
+        val inntektsendringer = inntektsendringerRepository.hentInntektsendringerSomSkalHaOppgave()
+        if (skalOppretteOppgave) {
+            inntektsendringer.forEach {
+                opprettOppgaveForInntektsendring(it, lagOppgavetekstForInntektsendring(it))
+            }
+        } else {
+            logger.info("Ville opprettet inntektsendring-oppgave for ${inntektsendringer.size} personer")
+        }
+        return inntektsendringer.size
+    }
+
+    fun opprettOppgaverForNyeVedtakUføretrygd() {
+        val nyeUføretrygdVedtak = inntektsendringerRepository.hentInntektsendringerForUføretrygd()
+        nyeUføretrygdVedtak.forEach {
+            opprettOppgaveForInntektsendring(it, lagOppgavetekstVedNyYtelseUføretrygd())
+        }
+    }
+
+    private fun hentInntekt(fnr: String): HentInntektListeResponse? {
+        try {
+            return inntektClient.hentInntekt(
+                fnr,
+                YearMonth.now().minusMonths(5),
+                YearMonth.now(),
+            )
+        } catch (e: Exception) {
+            secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person $fnr. Message: ${e.message} Cause: ${e.cause}")
+        }
+        return null
+    }
+
+    private fun opprettOppgaveForInntektsendring(
+        inntektOgVedtakEndring: InntektOgVedtakEndring,
+        beskrivelse: String,
+    ) {
+        // val oppgavetekst = lagOppgavetekst(harNyeVedtak, inntektsendringToMånederInntekt >= 10 && inntektsendringForrigeMåned >= 10)
+        val oppgaveId =
+            oppgaveClient.opprettOppgave(
+                OpprettOppgaveRequest(
+                    ident =
+                        OppgaveIdentV2(
+                            ident = inntektOgVedtakEndring.personIdent,
+                            gruppe = IdentGruppe.FOLKEREGISTERIDENT,
+                        ),
+                    saksId = null,
+                    tema = Tema.ENF,
+                    oppgavetype = Oppgavetype.VurderInntekt,
+                    fristFerdigstillelse = fristFerdigstillelse(),
+                    beskrivelse = beskrivelse,
+                    enhetsnummer = arbeidsfordelingClient.hentArbeidsfordelingEnhetId(inntektOgVedtakEndring.personIdent),
+                    behandlingstema = null, // Gjelder-feltet i Gosys
+                    tilordnetRessurs = null,
+                    behandlesAvApplikasjon = null,
+                ),
+            )
+        secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
+        oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
+    }
+
+    fun lagOppgavetekstForInntektsendring(inntektOgVedtakEndring: InntektOgVedtakEndring): String {
+        val totalFeilutbetaling =
+            inntektOgVedtakEndring.inntektsendringTreMånederTilbake.feilutbetaling +
+                inntektOgVedtakEndring.inntektsendringToMånederTilbake.feilutbetaling +
+                inntektOgVedtakEndring.inntektsendringForrigeMåned.feilutbetaling
+
+        val årMånedProsessert = YearMonth.from(inntektOgVedtakEndring.prosessertTid)
+
+        val periodeTekst =
+            "FOM ${årMånedProsessert.minusMonths(3).norskFormat()} - TOM ${årMånedProsessert.minusMonths(1).norskFormat()}"
+        val oppgavetekst =
+            "Uttrekksperiode: $periodeTekst \n" +
+                "Beregnet feilutbetaling i uttrekksperioden: ${totalFeilutbetaling.tusenskille()} kroner "
+        return oppgavetekst
+    }
+
+    fun lagOppgavetekstVedNyYtelseUføretrygd(): String = "Bruker har fått utbetalt uføretrygd. Vurder samordning."
+
+    private fun YearMonth.norskFormat() = this.format(DateTimeFormatter.ofPattern("MM.yyyy"))
+
+    private fun Int.tusenskille() = String.format("%,d", this).replace(",", " ")
 
     fun beregnEndretInntekt(
         inntektResponse: HentInntektListeResponse,
