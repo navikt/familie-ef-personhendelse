@@ -1,36 +1,13 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.mockk.mockk
-import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
-import no.nav.familie.ef.personhendelse.client.OppgaveClient
-import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.kontrakter.felles.Behandlingstema
-import no.nav.familie.kontrakter.felles.ef.StønadType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
-import java.time.LocalDateTime
 import java.time.YearMonth
 
-class VedtakendringerServiceTest {
-    private val inntektsendringerRepository = mockk<InntektsendringerRepository>()
-    private val inntektClient = mockk<InntektClient>()
-    private val oppgaveClient = mockk<OppgaveClient>()
-    private val sakClient = mockk<SakClient>()
-    private val arbeidsfordelingClient = mockk<ArbeidsfordelingClient>()
-    private val inntektsendringerService = mockk<InntektsendringerService>()
-    private val vedtakendringer =
-        VedtakendringerService(
-            inntektsendringerRepository,
-            inntektClient,
-            oppgaveClient,
-            sakClient,
-            arbeidsfordelingClient,
-            inntektsendringerService,
-        )
-
+class VedtakendringUtilTest {
     val enMndTilbake = YearMonth.now().minusMonths(1)
     val toMndTilbake = YearMonth.now().minusMonths(2)
     val treMndTilbake = YearMonth.now().minusMonths(3)
@@ -56,7 +33,7 @@ class VedtakendringerServiceTest {
                     ),
             )
 
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
     }
 
     @Test
@@ -85,7 +62,7 @@ class VedtakendringerServiceTest {
                     ),
             )
 
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isTrue
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isTrue
     }
 
     @Test
@@ -114,7 +91,7 @@ class VedtakendringerServiceTest {
                     ),
             )
 
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
     }
 
     @Test
@@ -143,7 +120,7 @@ class VedtakendringerServiceTest {
                     ),
             )
 
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isTrue
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isTrue
     }
 
     @Test
@@ -172,32 +149,7 @@ class VedtakendringerServiceTest {
                     ),
             )
 
-        Assertions.assertThat(vedtakendringer.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
-    }
-
-    @Test
-    fun `map stønadtype til behandlingstema`() {
-        Assertions.assertThat(StønadType.OVERGANGSSTØNAD.tilBehandlingstemaValue()).isEqualTo(Behandlingstema.Overgangsstønad.value)
-    }
-
-    @Test
-    fun `lagOppgavetekstForInntektsendring - sjekk tusenskille på feiltubetalingsbeløp og norsk format på år-måned`() {
-        val oppgavetekst =
-            vedtakendringer.lagOppgavetekstForInntektsendring(
-                InntektOgVedtakEndring(
-                    "1",
-                    false,
-                    LocalDateTime.of(2023, 11, 8, 5, 0),
-                    BeregningResultat(1, 1, 1),
-                    BeregningResultat(2, 2, 2),
-                    BeregningResultat(3, 3, 3),
-                    BeregningResultat(4, 4, 40000),
-                    null,
-                ),
-            )
-
-        Assertions.assertThat(oppgavetekst.contains("Beregnet feilutbetaling i uttrekksperioden: 40 006 kroner "))
-        Assertions.assertThat(oppgavetekst.contains("FOM 06.2023 - TOM 10.2023"))
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
     }
 
     fun readResource(name: String): String =
