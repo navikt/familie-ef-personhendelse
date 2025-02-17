@@ -5,6 +5,12 @@ import java.time.YearMonth
 object VedtakendringerUtil {
     fun harNyeVedtak(response: HentInntektListeResponse) = nyeVedtak(response)?.isNotEmpty() ?: false
 
+    fun offentligeYtelserForNyesteMåned(inntektResponse: HentInntektListeResponse): List<String>? {
+        val nyesteRegistrerteInntekt =
+            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(1) }
+        return offentligeYtelser(nyesteRegistrerteInntekt)
+    }
+
     fun nyeVedtak(inntektResponse: HentInntektListeResponse): List<String>? {
         // hent alle registrerte vedtak som var på personen sist beregning
         val nyesteRegistrerteInntekt =

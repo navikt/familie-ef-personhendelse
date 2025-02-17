@@ -19,6 +19,12 @@ class InntektController(
         return ResponseEntity.ok().build()
     }
 
+    @GetMapping("/automatisk-revurdering-dryrun")
+    fun loggAutomatiskInntektsendring(): ResponseEntity<Any> {
+        inntektsendringerService.loggAutomatiskRevurder()
+        return ResponseEntity.ok().build()
+    }
+
     @GetMapping("/opprettOppgaver")
     fun opprettOppgaverForInntektsendringer(
         @RequestParam skalOppretteOppgaver: Boolean,

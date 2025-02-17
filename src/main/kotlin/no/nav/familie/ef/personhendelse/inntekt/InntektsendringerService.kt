@@ -38,6 +38,12 @@ class InntektsendringerService(
         beregnInntektsendringerOgLagreIDb()
     }
 
+    fun loggAutomatiskRevurder() {
+        val inntektsendringer = inntektsendringerRepository.hentBrukereMedInntektsendringOver10Prosent()
+        val automatiskRevurderingKandidater = inntektsendringer.filter { !it.harNyeVedtak && it.harStabilInntekt() }
+        sakClient.automatiskRevurdering(automatiskRevurderingKandidater.map { it.personIdent })
+    }
+
     fun beregnInntektsendringerOgLagreIDb() {
         logger.info("Starter beregning av inntektsendringer")
         val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønadIkkeManueltRevurdertSisteMåneder(3)
@@ -74,6 +80,7 @@ class InntektsendringerService(
             nyeVedtak?.isNotEmpty() ?: false,
             nyeVedtak?.joinToString(),
             endretInntekt,
+            VedtakendringerUtil.offentligeYtelserForNyesteMåned(response)?.joinToString(),
         )
     }
 

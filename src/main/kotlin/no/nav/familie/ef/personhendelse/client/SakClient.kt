@@ -96,6 +96,15 @@ class SakClient(
         val response = postForEntity<Ressurs<NyeBarnDto>>(uriComponentsBuilder.build().toUri(), personIdent)
         return response.getDataOrThrow()
     }
+
+    fun automatiskRevurdering(personIdenter: List<String>): List<AutomatiskRevurdering>? {
+        val uriComponentsBuilder =
+            UriComponentsBuilder
+                .fromUri(uri)
+                .pathSegment("api/revurdering/automatisk")
+        val response = postForEntity<Ressurs<List<AutomatiskRevurdering>>>(uriComponentsBuilder.build().toUri(), personIdenter)
+        return response.data
+    }
 }
 
 data class ForventetInntektForPerson(
@@ -104,4 +113,9 @@ data class ForventetInntektForPerson(
     val forventetInntektToMånederTilbake: Int?,
     val forventetInntektTreMånederTilbake: Int?,
     val forventetInntektFireMånederTilbake: Int?,
+)
+
+data class AutomatiskRevurdering(
+    val personIdent: String,
+    val automatiskRevurdert: Boolean,
 )

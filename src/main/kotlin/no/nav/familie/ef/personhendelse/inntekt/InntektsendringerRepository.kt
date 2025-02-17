@@ -16,18 +16,20 @@ class InntektsendringerRepository(
         harNyeVedtak: Boolean,
         nyeYtelser: String?,
         inntektsendring: Inntektsendring,
+        eksisterendeYtelser: String?,
     ) {
         val sql =
             "INSERT INTO inntektsendringer(" +
                 "id, person_ident, harnyttvedtak, ny_ytelse_type, prosessert_tid, " +
                 "inntekt_endret_fire_maaneder_tilbake, inntekt_endret_tre_maaneder_tilbake, inntekt_endret_to_maaneder_tilbake, inntekt_endret_forrige_maaned, " +
                 "inntekt_endret_fire_maaneder_tilbake_belop, inntekt_endret_tre_maaneder_tilbake_belop, inntekt_endret_to_maaneder_tilbake_belop, inntekt_endret_forrige_maaned_belop," +
-                "feilutbetaling_fire_maaneder_tilbake, feilutbetaling_tre_maaneder_tilbake, feilutbetaling_to_maaneder_tilbake, feilutbetaling_forrige_maaned" +
+                "feilutbetaling_fire_maaneder_tilbake, feilutbetaling_tre_maaneder_tilbake, feilutbetaling_to_maaneder_tilbake, feilutbetaling_forrige_maaned," +
+                "eksisterende_ytelser" +
                 ") VALUES" +
                 "(:id, :personIdent, :harNyeVedtak, :nyeYtelser, :prosessertTid, " +
                 ":inntektsendringFireMånederTilbake, :inntektsendringTreMånederTilbake, :inntektsendringToMånederTilbake, :inntektsendringForrigeMåned, " +
                 ":inntektsendringFireMånederTilbakeBeløp, :inntektsendringTreMånederTilbakeBeløp, :inntektsendringToMånederTilbakeBeløp, :inntektsendringForrigeMånedBeløp, " +
-                ":feilutbetalingFireMånederTilbake, :feilutbetalingTreMånederTilbake, :feilutbetalingToMånederTilbake, :feilutbetalingForrigeMåned) " +
+                ":feilutbetalingFireMånederTilbake, :feilutbetalingTreMånederTilbake, :feilutbetalingToMånederTilbake, :feilutbetalingForrigeMåned, :eksisterendeYtelser) " +
                 "ON CONFLICT DO NOTHING"
         val params =
             MapSqlParameterSource(
@@ -49,6 +51,7 @@ class InntektsendringerRepository(
                     "feilutbetalingTreMånederTilbake" to inntektsendring.treMånederTilbake.feilutbetaling,
                     "feilutbetalingToMånederTilbake" to inntektsendring.toMånederTilbake.feilutbetaling,
                     "feilutbetalingForrigeMåned" to inntektsendring.forrigeMåned.feilutbetaling,
+                    "eksisterendeYtelser" to eksisterendeYtelser,
                 ),
             )
         namedParameterJdbcTemplate.update(sql, params)
@@ -66,6 +69,15 @@ class InntektsendringerRepository(
 
     fun hentInntektsendringerForUføretrygd(): List<InntektOgVedtakEndring> {
         val sql = "SELECT * FROM inntektsendringer WHERE harnyttvedtak is TRUE AND ny_ytelse_type like '%ufoeretrygd%'"
+        return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
+    }
+
+    fun hentBrukereMedInntektsendringOver10Prosent(): List<InntektOgVedtakEndring> {
+        val sql =
+            "SELECT * FROM inntektsendringer WHERE " +
+                "(inntekt_endret_tre_maaneder_tilbake >= 10 AND " +
+                "inntekt_endret_to_maaneder_tilbake >= 10 AND " +
+                "inntekt_endret_forrige_maaned >= 10)"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
@@ -95,6 +107,7 @@ class InntektsendringerRepository(
                 rs.getInt("feilutbetaling_forrige_maaned"),
             ),
             rs.getString("ny_ytelse_type"),
+            rs.getString("eksisterende_ytelser"),
         )
     }
 
@@ -113,4 +126,9 @@ data class InntektOgVedtakEndring(
     val inntektsendringToMånederTilbake: BeregningResultat,
     val inntektsendringForrigeMåned: BeregningResultat,
     val nyeYtelser: String?,
-)
+    val eksisterendeYtelser: String?,
+) {
+    fun harStabilInntekt(): Boolean =
+        inntektsendringTreMånederTilbake.beløp == inntektsendringToMånederTilbake.beløp &&
+            inntektsendringToMånederTilbake.beløp == inntektsendringForrigeMåned.beløp
+}
