@@ -271,6 +271,7 @@ class InntektsendringerServiceTest {
                     BeregningResultat(3, 3, 3),
                     BeregningResultat(4, 4, 40000),
                     null,
+                    null,
                 ),
             )
 
