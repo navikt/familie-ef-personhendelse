@@ -20,8 +20,8 @@ class InntektController(
     }
 
     @GetMapping("/automatisk-revurdering-dryrun")
-    fun loggAutomatiskInntektsendring(): ResponseEntity<Any> {
-        inntektsendringerService.loggAutomatiskRevurder()
+    fun loggAutomatiskeInntektsendringer(): ResponseEntity<Any> {
+        inntektsendringerService.loggAutomatiskeRevurderinger()
         return ResponseEntity.ok().build()
     }
 
