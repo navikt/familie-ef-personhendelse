@@ -5,7 +5,6 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
-import no.nav.familie.ef.personhendelse.client.pdl.secureLogger
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -36,6 +35,12 @@ class InntektsendringerService(
     @Async
     fun beregnInntektsendringerAsync() {
         beregnInntektsendringerOgLagreIDb()
+    }
+
+    fun loggAutomatiskeRevurderinger() {
+        val inntektsendringer = inntektsendringerRepository.hentBrukereMedInntektsendringOver10Prosent()
+        val automatiskRevurderingKandidater = inntektsendringer.filter { !it.harNyeVedtak && it.harStabilInntekt() }
+        sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent })
     }
 
     fun beregnInntektsendringerOgLagreIDb() {
@@ -74,6 +79,7 @@ class InntektsendringerService(
             nyeVedtak?.isNotEmpty() ?: false,
             nyeVedtak?.joinToString(),
             endretInntekt,
+            VedtakendringerUtil.offentligeYtelserForNyesteMåned(response)?.joinToString(),
         )
     }
 

@@ -1,0 +1,1 @@
+ALTER TABLE inntektsendringer ADD COLUMN eksisterende_ytelser VARCHAR;
