@@ -84,3 +84,5 @@ fun InntektV2Response.oppsummerInntektForÅr(år: Int): Double =
         .sumOf { it.beløp }
 
 fun List<Inntekt>.filterBasertPåInntektType(inntektType: InntektTypeV2): List<Inntekt> = this.filter { it.type == inntektType }
+
+fun List<MånedsInntekt>.summerTotalInntekt(): Double = this.flatMap { it.inntektListe }.sumOf { it.beløp }

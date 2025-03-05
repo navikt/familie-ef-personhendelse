@@ -55,15 +55,16 @@ class InntektClient(
         personident: String,
         fom: YearMonth,
         tom: YearMonth,
-    ): InntektV2Response = postForEntity(
-        uri = genererInntektV2Uri,
-        payload =
-            HentInntektV2Payload(
-                personident = personident,
-                maanedFom = fom,
-                maanedTom = tom,
-            ),
-    )
+    ): InntektV2Response =
+        postForEntity(
+            uri = genererInntektV2Uri,
+            payload =
+                HentInntektV2Payload(
+                    personident = personident,
+                    maanedFom = fom,
+                    maanedTom = tom,
+                ),
+        )
 
     fun hentInntektshistorikk(
         personIdent: String,

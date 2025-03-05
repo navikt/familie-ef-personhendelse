@@ -66,3 +66,8 @@ enum class InntektType {
     PENSJON_ELLER_TRYGD,
     YTELSE_FRA_OFFENTLIGE,
 }
+
+fun List<ArbeidsinntektMåned>.summerTotalInntekt(): Double =
+    this
+        .flatMap { it.arbeidsInntektInformasjon?.inntektListe ?: emptyList() }
+        .sumOf { it.beløp.toDouble() }
