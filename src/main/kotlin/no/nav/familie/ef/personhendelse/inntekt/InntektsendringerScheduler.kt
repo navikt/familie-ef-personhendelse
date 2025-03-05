@@ -11,8 +11,7 @@ class InntektsendringerScheduler(
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    // @Scheduled(cron = "\${INNTEKTSKONTROLL_CRON_EXPRESSION}") // kl 04:00 den 6. hver måned // TODO: Ikke glem å sette meg tilbake.
-    @Scheduled(initialDelay = 60 * 1000L, fixedDelay = 365 * 24 * 60 * 60 * 1000L) // Kjører ved oppstart av app
+    @Scheduled(cron = "\${INNTEKTSKONTROLL_CRON_EXPRESSION}") // kl 04:00 den 6. hver måned
     fun inntektskontroll() {
         logger.info("Cron scheduler starter inntektskontroll")
         inntektsendringerService.beregnInntektsendringerOgLagreIDb()
