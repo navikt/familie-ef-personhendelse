@@ -5,6 +5,7 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
+import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektV2Response
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -115,6 +116,20 @@ class InntektsendringerService(
         return null
     }
 
+    private fun hentInntektV2(personIdent: String): InntektV2Response? {
+        try {
+            return inntektClient.hentInntektV2(
+                personident = personIdent,
+                fom = YearMonth.now().minusMonths(5),
+                tom = YearMonth.now()
+            )
+        } catch (e: Exception) {
+            secureLogger.warn("Feil ved kall mot inntektskomponenten (inntektV2) ved kall mot person $personIdent. Message: ${e.message} Cause: ${e.cause}")
+        }
+
+        return null
+    }
+
     private fun opprettOppgaveForInntektsendring(
         inntektOgVedtakEndring: InntektOgVedtakEndring,
         beskrivelse: String,
@@ -146,8 +161,8 @@ class InntektsendringerService(
     fun lagOppgavetekstForInntektsendring(inntektOgVedtakEndring: InntektOgVedtakEndring): String {
         val totalFeilutbetaling =
             inntektOgVedtakEndring.inntektsendringTreMånederTilbake.feilutbetaling +
-                inntektOgVedtakEndring.inntektsendringToMånederTilbake.feilutbetaling +
-                inntektOgVedtakEndring.inntektsendringForrigeMåned.feilutbetaling
+                    inntektOgVedtakEndring.inntektsendringToMånederTilbake.feilutbetaling +
+                    inntektOgVedtakEndring.inntektsendringForrigeMåned.feilutbetaling
 
         val årMånedProsessert = YearMonth.from(inntektOgVedtakEndring.prosessertTid)
 
@@ -155,7 +170,7 @@ class InntektsendringerService(
             "FOM ${årMånedProsessert.minusMonths(3).norskFormat()} - TOM ${årMånedProsessert.minusMonths(1).norskFormat()}"
         val oppgavetekst =
             "Uttrekksperiode: $periodeTekst \n" +
-                "Beregnet feilutbetaling i uttrekksperioden: ${totalFeilutbetaling.tusenskille()} kroner "
+                    "Beregnet feilutbetaling i uttrekksperioden: ${totalFeilutbetaling.tusenskille()} kroner "
         return oppgavetekst
     }
 
