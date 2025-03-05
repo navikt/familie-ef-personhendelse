@@ -5,6 +5,8 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
+import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektV2Response
+import no.nav.familie.ef.personhendelse.inntekt.inntektv2.summerTotalInntekt
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -52,10 +54,14 @@ class InntektsendringerService(
         personerMedAktivStønad.chunked(500).forEach {
             sakClient.hentForventetInntektForIdenter(it).forEach { forventetInntektForPerson ->
                 val response = hentInntekt(forventetInntektForPerson.personIdent)
+                val inntektV2Response = hentInntektV2(personIdent = forventetInntektForPerson.personIdent)
+
                 if (response != null &&
                     forventetInntektForPerson.forventetInntektForrigeMåned != null &&
                     forventetInntektForPerson.forventetInntektToMånederTilbake != null
                 ) {
+                    // TODO: Husk å slett meg.
+                    secureLogger.info("INNTEKTV2 ---- Response for inntektv1 er: ${response.arbeidsinntektMåned?.summerTotalInntekt()} OG response for inntektv2 er: ${inntektV2Response?.maanedsData?.summerTotalInntekt()}.")
                     lagreInntektsendringForPerson(forventetInntektForPerson, response)
                 }
                 counter++
@@ -112,6 +118,20 @@ class InntektsendringerService(
         } catch (e: Exception) {
             secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person $fnr. Message: ${e.message} Cause: ${e.cause}")
         }
+        return null
+    }
+
+    private fun hentInntektV2(personIdent: String): InntektV2Response? {
+        try {
+            return inntektClient.hentInntektV2(
+                personident = personIdent,
+                fom = YearMonth.now().minusMonths(5),
+                tom = YearMonth.now(),
+            )
+        } catch (e: Exception) {
+            secureLogger.warn("Feil ved kall mot inntektskomponenten (inntektV2) ved kall mot person $personIdent. Melding: ${e.message}. Årsak: ${e.cause}.")
+        }
+
         return null
     }
 
