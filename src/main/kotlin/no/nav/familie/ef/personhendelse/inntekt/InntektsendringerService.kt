@@ -41,7 +41,7 @@ class InntektsendringerService(
 
     fun loggAutomatiskeRevurderinger() {
         val inntektsendringer = inntektsendringerRepository.hentBrukereMedInntektsendringOver10Prosent()
-        val automatiskRevurderingKandidater = inntektsendringer.filter { !it.harNyeVedtak && it.harStabilInntekt() }
+        val automatiskRevurderingKandidater = inntektsendringer.filter { it.harIngenEksisterendeYtelser() && it.harStabilInntekt() }
         sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent })
     }
 
