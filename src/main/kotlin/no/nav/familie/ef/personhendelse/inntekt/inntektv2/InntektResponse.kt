@@ -29,7 +29,8 @@ data class Inntekt(
     val beløp: Double,
     val fordel: String,
     val beskrivelse: String,
-    val inngaarIGrunnlagForTrekk: Boolean,
+    @JsonProperty("inngaarIGrunnlagForTrekk")
+    val inngårIGrunnlagForTrekk: Boolean,
     @JsonProperty("utloeserArbeidsgiveravgift")
     val utløserArbeidsgiveravgift: Boolean,
     val skatteOgAvgiftsregel: String?,
