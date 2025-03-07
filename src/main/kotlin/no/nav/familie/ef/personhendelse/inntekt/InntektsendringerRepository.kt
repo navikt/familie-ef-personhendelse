@@ -132,4 +132,6 @@ data class InntektOgVedtakEndring(
     fun harStabilInntekt(): Boolean =
         abs(inntektsendringTreMånederTilbake.beløp - inntektsendringToMånederTilbake.beløp) < 1500 &&
             abs(inntektsendringTreMånederTilbake.beløp - inntektsendringForrigeMåned.beløp) < 1500
+
+    fun harIngenEksisterendeYtelser(): Boolean = eksisterendeYtelser.isNullOrEmpty()
 }
