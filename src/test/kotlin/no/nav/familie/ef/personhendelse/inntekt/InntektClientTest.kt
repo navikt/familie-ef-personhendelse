@@ -59,22 +59,22 @@ class InntektClientTest {
                 ),
         )
 
-        val response = runBlocking { inntektClient.hentInntekt(personIdent, YearMonth.of(2020, 11), YearMonth.of(2021, 11)) }
+        val inntektResponse = runBlocking { inntektClient.hentInntektV2(personident = personIdent, fom = YearMonth.of(2020, 11), tom = YearMonth.of(2021, 11)) }
 
         val inntektType =
-            response.arbeidsinntektMåned
-                ?.first()
-                ?.arbeidsInntektInformasjon
-                ?.inntektListe
-                ?.first()
-                ?.inntektType
+            inntektResponse.maanedsData
+                .first()
+                .inntektListe
+                .first()
+                .type
+
         val beløp =
-            response.arbeidsinntektMåned
-                ?.first()
-                ?.arbeidsInntektInformasjon
-                ?.inntektListe
-                ?.first()
-                ?.beløp
+            inntektResponse.maanedsData
+                .first()
+                .inntektListe
+                .first()
+                .beløp
+
         Assertions.assertEquals(InntektType.LOENNSINNTEKT, inntektType)
         Assertions.assertEquals(40000, beløp)
     }

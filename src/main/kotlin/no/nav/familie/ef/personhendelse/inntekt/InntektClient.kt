@@ -27,7 +27,7 @@ class InntektClient(
         .build()
         .toUri()
 
-    private val genererInntektV2Uri =
+    private val inntektV2Uri =
         UriComponentsBuilder
             .fromUri(uri)
             .pathSegment("api/inntekt/v2")
@@ -45,19 +45,13 @@ class InntektClient(
         .build()
         .toUri()
 
-    fun hentInntekt(
-        personIdent: String,
-        fom: YearMonth,
-        tom: YearMonth,
-    ): HentInntektListeResponse = postForEntity(lagInntektUri(fom, tom), PersonIdent(personIdent))
-
     fun hentInntektV2(
         personident: String,
         fom: YearMonth,
         tom: YearMonth,
     ): InntektV2Response =
         postForEntity(
-            uri = genererInntektV2Uri,
+            uri = inntektV2Uri,
             payload =
                 HentInntektV2Payload(
                     personident = personident,

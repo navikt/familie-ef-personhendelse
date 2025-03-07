@@ -6,7 +6,7 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
 import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektV2Response
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.summerTotalInntekt
+import no.nav.familie.ef.personhendelse.inntekt.inntektv2.MånedsInntekt
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -47,24 +47,27 @@ class InntektsendringerService(
 
     fun beregnInntektsendringerOgLagreIDb() {
         logger.info("Starter beregning av inntektsendringer")
+
         val personerMedAktivStønad = sakClient.hentPersonerMedAktivStønadIkkeManueltRevurdertSisteMåneder(3)
         inntektsendringerRepository.clearInntektsendringer()
+
         logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
+
         var counter = 0
+
         personerMedAktivStønad.chunked(500).forEach {
             sakClient.hentForventetInntektForIdenter(it).forEach { forventetInntektForPerson ->
-                val response = hentInntekt(forventetInntektForPerson.personIdent)
-                val inntektV2Response = hentInntektV2(personIdent = forventetInntektForPerson.personIdent)
+                val inntektResponse = hentInntekt(personIdent = forventetInntektForPerson.personIdent)
 
-                if (response != null &&
-                    forventetInntektForPerson.forventetInntektForrigeMåned != null &&
-                    forventetInntektForPerson.forventetInntektToMånederTilbake != null
-                ) {
-                    // TODO: Husk å slett meg.
-                    secureLogger.info("INNTEKTV2 ---- Response for inntektv1 er: ${response.arbeidsinntektMåned?.summerTotalInntekt()} OG response for inntektv2 er: ${inntektV2Response?.maanedsData?.summerTotalInntekt()}.")
-                    lagreInntektsendringForPerson(forventetInntektForPerson, response)
+                if (inntektResponse != null && forventetInntektForPerson.forventetInntektForrigeMåned != null && forventetInntektForPerson.forventetInntektToMånederTilbake != null) {
+                    lagreInntektsendringForPerson(
+                        forventetInntektForPerson = forventetInntektForPerson,
+                        inntektResponse = inntektResponse,
+                    )
                 }
+
                 counter++
+
                 if (counter % 500 == 0) {
                     logger.info("Antall personer sjekket: $counter (av ${personerMedAktivStønad.size}")
                 }
@@ -76,16 +79,18 @@ class InntektsendringerService(
 
     private fun lagreInntektsendringForPerson(
         forventetInntektForPerson: ForventetInntektForPerson,
-        response: HentInntektListeResponse,
+        inntektResponse: InntektV2Response,
     ) {
-        val nyeVedtak = VedtakendringerUtil.nyeVedtak(response)
-        val endretInntekt = beregnEndretInntekt(response, forventetInntektForPerson)
+        val nyeVedtak = VedtakendringerUtil.nyeVedtak(inntektResponse)
+
+        val endretInntekt = beregnEndretInntekt(inntektResponse, forventetInntektForPerson)
+
         inntektsendringerRepository.lagreVedtakOgInntektsendringForPersonIdent(
-            forventetInntektForPerson.personIdent,
-            nyeVedtak?.isNotEmpty() ?: false,
-            nyeVedtak?.joinToString(),
-            endretInntekt,
-            VedtakendringerUtil.offentligeYtelserForNyesteMåned(response)?.joinToString(),
+            personIdent = forventetInntektForPerson.personIdent,
+            harNyeVedtak = nyeVedtak.isNotEmpty(),
+            nyeYtelser = nyeVedtak.joinToString(),
+            inntektsendring = endretInntekt,
+            eksisterendeYtelser = VedtakendringerUtil.offentligeYtelserForNyesteMåned(inntektResponse)?.joinToString(),
         )
     }
 
@@ -108,20 +113,7 @@ class InntektsendringerService(
         }
     }
 
-    private fun hentInntekt(fnr: String): HentInntektListeResponse? {
-        try {
-            return inntektClient.hentInntekt(
-                fnr,
-                YearMonth.now().minusMonths(5),
-                YearMonth.now(),
-            )
-        } catch (e: Exception) {
-            secureLogger.warn("Feil ved kall mot inntektskomponenten ved kall mot person $fnr. Message: ${e.message} Cause: ${e.cause}")
-        }
-        return null
-    }
-
-    private fun hentInntektV2(personIdent: String): InntektV2Response? {
+    private fun hentInntekt(personIdent: String): InntektV2Response? {
         try {
             return inntektClient.hentInntektV2(
                 personident = personIdent,
@@ -186,43 +178,39 @@ class InntektsendringerService(
     private fun Int.tusenskille() = String.format("%,d", this).replace(",", " ")
 
     fun beregnEndretInntekt(
-        inntektResponse: HentInntektListeResponse,
+        inntektResponse: InntektV2Response,
         forventetInntektForPerson: ForventetInntektForPerson,
     ): Inntektsendring {
         // hent alle registrerte vedtak som var på personen sist beregning
-        val nyesteRegistrerteInntekt =
-            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(1) }
-        val nestNyesteRegistrerteInntekt =
-            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(2) }
-        val inntektTreMånederTilbake =
-            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(3) }
-        val inntektFireMånederTilbake =
-            inntektResponse.arbeidsinntektMåned?.filter { it.årMåned == YearMonth.now().minusMonths(4) }
+        val nyesteRegistrerteInntekt = inntektResponse.maanedsData.filter { it.måned == YearMonth.now().minusMonths(1) }
+        val nestNyesteRegistrerteInntekt = inntektResponse.maanedsData.filter { it.måned == YearMonth.now().minusMonths(2) }
+        val inntektTreMånederTilbake = inntektResponse.maanedsData.filter { it.måned == YearMonth.now().minusMonths(3) }
+        val inntektFireMånederTilbake = inntektResponse.maanedsData.filter { it.måned == YearMonth.now().minusMonths(4) }
 
         val inntektsendringFireMånederTilbake =
             beregnInntektsendring(
-                inntektFireMånederTilbake,
-                forventetInntektForPerson.personIdent,
-                forventetInntektForPerson.forventetInntektTreMånederTilbake,
+                nyesteRegistrerteInntekt = inntektFireMånederTilbake,
+                ident = forventetInntektForPerson.personIdent,
+                forventetInntekt = forventetInntektForPerson.forventetInntektTreMånederTilbake,
             )
 
         val inntektsendringTreMånederTilbake =
             beregnInntektsendring(
-                inntektTreMånederTilbake,
-                forventetInntektForPerson.personIdent,
-                forventetInntektForPerson.forventetInntektTreMånederTilbake,
+                nyesteRegistrerteInntekt = inntektTreMånederTilbake,
+                ident = forventetInntektForPerson.personIdent,
+                forventetInntekt = forventetInntektForPerson.forventetInntektTreMånederTilbake,
             )
         val inntektsendringToMånederTilbake =
             beregnInntektsendring(
-                nestNyesteRegistrerteInntekt,
-                forventetInntektForPerson.personIdent,
-                forventetInntektForPerson.forventetInntektToMånederTilbake,
+                nyesteRegistrerteInntekt = nestNyesteRegistrerteInntekt,
+                ident = forventetInntektForPerson.personIdent,
+                forventetInntekt = forventetInntektForPerson.forventetInntektToMånederTilbake,
             )
         val inntektsendringForrigeMåned =
             beregnInntektsendring(
-                nyesteRegistrerteInntekt,
-                forventetInntektForPerson.personIdent,
-                forventetInntektForPerson.forventetInntektForrigeMåned,
+                nyesteRegistrerteInntekt = nyesteRegistrerteInntekt,
+                ident = forventetInntektForPerson.personIdent,
+                forventetInntekt = forventetInntektForPerson.forventetInntektForrigeMåned,
             )
 
         return Inntektsendring(
@@ -234,15 +222,14 @@ class InntektsendringerService(
     }
 
     private fun beregnInntektsendring(
-        nyesteRegistrerteInntekt: List<ArbeidsinntektMåned>?,
+        nyesteRegistrerteInntekt: List<MånedsInntekt>,
         ident: String,
         forventetInntekt: Int?,
     ): BeregningResultat {
         if (forventetInntekt == null ||
-            nyesteRegistrerteInntekt.isNullOrEmpty() ||
+            nyesteRegistrerteInntekt.isEmpty() ||
             nyesteRegistrerteInntekt
                 .firstOrNull()
-                ?.arbeidsInntektInformasjon
                 ?.inntektListe
                 .isNullOrEmpty()
         ) {
@@ -253,21 +240,19 @@ class InntektsendringerService(
         if (forventetInntekt > maxInntekt) return BeregningResultat(0, 0, 0) // Ignorer alle med over 652000 i årsinntekt, da de har 0 i utbetaling.
         val månedligForventetInntekt = (forventetInntekt / 12)
 
-        val inntektListe = nyesteRegistrerteInntekt.firstOrNull()?.arbeidsInntektInformasjon?.inntektListe ?: emptyList()
-        val samletInntekt =
-            inntektListe
-                .filterNot {
-                    ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse)
-                }.sumOf { it.beløp }
+        val inntektListe = nyesteRegistrerteInntekt.firstOrNull()?.inntektListe ?: emptyList()
+        val samletInntekt = inntektListe.filterNot { ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse) }.sumOf { it.beløp }.toInt()
 
         if (samletInntekt < halvtGrunnbeløpMånedlig) return BeregningResultat(0, 0, 0)
 
         secureLogger.info(
             "Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident",
         )
+
         val inntektsendringProsent = (((samletInntekt - månedligForventetInntekt) / månedligForventetInntekt.toDouble()) * 100).toInt()
         val endretInntektBeløp = samletInntekt - månedligForventetInntekt
         val feilutbetaling = beregnFeilutbetalingForMåned(månedligForventetInntekt, samletInntekt)
+
         if (månedligForventetInntekt == 0) return BeregningResultat(endretInntektBeløp, 100, feilutbetaling) // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
         return BeregningResultat(endretInntektBeløp, inntektsendringProsent, feilutbetaling)
     }

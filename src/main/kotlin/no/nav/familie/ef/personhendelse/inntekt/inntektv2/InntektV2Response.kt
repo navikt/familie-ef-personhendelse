@@ -5,11 +5,6 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.YearMonth
 
-data class InntektV2RequestBody(
-    val maanedFom: YearMonth?,
-    val maanedTom: YearMonth?,
-)
-
 data class InntektV2Response(
     @JsonProperty("data")
     val maanedsData: List<MånedsInntekt> = emptyList(),
@@ -62,7 +57,6 @@ data class Tilleggsinformasjon(
     val type: String,
 )
 
-// TODO: Husk å endre tilbake til normalt navn, samt fjerne bruken et at annet sted.
 enum class InntektTypeV2 {
     @JsonProperty("Loennsinntekt")
     LØNNSINNTEKT,

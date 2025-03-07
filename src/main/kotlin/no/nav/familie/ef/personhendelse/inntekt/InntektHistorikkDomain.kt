@@ -95,3 +95,35 @@ data class TilleggsinformasjonDetaljer(
     val ikkebeskrevet: String?,
     val detaljerType: String?,
 )
+
+data class Avvik(
+    val ident: Aktør? = null,
+    val opplysningspliktig: Aktør? = null,
+    val virksomhet: Aktør,
+    val avvikPeriode: YearMonth? = null,
+    val tekst: String? = null,
+)
+
+data class Aktør(
+    val identifikator: String,
+    @JsonProperty("aktoerType")
+    val aktørType: AktørType,
+)
+
+enum class AktørType {
+    AKTOER_ID,
+    NATURLIG_IDENT,
+    ORGANISASJON,
+}
+
+enum class InntektType {
+    LOENNSINNTEKT,
+    NAERINGSINNTEKT,
+    PENSJON_ELLER_TRYGD,
+    YTELSE_FRA_OFFENTLIGE,
+}
+
+data class Tilleggsinformasjon(
+    val kategori: String? = null, // Kodeverk -> EDAGTilleggsinfoKategorier
+    val tilleggsinformasjonDetaljer: TilleggsinformasjonDetaljer?,
+)
