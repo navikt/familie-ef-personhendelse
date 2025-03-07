@@ -5,12 +5,12 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.YearMonth
 
-data class InntektV2Response(
+data class InntektResponse(
     @JsonProperty("data")
-    val maanedsData: List<MånedsInntekt> = emptyList(),
+    val månedsData: List<InntektMåned> = emptyList(),
 )
 
-data class MånedsInntekt(
+data class InntektMåned(
     @JsonProperty("maaned")
     val måned: YearMonth,
     val opplysningspliktig: String,
@@ -71,12 +71,12 @@ enum class InntektTypeV2 {
     YTELSE_FRA_OFFENTLIGE,
 }
 
-fun InntektV2Response.oppsummerInntektForÅr(år: Int): Double =
-    this.maanedsData
+fun InntektResponse.oppsummerInntektForÅr(år: Int): Double =
+    this.månedsData
         .filter { it.måned.year == år }
         .flatMap { it.inntektListe }
         .sumOf { it.beløp }
 
 fun List<Inntekt>.filterBasertPåInntektType(inntektType: InntektTypeV2): List<Inntekt> = this.filter { it.type == inntektType }
 
-fun List<MånedsInntekt>.summerTotalInntekt(): Double = this.flatMap { it.inntektListe }.sumOf { it.beløp }
+fun List<InntektMåned>.summerTotalInntekt(): Double = this.flatMap { it.inntektListe }.sumOf { it.beløp }

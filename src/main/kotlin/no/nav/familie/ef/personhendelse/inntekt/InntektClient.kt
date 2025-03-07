@@ -1,6 +1,6 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektV2Response
+import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektResponse
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.PersonIdent
 import org.springframework.beans.factory.annotation.Qualifier
@@ -16,17 +16,6 @@ class InntektClient(
     @Value("\${FAMILIE_EF_PROXY_URL}") private val uri: URI,
     @Qualifier("azure") restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "inntekt") {
-    private fun lagInntektUri(
-        fom: YearMonth,
-        tom: YearMonth,
-    ) = UriComponentsBuilder
-        .fromUri(uri)
-        .pathSegment("api/inntekt")
-        .queryParam("fom", fom)
-        .queryParam("tom", tom)
-        .build()
-        .toUri()
-
     private val inntektV2Uri =
         UriComponentsBuilder
             .fromUri(uri)
@@ -45,15 +34,15 @@ class InntektClient(
         .build()
         .toUri()
 
-    fun hentInntektV2(
+    fun hentInntekt(
         personident: String,
         fom: YearMonth,
         tom: YearMonth,
-    ): InntektV2Response =
+    ): InntektResponse =
         postForEntity(
             uri = inntektV2Uri,
             payload =
-                HentInntektV2Payload(
+                HentInntektPayload(
                     personident = personident,
                     maanedFom = fom,
                     maanedTom = tom,
@@ -67,7 +56,7 @@ class InntektClient(
     ): InntektshistorikkResponse = postForEntity(lagInntekthistorikkUri(fom, tom), PersonIdent(personIdent))
 }
 
-data class HentInntektV2Payload(
+data class HentInntektPayload(
     val personident: String,
     val maanedFom: YearMonth,
     val maanedTom: YearMonth,

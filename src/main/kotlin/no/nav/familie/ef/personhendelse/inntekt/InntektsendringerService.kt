@@ -5,8 +5,8 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektV2Response
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.MånedsInntekt
+import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektMåned
+import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektResponse
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -79,7 +79,7 @@ class InntektsendringerService(
 
     private fun lagreInntektsendringForPerson(
         forventetInntektForPerson: ForventetInntektForPerson,
-        inntektResponse: InntektV2Response,
+        inntektResponse: InntektResponse,
     ) {
         val nyeVedtak = VedtakendringerUtil.nyeVedtak(inntektResponse)
 
@@ -113,9 +113,9 @@ class InntektsendringerService(
         }
     }
 
-    private fun hentInntekt(personIdent: String): InntektV2Response? {
+    private fun hentInntekt(personIdent: String): InntektResponse? {
         try {
-            return inntektClient.hentInntektV2(
+            return inntektClient.hentInntekt(
                 personident = personIdent,
                 fom = YearMonth.now().minusMonths(5),
                 tom = YearMonth.now(),
@@ -178,14 +178,14 @@ class InntektsendringerService(
     private fun Int.tusenskille() = String.format("%,d", this).replace(",", " ")
 
     fun beregnEndretInntekt(
-        inntektResponse: InntektV2Response,
+        inntektResponse: InntektResponse,
         forventetInntektForPerson: ForventetInntektForPerson,
     ): Inntektsendring {
         // hent alle registrerte vedtak som var på personen sist beregning
-        val nyesteRegistrerteInntekt = inntektResponse.maanedsData.filter { it.måned == YearMonth.now().minusMonths(1) }
-        val nestNyesteRegistrerteInntekt = inntektResponse.maanedsData.filter { it.måned == YearMonth.now().minusMonths(2) }
-        val inntektTreMånederTilbake = inntektResponse.maanedsData.filter { it.måned == YearMonth.now().minusMonths(3) }
-        val inntektFireMånederTilbake = inntektResponse.maanedsData.filter { it.måned == YearMonth.now().minusMonths(4) }
+        val nyesteRegistrerteInntekt = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(1) }
+        val nestNyesteRegistrerteInntekt = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(2) }
+        val inntektTreMånederTilbake = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(3) }
+        val inntektFireMånederTilbake = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(4) }
 
         val inntektsendringFireMånederTilbake =
             beregnInntektsendring(
@@ -222,7 +222,7 @@ class InntektsendringerService(
     }
 
     private fun beregnInntektsendring(
-        nyesteRegistrerteInntekt: List<MånedsInntekt>,
+        nyesteRegistrerteInntekt: List<InntektMåned>,
         ident: String,
         forventetInntekt: Int?,
     ): BeregningResultat {

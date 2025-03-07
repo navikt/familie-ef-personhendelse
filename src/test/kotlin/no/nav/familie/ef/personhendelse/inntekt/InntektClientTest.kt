@@ -59,17 +59,17 @@ class InntektClientTest {
                 ),
         )
 
-        val inntektResponse = runBlocking { inntektClient.hentInntektV2(personident = personIdent, fom = YearMonth.of(2020, 11), tom = YearMonth.of(2021, 11)) }
+        val inntektResponse = runBlocking { inntektClient.hentInntekt(personident = personIdent, fom = YearMonth.of(2020, 11), tom = YearMonth.of(2021, 11)) }
 
         val inntektType =
-            inntektResponse.maanedsData
+            inntektResponse.månedsData
                 .first()
                 .inntektListe
                 .first()
                 .type
 
         val beløp =
-            inntektResponse.maanedsData
+            inntektResponse.månedsData
                 .first()
                 .inntektListe
                 .first()
