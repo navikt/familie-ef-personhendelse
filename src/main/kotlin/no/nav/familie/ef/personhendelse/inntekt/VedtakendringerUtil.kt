@@ -23,24 +23,13 @@ object VedtakendringerUtil {
         return offentligeYtelserForNyesteMåned.minus(offentligeYtelserForNestNyesteMåned.toSet())
     }
 
-    private fun offentligeYtelser(inntektMåneder: List<InntektMåned>): List<String> {
-        val offentligYtelseInntekt =
-            inntektMåneder.filter {
-                it.inntektListe.any { inntekt ->
-                    inntekt.type == InntektTypeV2.YTELSE_FRA_OFFENTLIGE &&
-                        inntekt.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
-                }
-            }
-
-        val inntektListe = offentligYtelseInntekt.flatMap { it.inntektListe }
-
-        return inntektListe
+    private fun offentligeYtelser(inntektMåneder: List<InntektMåned>): List<String> =
+        inntektMåneder
+            .flatMap { it.inntektListe }
             .filter {
                 it.type == InntektTypeV2.YTELSE_FRA_OFFENTLIGE &&
                     it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
                     it.tilleggsinformasjon?.type != "ETTERBETALINGSPERIODE"
-            }.groupBy { it.beskrivelse }
-            .keys
-            .toList()
-    }
+            }.map { it.beskrivelse }
+            .distinct()
 }
