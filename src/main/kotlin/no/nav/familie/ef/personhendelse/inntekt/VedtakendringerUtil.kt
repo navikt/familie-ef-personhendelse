@@ -2,7 +2,7 @@ package no.nav.familie.ef.personhendelse.inntekt
 
 import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektMåned
 import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektResponse
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektTypeV2
+import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektType
 import java.time.YearMonth
 
 object VedtakendringerUtil {
@@ -27,7 +27,7 @@ object VedtakendringerUtil {
         inntektMåneder
             .flatMap { it.inntektListe }
             .filter {
-                it.type == InntektTypeV2.YTELSE_FRA_OFFENTLIGE &&
+                it.type == InntektType.YTELSE_FRA_OFFENTLIGE &&
                     it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" &&
                     it.tilleggsinformasjon?.type != "ETTERBETALINGSPERIODE"
             }.map { it.beskrivelse }

@@ -2,7 +2,7 @@ package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektResponse
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektTypeV2
+import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektType
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
@@ -19,7 +19,7 @@ class InntektClientTest {
             val inntektResponse = objectMapper.readValue<InntektResponse>(inntektV2ResponseJson)
 
             val forventetMåned = YearMonth.of(2020, 3)
-            val forventetInntektType: InntektTypeV2 = InntektTypeV2.LØNNSINNTEKT
+            val forventetInntektType: InntektType = InntektType.LØNNSINNTEKT
 
             Assertions.assertEquals(forventetMåned, inntektResponse.månedsData[0].måned)
             Assertions.assertEquals(forventetInntektType, inntektResponse.månedsData[0].inntektListe[0].type)
@@ -32,10 +32,10 @@ class InntektClientTest {
 
             val forventeteInntektTyper =
                 listOf(
-                    InntektTypeV2.LØNNSINNTEKT,
-                    InntektTypeV2.NAERINGSINNTEKT,
-                    InntektTypeV2.YTELSE_FRA_OFFENTLIGE,
-                    InntektTypeV2.PENSJON_ELLER_TRYGD,
+                    InntektType.LØNNSINNTEKT,
+                    InntektType.NAERINGSINNTEKT,
+                    InntektType.YTELSE_FRA_OFFENTLIGE,
+                    InntektType.PENSJON_ELLER_TRYGD,
                 )
 
             val faktiskeInntektTyper =

@@ -24,7 +24,7 @@ data class InntektMåned(
 )
 
 data class Inntekt(
-    val type: InntektTypeV2,
+    val type: InntektType,
     @JsonProperty("beloep")
     val beløp: Double,
     val fordel: String,
@@ -58,7 +58,7 @@ data class Tilleggsinformasjon(
     val type: String,
 )
 
-enum class InntektTypeV2 {
+enum class InntektType {
     @JsonProperty("Loennsinntekt")
     LØNNSINNTEKT,
 
@@ -78,6 +78,6 @@ fun InntektResponse.oppsummerInntektForÅr(år: Int): Double =
         .flatMap { it.inntektListe }
         .sumOf { it.beløp }
 
-fun List<Inntekt>.filterBasertPåInntektType(inntektType: InntektTypeV2): List<Inntekt> = this.filter { it.type == inntektType }
+fun List<Inntekt>.filterBasertPåInntektType(inntektType: InntektType): List<Inntekt> = this.filter { it.type == inntektType }
 
 fun List<InntektMåned>.summerTotalInntekt(): Double = this.flatMap { it.inntektListe }.sumOf { it.beløp }
