@@ -1,0 +1,158 @@
+{
+  "data": [
+    {
+      "maaned": "2020-03",
+      "opplysningspliktig": "990983666",
+      "underenhet": "990983666",
+      "norskident": "10108000398",
+      "oppsummeringstidspunkt": "2025-03-03T08:32:35.622Z",
+      "inntektListe": [
+        {
+          "type": "Loennsinntekt",
+          "beloep": 25003,
+          "fordel": "kontantytelse",
+          "beskrivelse": "fastTillegg",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true
+        },
+        {
+          "type": "Loennsinntekt",
+          "beloep": 25000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "fastloenn",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true
+        }
+      ]
+    },
+    {
+      "maaned": "2020-01",
+      "opplysningspliktig": "974650991",
+      "underenhet": "974650991",
+      "norskident": "10108000398",
+      "oppsummeringstidspunkt": "2025-03-03T08:32:35.622Z",
+      "inntektListe": [
+        {
+          "type": "Loennsinntekt",
+          "beloep": 23000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "fastloenn",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true,
+          "opptjeningsperiodeFom": "2020-01-02"
+        }
+      ]
+    },
+    {
+      "maaned": "2020-01",
+      "opplysningspliktig": "990983666",
+      "underenhet": "990983666",
+      "norskident": "10108000398",
+      "oppsummeringstidspunkt": "2025-03-03T08:32:35.622Z",
+      "inntektListe": [
+        {
+          "type": "Loennsinntekt",
+          "beloep": 25000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "annet",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true,
+          "skatteOgAvgiftsregel": "nettoloenn"
+        },
+        {
+          "type": "Loennsinntekt",
+          "beloep": 25006,
+          "fordel": "kontantytelse",
+          "beskrivelse": "feriepenger",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true,
+          "tilleggsinformasjon": {
+            "type": "SpesielleInntjeningsforhold",
+            "kode": "loennVedArbeidsmarkedstiltak"
+          }
+        }
+      ]
+    },
+    {
+      "maaned": "2020-02",
+      "opplysningspliktig": "990983666",
+      "underenhet": "990983666",
+      "norskident": "10108000398",
+      "oppsummeringstidspunkt": "2025-03-03T08:32:35.622Z",
+      "inntektListe": [
+        {
+          "type": "Loennsinntekt",
+          "beloep": 25000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "fastloenn",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true
+        }
+      ]
+    },
+    {
+      "maaned": "2020-03",
+      "opplysningspliktig": "974637529",
+      "underenhet": "974637529",
+      "norskident": "10108000398",
+      "oppsummeringstidspunkt": "2025-03-03T08:32:35.622Z",
+      "inntektListe": [
+        {
+          "type": "Loennsinntekt",
+          "beloep": 56789,
+          "fordel": "kontantytelse",
+          "beskrivelse": "fastloenn",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true
+        }
+      ]
+    },
+    {
+      "maaned": "2020-05",
+      "opplysningspliktig": "913850688",
+      "underenhet": "913850688",
+      "norskident": "10108000398",
+      "oppsummeringstidspunkt": "2025-03-03T08:32:35.622Z",
+      "inntektListe": [
+        {
+          "type": "Loennsinntekt",
+          "beloep": 33000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "fastloenn",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true
+        }
+      ]
+    },
+    {
+      "maaned": "2020-09",
+      "opplysningspliktig": "990983666",
+      "underenhet": "990983666",
+      "norskident": "10108000398",
+      "oppsummeringstidspunkt": "2025-03-03T08:32:35.622Z",
+      "inntektListe": [
+        {
+          "type": "Loennsinntekt",
+          "beloep": 25000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "fastloenn",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true
+        }
+      ]
+    },
+    {
+      "maaned": "2020-12",
+      "opplysningspliktig": "913850688",
+      "underenhet": "913850688",
+      "norskident": "10108000398",
+      "oppsummeringstidspunkt": "2025-03-03T08:32:35.622Z",
+      "avvikListe": [
+        {
+          "kode": "AVVIK-001",
+          "tekst": "Feil på innsendt a-melding."
+        }
+      ]
+    }
+  ]
+}

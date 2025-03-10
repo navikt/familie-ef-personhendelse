@@ -90,7 +90,7 @@ class InntektsendringerService(
             harNyeVedtak = nyeVedtak.isNotEmpty(),
             nyeYtelser = nyeVedtak.joinToString(),
             inntektsendring = endretInntekt,
-            eksisterendeYtelser = VedtakendringerUtil.offentligeYtelserForNyesteMåned(inntektResponse)?.joinToString(),
+            eksisterendeYtelser = VedtakendringerUtil.offentligeYtelserForNyesteMåned(inntektResponse).joinToString(),
         )
     }
 
@@ -116,7 +116,7 @@ class InntektsendringerService(
     private fun hentInntekt(personIdent: String): InntektResponse? {
         try {
             return inntektClient.hentInntekt(
-                personident = personIdent,
+                personIdent = personIdent,
                 fom = YearMonth.now().minusMonths(5),
                 tom = YearMonth.now(),
             )

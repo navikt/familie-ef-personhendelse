@@ -215,7 +215,7 @@ class InntektsendringerServiceTest {
                 inntektsendringerService
                     .beregnEndretInntekt(
                         inntektResponse = oppdatertInntektResponse,
-                        forventetInntektForPerson = ForventetInntektForPerson("1", forventetInntekt, forventetInntekt, forventetInntekt, forventetInntekt),
+                        forventetInntektForPerson = ForventetInntektForPerson(personIdent = "1", forventetInntektForrigeMåned = forventetInntekt, forventetInntektToMånederTilbake = forventetInntekt, forventetInntektTreMånederTilbake = forventetInntekt, forventetInntektFireMånederTilbake = forventetInntekt),
                     ).harEndretInntekt(),
             ).isFalse
     }
@@ -252,15 +252,15 @@ class InntektsendringerServiceTest {
         val oppgavetekst =
             inntektsendringerService.lagOppgavetekstForInntektsendring(
                 InntektOgVedtakEndring(
-                    "1",
-                    false,
-                    LocalDateTime.of(2023, 11, 8, 5, 0),
-                    BeregningResultat(1, 1, 1),
-                    BeregningResultat(2, 2, 2),
-                    BeregningResultat(3, 3, 3),
-                    BeregningResultat(4, 4, 40000),
-                    null,
-                    null,
+                    personIdent = "1",
+                    harNyeVedtak = false,
+                    prosessertTid = LocalDateTime.of(2023, 11, 8, 5, 0),
+                    inntektsendringFireMånederTilbake = BeregningResultat(1, 1, 1),
+                    inntektsendringTreMånederTilbake = BeregningResultat(2, 2, 2),
+                    inntektsendringToMånederTilbake = BeregningResultat(3, 3, 3),
+                    inntektsendringForrigeMåned = BeregningResultat(4, 4, 40000),
+                    nyeYtelser = null,
+                    eksisterendeYtelser = null,
                 ),
             )
 
@@ -290,10 +290,10 @@ class InntektsendringerServiceTest {
 
     private fun forventetInntektForPerson(forventetÅrligInntekt: Int) =
         ForventetInntektForPerson(
-            "1",
-            forventetÅrligInntekt,
-            forventetÅrligInntekt,
-            forventetÅrligInntekt,
-            forventetÅrligInntekt,
+            personIdent = "1",
+            forventetInntektForrigeMåned = forventetÅrligInntekt,
+            forventetInntektToMånederTilbake = forventetÅrligInntekt,
+            forventetInntektTreMånederTilbake = forventetÅrligInntekt,
+            forventetInntektFireMånederTilbake = forventetÅrligInntekt,
         )
 }

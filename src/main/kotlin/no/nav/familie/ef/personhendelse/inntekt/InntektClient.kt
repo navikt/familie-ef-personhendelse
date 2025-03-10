@@ -2,7 +2,6 @@ package no.nav.familie.ef.personhendelse.inntekt
 
 import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektResponse
 import no.nav.familie.http.client.AbstractRestClient
-import no.nav.familie.kontrakter.felles.PersonIdent
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -23,19 +22,8 @@ class InntektClient(
             .build()
             .toUri()
 
-    private fun lagInntekthistorikkUri(
-        fom: YearMonth,
-        tom: YearMonth?,
-    ) = UriComponentsBuilder
-        .fromUri(uri)
-        .pathSegment("api/inntekt/historikk")
-        .queryParam("fom", fom)
-        .queryParam("tom", tom)
-        .build()
-        .toUri()
-
     fun hentInntekt(
-        personident: String,
+        personIdent: String,
         fom: YearMonth,
         tom: YearMonth,
     ): InntektResponse =
@@ -43,21 +31,15 @@ class InntektClient(
             uri = inntektV2Uri,
             payload =
                 HentInntektPayload(
-                    personident = personident,
-                    maanedFom = fom,
-                    maanedTom = tom,
+                    personIdent = personIdent,
+                    månedFom = fom,
+                    månedTom = tom,
                 ),
         )
-
-    fun hentInntektshistorikk(
-        personIdent: String,
-        fom: YearMonth,
-        tom: YearMonth?,
-    ): InntektshistorikkResponse = postForEntity(lagInntekthistorikkUri(fom, tom), PersonIdent(personIdent))
 }
 
 data class HentInntektPayload(
-    val personident: String,
-    val maanedFom: YearMonth,
-    val maanedTom: YearMonth,
+    val personIdent: String,
+    val månedFom: YearMonth,
+    val månedTom: YearMonth,
 )
