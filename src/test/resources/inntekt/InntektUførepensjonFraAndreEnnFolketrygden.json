@@ -1,77 +1,51 @@
 {
-  "arbeidsInntektMaaned": [
+  "data": [
     {
-      "aarMaaned": "2024-07",
-      "arbeidsInntektInformasjon": {
-        "inntektListe": [
-          {
-            "inntektType": "PENSJON_ELLER_TRYGD",
-            "beloep": 4381,
-            "fordel": "kontantytelse",
-            "inntektskilde": "A-ordningen",
-            "inntektsperiodetype": "Maaned",
-            "inntektsstatus": "LoependeInnrapportert",
-            "leveringstidspunkt": "2022-04",
-            "utbetaltIMaaned": "2022-01",
-            "opplysningspliktig": {
-              "identifikator": "1",
-              "aktoerType": "ORGANISASJON"
-            },
-            "virksomhet": {
-              "identifikator": "1",
-              "aktoerType": "ORGANISASJON"
-            },
-            "inntektsmottaker": {
-              "identifikator": "2",
-              "aktoerType": "NATURLIG_IDENT"
-            },
-            "inngaarIGrunnlagForTrekk": true,
-            "utloeserArbeidsgiveravgift": false,
-            "informasjonsstatus": "InngaarAlltid",
-            "beskrivelse": "ufoerepensjonFraAndreEnnFolketrygden"
+      "maaned": "2024-07",
+      "opplysningspliktig": "1",
+      "underenhet": "1",
+      "norskident": "2",
+      "oppsummeringstidspunkt": "2022-04-01T00:00:00Z",
+      "inntektListe": [
+        {
+          "type": "PensjonEllerTrygd",
+          "beloep": 4381.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "ufoerepensjonFraAndreEnnFolketrygden",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": "InngaarAlltid",
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": {
+            "type": "Nettoloennsordning"
           },
-          {
-            "inntektType": "PENSJON_ELLER_TRYGD",
-            "beloep": 2596,
-            "fordel": "kontantytelse",
-            "inntektskilde": "A-ordningen",
-            "inntektsperiodetype": "Maaned",
-            "inntektsstatus": "LoependeInnrapportert",
-            "leveringstidspunkt": "2022-04",
-            "opptjeningsperiodeFom": "2022-01-01",
-            "opptjeningsperiodeTom": "2022-01-31",
-            "utbetaltIMaaned": "2022-01",
-            "opplysningspliktig": {
-              "identifikator": "3",
-              "aktoerType": "ORGANISASJON"
-            },
-            "virksomhet": {
-              "identifikator": "4",
-              "aktoerType": "ORGANISASJON"
-            },
-            "tilleggsinformasjon": {
-              "kategori": "AldersUfoereEtterlatteAvtalefestetOgKrigspensjon",
-              "tilleggsinformasjonDetaljer": {
-                "detaljerType": "ALDERSUFOEREETTERLATTEAVTALEFESTETOGKRIGSPENSJON",
-                "tidsromFom": "2022-01-01",
-                "tidsromTom": "2022-01-31"
-              }
-            },
-            "inntektsmottaker": {
-              "identifikator": "2",
-              "aktoerType": "NATURLIG_IDENT"
-            },
-            "inngaarIGrunnlagForTrekk": true,
-            "utloeserArbeidsgiveravgift": false,
-            "informasjonsstatus": "InngaarAlltid",
-            "beskrivelse": "ufoerepensjonFraAndreEnnFolketrygden"
-          }
-        ]
-      }
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        },
+        {
+          "type": "PensjonEllerTrygd",
+          "beloep": 2596.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "ufoerepensjonFraAndreEnnFolketrygden",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": "InngaarAlltid",
+          "opptjeningsperiodeFom": "2022-01-01",
+          "opptjeningsperiodeTom": "2022-01-31",
+          "tilleggsinformasjon": {
+            "type": "ALDERSUFOEREETTERLATTEAVTALEFESTETOGKRIGSPENSJON"
+          },
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        }
+      ],
+      "forskuddstrekkListe": [],
+      "avvikListe": []
     }
-  ],
-  "ident": {
-    "identifikator": "31439222118",
-    "aktoerType": "NATURLIG_IDENT"
-  }
+  ]
 }
