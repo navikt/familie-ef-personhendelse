@@ -15,7 +15,7 @@ class InntektClientTest {
     inner class ParseInntektRepsonse {
         @Test
         fun `parser generell inntekt response med riktig data struktur`() {
-            val inntektV2ResponseJson: String = lesRessurs("inntekt/inntektv2/GenerellInntektV2Response.json")
+            val inntektV2ResponseJson: String = lesRessurs("inntekt/InntektGenerellResponse.json")
             val inntektResponse = objectMapper.readValue<InntektResponse>(inntektV2ResponseJson)
 
             val forventetMåned = YearMonth.of(2020, 3)
@@ -27,7 +27,7 @@ class InntektClientTest {
 
         @Test
         fun `parser inntektv2 response med forskjellige inntekt typer`() {
-            val inntektV2ResponseJson: String = lesRessurs("inntekt/inntektv2/FlereInntektTyperInntektV2Response.json")
+            val inntektV2ResponseJson: String = lesRessurs("inntekt/InntektFlereInntektTyper.json")
             val inntektResponse = objectMapper.readValue<InntektResponse>(inntektV2ResponseJson)
 
             val forventeteInntektTyper =
