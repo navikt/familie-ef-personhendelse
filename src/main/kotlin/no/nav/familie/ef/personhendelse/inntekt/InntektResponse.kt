@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.inntekt.inntektv2
+package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate

@@ -1,8 +1,5 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektMåned
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektResponse
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektType
 import java.time.YearMonth
 
 object VedtakendringerUtil {

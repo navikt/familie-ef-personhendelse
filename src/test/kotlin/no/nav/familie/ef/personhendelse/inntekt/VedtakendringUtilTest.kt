@@ -1,7 +1,6 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.ef.personhendelse.inntekt.inntektv2.InntektResponse
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
