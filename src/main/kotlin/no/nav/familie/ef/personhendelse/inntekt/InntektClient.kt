@@ -24,16 +24,16 @@ class InntektClient(
 
     fun hentInntekt(
         personIdent: String,
-        fom: YearMonth,
-        tom: YearMonth,
+        månedFom: YearMonth,
+        månedTom: YearMonth,
     ): InntektResponse =
         postForEntity(
             uri = inntektV2Uri,
             payload =
                 HentInntektPayload(
                     personIdent = personIdent,
-                    månedFom = fom,
-                    månedTom = tom,
+                    månedFom = månedFom,
+                    månedTom = månedTom,
                 ),
         )
 }

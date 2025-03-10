@@ -117,8 +117,8 @@ class InntektsendringerService(
         try {
             return inntektClient.hentInntekt(
                 personIdent = personIdent,
-                fom = YearMonth.now().minusMonths(5),
-                tom = YearMonth.now(),
+                månedFom = YearMonth.now().minusMonths(5),
+                månedTom = YearMonth.now(),
             )
         } catch (e: Exception) {
             secureLogger.warn("Feil ved kall mot inntektskomponenten (inntektV2) ved kall mot person $personIdent. Melding: ${e.message}. Årsak: ${e.cause}.")
