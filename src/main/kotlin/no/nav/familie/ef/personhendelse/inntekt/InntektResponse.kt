@@ -1,21 +1,16 @@
-package no.nav.familie.ef.personhendelse.inntekt.inntektv2
+package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.YearMonth
 
-data class InntektV2RequestBody(
-    val maanedFom: YearMonth?,
-    val maanedTom: YearMonth?,
-)
-
-data class InntektV2Response(
+data class InntektResponse(
     @JsonProperty("data")
-    val maanedsData: List<MånedsInntekt> = emptyList(),
+    val månedsData: List<InntektMåned> = emptyList(),
 )
 
-data class MånedsInntekt(
+data class InntektMåned(
     @JsonProperty("maaned")
     val måned: YearMonth,
     val opplysningspliktig: String,
@@ -29,12 +24,13 @@ data class MånedsInntekt(
 )
 
 data class Inntekt(
-    val type: InntektTypeV2,
+    val type: InntektType,
     @JsonProperty("beloep")
     val beløp: Double,
     val fordel: String,
     val beskrivelse: String,
-    val inngaarIGrunnlagForTrekk: Boolean,
+    @JsonProperty("inngaarIGrunnlagForTrekk")
+    val inngårIGrunnlagForTrekk: Boolean,
     @JsonProperty("utloeserArbeidsgiveravgift")
     val utløserArbeidsgiveravgift: Boolean,
     val skatteOgAvgiftsregel: String?,
@@ -62,8 +58,7 @@ data class Tilleggsinformasjon(
     val type: String,
 )
 
-// TODO: Husk å endre tilbake til normalt navn, samt fjerne bruken et at annet sted.
-enum class InntektTypeV2 {
+enum class InntektType {
     @JsonProperty("Loennsinntekt")
     LØNNSINNTEKT,
 
@@ -77,12 +72,12 @@ enum class InntektTypeV2 {
     YTELSE_FRA_OFFENTLIGE,
 }
 
-fun InntektV2Response.oppsummerInntektForÅr(år: Int): Double =
-    this.maanedsData
+fun InntektResponse.oppsummerInntektForÅr(år: Int): Double =
+    this.månedsData
         .filter { it.måned.year == år }
         .flatMap { it.inntektListe }
         .sumOf { it.beløp }
 
-fun List<Inntekt>.filterBasertPåInntektType(inntektType: InntektTypeV2): List<Inntekt> = this.filter { it.type == inntektType }
+fun List<Inntekt>.filterBasertPåInntektType(inntektType: InntektType): List<Inntekt> = this.filter { it.type == inntektType }
 
-fun List<MånedsInntekt>.summerTotalInntekt(): Double = this.flatMap { it.inntektListe }.sumOf { it.beløp }
+fun List<InntektMåned>.summerTotalInntekt(): Double = this.flatMap { it.inntektListe }.sumOf { it.beløp }

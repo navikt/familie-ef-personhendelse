@@ -1,0 +1,76 @@
+{
+  "data": [
+    {
+      "maaned": "2025-01",
+      "opplysningspliktig": "963743254",
+      "underenhet": "896929119",
+      "norskident": "17499019114",
+      "oppsummeringstidspunkt": "2025-03-04T10:17:31.428Z",
+      "inntektListe": [
+        {
+          "type": "Naeringsinntekt",
+          "beloep": 35000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "annet",
+          "inngaarIGrunnlagForTrekk": false,
+          "utloeserArbeidsgiveravgift": false,
+          "opptjeningsperiodeFom": "2025-01-01",
+          "opptjeningsperiodeTom": "2025-03-04"
+        },
+        {
+          "type": "Loennsinntekt",
+          "beloep": 25000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "fastloenn",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true
+        }
+      ]
+    },
+    {
+      "maaned": "2025-01",
+      "opplysningspliktig": "963743254",
+      "underenhet": "972674818",
+      "norskident": "17499019114",
+      "oppsummeringstidspunkt": "2025-03-04T10:21:59.121Z",
+      "inntektListe": [
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 23000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "dagpengerVedArbeidsloeshet",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "tilleggsinformasjon": {
+            "type": "Etterbetalingsperiode",
+            "startdato": "2025-01-01",
+            "sluttdato": "2025-03-04"
+          }
+        }
+      ]
+    },
+    {
+      "maaned": "2025-02",
+      "opplysningspliktig": "963743254",
+      "underenhet": "967170232",
+      "norskident": "17499019114",
+      "oppsummeringstidspunkt": "2025-03-04T09:08:01.176Z",
+      "inntektListe": [
+        {
+          "type": "PensjonEllerTrygd",
+          "beloep": 34000,
+          "fordel": "kontantytelse",
+          "beskrivelse": "ufoerepensjon",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "tilleggsinformasjon": {
+            "type": "AldersUfoereEtterlatteAvtalefestetOgKrigspensjon",
+            "grunnpensjonsbeloep": 35000,
+            "tilleggspensjonsbeloep": 75000,
+            "ufoeregrad": 100
+          }
+        }
+      ]
+    }
+  ]
+}
