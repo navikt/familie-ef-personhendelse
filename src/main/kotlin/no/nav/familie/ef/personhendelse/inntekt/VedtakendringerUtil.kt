@@ -6,13 +6,13 @@ object VedtakendringerUtil {
     fun harNyeVedtak(inntektResponse: InntektResponse): Boolean = nyeVedtak(inntektResponse).isNotEmpty()
 
     fun offentligeYtelserForNyesteMåned(inntektResponse: InntektResponse): List<String> {
-        val nyesteRegistrerteInntekt = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(1) }
+        val nyesteRegistrerteInntekt = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(1) }
         return offentligeYtelser(nyesteRegistrerteInntekt)
     }
 
     fun nyeVedtak(inntektResponse: InntektResponse): List<String> {
-        val nyesteRegistrerteInntekt = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(1) }
-        val nestNyesteRegistrerteInntekt = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(2) }
+        val nyesteRegistrerteInntekt = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(1) }
+        val nestNyesteRegistrerteInntekt = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(2) }
 
         val offentligeYtelserForNyesteMåned = offentligeYtelser(nyesteRegistrerteInntekt)
         val offentligeYtelserForNestNyesteMåned = offentligeYtelser(nestNyesteRegistrerteInntekt)

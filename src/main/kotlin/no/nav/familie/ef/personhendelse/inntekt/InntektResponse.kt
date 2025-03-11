@@ -7,7 +7,7 @@ import java.time.YearMonth
 
 data class InntektResponse(
     @JsonProperty("data")
-    val månedsData: List<InntektMåned> = emptyList(),
+    val inntektsMåneder: List<InntektMåned> = emptyList(),
 )
 
 data class InntektMåned(
@@ -73,7 +73,7 @@ enum class InntektType {
 }
 
 fun InntektResponse.oppsummerInntektForÅr(år: Int): Double =
-    this.månedsData
+    this.inntektsMåneder
         .filter { it.måned.year == år }
         .flatMap { it.inntektListe }
         .sumOf { it.beløp }

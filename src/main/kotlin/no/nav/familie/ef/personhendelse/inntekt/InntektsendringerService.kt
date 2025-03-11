@@ -180,10 +180,10 @@ class InntektsendringerService(
         forventetInntektForPerson: ForventetInntektForPerson,
     ): Inntektsendring {
         // hent alle registrerte vedtak som var på personen sist beregning
-        val nyesteRegistrerteInntekt = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(1) }
-        val nestNyesteRegistrerteInntekt = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(2) }
-        val inntektTreMånederTilbake = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(3) }
-        val inntektFireMånederTilbake = inntektResponse.månedsData.filter { it.måned == YearMonth.now().minusMonths(4) }
+        val nyesteRegistrerteInntekt = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(1) }
+        val nestNyesteRegistrerteInntekt = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(2) }
+        val inntektTreMånederTilbake = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(3) }
+        val inntektFireMånederTilbake = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(4) }
 
         val inntektsendringFireMånederTilbake =
             beregnInntektsendring(
