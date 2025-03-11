@@ -70,13 +70,3 @@ enum class InntektType {
     @JsonProperty("YtelseFraOffentlige")
     YTELSE_FRA_OFFENTLIGE,
 }
-
-fun InntektResponse.oppsummerInntektForÅr(år: Int): Double =
-    this.inntektsmåneder
-        .filter { it.måned.year == år }
-        .flatMap { it.inntektListe }
-        .sumOf { it.beløp }
-
-fun List<Inntekt>.filterBasertPåInntektType(inntektType: InntektType): List<Inntekt> = this.filter { it.type == inntektType }
-
-fun List<Inntektsmåned>.summerTotalInntekt(): Double = this.flatMap { it.inntektListe }.sumOf { it.beløp }
