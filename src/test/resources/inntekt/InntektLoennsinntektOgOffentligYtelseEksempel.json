@@ -1,73 +1,51 @@
 {
-  "arbeidsInntektMaaned": [
+  "data": [
     {
-      "aarMaaned": "2024-07",
-      "arbeidsInntektInformasjon": {
-        "inntektListe": [
-          {
-            "inntektType": "YTELSE_FRA_OFFENTLIGE",
-            "beloep": 20000,
-            "fordel": "kontantytelse",
-            "inntektskilde": "A-ordningen",
-            "inntektsperiodetype": "Maaned",
-            "inntektsstatus": "LoependeInnrapportert",
-            "leveringstidspunkt": "2022-01",
-            "opptjeningsperiodeFom": "2021-01-01",
-            "utbetaltIMaaned": "2024-08",
-            "opplysningspliktig": {
-              "identifikator": "4",
-              "aktoerType": "ORGANISASJON"
-            },
-            "virksomhet": {
-              "identifikator": "4",
-              "aktoerType": "ORGANISASJON"
-            },
-            "inntektsmottaker": {
-              "identifikator": "1",
-              "aktoerType": "NATURLIG_IDENT"
-            },
-            "inngaarIGrunnlagForTrekk": true,
-            "utloeserArbeidsgiveravgift": true,
-            "informasjonsstatus": "InngaarAlltid",
-            "beskrivelse": "venteloenn"
+      "maaned": "2024-07",
+      "opplysningspliktig": "4",
+      "underenhet": "4",
+      "norskident": "1",
+      "oppsummeringstidspunkt": "2022-01-01T00:00:00Z",
+      "inntektListe": [
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 20000.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "venteloenn",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true,
+          "skatteOgAvgiftsregel": "InngaarAlltid",
+          "opptjeningsperiodeFom": "2021-01-01",
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": {
+            "type": "Nettoloennsordning"
           },
-          {
-            "inntektType": "LOENNSINNTEKT",
-            "beloep": 18500,
-            "fordel": "kontantytelse",
-            "inntektskilde": "A-ordningen",
-            "inntektsperiodetype": "Maaned",
-            "inntektsstatus": "LoependeInnrapportert",
-            "leveringstidspunkt": "2022-01",
-            "opptjeningsland": "NO",
-            "skattemessigBosattLand": "NO",
-            "utbetaltIMaaned": "2020-07",
-            "opplysningspliktig": {
-              "identifikator": "5",
-              "aktoerType": "ORGANISASJON"
-            },
-            "virksomhet": {
-              "identifikator": "5",
-              "aktoerType": "ORGANISASJON"
-            },
-            "tilleggsinformasjon": {
-              "kategori": "Nettoloennsordning"
-            },
-            "inntektsmottaker": {
-              "identifikator": "1",
-              "aktoerType": "NATURLIG_IDENT"
-            },
-            "inngaarIGrunnlagForTrekk": true,
-            "utloeserArbeidsgiveravgift": true,
-            "informasjonsstatus": "InngaarAlltid",
-            "beskrivelse": "fastloenn"
-          }
-        ]
-      }
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        },
+        {
+          "type": "Loennsinntekt",
+          "beloep": 18500.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "fastloenn",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true,
+          "skatteOgAvgiftsregel": "InngaarAlltid",
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": {
+            "type": "Nettoloennsordning"
+          },
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": "NO",
+          "opptjeningsland": "NO"
+        }
+      ],
+      "forskuddstrekkListe": [],
+      "avvikListe": []
     }
-  ],
-  "ident": {
-    "identifikator": "31439222118",
-    "aktoerType": "NATURLIG_IDENT"
-  }
+  ]
 }

@@ -40,20 +40,18 @@ class InntektsendringerServiceTest {
     @Test
     fun `Har endret inntekt med mer enn 10 prosent i forhold til forventet inntekt`() {
         val json: String = readResource("inntekt/InntektLoennsinntektEksempel.json") // 40k
-        val inntektResponse = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned =
-            inntektResponse.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val månedsInntekt = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponse.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMåned.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = treMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = fireMndTilbake),
+                        månedsInntekt.copy(måned = enMndTilbake),
+                        månedsInntekt.copy(måned = toMndTilbake),
+                        månedsInntekt.copy(måned = treMndTilbake),
+                        månedsInntekt.copy(måned = fireMndTilbake),
                     ),
             )
 
@@ -63,23 +61,23 @@ class InntektsendringerServiceTest {
         Assertions
             .assertThat(
                 inntektsendringerService.beregnEndretInntekt(
-                    oppdatertDatoHentInntektListeResponse,
-                    forventetInntektForPerson(forventetÅrligInntekt),
+                    inntektResponse = oppdatertInntektResponse,
+                    forventetInntektForPerson = forventetInntektForPerson(forventetÅrligInntekt),
                 ),
             ).isEqualTo(inntektsendring())
         Assertions
             .assertThat(
                 inntektsendringerService.beregnEndretInntekt(
-                    oppdatertDatoHentInntektListeResponse,
-                    forventetInntektForPerson(forventetInntektTiProsentLavere),
+                    inntektResponse = oppdatertInntektResponse,
+                    forventetInntektForPerson = forventetInntektForPerson(forventetInntektTiProsentLavere),
                 ),
             ).isEqualTo(inntektsendring(3500, 11, 1575))
 
         Assertions
             .assertThat(
                 inntektsendringerService.beregnEndretInntekt(
-                    oppdatertDatoHentInntektListeResponse,
-                    forventetInntektForPerson(forventetInntektNiProsentLavere),
+                    inntektResponse = oppdatertInntektResponse,
+                    forventetInntektForPerson = forventetInntektForPerson(forventetInntektNiProsentLavere),
                 ),
             ).isEqualTo(inntektsendring(3150, 9, 1417))
     }
@@ -87,19 +85,17 @@ class InntektsendringerServiceTest {
     @Test
     fun `Utbetaling av offentlig ytelse og lønnsinntekt utgjør til sammen mer enn 10 prosent av forventet inntekt`() {
         val json: String = readResource("inntekt/InntektLoennsinntektOgOffentligYtelseEksempel.json") // 38,5k totalt
-        val inntektResponse = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned =
-            inntektResponse.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponse.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMåned.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMåned.copy(måned = enMndTilbake),
+                        arbeidsinntektMåned.copy(måned = toMndTilbake),
+                        arbeidsinntektMåned.copy(måned = treMndTilbake),
                     ),
             )
 
@@ -107,8 +103,8 @@ class InntektsendringerServiceTest {
             .assertThat(
                 inntektsendringerService
                     .beregnEndretInntekt(
-                        oppdatertDatoHentInntektListeResponse,
-                        forventetInntektForPerson(forventetÅrligInntekt),
+                        inntektResponse = oppdatertInntektResponse,
+                        forventetInntektForPerson = forventetInntektForPerson(forventetÅrligInntekt),
                     ).harEndretInntekt(),
             ).isTrue
     }
@@ -116,19 +112,17 @@ class InntektsendringerServiceTest {
     @Test
     fun `Etterbetaling skal ikke medberegnes`() {
         val json: String = readResource("inntekt/InntektEtterbetalingSkalIgnoreres.json") // Inntekt 35k + etterbetaling 10k
-        val inntektResponse = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned =
-            inntektResponse.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponse.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMåned.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMåned.copy(måned = enMndTilbake),
+                        arbeidsinntektMåned.copy(måned = toMndTilbake),
+                        arbeidsinntektMåned.copy(måned = treMndTilbake),
                     ),
             )
 
@@ -136,8 +130,8 @@ class InntektsendringerServiceTest {
             .assertThat(
                 inntektsendringerService
                     .beregnEndretInntekt(
-                        oppdatertDatoHentInntektListeResponse,
-                        forventetInntektForPerson(forventetÅrligInntekt),
+                        inntektResponse = oppdatertInntektResponse,
+                        forventetInntektForPerson = forventetInntektForPerson(forventetÅrligInntekt),
                     ).harEndretInntekt(),
             ).isFalse
     }
@@ -145,17 +139,15 @@ class InntektsendringerServiceTest {
     @Test
     fun `Har for høy forventet inntekt, skal returnere false`() {
         val json: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponse = objectMapper.readValue<HentInntektListeResponse>(json) // 40k pr mnd
+        val inntektResponse = objectMapper.readValue<InntektResponse>(json) // 40k pr mnd
 
-        val arbeidsinntektMåned =
-            inntektResponse.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponse.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMåned.copy(årMåned = enMndTilbake),
+                        arbeidsinntektMåned.copy(måned = enMndTilbake),
                     ),
             )
 
@@ -163,8 +155,8 @@ class InntektsendringerServiceTest {
             .assertThat(
                 inntektsendringerService
                     .beregnEndretInntekt(
-                        oppdatertDatoHentInntektListeResponse,
-                        forventetInntektForPerson(forventetÅrligInntekt),
+                        inntektResponse = oppdatertInntektResponse,
+                        forventetInntektForPerson = forventetInntektForPerson(forventetÅrligInntekt),
                     ).harEndretInntekt(),
             ).isFalse
     }
@@ -172,29 +164,28 @@ class InntektsendringerServiceTest {
     @Test
     fun `Har inntekt under halv G, skal returnere false selv om inntekt har økt mer enn 10 prosent`() {
         val json: String = readResource("inntekt/InntektUnderHalvG.json")
-        val inntektResponse = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned =
-            inntektResponse.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponse.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMåned.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMåned.copy(måned = enMndTilbake),
+                        arbeidsinntektMåned.copy(måned = toMndTilbake),
+                        arbeidsinntektMåned.copy(måned = treMndTilbake),
                     ),
             )
 
         val forventetÅrligInntekt = 30000
+
         Assertions
             .assertThat(
                 inntektsendringerService
                     .beregnEndretInntekt(
-                        oppdatertDatoHentInntektListeResponse,
-                        forventetInntektForPerson(forventetÅrligInntekt),
+                        inntektResponse = oppdatertInntektResponse,
+                        forventetInntektForPerson = forventetInntektForPerson(forventetÅrligInntekt),
                     ).harEndretInntekt(),
             ).isFalse
     }
@@ -202,29 +193,28 @@ class InntektsendringerServiceTest {
     @Test
     fun `Ignorer utbetalinger av uførepensjon fra andre enn NAV`() {
         val json: String = readResource("inntekt/InntektUførepensjonFraAndreEnnFolketrygden.json")
-        val inntektResponse = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned =
-            inntektResponse.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponse.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMåned.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMåned.copy(måned = enMndTilbake),
+                        arbeidsinntektMåned.copy(måned = toMndTilbake),
+                        arbeidsinntektMåned.copy(måned = treMndTilbake),
                     ),
             )
 
         val forventetInntekt = 5000
+
         Assertions
             .assertThat(
                 inntektsendringerService
                     .beregnEndretInntekt(
-                        oppdatertDatoHentInntektListeResponse,
-                        ForventetInntektForPerson("1", forventetInntekt, forventetInntekt, forventetInntekt, forventetInntekt),
+                        inntektResponse = oppdatertInntektResponse,
+                        forventetInntektForPerson = ForventetInntektForPerson(personIdent = "1", forventetInntektForrigeMåned = forventetInntekt, forventetInntektToMånederTilbake = forventetInntekt, forventetInntektTreMånederTilbake = forventetInntekt, forventetInntektFireMånederTilbake = forventetInntekt),
                     ).harEndretInntekt(),
             ).isFalse
     }
@@ -232,19 +222,17 @@ class InntektsendringerServiceTest {
     @Test
     fun `Ferieutbetalinger skal medberegnes`() {
         val json: String = readResource("inntekt/InntektFeriepengerSkalMedberegnes.json")
-        val inntektResponse = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned =
-            inntektResponse.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponse.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMåned.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = treMndTilbake),
+                        arbeidsinntektMåned.copy(måned = enMndTilbake),
+                        arbeidsinntektMåned.copy(måned = toMndTilbake),
+                        arbeidsinntektMåned.copy(måned = treMndTilbake),
                     ),
             )
 
@@ -252,8 +240,8 @@ class InntektsendringerServiceTest {
             .assertThat(
                 inntektsendringerService
                     .beregnEndretInntekt(
-                        oppdatertDatoHentInntektListeResponse,
-                        forventetInntektForPerson(forventetÅrligInntekt),
+                        inntektResponse = oppdatertInntektResponse,
+                        forventetInntektForPerson = forventetInntektForPerson(forventetÅrligInntekt),
                     ).harEndretInntekt(),
             ).isTrue
     }
@@ -263,15 +251,15 @@ class InntektsendringerServiceTest {
         val oppgavetekst =
             inntektsendringerService.lagOppgavetekstForInntektsendring(
                 InntektOgVedtakEndring(
-                    "1",
-                    false,
-                    LocalDateTime.of(2023, 11, 8, 5, 0),
-                    BeregningResultat(1, 1, 1),
-                    BeregningResultat(2, 2, 2),
-                    BeregningResultat(3, 3, 3),
-                    BeregningResultat(4, 4, 40000),
-                    null,
-                    null,
+                    personIdent = "1",
+                    harNyeVedtak = false,
+                    prosessertTid = LocalDateTime.of(2023, 11, 8, 5, 0),
+                    inntektsendringFireMånederTilbake = BeregningResultat(1, 1, 1),
+                    inntektsendringTreMånederTilbake = BeregningResultat(2, 2, 2),
+                    inntektsendringToMånederTilbake = BeregningResultat(3, 3, 3),
+                    inntektsendringForrigeMåned = BeregningResultat(4, 4, 40000),
+                    nyeYtelser = null,
+                    eksisterendeYtelser = null,
                 ),
             )
 
@@ -301,10 +289,10 @@ class InntektsendringerServiceTest {
 
     private fun forventetInntektForPerson(forventetÅrligInntekt: Int) =
         ForventetInntektForPerson(
-            "1",
-            forventetÅrligInntekt,
-            forventetÅrligInntekt,
-            forventetÅrligInntekt,
-            forventetÅrligInntekt,
+            personIdent = "1",
+            forventetInntektForrigeMåned = forventetÅrligInntekt,
+            forventetInntektToMånederTilbake = forventetÅrligInntekt,
+            forventetInntektTreMånederTilbake = forventetÅrligInntekt,
+            forventetInntektFireMånederTilbake = forventetÅrligInntekt,
         )
 }

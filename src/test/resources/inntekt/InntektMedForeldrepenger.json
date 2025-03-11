@@ -1,67 +1,51 @@
 {
-  "arbeidsInntektMaaned": [
+  "data": [
     {
-      "aarMaaned": "2024-07",
-      "arbeidsInntektInformasjon": {
-        "inntektListe": [
-          {
-            "inntektType": "YTELSE_FRA_OFFENTLIGE",
-            "beloep": 9604,
-            "fordel": "kontantytelse",
-            "inntektskilde": "A-ordningen",
-            "inntektsperiodetype": "Maaned",
-            "inntektsstatus": "LoependeInnrapportert",
-            "leveringstidspunkt": "2023-02",
-            "utbetaltIMaaned": "2023-01",
-            "opplysningspliktig": {
-              "identifikator": "999888777",
-              "aktoerType": "ORGANISASJON"
-            },
-            "virksomhet": {
-              "identifikator": "999888777",
-              "aktoerType": "ORGANISASJON"
-            },
-            "inntektsmottaker": {
-              "identifikator": "01010199999",
-              "aktoerType": "NATURLIG_IDENT"
-            },
-            "inngaarIGrunnlagForTrekk": true,
-            "utloeserArbeidsgiveravgift": false,
-            "informasjonsstatus": "InngaarAlltid",
-            "beskrivelse": "foreldrepenger"
+      "maaned": "2024-07",
+      "opplysningspliktig": "999888777",
+      "underenhet": "999888777",
+      "norskident": "01010199999",
+      "oppsummeringstidspunkt": "2023-02-01T00:00:00Z",
+      "inntektListe": [
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 9604.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "foreldrepenger",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": "InngaarAlltid",
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": {
+            "type": "Nettoloennsordning"
           },
-          {
-            "inntektType": "YTELSE_FRA_OFFENTLIGE",
-            "beloep": 14630,
-            "fordel": "kontantytelse",
-            "inntektskilde": "A-ordningen",
-            "inntektsperiodetype": "Maaned",
-            "inntektsstatus": "LoependeInnrapportert",
-            "leveringstidspunkt": "2023-02",
-            "utbetaltIMaaned": "2023-01",
-            "opplysningspliktig": {
-              "identifikator": "999888777",
-              "aktoerType": "ORGANISASJON"
-            },
-            "virksomhet": {
-              "identifikator": "999888777",
-              "aktoerType": "ORGANISASJON"
-            },
-            "inntektsmottaker": {
-              "identifikator": "01010199999",
-              "aktoerType": "NATURLIG_IDENT"
-            },
-            "inngaarIGrunnlagForTrekk": true,
-            "utloeserArbeidsgiveravgift": false,
-            "informasjonsstatus": "InngaarAlltid",
-            "beskrivelse": "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere"
-          }
-        ]
-      }
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        },
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 14630.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": "InngaarAlltid",
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": {
+            "type": "Nettoloennsordning"
+          },
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        }
+      ],
+      "forskuddstrekkListe": [],
+      "avvikListe": []
     }
-  ],
-  "ident": {
-    "identifikator": "31439222118",
-    "aktoerType": "NATURLIG_IDENT"
-  }
+  ]
 }

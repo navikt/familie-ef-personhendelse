@@ -16,140 +16,118 @@ class VedtakendringUtilTest {
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {
         val json: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponse = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned =
-            inntektResponse.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponse.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMåned.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = treMndTilbake),
-                        arbeidsinntektMåned.copy(årMåned = fireMndTilbake),
+                        arbeidsinntektMåned.copy(måned = enMndTilbake),
+                        arbeidsinntektMåned.copy(måned = toMndTilbake),
+                        arbeidsinntektMåned.copy(måned = treMndTilbake),
+                        arbeidsinntektMåned.copy(måned = fireMndTilbake),
                     ),
             )
 
-        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }
 
     @Test
     fun `Bruker har lønnsinntekt frem til forrige måned`() {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponseMedLønn = objectMapper.readValue<HentInntektListeResponse>(jsonMedLønn)
+        val inntektResponseMedLønn = objectMapper.readValue<InntektResponse>(jsonMedLønn)
         val json: String = readResource("inntekt/InntektLoennsinntektTilOffentligYtelseEksempel.json")
-        val inntektResponseMedVedtak = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponseMedVedtak = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMånedMedLønn =
-            inntektResponseMedLønn.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMånedMedLønn = inntektResponseMedLønn.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMedOffentligYtelse = inntektResponseMedVedtak.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val arbeidsinntektMedOffentligYtelse =
-            inntektResponseMedVedtak.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponseMedLønn.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMedOffentligYtelse.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = treMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = fireMndTilbake),
+                        arbeidsinntektMedOffentligYtelse.copy(måned = enMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = toMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = treMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = fireMndTilbake),
                     ),
             )
 
-        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isTrue
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isTrue
     }
 
     @Test
     fun `Etterbetaling av sykepenger skal ignoreres ved vedtaksendringer`() {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponseMedLønn = objectMapper.readValue<HentInntektListeResponse>(jsonMedLønn)
+        val inntektResponseMedLønn = objectMapper.readValue<InntektResponse>(jsonMedLønn)
         val json: String = readResource("inntekt/InntektEtterbetalingSkalIgnoreres.json")
-        val inntektResponseMedVedtak = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponseMedVedtak = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMånedMedLønn =
-            inntektResponseMedLønn.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMånedMedLønn = inntektResponseMedLønn.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMedEtterbetalingAvSykepenger = inntektResponseMedVedtak.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val arbeidsinntektMedEtterbetalingAvSykepenger =
-            inntektResponseMedVedtak.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponseMedLønn.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMedEtterbetalingAvSykepenger.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = treMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = fireMndTilbake),
+                        arbeidsinntektMedEtterbetalingAvSykepenger.copy(måned = enMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = toMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = treMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = fireMndTilbake),
                     ),
             )
 
-        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }
 
     @Test
     fun `Bruker har fått foreldrepenger i nyeste måned`() {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponseMedLønn = objectMapper.readValue<HentInntektListeResponse>(jsonMedLønn)
+        val inntektResponseMedLønn = objectMapper.readValue<InntektResponse>(jsonMedLønn)
         val json: String = readResource("inntekt/InntektMedForeldrepenger.json")
-        val inntektResponseMedVedtak = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponseMedVedtak = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMånedMedLønn =
-            inntektResponseMedLønn.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMånedMedLønn = inntektResponseMedLønn.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMedForeldrepenger = inntektResponseMedVedtak.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val arbeidsinntektMedForeldrepenger =
-            inntektResponseMedVedtak.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponseMedLønn.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMedForeldrepenger.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = treMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = fireMndTilbake),
+                        arbeidsinntektMedForeldrepenger.copy(måned = enMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = toMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = treMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = fireMndTilbake),
                     ),
             )
 
-        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isTrue
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isTrue
     }
 
     @Test
     fun `Bruker får overgangsstønad - skal ignoreres`() {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponseMedLønn = objectMapper.readValue<HentInntektListeResponse>(jsonMedLønn)
+        val inntektResponseMedLønn = objectMapper.readValue<InntektResponse>(jsonMedLønn)
         val json: String = readResource("inntekt/InntektMedOvergangsstønad.json")
-        val inntektResponseMedVedtak = objectMapper.readValue<HentInntektListeResponse>(json)
+        val inntektResponseMedVedtak = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMånedMedLønn =
-            inntektResponseMedLønn.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMånedMedLønn = inntektResponseMedLønn.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
+        val arbeidsinntektMedOvergangsstønad = inntektResponseMedVedtak.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
-        val arbeidsinntektMedOvergangsstønad =
-            inntektResponseMedVedtak.arbeidsinntektMåned
-                ?.first() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertDatoHentInntektListeResponse =
+        val oppdatertInntektResponse =
             inntektResponseMedLønn.copy(
-                arbeidsinntektMåned =
+                inntektsmåneder =
                     listOf(
-                        arbeidsinntektMedOvergangsstønad.copy(årMåned = enMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = toMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = treMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(årMåned = fireMndTilbake),
+                        arbeidsinntektMedOvergangsstønad.copy(måned = enMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = toMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = treMndTilbake),
+                        arbeidsinntektMånedMedLønn.copy(måned = fireMndTilbake),
                     ),
             )
 
-        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertDatoHentInntektListeResponse)).isFalse
+        Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }
 
     fun readResource(name: String): String =
