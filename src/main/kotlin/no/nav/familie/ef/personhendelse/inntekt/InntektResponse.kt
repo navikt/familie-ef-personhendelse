@@ -7,17 +7,16 @@ import java.time.YearMonth
 
 data class InntektResponse(
     @JsonProperty("data")
-    val inntektsMåneder: List<InntektMåned> = emptyList(),
+    val inntektsmåneder: List<Inntektsmåned> = emptyList(),
 )
 
-data class InntektMåned(
+data class Inntektsmåned(
     @JsonProperty("maaned")
     val måned: YearMonth,
     val opplysningspliktig: String,
     val underenhet: String,
     val norskident: String,
-    @JsonProperty("oppsummeringstidspunkt")
-    val oppsummeringsTidspunkt: OffsetDateTime,
+    val oppsummeringstidspunkt: OffsetDateTime,
     val inntektListe: List<Inntekt> = emptyList(),
     val forskuddstrekkListe: List<Forskuddstrekk> = emptyList(),
     val avvikListe: List<Avvik> = emptyList(),
@@ -73,11 +72,11 @@ enum class InntektType {
 }
 
 fun InntektResponse.oppsummerInntektForÅr(år: Int): Double =
-    this.inntektsMåneder
+    this.inntektsmåneder
         .filter { it.måned.year == år }
         .flatMap { it.inntektListe }
         .sumOf { it.beløp }
 
 fun List<Inntekt>.filterBasertPåInntektType(inntektType: InntektType): List<Inntekt> = this.filter { it.type == inntektType }
 
-fun List<InntektMåned>.summerTotalInntekt(): Double = this.flatMap { it.inntektListe }.sumOf { it.beløp }
+fun List<Inntektsmåned>.summerTotalInntekt(): Double = this.flatMap { it.inntektListe }.sumOf { it.beløp }

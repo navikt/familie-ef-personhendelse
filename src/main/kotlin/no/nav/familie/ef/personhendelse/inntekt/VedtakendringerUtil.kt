@@ -6,13 +6,13 @@ object VedtakendringerUtil {
     fun harNyeVedtak(inntektResponse: InntektResponse): Boolean = nyeVedtak(inntektResponse).isNotEmpty()
 
     fun offentligeYtelserForNyesteMåned(inntektResponse: InntektResponse): List<String> {
-        val nyesteRegistrerteInntekt = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(1) }
+        val nyesteRegistrerteInntekt = inntektResponse.inntektsmåneder.filter { it.måned == YearMonth.now().minusMonths(1) }
         return offentligeYtelser(nyesteRegistrerteInntekt)
     }
 
     fun nyeVedtak(inntektResponse: InntektResponse): List<String> {
-        val nyesteRegistrerteInntekt = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(1) }
-        val nestNyesteRegistrerteInntekt = inntektResponse.inntektsMåneder.filter { it.måned == YearMonth.now().minusMonths(2) }
+        val nyesteRegistrerteInntekt = inntektResponse.inntektsmåneder.filter { it.måned == YearMonth.now().minusMonths(1) }
+        val nestNyesteRegistrerteInntekt = inntektResponse.inntektsmåneder.filter { it.måned == YearMonth.now().minusMonths(2) }
 
         val offentligeYtelserForNyesteMåned = offentligeYtelser(nyesteRegistrerteInntekt)
         val offentligeYtelserForNestNyesteMåned = offentligeYtelser(nestNyesteRegistrerteInntekt)
@@ -20,7 +20,7 @@ object VedtakendringerUtil {
         return offentligeYtelserForNyesteMåned.minus(offentligeYtelserForNestNyesteMåned.toSet())
     }
 
-    private fun offentligeYtelser(inntektMåneder: List<InntektMåned>): List<String> =
+    private fun offentligeYtelser(inntektMåneder: List<Inntektsmåned>): List<String> =
         inntektMåneder
             .flatMap { it.inntektListe }
             .filter {
