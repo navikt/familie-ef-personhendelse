@@ -15,3 +15,5 @@ AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth/v2.0/token
 SPRING_PROFILES_ACTIVE: local
 FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.dev.intern.nav.no/api/inntekt
+
+API_SCOPE: test

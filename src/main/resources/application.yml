@@ -117,6 +117,10 @@ FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integra
 FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.${DEPLOY_ENV}-fss-pub.nais.io
 EF_PROXY_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-ef-proxy/.default
 
+AUTHORIZATION_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/authorize
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+API_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default
+
 PDL_URL: https://pdl-api.${DEPLOY_ENV}-fss-pub.nais.io/graphql
 PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
 
