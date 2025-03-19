@@ -37,13 +37,13 @@ class InntektController(
     }
 
     // TODO: Denne skal fjernes, kun for testing gjennom Swagger.
-    @PostMapping("/manuellOpprettelseAvBehandleAutomatiskInntektsendringTask")
+    @PostMapping("/manuellOpprettelseAvBehandleAutomatiskInntektsendringTasker")
     fun manuellOpprettelseAvBehandleAutomatiskInntektsendringTasker() {
         inntektsendringerService.opprettBehandleAutomatiskInntektsendringTask()
     }
 
     // TODO: Denne skal fjernes, kun for testing gjennom Swagger.
-    @PostMapping("/manuellOpprettelseAvBehandleAutomatiskInntektsendringTasker")
+    @PostMapping("/manuellOpprettelseAvBehandleAutomatiskInntektsendringTask")
     fun manuellOpprettelseAvBehandleAutomatiskInntektsendringTask(
         @RequestBody manuellOpprettelseAvBehandleAutomatiskInntektsendringTaskRequestBody: ManuellOpprettelseAvBehandleAutomatiskInntektsendringTaskRequestBody,
     ) {
