@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
+import no.nav.familie.ef.personhendelse.client.AutomatiskRevurdering
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
@@ -41,6 +42,12 @@ class InntektsendringerService(
         val inntektsendringer = inntektsendringerRepository.hentBrukereMedInntektsendringOver10Prosent()
         val automatiskRevurderingKandidater = inntektsendringer.filter { it.harIngenEksisterendeYtelser() && it.harStabilInntekt() }
         sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent })
+    }
+
+    fun hentAutomatiskeRevurderinger(): List<AutomatiskRevurdering> {
+        val inntektsendringer = inntektsendringerRepository.hentBrukereMedInntektsendringOver10Prosent()
+        val automatiskRevurderingKandidater = inntektsendringer.filter { it.harIngenEksisterendeYtelser() && it.harStabilInntekt() }
+        return sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent }) ?: emptyList()
     }
 
     fun beregnInntektsendringerOgLagreIDb() {
@@ -108,6 +115,21 @@ class InntektsendringerService(
         val nyeUføretrygdVedtak = inntektsendringerRepository.hentInntektsendringerForUføretrygd()
         nyeUføretrygdVedtak.forEach {
             opprettOppgaveForInntektsendring(it, lagOppgavetekstVedNyYtelseUføretrygd())
+        }
+    }
+
+    fun opprettBehandleAutomatiskInntektsendringTask() {
+        val debugTag = "BehandleAutomatiskInntektsendringTask --- "
+        secureLogger.info(debugTag + "Henter ut automatiskeRevurderinger.")
+
+        val automatiskeRevurderinger = hentAutomatiskeRevurderinger()
+        val automatiskeRevurderingPersonIdenter = automatiskeRevurderinger.map { it.personIdent }
+
+        secureLogger.info(debugTag + "Størrelsen på listen med personIdenter for automatisk behandling er: ${automatiskeRevurderingPersonIdenter.size}.")
+        secureLogger.info(debugTag + "Starter kall mot EF-SAK der vi sender person identer for automatisk behandling.")
+
+        automatiskeRevurderingPersonIdenter.forEach { ident ->
+            sakClient.opprettBehandleAutomatiskInntektsendringTask(ident)
         }
     }
 

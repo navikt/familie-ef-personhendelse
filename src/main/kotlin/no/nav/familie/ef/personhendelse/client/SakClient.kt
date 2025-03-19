@@ -105,6 +105,15 @@ class SakClient(
         val response = postForEntity<Ressurs<List<AutomatiskRevurdering>>>(uriComponentsBuilder.build().toUri(), personIdenter)
         return response.data
     }
+
+    fun opprettBehandleAutomatiskInntektsendringTask(personIdent: String): Boolean {
+        val uriComponentsBuilder =
+            UriComponentsBuilder
+                .fromUri(uri)
+                .pathSegment("api/revurdering/behandleAutomatisk")
+        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), personIdent)
+        return response.data ?: throw Exception("Feil ved kall mot ef-sak med personIdent for oppretting av behandle automatisk inntektsendring task.")
+    }
 }
 
 data class ForventetInntektForPerson(
