@@ -128,16 +128,14 @@ class InntektsendringerService(
         secureLogger.info(debugTag + "Størrelsen på listen med personIdenter for automatisk behandling er: ${automatiskeRevurderingPersonIdenter.size}.")
         secureLogger.info(debugTag + "Starter kall mot EF-SAK der vi sender person identer for automatisk behandling.")
 
-        automatiskeRevurderingPersonIdenter.forEach { ident ->
-            sakClient.opprettBehandleAutomatiskInntektsendringTask(ident)
-        }
+        sakClient.opprettBehandleAutomatiskInntektsendringTask(automatiskeRevurderingPersonIdenter)
     }
 
     // TODO: Denne metoden kan være generisk og er veldig lik den over. Refaktorer.
     fun manuellOpprettBehandleAutomatiskInntektsendringTask(personIdent: String) {
         val debugTag = "ManuellBehandleAutomatiskInntektsendringTask (forvaltning) --- "
         secureLogger.info(debugTag + "Begynner manuell task opprettelse for personIdent: $personIdent.")
-        sakClient.opprettBehandleAutomatiskInntektsendringTask(personIdent)
+        sakClient.opprettBehandleAutomatiskInntektsendringTask(listOf(personIdent))
     }
 
     private fun hentInntekt(personIdent: String): InntektResponse? {
