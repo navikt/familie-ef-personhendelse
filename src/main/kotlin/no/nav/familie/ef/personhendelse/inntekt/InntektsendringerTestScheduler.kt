@@ -17,6 +17,7 @@ class InntektsendringerTestScheduler(
     @Scheduled(cron = "\${INNTEKTSKONTROLL_TEST_CRON_EXPRESSION}")
     fun inntektskontroll() {
         logger.info("Cron scheduler starter for innkektskontroll tester scheduler.")
+        inntektsendringerService.beregnInntektsendringerOgLagreIDb()
         inntektsendringerService.opprettBehandleAutomatiskInntektsendringTask()
     }
 }
