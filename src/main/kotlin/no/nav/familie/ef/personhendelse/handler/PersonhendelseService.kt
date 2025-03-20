@@ -57,11 +57,10 @@ class PersonhendelseService(
         personidenter: Set<String>,
     ) {
         val harLøpendeStønad = sakClient.harLøpendeStønad(personidenter)
-        logger.info(
-            "Personhendelse av opplysningstype=${personhendelse.opplysningstype} av type=${personhendelse.endringstype.name} - " +
-                " harLøpendeStønad=$harLøpendeStønad",
-        )
         if (harLøpendeStønad) {
+            logger.info(
+                "Håndterer hendelse: opplysningstype=${personhendelse.opplysningstype} av type=${personhendelse.endringstype.name}",
+            )
             handlePersonhendelse(handler, personhendelse, personidenter.first())
         }
     }
@@ -130,7 +129,6 @@ class PersonhendelseService(
         beskrivelse: String,
         personIdent: String,
     ) {
-        val beskrivelse = beskrivelse
         val opprettOppgaveRequest =
             opprettVurderLivshendelseoppgave(
                 personIdent = personIdent,
