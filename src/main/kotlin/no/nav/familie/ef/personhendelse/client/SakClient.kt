@@ -110,9 +110,9 @@ class SakClient(
         val uriComponentsBuilder =
             UriComponentsBuilder
                 .fromUri(uri)
-                .pathSegment("api/revurdering/behandleAutomatisk")
+                .pathSegment("api/revurdering/behandle-automatisk")
         val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), personIdenter)
-        return response.data ?: throw Exception("Feil ved kall mot ef-sak med personIdent for oppretting av behandle automatisk inntektsendring task.")
+        return response.data ?: throw Exception("Feil ved kall mot ef-sak med personIdenter for oppretting av behandle automatisk inntektsendring task.")
     }
 }
 

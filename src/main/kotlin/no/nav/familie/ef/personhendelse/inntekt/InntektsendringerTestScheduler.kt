@@ -13,10 +13,8 @@ class InntektsendringerTestScheduler(
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    // Kjøres hver dag, hver 5 minutt.
     @Scheduled(cron = "\${INNTEKTSKONTROLL_TEST_CRON_EXPRESSION}")
     fun inntektskontroll() {
-        logger.info("Cron scheduler starter for innkektskontroll tester scheduler.")
         inntektsendringerService.beregnInntektsendringerOgLagreIDb()
         inntektsendringerService.opprettBehandleAutomatiskInntektsendringTask()
     }
