@@ -1,3 +1,6 @@
 DEPLOY_ENV: dev
 
+rolle:
+  forvalter: "c62e908a-cf20-4ad0-b7b3-3ff6ca4bf38b" # teamfamilie-forvaltning
+
 INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 10 3 * * # kl 10:00 den 3. hver måned
