@@ -1,3 +1,4 @@
 DEPLOY_ENV: dev
 
 INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 10 3 * * # kl 10:00 den 3. hver måned
+INNTEKTSKONTROLL_TEST_CRON_EXPRESSION : 0 */5 * * * * # Hver dag, hver 5 min.
