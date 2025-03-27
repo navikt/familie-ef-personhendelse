@@ -2,9 +2,6 @@ package no.nav.familie.ef.personhendelse.configuration
 
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
-import io.swagger.v3.oas.models.security.OAuthFlow
-import io.swagger.v3.oas.models.security.OAuthFlows
-import io.swagger.v3.oas.models.security.Scopes
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springdoc.core.models.GroupedOpenApi
@@ -24,8 +21,8 @@ class SwaggerDocumentationConfig(
     @Bean
     fun openApi(): OpenAPI =
         OpenAPI()
-            .components(Components().addSecuritySchemes("oauth2", securitySchemes()))
-            .addSecurityItem(SecurityRequirement().addList("oauth2", listOf("read", "write")))
+            .components(Components().addSecuritySchemes("bearerAuth", securitySchemes()))
+            .addSecurityItem(SecurityRequirement().addList("bearerAuth"))
 
     @Bean
     fun internOpenApi(): GroupedOpenApi =
@@ -45,17 +42,10 @@ class SwaggerDocumentationConfig(
 
     private fun securitySchemes(): SecurityScheme =
         SecurityScheme()
-            .name("oauth2")
-            .type(SecurityScheme.Type.OAUTH2)
-            .scheme("oauth2")
+            .name("bearerAuth")
+            .type(SecurityScheme.Type.HTTP)
+            .scheme("bearer")
+            .bearerFormat("JWT")
             .`in`(SecurityScheme.In.HEADER)
-            .flows(
-                OAuthFlows()
-                    .authorizationCode(
-                        OAuthFlow()
-                            .authorizationUrl(authorizationUrl)
-                            .tokenUrl(tokenUrl)
-                            .scopes(Scopes().addString(personhendelseScope, "read,write")),
-                    ),
-            )
+            .description("Legg inn STS eller AAD token, uten \"Bearer \" prefiks")
 }
