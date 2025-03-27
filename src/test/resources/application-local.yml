@@ -17,7 +17,7 @@ spring:
         jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="username" password="password";
 
 rolle:
-  forvalter: "c62e908a-cf20-4ad0-b7b3-3ff6ca4bf38b" # teamfamilie-ef-forvaltning
+  forvalter: "f9882377-e69d-4af8-b41d-3ccdfc46ef8d" # teamfamilie-ef-forvaltning
 
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.dev-fss-pub.nais.io
