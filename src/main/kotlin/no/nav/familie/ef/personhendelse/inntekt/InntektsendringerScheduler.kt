@@ -19,6 +19,6 @@ class InntektsendringerScheduler(
         inntektsendringerService.opprettOppgaverForInntektsendringer(true)
         inntektsendringerService.opprettOppgaverForNyeVedtakUføretrygd()
 
-        inntektsendringerService.opprettBehandleAutomatiskInntektsendringTask()
+        inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
     }
 }

@@ -1,7 +1,6 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
-import no.nav.familie.ef.personhendelse.client.AutomatiskRevurdering
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
@@ -44,10 +43,10 @@ class InntektsendringerService(
         sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent })
     }
 
-    fun hentAutomatiskeRevurderinger(): List<AutomatiskRevurdering> {
+    fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
         val inntektsendringer = inntektsendringerRepository.hentBrukereMedInntektsendringOver10Prosent()
         val automatiskRevurderingKandidater = inntektsendringer.filter { it.harIngenEksisterendeYtelser() && it.harStabilInntekt() }
-        return sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent }) ?: emptyList()
+        sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent })
     }
 
     fun beregnInntektsendringerOgLagreIDb() {
@@ -116,19 +115,6 @@ class InntektsendringerService(
         nyeUføretrygdVedtak.forEach {
             opprettOppgaveForInntektsendring(it, lagOppgavetekstVedNyYtelseUføretrygd())
         }
-    }
-
-    fun opprettBehandleAutomatiskInntektsendringTask() {
-        val automatiskeRevurderinger = hentAutomatiskeRevurderinger()
-        val automatiskeRevurderingPersonIdenter = automatiskeRevurderinger.map { it.personIdent }
-
-        if (automatiskeRevurderingPersonIdenter.isEmpty()) {
-            return
-        }
-
-        secureLogger.info("Oppretter task for opprette behandling av automatisk inntektsendring. Antall personer :${automatiskeRevurderingPersonIdenter.size}.")
-
-        sakClient.opprettBehandleAutomatiskInntektsendringTask(automatiskeRevurderingPersonIdenter)
     }
 
     private fun hentInntekt(personIdent: String): InntektResponse? {
