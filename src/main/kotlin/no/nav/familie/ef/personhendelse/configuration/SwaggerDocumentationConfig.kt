@@ -18,8 +18,8 @@ class SwaggerDocumentationConfig(
     val authorizationUrl: String,
     @Value("\${AZUREAD_TOKEN_ENDPOINT_URL}")
     val tokenUrl: String,
-    @Value("\${API_SCOPE}")
-    val apiScope: String,
+    @Value("\${PERSONHENDELSE_SCOPE}")
+    val personhendelseScope: String,
 ) {
     @Bean
     fun openApi(): OpenAPI =
@@ -55,7 +55,7 @@ class SwaggerDocumentationConfig(
                         OAuthFlow()
                             .authorizationUrl(authorizationUrl)
                             .tokenUrl(tokenUrl)
-                            .scopes(Scopes().addString(apiScope, "read,write")),
+                            .scopes(Scopes().addString(personhendelseScope, "read,write")),
                     ),
             )
 }

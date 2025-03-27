@@ -119,7 +119,7 @@ management:
   prometheus.metrics.export.enabled: true
 
 rolle:
-  forvalter: "c62e908a-cf20-4ad0-b7b3-3ff6ca4bf38b" # teamfamilie-forvaltning
+  forvalter: "c62e908a-cf20-4ad0-b7b3-3ff6ca4bf38b" # teamfamilie-ef-forvaltning
 
 DEPLOY_ENV: prod
 
@@ -146,4 +146,4 @@ AZURE_APP_TENANT_ID: navq.onmicrosoft.com
 #Swagger
 AUTHORIZATION_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/authorize
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
-API_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default
+PERSONHENDELSE_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default

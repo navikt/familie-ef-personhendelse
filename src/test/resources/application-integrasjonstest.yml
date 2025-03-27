@@ -16,4 +16,4 @@ AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/navq.onmic
 SPRING_PROFILES_ACTIVE: local
 FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.dev.intern.nav.no/api/inntekt
 
-API_SCOPE: test
+PERSONHENDELSE_SCOPE: test
