@@ -43,6 +43,12 @@ class InntektsendringerService(
         sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent })
     }
 
+    fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
+        val inntektsendringer = inntektsendringerRepository.hentBrukereMedInntektsendringOver10Prosent()
+        val automatiskRevurderingKandidater = inntektsendringer.filter { it.harIngenEksisterendeYtelser() && it.harStabilInntekt() }
+        sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent })
+    }
+
     fun beregnInntektsendringerOgLagreIDb() {
         logger.info("Starter beregning av inntektsendringer")
 
