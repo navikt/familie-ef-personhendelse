@@ -99,6 +99,15 @@ no.nav.security.jwt:
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
 
+springdoc:
+  swagger-ui:
+    oauth:
+      use-pkce-with-authorization-code-grant: true
+      client-id: ${AZURE_APP_CLIENT_ID}
+      scope-separator: ","
+    disable-swagger-default-url: true
+    persist-authorization: true
+
 management:
   endpoint.health.show-details: always
   endpoints.web:
@@ -108,6 +117,9 @@ management:
       info: "isAlive"
   metrics.export.prometheus.enabled: true
   prometheus.metrics.export.enabled: true
+
+rolle:
+  forvalter: "c62e908a-cf20-4ad0-b7b3-3ff6ca4bf38b" # teamfamilie-ef-forvaltning
 
 DEPLOY_ENV: prod
 
@@ -128,3 +140,10 @@ FAMILIE_KS_VEDTAK_TOPIC: teamfamilie.aapen-kontantstotte-vedtak-v1
 
 INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 4 6 * * # kl 04:00 den 6. hver måned
 OPPGAVERDØDSFALL_CRON_EXPRESSION: 0 0 5 * * * # kl 05:00 hver dag
+
+AZURE_APP_TENANT_ID: navq.onmicrosoft.com
+
+#Swagger
+AUTHORIZATION_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/authorize
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+PERSONHENDELSE_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default
