@@ -35,25 +35,13 @@ class SwaggerDocumentationConfig(
             .packagesToScan("no.nav.familie.ef.personhendelse")
             .build()
 
-    // TODO: Denne pakken finnes ikke helt enda, husk å endre denne.
-
-    /*@Bean
+    @Bean
     fun forvalterOpenApi(): GroupedOpenApi =
         GroupedOpenApi
             .builder()
             .group("Forvalter")
             .packagesToScan("no.nav.familie.ef.personhendelse.forvaltning")
-            .build()*/
-
-    // TODO: Denne pakken finnes ikke helt enda, husk å endre denne.
-
-    /*@Bean
-    fun eksternOpenApi(): GroupedOpenApi =
-        GroupedOpenApi
-            .builder()
-            .group("Ekstern")
-            .packagesToScan("no.nav.familie.ef.personhendelse.ekstern")
-            .build()*/
+            .build()
 
     private fun securitySchemes(): SecurityScheme =
         SecurityScheme()
