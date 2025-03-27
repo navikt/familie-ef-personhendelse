@@ -1,5 +1,6 @@
 package no.nav.familie.ef.personhendelse.util
 
+import io.swagger.v3.oas.annotations.Operation
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.pdl.secureLogger
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
@@ -16,6 +17,13 @@ class OppgaveController(
     val oppgaveClient: OppgaveClient,
     val personhendelseRepository: PersonhendelseRepository,
 ) {
+    // TODO: Dette skal fjernes.
+    @Operation(
+        description =
+            "Hei, dette er en test!",
+        summary =
+            "Hei, dette er en test!",
+    )
     @PostMapping("/logOpprettedeOppgaver")
     fun logOpprettedeOppgaver() {
         val oppgaveIds = personhendelseRepository.hentAlleOppgaveIds()
