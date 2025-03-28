@@ -43,6 +43,8 @@ spec:
         extra:
           - "NAVident"
           - "azp_name"
+      replyURLs:
+        - "https://familie-ef-personhendelse.intern.dev.nav.no/swagger-ui/oauth2-redirect.html"
   accessPolicy:
     inbound:
       rules:
