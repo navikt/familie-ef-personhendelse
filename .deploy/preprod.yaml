@@ -41,6 +41,9 @@ spec:
       claims:
         groups:
           - id: "59865891-62a0-4fe3-b282-2e38210d1fbb" # teamfamilie-ef-forvaltning
+        extra:
+          - "NAVident"
+          - "azp_name"
   accessPolicy:
     inbound:
       rules:
