@@ -119,7 +119,7 @@ management:
   prometheus.metrics.export.enabled: true
 
 rolle:
-  forvalter: "c62e908a-cf20-4ad0-b7b3-3ff6ca4bf38b" # teamfamilie-ef-forvaltning
+  forvalter: "f9882377-e69d-4af8-b41d-3ccdfc46ef8d" # teamfamilie-ef-forvaltning
 
 DEPLOY_ENV: prod
 
