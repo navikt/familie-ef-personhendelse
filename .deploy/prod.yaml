@@ -45,6 +45,7 @@ spec:
           - "azp_name"
       replyURLs:
         - "https://familie-ef-personhendelse.intern.nav.no/swagger-ui/oauth2-redirect.html"
+      singlePageApplication: true
   accessPolicy:
     inbound:
       rules:
