@@ -97,13 +97,12 @@ class SakClient(
         return response.getDataOrThrow()
     }
 
-    fun revurderAutomatisk(personIdenter: List<String>): List<AutomatiskRevurdering>? {
+    fun revurderAutomatisk(personIdenter: List<String>) {
         val uriComponentsBuilder =
             UriComponentsBuilder
                 .fromUri(uri)
                 .pathSegment("api/automatisk-revurdering")
-        val response = postForEntity<Ressurs<List<AutomatiskRevurdering>>>(uriComponentsBuilder.build().toUri(), personIdenter)
-        return response.data
+        postForEntity<Ressurs<List<AutomatiskRevurdering>>>(uriComponentsBuilder.build().toUri(), personIdenter)
     }
 }
 
