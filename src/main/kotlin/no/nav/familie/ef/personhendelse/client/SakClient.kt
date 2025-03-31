@@ -102,7 +102,7 @@ class SakClient(
             UriComponentsBuilder
                 .fromUri(uri)
                 .pathSegment("api/automatisk-revurdering")
-        postForEntity<Ressurs<List<AutomatiskRevurdering>>>(uriComponentsBuilder.build().toUri(), personIdenter)
+        postForEntity<Any>(uriComponentsBuilder.build().toUri(), personIdenter)
     }
 }
 
@@ -112,7 +112,9 @@ data class ForventetInntektForPerson(
     val forventetInntektToMånederTilbake: Int?,
     val forventetInntektTreMånederTilbake: Int?,
     val forventetInntektFireMånederTilbake: Int?,
-)
+) {
+    fun erSiste2MånederNotNull(): Boolean = this.forventetInntektForrigeMåned != null && this.forventetInntektToMånederTilbake != null
+}
 
 data class AutomatiskRevurdering(
     val personIdent: String,
