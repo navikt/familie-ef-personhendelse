@@ -37,16 +37,10 @@ class InntektsendringerService(
         beregnInntektsendringerOgLagreIDb()
     }
 
-    fun loggAutomatiskeRevurderinger() {
-        val inntektsendringer = inntektsendringerRepository.hentBrukereMedInntektsendringOver10Prosent()
-        val automatiskRevurderingKandidater = inntektsendringer.filter { it.harIngenEksisterendeYtelser() && it.harStabilInntekt() }
-        sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent })
-    }
-
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
         val inntektsendringer = inntektsendringerRepository.hentBrukereMedInntektsendringOver10Prosent()
-        val automatiskRevurderingKandidater = inntektsendringer.filter { it.harIngenEksisterendeYtelser() && it.harStabilInntekt() }
-        sakClient.revurderAutomatisk(automatiskRevurderingKandidater.map { it.personIdent })
+        val automatiskRevurderingKandidater = inntektsendringer.filter { it.harIngenEksisterendeYtelser() && it.harStabilInntekt() }.map { it.personIdent }
+        sakClient.revurderAutomatisk(automatiskRevurderingKandidater)
     }
 
     fun beregnInntektsendringerOgLagreIDb() {
@@ -63,7 +57,7 @@ class InntektsendringerService(
             sakClient.hentForventetInntektForIdenter(it).forEach { forventetInntektForPerson ->
                 val inntektResponse = hentInntekt(personIdent = forventetInntektForPerson.personIdent)
 
-                if (inntektResponse != null && forventetInntektForPerson.forventetInntektForrigeMåned != null && forventetInntektForPerson.forventetInntektToMånederTilbake != null) {
+                if (inntektResponse != null && forventetInntektForPerson.erSiste2MånederNotNull()) {
                     lagreInntektsendringForPerson(
                         forventetInntektForPerson = forventetInntektForPerson,
                         inntektResponse = inntektResponse,
