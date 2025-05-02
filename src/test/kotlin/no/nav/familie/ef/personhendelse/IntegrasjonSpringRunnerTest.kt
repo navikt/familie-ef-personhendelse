@@ -23,7 +23,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 abstract class IntegrasjonSpringRunnerTest {
     protected val listAppender = initLoggingEventListAppender()
     protected var loggingEvents: MutableList<ILoggingEvent> = listAppender.list
-    protected val restTemplate = TestRestTemplate()
 
     @Autowired private lateinit var applicationContext: ApplicationContext
 
