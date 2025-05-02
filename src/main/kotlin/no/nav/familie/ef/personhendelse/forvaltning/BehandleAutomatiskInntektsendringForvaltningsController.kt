@@ -2,7 +2,9 @@ package no.nav.familie.ef.personhendelse.forvaltning
 
 import io.swagger.v3.oas.annotations.Operation
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.inntekt.InntektsendringerService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @ProtectedWithClaims(issuer = "azuread")
 class BehandleAutomatiskInntektsendringForvaltningsController(
     private val sakClient: SakClient,
+    private val inntektsendringerService: InntektsendringerService,
 ) {
     @Operation(
         description = "Kan brukes til å opprette en automatisk behandle automatisk inntektsendring gjennom ef-sak for en person.",
@@ -25,5 +28,17 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     ) {
         val person = listOf(personIdent)
         sakClient.revurderAutomatisk(person)
+    }
+
+    @Operation(
+        description =
+            "Utfører en dry-run av inntektskontroll. Det vil si at hele inntektskontroll kjøres, med unntak av opprettelse av oppgaver. " +
+                "Det betyr at databasen vil oppdateres, altså at forrige kjøring vil overskrives. Dette for å teste hele flyten.",
+        summary =
+            "Dry-run av inntektskontroll",
+    )
+    @GetMapping("/dry-run-inntektskontroll")
+    fun dryRunInntektskontroll() {
+        inntektsendringerService.beregnInntektsendringerAsync()
     }
 }
