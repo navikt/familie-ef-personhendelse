@@ -262,6 +262,7 @@ class InntektsendringerService(
             "ufoeretrygd",
             "ufoereytelseEtteroppgjoer",
             "ufoerepensjonFraAndreEnnFolketrygden",
+            "barnepensjon",
         )
 }
 
