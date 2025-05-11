@@ -29,21 +29,21 @@
         <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
         <kotlin.version>2.1.20</kotlin.version>
-        <kafka-avro-serializer.version>7.9.0</kafka-avro-serializer.version>
+        <kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
         <avro.version>1.12.0</avro.version>
         <graphql-kotlin-spring-client.version>8.7.0</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>8.7.0</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
-        <kontrakter.version>3.0_20250424145650_af8cea0</kontrakter.version>
+        <kontrakter.version>3.0_20250508163827_676473b</kontrakter.version>
         <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20250422132745_dfaa902</eksterne-kontrakter.version.stonadsstatistikk.ks>
-        <felles.version>3.20250422130733_4d831f9</felles.version>
+        <felles.version>3.20250505101905_835431d</felles.version>
         <nav.security.version>5.0.25</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.2</wiremock.version>
         <mockk-jvm.version>1.14.2</mockk-jvm.version>
         <postgres.version>1.21.0</postgres.version>
-        <springdoc.version>2.8.6</springdoc.version>
+        <springdoc.version>2.8.8</springdoc.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
     </properties>
     <dependencies>
@@ -160,7 +160,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.8.0</version>
+            <version>11.8.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
