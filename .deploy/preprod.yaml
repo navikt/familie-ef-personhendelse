@@ -62,6 +62,13 @@ spec:
         - host: pdl-api.dev-fss-pub.nais.io
         - host: familie-integrasjoner.dev-fss-pub.nais.io
         - host: familie-ef-proxy.dev-fss-pub.nais.io
+      logging:
+        destinations:
+          - id: loki
+          - id: elastic
+        autoInstrumentation:
+          enabled: true
+          runtime: java
   kafka:
     pool: nav-dev
   gcp:
