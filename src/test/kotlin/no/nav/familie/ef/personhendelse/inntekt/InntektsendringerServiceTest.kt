@@ -79,7 +79,7 @@ class InntektsendringerServiceTest {
                     inntektResponse = oppdatertInntektResponse,
                     forventetInntektForPerson = forventetInntektForPerson(forventetInntektNiProsentLavere),
                 ),
-            ).isEqualTo(inntektsendring(3150, 9, 1417))
+            ).isEqualTo(inntektsendring(3150, 9, 1418))
     }
 
     @Test

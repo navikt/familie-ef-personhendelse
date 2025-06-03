@@ -3,9 +3,9 @@ package no.nav.familie.ef.personhendelse.inntekt
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-private val grunnbeløp = 118_620
-private val halvtGrunnbeløp = 59_310
-private val reduksjonsfaktor = BigDecimal(0.45)
+private val nyesteGrunnbeløp = Grunnbeløp().nyesteGrunnbeløp
+private val grunnbeløp = nyesteGrunnbeløp.grunnbeløp.toInt()
+private val halvtGrunnbeløp = nyesteGrunnbeløp.halvtGrunnbeløp.toInt()
 
 fun beregnFeilutbetalingForMåned(
     forventetInntekt: Int,
@@ -26,7 +26,7 @@ private fun beregnUtbetaling(inntekt: Int): Int {
 private fun beregnAvkortning(inntekt: Int): BigDecimal {
     val inntektOverHalveGrunnbeløpÅrlig = BigDecimal(inntekt).multiply(BigDecimal(12)).subtract(BigDecimal(halvtGrunnbeløp))
     return if (inntektOverHalveGrunnbeløpÅrlig > BigDecimal.ZERO) {
-        inntektOverHalveGrunnbeløpÅrlig.multiply(reduksjonsfaktor).setScale(5, RoundingMode.HALF_DOWN)
+        inntektOverHalveGrunnbeløpÅrlig.multiply(Grunnbeløp().reduksjonsfaktor).setScale(5, RoundingMode.HALF_DOWN)
     } else {
         BigDecimal.ZERO
     }

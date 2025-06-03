@@ -25,9 +25,9 @@ class InntektsendringerService(
     val inntektsendringerRepository: InntektsendringerRepository,
     val inntektClient: InntektClient,
 ) {
-    private val grunnbeløp = 124_028
-    private val halvtGrunnbeløpMånedlig = (grunnbeløp / 2) / 12
-    private val maxInntekt = Math.floor((grunnbeløp * 5.5) / 1000L) * 1000L // Ingen utbetaling av OS ved inntekt på over 5.5 rundet ned til nærmeste 1000
+    private val grunnbeløp = Grunnbeløp().nyesteGrunnbeløp.grunnbeløp
+    private val halvtGrunnbeløpMånedlig = (grunnbeløp / 2.toBigDecimal()) / 12.toBigDecimal()
+    private val maksInntekt = Grunnbeløp().maksInntekt
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -235,13 +235,13 @@ class InntektsendringerService(
             return BeregningResultat(0, 0, 0)
         }
 
-        if (forventetInntekt > maxInntekt) return BeregningResultat(0, 0, 0) // Ignorer alle med over 652000 i årsinntekt, da de har 0 i utbetaling.
+        if (forventetInntekt > maksInntekt) return BeregningResultat(0, 0, 0)
         val månedligForventetInntekt = (forventetInntekt / 12)
 
         val inntektListe = nyesteRegistrerteInntekt.firstOrNull()?.inntektListe ?: emptyList()
         val samletInntekt = inntektListe.filterNot { ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse) }.sumOf { it.beløp }.toInt()
 
-        if (samletInntekt < halvtGrunnbeløpMånedlig) return BeregningResultat(0, 0, 0)
+        if (samletInntekt < halvtGrunnbeløpMånedlig.toInt()) return BeregningResultat(0, 0, 0)
 
         secureLogger.info(
             "Samlet inntekt: $samletInntekt - månedlig forventet inntekt: $månedligForventetInntekt  (årlig: $forventetInntekt) for person $ident",
