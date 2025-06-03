@@ -7,7 +7,7 @@ class FeilutbetalingBeregningUtilTest {
     @Test
     fun `beregn feilutbetaling - max feilutbetaling`() {
         val feilutbetaling = beregnFeilutbetalingForMåned(0, 60_000)
-        val maxOvergangsstønadPrMnd = 118_620 * 2.25 / 12
+        val maxOvergangsstønadPrMnd = Grunnbeløp().nyesteGrunnbeløp.grunnbeløp.toInt() * 2.25 / 12
 
         Assertions.assertEquals(maxOvergangsstønadPrMnd.toInt(), feilutbetaling)
     }
