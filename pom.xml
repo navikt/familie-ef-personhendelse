@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
+        <version>3.5.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.familie.ef</groupId>
@@ -31,18 +31,18 @@
         <kotlin.version>2.1.21</kotlin.version>
         <kafka-avro-serializer.version>7.9.1</kafka-avro-serializer.version>
         <avro.version>1.12.0</avro.version>
-        <graphql-kotlin-spring-client.version>8.7.0</graphql-kotlin-spring-client.version>
-        <graphql-kotlin-maven-plugin.version>8.7.0</graphql-kotlin-maven-plugin.version>
+        <graphql-kotlin-spring-client.version>8.8.0</graphql-kotlin-spring-client.version>
+        <graphql-kotlin-maven-plugin.version>8.8.0</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
-        <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
-        <kontrakter.version>3.0_20250513140227_11db730</kontrakter.version>
-        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20250422132745_dfaa902</eksterne-kontrakter.version.stonadsstatistikk.ks>
+        <exec-maven-plugin.version>3.5.1</exec-maven-plugin.version>
+        <kontrakter.version>3.0_20250530161722_14f12e3</kontrakter.version>
+        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20250528130257_514d030</eksterne-kontrakter.version.stonadsstatistikk.ks>
         <felles.version>3.20250505101905_835431d</felles.version>
-        <nav.security.version>5.0.27</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <nav.security.version>5.0.29</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.2</wiremock.version>
         <mockk-jvm.version>1.14.2</mockk-jvm.version>
-        <postgres.version>1.21.0</postgres.version>
+        <postgres.version>1.21.1</postgres.version>
         <springdoc.version>2.8.8</springdoc.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
     </properties>
@@ -385,7 +385,7 @@
                     <dependency>
                         <groupId>com.pinterest.ktlint</groupId>
                         <artifactId>ktlint-cli</artifactId>
-                        <version>1.5.0</version>
+                        <version>1.6.0</version>
                     </dependency>
                     <!-- additional 3rd party ruleset(s) can be specified here -->
                 </dependencies>
