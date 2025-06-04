@@ -144,8 +144,8 @@ EF_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ef-sak/.default
 FAMILIE_EF_VEDTAK_TOPIC: teamfamilie.aapen-ensligforsorger-iverksatt-vedtak
 FAMILIE_KS_VEDTAK_TOPIC: teamfamilie.aapen-kontantstotte-vedtak-v1
 
-INNTEKT_URL: https://ikomp-q2.${DEPLOY_ENV}-fss-pub.nais.io
-INNTEKT_SCOPE: api://${DEPLOY_ENV}-fss.team-inntekt.ikomp-q2/.default
+INNTEKT_URL: https://ikomp.prod-fss-pub.nais.io
+INNTEKT_SCOPE: api://prod-fss.team-inntekt.ikomp/.default
 
 INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 4 6 * * # kl 04:00 den 6. hver måned
 OPPGAVERDØDSFALL_CRON_EXPRESSION: 0 0 5 * * * # kl 05:00 hver dag
