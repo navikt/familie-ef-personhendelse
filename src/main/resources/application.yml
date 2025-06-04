@@ -89,11 +89,20 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
-      ef-proxy:
-        resource-url: ${FAMILIE_EF_PROXY_URL}
-        token-endpoint-url: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+      inntektskomponenten:
+        resource-url: ${INNTEKT_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        scope: ${INNTEKT_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      inntektskomponenten-clientcredentials:
+        resource-url: ${INNTEKT_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
         grant-type: client_credentials
-        scope: ${EF_PROXY_SCOPE}
+        scope: ${INNTEKT_SCOPE}
         authentication:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-secret: ${AZURE_APP_CLIENT_SECRET}
@@ -126,9 +135,6 @@ DEPLOY_ENV: prod
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.${DEPLOY_ENV}-fss-pub.nais.io
 FAMILIE_INTEGRASJONER_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-integrasjoner/.default
 
-FAMILIE_EF_PROXY_URL: https://familie-ef-proxy.${DEPLOY_ENV}-fss-pub.nais.io
-EF_PROXY_SCOPE: api://${DEPLOY_ENV}-fss.teamfamilie.familie-ef-proxy/.default
-
 PDL_URL: https://pdl-api.${DEPLOY_ENV}-fss-pub.nais.io/graphql
 PDL_SCOPE: api://${DEPLOY_ENV}-fss.pdl.pdl-api/.default
 
@@ -137,6 +143,9 @@ EF_SAK_SCOPE: api://${DEPLOY_ENV}-gcp.teamfamilie.familie-ef-sak/.default
 
 FAMILIE_EF_VEDTAK_TOPIC: teamfamilie.aapen-ensligforsorger-iverksatt-vedtak
 FAMILIE_KS_VEDTAK_TOPIC: teamfamilie.aapen-kontantstotte-vedtak-v1
+
+INNTEKT_URL: https://ikomp-q2.${DEPLOY_ENV}-fss-pub.nais.io
+INNTEKT_SCOPE: api://${DEPLOY_ENV}-fss.team-inntekt.ikomp-q2/.default
 
 INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 4 6 * * # kl 04:00 den 6. hver måned
 OPPGAVERDØDSFALL_CRON_EXPRESSION: 0 0 5 * * * # kl 05:00 hver dag
