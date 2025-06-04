@@ -62,6 +62,7 @@ spec:
         - host: kafka-schema-registry.nais.adeo.no
         - host: pdl-api.prod-fss-pub.nais.io
         - host: familie-integrasjoner.prod-fss-pub.nais.io
+        - host: ikomp.prod-fss-pub.nais.io
   observability:
     logging:
       destinations:
