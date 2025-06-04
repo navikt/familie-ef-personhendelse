@@ -54,8 +54,6 @@ spec:
       rules:
         - application: familie-ef-sak
         - application: familie-ef-sak-lokal
-          namespace: teamfamilie
-          cluster: dev-fss
       external:
         - host: kafka-schema-registry.nais-q.adeo.no
         - host: pdl-api.dev-fss-pub.nais.io
