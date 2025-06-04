@@ -55,6 +55,9 @@ spec:
         - application: familie-ef-sak
           namespace: teamfamilie
           cluster: prod-fss
+        - application: ikomp
+          namespace: team-inntekt
+          cluster: prod-fss
       external:
         - host: kafka-schema-registry.nais.adeo.no
         - host: pdl-api.prod-fss-pub.nais.io
