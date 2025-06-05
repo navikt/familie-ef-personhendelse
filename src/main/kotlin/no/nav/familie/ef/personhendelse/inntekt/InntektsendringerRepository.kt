@@ -73,12 +73,14 @@ class InntektsendringerRepository(
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
-    fun hentBrukereMedInntektsendringOver10Prosent(): List<InntektOgVedtakEndring> {
+    fun hentKandidaterTilAutomatiskRevurdering(): List<InntektOgVedtakEndring> {
         val sql =
             "SELECT * FROM inntektsendringer WHERE " +
                 "(inntekt_endret_tre_maaneder_tilbake >= 10 AND " +
                 "inntekt_endret_to_maaneder_tilbake >= 10 AND " +
-                "inntekt_endret_forrige_maaned >= 10)"
+                "inntekt_endret_forrige_maaned >= 10) AND " +
+                "(feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) < 20000 AND " +
+                "(feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) > 5000"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
