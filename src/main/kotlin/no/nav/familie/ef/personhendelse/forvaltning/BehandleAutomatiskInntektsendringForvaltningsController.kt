@@ -41,4 +41,16 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     fun dryRunInntektskontroll() {
         inntektsendringerService.beregnInntektsendringerAsync()
     }
+
+    @Operation(
+        description =
+            "Utfør automatisk revurdering mot ef-sak for personer med inntektsendring, altså 10% endring i inntekt siste 3 måneder. " +
+                "Dobbeltsjekk at featuretoggle familie.ef.sak-behandle-automatisk-inntektsendring-task er av i prod dersom man kun ønsker å logge",
+        summary =
+            "Utfør automatisk revurdering mot ef-sak for personer med inntektsendring",
+    )
+    @GetMapping("/revurder-personer-med-inntektsendringer-automatisk")
+    fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
+        inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
+    }
 }
