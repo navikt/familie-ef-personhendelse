@@ -135,5 +135,10 @@ data class InntektOgVedtakEndring(
         abs(inntektsendringTreMånederTilbake.beløp - inntektsendringToMånederTilbake.beløp) < 1500 &&
             abs(inntektsendringTreMånederTilbake.beløp - inntektsendringForrigeMåned.beløp) < 1500
 
-    fun harIngenEksisterendeYtelser(): Boolean = eksisterendeYtelser.isNullOrEmpty()
+    fun harIngenEksisterendeYtelser(): Boolean {
+        val feriePengerYtelser = setOf("feriepengerPleiepenger", "feriepengerForeldrepenger", "feriepengerSykepenger")
+        if (eksisterendeYtelser.isNullOrEmpty()) return true
+        val list = eksisterendeYtelser.split(",").map { it.trim() }
+        return list.size == 1 && list[0] in feriePengerYtelser
+    }
 }
