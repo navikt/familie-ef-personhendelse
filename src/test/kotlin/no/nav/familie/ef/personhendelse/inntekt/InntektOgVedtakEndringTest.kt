@@ -9,21 +9,28 @@ class InntektOgVedtakEndringTest {
     fun `Skal hvis bare feriepenger returner true for harIngenEksisterendeYtelser()`() {
         val inntektsendringer = opprettInntektOgVedtakEndring("feriepengerPleiepenger")
 
-        Assertions.assertThat(inntektsendringer.harIngenEksisterendeYtelser())
+        Assertions.assertThat(inntektsendringer.harIngenEksisterendeYtelser()).isTrue()
     }
 
     @Test
     fun `Skal returnere false hvis har vanlig ytelse for harIngenEksisterendeYtelser()`() {
         val inntektsendringer = opprettInntektOgVedtakEndring("arbeidsavklaringspenger")
 
-        Assertions.assertThat(!inntektsendringer.harIngenEksisterendeYtelser())
+        Assertions.assertThat(inntektsendringer.harIngenEksisterendeYtelser()).isFalse()
     }
 
     @Test
     fun `Skal returnere true hvis null for harIngenEksisterendeYtelser()`() {
         val inntektsendringer = opprettInntektOgVedtakEndring(null)
 
-        Assertions.assertThat(inntektsendringer.harIngenEksisterendeYtelser())
+        Assertions.assertThat(inntektsendringer.harIngenEksisterendeYtelser()).isTrue()
+    }
+
+    @Test
+    fun `Skal returnere false hvis feriePenger og vanlig ytelse for harIngenEksisterendeYtelser()`() {
+        val inntektsendringer = opprettInntektOgVedtakEndring("feriepengerPleiepenger, arbeidsavklaringspenger")
+
+        Assertions.assertThat(inntektsendringer.harIngenEksisterendeYtelser()).isFalse()
     }
 
     private fun opprettInntektOgVedtakEndring(eksisterneYtelser: String?): InntektOgVedtakEndring {
