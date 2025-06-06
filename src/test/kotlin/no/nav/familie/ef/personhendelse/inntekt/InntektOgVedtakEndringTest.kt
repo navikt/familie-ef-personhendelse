@@ -7,26 +7,38 @@ import java.time.LocalDateTime
 class InntektOgVedtakEndringTest {
     @Test
     fun `Skal hvis bare feriepenger returner true for harIngenEksisterendeYtelser()`() {
-        val beregningResultatList =
-            listOf(
-                BeregningResultat(10000, 10, 123 / 3),
-                BeregningResultat(10000, 10, 213 / 3),
-                BeregningResultat(10000, 10, 213 / 3),
-            )
-
-        val inntektsendringer =
-            InntektOgVedtakEndring(
-                personIdent = "",
-                harNyeVedtak = true,
-                prosessertTid = LocalDateTime.now(),
-                inntektsendringFireMånederTilbake = beregningResultatList[0],
-                inntektsendringTreMånederTilbake = beregningResultatList[0],
-                inntektsendringToMånederTilbake = beregningResultatList[0],
-                inntektsendringForrigeMåned = beregningResultatList[0],
-                nyeYtelser = null,
-                eksisterendeYtelser = "feriepengerPleiepenger",
-            )
+        val inntektsendringer = opprettInntektOgVedtakEndring("feriepengerPleiepenger")
 
         Assertions.assertThat(inntektsendringer.harIngenEksisterendeYtelser())
+    }
+
+    @Test
+    fun `Skal returnere false hvis har vanlig ytelse for harIngenEksisterendeYtelser()`() {
+        val inntektsendringer = opprettInntektOgVedtakEndring("arbeidsavklaringspenger")
+
+        Assertions.assertThat(!inntektsendringer.harIngenEksisterendeYtelser())
+    }
+
+    @Test
+    fun `Skal returnere true hvis null for harIngenEksisterendeYtelser()`() {
+        val inntektsendringer = opprettInntektOgVedtakEndring(null)
+
+        Assertions.assertThat(inntektsendringer.harIngenEksisterendeYtelser())
+    }
+
+    private fun opprettInntektOgVedtakEndring(eksisterneYtelser: String?): InntektOgVedtakEndring {
+        val beregningResultat = BeregningResultat(10000, 10, 123 / 3)
+
+        return InntektOgVedtakEndring(
+            personIdent = "",
+            harNyeVedtak = true,
+            prosessertTid = LocalDateTime.now(),
+            inntektsendringFireMånederTilbake = beregningResultat,
+            inntektsendringTreMånederTilbake = beregningResultat,
+            inntektsendringToMånederTilbake = beregningResultat,
+            inntektsendringForrigeMåned = beregningResultat,
+            nyeYtelser = null,
+            eksisterendeYtelser = eksisterneYtelser,
+        )
     }
 }
