@@ -4,3 +4,4 @@ rolle:
   forvalter: "59865891-62a0-4fe3-b282-2e38210d1fbb" # teamfamilie-ef-forvaltning
 
 INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 10 3 * * # kl 10:00 den 3. hver måned
+AUTOMATISK_REVURDERING_CRON_EXPRESSION: 0 0 13 3 * * # kl 04:00 den 6. hver måned

@@ -148,6 +148,7 @@ INNTEKT_URL: https://ikomp.prod-fss-pub.nais.io
 INNTEKT_SCOPE: api://prod-fss.team-inntekt.ikomp/.default
 
 INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 4 6 * * # kl 04:00 den 6. hver måned
+AUTOMATISK_REVURDERING_CRON_EXPRESSION: 0 0 13 6 * * # kl 04:00 den 6. hver måned
 OPPGAVERDØDSFALL_CRON_EXPRESSION: 0 0 5 * * * # kl 05:00 hver dag
 
 AZURE_APP_TENANT_ID: navq.onmicrosoft.com

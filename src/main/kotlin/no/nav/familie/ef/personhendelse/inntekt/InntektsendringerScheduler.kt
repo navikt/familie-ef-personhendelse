@@ -20,4 +20,10 @@ class InntektsendringerScheduler(
         inntektsendringerService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
     }
+
+    @Scheduled(cron = "\${INNTEKTSKONTROLL_CRON_EXPRESSION}") // kl 04:00 den 6. hver måned
+    fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
+        logger.info("Cron scheduler starter hentPersonerMedInntektsendringerOgRevurderAutomatisk")
+        inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
+    }
 }
