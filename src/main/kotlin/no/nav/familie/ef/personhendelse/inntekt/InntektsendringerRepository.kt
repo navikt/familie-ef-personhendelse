@@ -132,8 +132,8 @@ data class InntektOgVedtakEndring(
     val eksisterendeYtelser: String?,
 ) {
     fun harStabilInntekt(): Boolean =
-        abs(inntektsendringTreMånederTilbake.beløp - inntektsendringToMånederTilbake.beløp) < 1500 &&
-            abs(inntektsendringTreMånederTilbake.beløp - inntektsendringForrigeMåned.beløp) < 1500
+        abs(inntektsendringTreMånederTilbake.beløp - inntektsendringToMånederTilbake.beløp) < 3000 &&
+            abs(inntektsendringTreMånederTilbake.beløp - inntektsendringForrigeMåned.beløp) < 3000
 
     fun harIngenEksisterendeYtelser(): Boolean {
         val feriePengerYtelser = setOf("feriepengerPleiepenger", "feriepengerForeldrepenger", "feriepengerSykepenger")
