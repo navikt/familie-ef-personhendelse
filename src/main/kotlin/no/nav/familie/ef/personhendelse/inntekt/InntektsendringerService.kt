@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 @Service
 class InntektsendringerService(
@@ -39,8 +40,21 @@ class InntektsendringerService(
 
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
-        val automatiskRevurderingKandidater = inntektsendringer.filter { it.harIngenEksisterendeYtelser() && it.harStabilInntekt() }.map { it.personIdent }
-        sakClient.revurderAutomatisk(automatiskRevurderingKandidater)
+
+        val identer = mutableListOf<String>()
+        inntektsendringer.forEach {
+            val inntektResponse = inntektClient.hentInntekt(it.personIdent, YearMonth.now().minusMonths(3), YearMonth.now().minusMonths(1))
+            val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(3))
+            val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(2))
+            val totalInntektForrigeMåned = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(1))
+
+            val harStabilInntekt = abs(totalInntektTreMånederTilbake - totalInntektToMånederTilbake) < 3000 && abs(totalInntektTreMånederTilbake - totalInntektForrigeMåned) < 3000
+            if (harStabilInntekt && it.harIngenEksisterendeYtelser()) {
+                identer.add(it.personIdent)
+            }
+        }
+
+        sakClient.revurderAutomatisk(identer)
     }
 
     fun beregnInntektsendringerOgLagreIDb() {
