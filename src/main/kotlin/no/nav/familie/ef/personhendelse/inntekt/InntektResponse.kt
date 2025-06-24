@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import no.nav.familie.ef.personhendelse.datoutil.isEqualOrAfter
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.YearMonth
@@ -8,7 +9,22 @@ import java.time.YearMonth
 data class InntektResponse(
     @JsonProperty("data")
     val inntektsmåneder: List<Inntektsmåned> = emptyList(),
-)
+) {
+    fun inntektsmånederFraOgMedÅrMåned(fraOgMedÅrMåned: YearMonth? = null): List<Inntektsmåned> =
+        inntektsmåneder
+            .filter { inntektsmåned ->
+                inntektsmåned.måned.isBefore(YearMonth.now()) &&
+                    inntektsmåned.måned.isEqualOrAfter(fraOgMedÅrMåned)
+            }.sortedBy { it.måned }
+
+    fun totalInntektForÅrMånedUtenFeriepenger(årMåned: YearMonth): Int =
+        inntektsmånederFraOgMedÅrMåned(årMåned)
+            .filter { it.måned == årMåned }
+            .flatMap { it.inntektListe }
+            .filter { it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" && it.beskrivelse != "barnepensjon" && !it.beskrivelse.contains("ferie", true) }
+            .sumOf { it.beløp }
+            .toInt()
+}
 
 data class Inntektsmåned(
     @JsonProperty("maaned")
