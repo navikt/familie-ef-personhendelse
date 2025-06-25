@@ -52,6 +52,7 @@ class InntektsendringerService(
             if (harStabilInntekt && it.harIngenEksisterendeYtelser()) {
                 identer.add(it.personIdent)
             }
+            secureLogger.info("Total inntekt pr mnd uten feriepenger ${it.personIdent}: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: ${it.harIngenEksisterendeYtelser()}")
         }
 
         sakClient.revurderAutomatisk(identer)
