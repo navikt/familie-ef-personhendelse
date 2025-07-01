@@ -48,7 +48,7 @@ class InntektsendringerService(
             val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(2))
             val totalInntektForrigeMåned = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(1))
 
-            val harStabilInntekt = abs(totalInntektTreMånederTilbake - totalInntektToMånederTilbake) < 3000 && abs(totalInntektTreMånederTilbake - totalInntektForrigeMåned) < 3000
+            val harStabilInntekt = abs(totalInntektTreMånederTilbake - totalInntektToMånederTilbake) < 6000 && abs(totalInntektTreMånederTilbake - totalInntektForrigeMåned) < 6000
             if (harStabilInntekt && it.harIngenEksisterendeYtelser()) {
                 identer.add(it.personIdent)
             }
