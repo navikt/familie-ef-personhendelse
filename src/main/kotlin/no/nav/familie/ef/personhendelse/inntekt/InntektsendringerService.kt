@@ -253,7 +253,7 @@ class InntektsendringerService(
         if (forventetInntekt > maksInntekt) return BeregningResultat(0, 0, 0)
         val månedligForventetInntekt = (forventetInntekt / 12)
 
-        val inntektListe = nyesteRegistrerteInntekt.firstOrNull()?.inntektListe ?: emptyList()
+        val inntektListe = nyesteRegistrerteInntekt.flatMap { it.inntektListe }
         val samletInntekt = inntektListe.filterNot { ignorerteYtelserOgUtbetalinger.contains(it.beskrivelse) }.sumOf { it.beløp }.toInt()
 
         if (samletInntekt < halvtGrunnbeløpMånedlig.toInt()) return BeregningResultat(0, 0, 0)
