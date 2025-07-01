@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository
 import java.sql.ResultSet
 import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.math.abs
 
 @Repository
 class InntektsendringerRepository(
@@ -131,10 +130,6 @@ data class InntektOgVedtakEndring(
     val nyeYtelser: String?,
     val eksisterendeYtelser: String?,
 ) {
-    fun harStabilInntekt(): Boolean =
-        abs(inntektsendringTreMånederTilbake.beløp - inntektsendringToMånederTilbake.beløp) < 3000 &&
-            abs(inntektsendringTreMånederTilbake.beløp - inntektsendringForrigeMåned.beløp) < 3000
-
     fun harIngenEksisterendeYtelser(): Boolean {
         val feriePengerYtelser = setOf("feriepengerPleiepenger", "feriepengerForeldrepenger", "feriepengerSykepenger")
         if (eksisterendeYtelser.isNullOrEmpty()) return true
