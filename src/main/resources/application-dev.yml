@@ -3,7 +3,7 @@ DEPLOY_ENV: dev
 rolle:
   forvalter: "59865891-62a0-4fe3-b282-2e38210d1fbb" # teamfamilie-ef-forvaltning
 
-INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 10 3 * * # kl 10:00 den 3. hver måned
+INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0/10 * * * *
 
 INNTEKT_URL: https://ikomp-q2.dev-fss-pub.nais.io
 INNTEKT_SCOPE: api://dev-fss.team-inntekt.ikomp-q2/.default
