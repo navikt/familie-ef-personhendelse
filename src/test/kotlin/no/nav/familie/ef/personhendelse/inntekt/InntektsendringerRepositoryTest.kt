@@ -26,15 +26,15 @@ class InntektsendringerRepositoryTest : IntegrasjonSpringRunnerTest() {
     }
 
     @Test
-    fun `finn inntektsendringer som skal ha oppgave - endring må over 10 prosent og 20 000 i feilutbetaling`() {
-        lagreInntektsendringGittFeilutbetalingsbeløp(21_000)
+    fun `finn inntektsendringer som skal ha oppgave - endring må over 10 prosent og 30 000 i feilutbetaling`() {
+        lagreInntektsendringGittFeilutbetalingsbeløp(31_000)
 
         val inntektsendringer = inntektsendringerRepository.hentInntektsendringerSomSkalHaOppgave()
         Assertions.assertThat(inntektsendringer.size).isEqualTo(1)
     }
 
     @Test
-    fun `finn inntektsendringer som er kandidat til automatisk revurdering - endring må være over 10 prosent og mellom 5000 til 20000 i feilutbetaling`() {
+    fun `finn inntektsendringer som er kandidat til automatisk revurdering - endring må være over 10 prosent og mellom 5000 til 30000 i feilutbetaling`() {
         lagreInntektsendringGittFeilutbetalingsbeløp(15_000)
 
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
