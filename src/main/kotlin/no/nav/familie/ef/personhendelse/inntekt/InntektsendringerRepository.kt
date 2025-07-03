@@ -63,7 +63,7 @@ class InntektsendringerRepository(
                 "(inntekt_endret_tre_maaneder_tilbake >= 10 AND " +
                 "inntekt_endret_to_maaneder_tilbake >= 10 AND " +
                 "inntekt_endret_forrige_maaned >= 10) AND " +
-                "(feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) > 20000"
+                "(feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) > 30000"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
@@ -78,7 +78,7 @@ class InntektsendringerRepository(
                 "(inntekt_endret_tre_maaneder_tilbake >= 10 AND " +
                 "inntekt_endret_to_maaneder_tilbake >= 10 AND " +
                 "inntekt_endret_forrige_maaned >= 10) AND " +
-                "(feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) < 20000 AND " +
+                "(feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) < 30000 AND " +
                 "(feilutbetaling_tre_maaneder_tilbake + feilutbetaling_to_maaneder_tilbake + feilutbetaling_forrige_maaned) > 5000"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
