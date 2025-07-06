@@ -44,6 +44,21 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
 
     @Operation(
         description =
+            "Kjører inntektskontroll på samme måte som i scheduler. Dette er til bruk dersom inntektskontrollen feiler før opprettelse av oppgaver gjøres.",
+        summary =
+            "Kjører inntektskontroll",
+    )
+    @GetMapping("/run-inntektskontroll")
+    fun runInntektskontroll() {
+        inntektsendringerService.beregnInntektsendringerOgLagreIDb()
+        // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
+        inntektsendringerService.opprettOppgaverForInntektsendringer(true)
+        inntektsendringerService.opprettOppgaverForNyeVedtakUføretrygd()
+        inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
+    }
+
+    @Operation(
+        description =
             "Utfør automatisk revurdering mot ef-sak for personer med inntektsendring, altså 10% endring i inntekt siste 3 måneder. " +
                 "Dobbeltsjekk at featuretoggle familie.ef.sak-behandle-automatisk-inntektsendring-task er av i prod dersom man kun ønsker å logge",
         summary =

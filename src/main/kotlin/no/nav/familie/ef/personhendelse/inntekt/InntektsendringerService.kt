@@ -144,7 +144,6 @@ class InntektsendringerService(
         inntektOgVedtakEndring: InntektOgVedtakEndring,
         beskrivelse: String,
     ) {
-        // val oppgavetekst = lagOppgavetekst(harNyeVedtak, inntektsendringToMånederInntekt >= 10 && inntektsendringForrigeMåned >= 10)
         val oppgaveId =
             oppgaveClient.opprettOppgave(
                 OpprettOppgaveRequest(
