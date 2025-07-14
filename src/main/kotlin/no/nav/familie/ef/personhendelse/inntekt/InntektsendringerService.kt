@@ -352,6 +352,7 @@ class InntektsendringerService(
             "ufoereytelseEtteroppgjoer",
             "ufoerepensjonFraAndreEnnFolketrygden",
             "barnepensjon",
+            "introduksjonsstoenad",
         )
 }
 
