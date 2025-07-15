@@ -74,7 +74,7 @@ class InntektsendringerRepository(
 
     // TODO nytt navn
     fun hentInntektsendringerForUføretrygdSomSkalHaOppgave(): List<InntektOgVedtakEndring> {
-        val sql = "SELECT * FROM inntektsendringer WHERE eksisterende_ytelelser like '%ufoeretrygd%'"
+        val sql = "SELECT * FROM inntektsendringer WHERE eksisterende_ytelser like '%ufoeretrygd%'"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
