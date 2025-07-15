@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class InntektsendringerScheduler(
     val inntektsendringerService: InntektsendringerService,
-    val inntektOppgaveService: InntektOppgaveService
+    val inntektOppgaveService: InntektOppgaveService,
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
