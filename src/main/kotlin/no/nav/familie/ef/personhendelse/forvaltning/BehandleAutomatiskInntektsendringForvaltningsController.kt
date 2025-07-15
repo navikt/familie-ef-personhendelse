@@ -44,13 +44,12 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
 
     @Operation(
         description =
-            "Kjører inntektskontroll på samme måte som i scheduler. Dette er til bruk dersom inntektskontrollen feiler før opprettelse av oppgaver gjøres.",
+            "Oppretter oppgaver på samme måte som i scheduler etter inntektskontrollen. Kjør dry-run av inntektskontroll først for oppdaterte verdier i databasen.",
         summary =
-            "Kjører inntektskontroll",
+            "Oppretter oppgaver og automatisk revurderer på bakgrunn av hva som er hentet inn i inntektskontrollen.",
     )
-    @GetMapping("/run-inntektskontroll")
-    fun runInntektskontroll() {
-        inntektsendringerService.beregnInntektsendringerOgLagreIDb()
+    @GetMapping("/opprett-oppgaver-fra-inntektskontroll")
+    fun opprettOppgaverFraInntektskontroll() {
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
         inntektsendringerService.opprettOppgaverForInntektsendringer(true)
         inntektsendringerService.opprettOppgaveForUføretrygdsendringer(true)
