@@ -151,6 +151,7 @@ class InntektsendringerService(
         if (skalOppretteOppgave) {
             kandidater.forEach {
                 opprettOppgaveForUføretrygdEndring(it, lagOppgavetekstVedEndringUføretrygd(forrigeMåned))
+                logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
             }
         } else {
             logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")

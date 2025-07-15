@@ -53,7 +53,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
         inntektsendringerService.beregnInntektsendringerOgLagreIDb()
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
         inntektsendringerService.opprettOppgaverForInntektsendringer(true)
-        inntektsendringerService.opprettOppgaveForUføretrygdsendringer(false)
+        inntektsendringerService.opprettOppgaveForUføretrygdsendringer(true)
         inntektsendringerService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
     }
