@@ -42,6 +42,11 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
         inntektsendringerService.beregnInntektsendringerAsync()
     }
 
+    @GetMapping("/opprett-oppgaver-for-uføretrygdsendringer")
+    fun opprettOppgaverForUføretrygdsendringer() {
+        inntektsendringerService.opprettOppgaverForInntektsendringerAsync(true)
+    }
+
     @Operation(
         description =
             "Oppretter oppgaver på samme måte som i scheduler etter inntektskontrollen. Kjør dry-run av inntektskontroll først for oppdaterte verdier i databasen.",
@@ -52,7 +57,6 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     fun opprettOppgaverFraInntektskontroll() {
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
         inntektsendringerService.opprettOppgaverForInntektsendringer(true)
-        inntektsendringerService.opprettOppgaveForUføretrygdsendringer(true)
         inntektsendringerService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
     }

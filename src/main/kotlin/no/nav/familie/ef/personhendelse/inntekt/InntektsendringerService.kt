@@ -38,6 +38,11 @@ class InntektsendringerService(
         beregnInntektsendringerOgLagreIDb()
     }
 
+    @Async
+    fun opprettOppgaverForInntektsendringerAsync(skalOppretteOppgave: Boolean) {
+        opprettOppgaveForUføretrygdsendringer(skalOppretteOppgave)
+    }
+
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
 
