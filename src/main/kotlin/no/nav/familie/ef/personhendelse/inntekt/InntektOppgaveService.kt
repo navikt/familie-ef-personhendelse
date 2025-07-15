@@ -48,7 +48,7 @@ class InntektOppgaveService(
     fun opprettOppgaveForUføretrygdsendringer(
         skalOppretteOppgave: Boolean,
     ): Int {
-        val inntektsendringForBrukereMedUføretrygd = inntektsendringerRepository.hentInntektsendringerForUføretrygdSomSkalHaOppgave()
+        val inntektsendringForBrukereMedUføretrygd = inntektsendringerRepository.hentInntektsendringerForUføretrygdSomHarUføretrygd()
         val forrigeMåned = YearMonth.now().minusMonths(1)
         val toMånederTilbake = YearMonth.now().minusMonths(2)
         val kandidater =
@@ -133,7 +133,7 @@ class InntektOppgaveService(
                     saksId = null,
                     tema = Tema.ENF,
                     oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
-                    fristFerdigstillelse = fristFerdigstillelse(), // TODO: Sjekk hva som ønskes her
+                    fristFerdigstillelse = fristFerdigstillelse(),
                     beskrivelse = beskrivelse,
                     enhetsnummer = "4489",
                     behandlingstema = Behandlingstema.Overgangsstønad.toString(), // Gjelder-feltet i Gosys
