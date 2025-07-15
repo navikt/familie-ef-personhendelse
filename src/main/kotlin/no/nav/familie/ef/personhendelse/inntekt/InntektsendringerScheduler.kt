@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class InntektsendringerScheduler(
     val inntektsendringerService: InntektsendringerService,
+    val inntektOppgaveService: InntektOppgaveService
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -16,8 +17,8 @@ class InntektsendringerScheduler(
         logger.info("Cron scheduler starter inntektskontroll")
         inntektsendringerService.beregnInntektsendringerOgLagreIDb()
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
-        inntektsendringerService.opprettOppgaverForInntektsendringer(true)
-        inntektsendringerService.opprettOppgaverForNyeVedtakUføretrygd()
+        inntektOppgaveService.opprettOppgaverForInntektsendringer(true)
+        inntektOppgaveService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
     }
 }
