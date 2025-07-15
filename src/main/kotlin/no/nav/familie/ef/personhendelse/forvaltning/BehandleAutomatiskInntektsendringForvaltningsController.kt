@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.forvaltning
 
 import io.swagger.v3.oas.annotations.Operation
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.inntekt.InntektOppgaveService
 import no.nav.familie.ef.personhendelse.inntekt.InntektsendringerService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class BehandleAutomatiskInntektsendringForvaltningsController(
     private val sakClient: SakClient,
     private val inntektsendringerService: InntektsendringerService,
+    private val inntektOppgaveService: InntektOppgaveService,
 ) {
     @Operation(
         description = "Kan brukes til å opprette en automatisk behandle automatisk inntektsendring gjennom ef-sak for en person.",
@@ -51,7 +53,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     )
     @GetMapping("/opprett-oppgaver-for-uføretrygdsendringer")
     fun opprettOppgaverForUføretrygdsendringer() {
-        inntektsendringerService.opprettOppgaverForInntektsendringerAsync(true)
+        inntektOppgaveService.opprettOppgaverForInntektsendringerAsync(true)
     }
 
     @Operation(
@@ -63,8 +65,8 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     @GetMapping("/opprett-oppgaver-fra-inntektskontroll")
     fun opprettOppgaverFraInntektskontroll() {
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
-        inntektsendringerService.opprettOppgaverForInntektsendringer(true)
-        inntektsendringerService.opprettOppgaverForNyeVedtakUføretrygd()
+        inntektOppgaveService.opprettOppgaverForInntektsendringer(true)
+        inntektOppgaveService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
     }
 
