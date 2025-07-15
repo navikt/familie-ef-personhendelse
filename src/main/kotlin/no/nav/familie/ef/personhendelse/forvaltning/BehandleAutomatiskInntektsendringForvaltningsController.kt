@@ -42,6 +42,12 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
         inntektsendringerService.beregnInntektsendringerAsync()
     }
 
+    @Operation(
+        description =
+            "TODO legg til beskrivelse",
+        summary =
+            "TODO legg til sammendrag",
+    )
     @GetMapping("/opprett-oppgaver-for-uføretrygdsendringer")
     fun opprettOppgaverForUføretrygdsendringer() {
         inntektsendringerService.opprettOppgaverForInntektsendringerAsync(true)
