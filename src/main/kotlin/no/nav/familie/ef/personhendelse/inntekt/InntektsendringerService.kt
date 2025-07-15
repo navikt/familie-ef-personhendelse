@@ -122,11 +122,11 @@ class InntektsendringerService(
     fun opprettOppgaveForUføretrygdsendringer(
         skalOppretteOppgave: Boolean,
     ): Int {
-        val uføreTrygsendringer = inntektsendringerRepository.hentInntektsendringerForUføretrygdSomSkalHaOppgave()
+        val inntektsendringForBrukereMedUføretrygd = inntektsendringerRepository.hentInntektsendringerForUføretrygdSomSkalHaOppgave()
         val forrigeMåned = YearMonth.now().minusMonths(1)
         val toMånederTilbake = YearMonth.now().minusMonths(2)
         val kandidater =
-            uføreTrygsendringer.mapNotNull { endring ->
+            inntektsendringForBrukereMedUføretrygd.mapNotNull { endring ->
                 val inntekt = hentInntekt(endring.personIdent) ?: return@mapNotNull null
 
                 val uføretrygdForrige =
@@ -145,19 +145,12 @@ class InntektsendringerService(
                         ?.sumOf { it.beløp }
                         ?: 0.0
 
-                val harOvergangsstoenad =
-                    inntekt.inntektsmåneder
-                        .find { it.måned == forrigeMåned }
-                        ?.inntektListe
-                        ?.any { it.beskrivelse == "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" }
-                        ?: false
-
-                if (uføretrygdForrige > uføretrygdToMnd && harOvergangsstoenad) endring else null
+                if (uføretrygdForrige > uføretrygdToMnd) endring else null
             }
 
         if (skalOppretteOppgave) {
             kandidater.forEach {
-                opprettOppgaveForUføretrygEndring(it, lagOppgavetekstVedEnringUføretrygd(forrigeMåned))
+                opprettOppgaveForUføretrygdEndring(it, lagOppgavetekstVedEndringUføretrygd(forrigeMåned))
             }
         } else {
             logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
@@ -213,7 +206,7 @@ class InntektsendringerService(
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
-    private fun opprettOppgaveForUføretrygEndring(
+    private fun opprettOppgaveForUføretrygdEndring(
         inntektOgVedtakEndring: InntektOgVedtakEndring,
         beskrivelse: String,
     ) {
@@ -258,7 +251,7 @@ class InntektsendringerService(
 
     fun lagOppgavetekstVedNyYtelseUføretrygd(): String = "Bruker har fått utbetalt uføretrygd. Vurder samordning."
 
-    fun lagOppgavetekstVedEnringUføretrygd(MånedÅr: YearMonth): String = "Uføretrygden til bruker har økt fra ${MånedÅr.norskFormat()}. Vurder om overgangsstønaden skal beregnes på nytt."
+    fun lagOppgavetekstVedEndringUføretrygd(MånedÅr: YearMonth): String = "Uføretrygden til bruker har økt fra ${MånedÅr.norskFormat()}. Vurder om overgangsstønaden skal beregnes på nytt."
 
     private fun YearMonth.norskFormat() = this.format(DateTimeFormatter.ofPattern("MM.yyyy"))
 
