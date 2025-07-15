@@ -44,9 +44,10 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
 
     @Operation(
         description =
-            "TODO legg til beskrivelse",
+            "Oppprett oppgaver for uføretrygdsendringer",
         summary =
-            "TODO legg til sammendrag",
+            "Oppretter oppgaver for uføretrygdsendringer for personer som har hatt endring i stønadsbeløpet i løpet av de 2 siste månedene. " +
+                "Baserer seg på inntektskontroll og krever derfor en dry-run av inntektskontroll for å hente nyeste data.",
     )
     @GetMapping("/opprett-oppgaver-for-uføretrygdsendringer")
     fun opprettOppgaverForUføretrygdsendringer() {

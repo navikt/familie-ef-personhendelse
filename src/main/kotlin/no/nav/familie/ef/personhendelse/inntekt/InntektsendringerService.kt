@@ -5,6 +5,7 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
+import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
@@ -156,7 +157,6 @@ class InntektsendringerService(
         if (skalOppretteOppgave) {
             kandidater.forEach {
                 opprettOppgaveForUføretrygdEndring(it, lagOppgavetekstVedEndringUføretrygd(forrigeMåned))
-                logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
             }
         } else {
             logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
@@ -230,7 +230,7 @@ class InntektsendringerService(
                     fristFerdigstillelse = fristFerdigstillelse(), // TODO: Sjekk hva som ønskes her
                     beskrivelse = beskrivelse,
                     enhetsnummer = "4489",
-                    behandlingstema = null, // Gjelder-feltet i Gosys
+                    behandlingstema = Behandlingstema.Overgangsstønad.toString(), // Gjelder-feltet i Gosys
                     tilordnetRessurs = null,
                     behandlesAvApplikasjon = null,
                 ),
