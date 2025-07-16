@@ -2,6 +2,7 @@ package no.nav.familie.ef.personhendelse.forvaltning
 
 import io.swagger.v3.oas.annotations.Operation
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.inntekt.InntektOppgaveService
 import no.nav.familie.ef.personhendelse.inntekt.InntektsendringerService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 class BehandleAutomatiskInntektsendringForvaltningsController(
     private val sakClient: SakClient,
     private val inntektsendringerService: InntektsendringerService,
+    private val inntektOppgaveService: InntektOppgaveService,
 ) {
     @Operation(
         description = "Kan brukes til å opprette en automatisk behandle automatisk inntektsendring gjennom ef-sak for en person.",
@@ -44,16 +46,27 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
 
     @Operation(
         description =
-            "Kjører inntektskontroll på samme måte som i scheduler. Dette er til bruk dersom inntektskontrollen feiler før opprettelse av oppgaver gjøres.",
+            "Oppprett oppgaver for uføretrygdsendringer",
         summary =
-            "Kjører inntektskontroll",
+            "Oppretter oppgaver for uføretrygdsendringer for personer som har hatt endring i stønadsbeløpet i løpet av de 2 siste månedene. " +
+                "Baserer seg på inntektskontroll og krever derfor en dry-run av inntektskontroll for å hente nyeste data. Denne er i egen metode og kjøres async for å få et m2m-token mot a-inntekt",
     )
-    @GetMapping("/run-inntektskontroll")
-    fun runInntektskontroll() {
-        inntektsendringerService.beregnInntektsendringerOgLagreIDb()
+    @GetMapping("/opprett-oppgaver-for-ufoeretrygdsendringer")
+    fun opprettOppgaverForUføretrygdsendringer() {
+        inntektOppgaveService.opprettOppgaverForUføretrygdsendringerAsync(true)
+    }
+
+    @Operation(
+        description =
+            "Oppretter oppgaver for uføretrygdsendringer. Baserer seg på inntektskontrollen, det vil si at dry-run-inntektskontroll må være kjørt først for oppdaterte verdier",
+        summary =
+            "Oppretter oppgaver og automatisk revurderer på bakgrunn av hva som er hentet inn i inntektskontrollen.",
+    )
+    @GetMapping("/opprett-oppgaver-for-inntektskontroll")
+    fun opprettOppgaverFraInntektskontroll() {
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
-        inntektsendringerService.opprettOppgaverForInntektsendringer(true)
-        inntektsendringerService.opprettOppgaverForNyeVedtakUføretrygd()
+        inntektOppgaveService.opprettOppgaverForInntektsendringer(true)
+        inntektOppgaveService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
     }
 

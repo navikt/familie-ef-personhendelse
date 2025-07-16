@@ -3,7 +3,6 @@ package no.nav.familie.ef.personhendelse.inntekt
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
@@ -12,17 +11,15 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
-import java.time.LocalDateTime
 import java.time.YearMonth
 
 class InntektsendringerServiceTest {
     private val oppgaveClient = mockk<OppgaveClient>()
     private val sakClient = mockk<SakClient>()
-    private val arbeidsfordelingClient = mockk<ArbeidsfordelingClient>()
     private val inntektsendringerRepository = mockk<InntektsendringerRepository>()
     private val inntektClient = mockk<InntektClient>()
 
-    val inntektsendringerService = InntektsendringerService(oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerRepository, inntektClient)
+    val inntektsendringerService = InntektsendringerService(oppgaveClient, sakClient, inntektsendringerRepository, inntektClient)
     val forventetÅrligInntekt = 420000 // 35k pr mnd i eksempel json-fil
 
     val enMndTilbake = YearMonth.now().minusMonths(1)
@@ -244,27 +241,6 @@ class InntektsendringerServiceTest {
                         forventetInntektForPerson = forventetInntektForPerson(forventetÅrligInntekt),
                     ).harEndretInntekt(),
             ).isTrue
-    }
-
-    @Test
-    fun `lagOppgavetekstForInntektsendring - sjekk tusenskille på feiltubetalingsbeløp og norsk format på år-måned`() {
-        val oppgavetekst =
-            inntektsendringerService.lagOppgavetekstForInntektsendring(
-                InntektOgVedtakEndring(
-                    personIdent = "1",
-                    harNyeVedtak = false,
-                    prosessertTid = LocalDateTime.of(2023, 11, 8, 5, 0),
-                    inntektsendringFireMånederTilbake = BeregningResultat(1, 1, 1),
-                    inntektsendringTreMånederTilbake = BeregningResultat(2, 2, 2),
-                    inntektsendringToMånederTilbake = BeregningResultat(3, 3, 3),
-                    inntektsendringForrigeMåned = BeregningResultat(4, 4, 40000),
-                    nyeYtelser = null,
-                    eksisterendeYtelser = null,
-                ),
-            )
-
-        Assertions.assertThat(oppgavetekst.contains("Beregnet feilutbetaling i uttrekksperioden: 40 006 kroner "))
-        Assertions.assertThat(oppgavetekst.contains("FOM 06.2023 - TOM 10.2023"))
     }
 
     fun readResource(name: String): String =

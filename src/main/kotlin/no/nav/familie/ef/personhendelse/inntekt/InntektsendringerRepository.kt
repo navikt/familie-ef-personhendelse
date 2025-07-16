@@ -72,6 +72,11 @@ class InntektsendringerRepository(
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
+    fun hentInntektsendringerForUføretrygdSomHarUføretrygd(): List<InntektOgVedtakEndring> {
+        val sql = "SELECT * FROM inntektsendringer WHERE eksisterende_ytelser like '%ufoeretrygd%'"
+        return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
+    }
+
     fun hentKandidaterTilAutomatiskRevurdering(): List<InntektOgVedtakEndring> {
         val sql =
             "SELECT * FROM inntektsendringer WHERE " +

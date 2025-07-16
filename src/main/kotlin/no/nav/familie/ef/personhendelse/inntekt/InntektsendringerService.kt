@@ -1,28 +1,19 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
-import no.nav.familie.kontrakter.felles.Tema
-import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
-import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
-import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
-import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 
 @Service
 class InntektsendringerService(
     val oppgaveClient: OppgaveClient,
     val sakClient: SakClient,
-    val arbeidsfordelingClient: ArbeidsfordelingClient,
     val inntektsendringerRepository: InntektsendringerRepository,
     val inntektClient: InntektClient,
 ) {
@@ -107,26 +98,7 @@ class InntektsendringerService(
         )
     }
 
-    fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {
-        val inntektsendringer = inntektsendringerRepository.hentInntektsendringerSomSkalHaOppgave()
-        if (skalOppretteOppgave) {
-            inntektsendringer.forEach {
-                opprettOppgaveForInntektsendring(it, lagOppgavetekstForInntektsendring(it))
-            }
-        } else {
-            logger.info("Ville opprettet inntektsendring-oppgave for ${inntektsendringer.size} personer")
-        }
-        return inntektsendringer.size
-    }
-
-    fun opprettOppgaverForNyeVedtakUføretrygd() {
-        val nyeUføretrygdVedtak = inntektsendringerRepository.hentInntektsendringerForUføretrygd()
-        nyeUføretrygdVedtak.forEach {
-            opprettOppgaveForInntektsendring(it, lagOppgavetekstVedNyYtelseUføretrygd())
-        }
-    }
-
-    private fun hentInntekt(personIdent: String): InntektResponse? {
+    fun hentInntekt(personIdent: String): InntektResponse? {
         try {
             return inntektClient.hentInntekt(
                 personIdent = personIdent,
@@ -139,55 +111,6 @@ class InntektsendringerService(
 
         return null
     }
-
-    private fun opprettOppgaveForInntektsendring(
-        inntektOgVedtakEndring: InntektOgVedtakEndring,
-        beskrivelse: String,
-    ) {
-        val oppgaveId =
-            oppgaveClient.opprettOppgave(
-                OpprettOppgaveRequest(
-                    ident =
-                        OppgaveIdentV2(
-                            ident = inntektOgVedtakEndring.personIdent,
-                            gruppe = IdentGruppe.FOLKEREGISTERIDENT,
-                        ),
-                    saksId = null,
-                    tema = Tema.ENF,
-                    oppgavetype = Oppgavetype.VurderInntekt,
-                    fristFerdigstillelse = fristFerdigstillelse(),
-                    beskrivelse = beskrivelse,
-                    enhetsnummer = arbeidsfordelingClient.hentArbeidsfordelingEnhetId(inntektOgVedtakEndring.personIdent),
-                    behandlingstema = null, // Gjelder-feltet i Gosys
-                    tilordnetRessurs = null,
-                    behandlesAvApplikasjon = null,
-                ),
-            )
-        secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
-        oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
-    }
-
-    fun lagOppgavetekstForInntektsendring(inntektOgVedtakEndring: InntektOgVedtakEndring): String {
-        val totalFeilutbetaling =
-            inntektOgVedtakEndring.inntektsendringTreMånederTilbake.feilutbetaling +
-                inntektOgVedtakEndring.inntektsendringToMånederTilbake.feilutbetaling +
-                inntektOgVedtakEndring.inntektsendringForrigeMåned.feilutbetaling
-
-        val årMånedProsessert = YearMonth.from(inntektOgVedtakEndring.prosessertTid)
-
-        val periodeTekst =
-            "FOM ${årMånedProsessert.minusMonths(3).norskFormat()} - TOM ${årMånedProsessert.minusMonths(1).norskFormat()}"
-        val oppgavetekst =
-            "Uttrekksperiode: $periodeTekst \n" +
-                "Beregnet feilutbetaling i uttrekksperioden: ${totalFeilutbetaling.tusenskille()} kroner "
-        return oppgavetekst
-    }
-
-    fun lagOppgavetekstVedNyYtelseUføretrygd(): String = "Bruker har fått utbetalt uføretrygd. Vurder samordning."
-
-    private fun YearMonth.norskFormat() = this.format(DateTimeFormatter.ofPattern("MM.yyyy"))
-
-    private fun Int.tusenskille() = String.format("%,d", this).replace(",", " ")
 
     fun beregnEndretInntekt(
         inntektResponse: InntektResponse,
