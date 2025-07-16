@@ -26,7 +26,7 @@ class InntektOppgaveService(
     val inntektsendringerService: InntektsendringerService,
 ) {
     @Async
-    fun opprettOppgaverForInntektsendringerAsync(skalOppretteOppgave: Boolean) {
+    fun opprettOppgaverForUføretrygdsendringerAsync(skalOppretteOppgave: Boolean) {
         opprettOppgaveForUføretrygdsendringer(skalOppretteOppgave)
     }
 
