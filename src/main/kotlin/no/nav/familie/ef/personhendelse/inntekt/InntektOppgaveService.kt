@@ -136,7 +136,7 @@ class InntektOppgaveService(
                     fristFerdigstillelse = fristFerdigstillelse(),
                     beskrivelse = beskrivelse,
                     enhetsnummer = "4489",
-                    behandlingstema = Behandlingstema.Overgangsstønad.toString(), // Gjelder-feltet i Gosys
+                    behandlingstema = Behandlingstema.Overgangsstønad.value, // Gjelder-feltet i Gosys
                     tilordnetRessurs = null,
                     behandlesAvApplikasjon = null,
                 ),
