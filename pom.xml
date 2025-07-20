@@ -42,7 +42,7 @@
         <nav.security.version>5.0.30</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.2</wiremock.version>
-        <mockk-jvm.version>1.14.4</mockk-jvm.version>
+        <mockk-jvm.version>1.14.5</mockk-jvm.version>
         <postgres.version>1.21.3</postgres.version>
         <springdoc.version>2.8.9</springdoc.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
@@ -161,7 +161,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.10.1</version>
+            <version>11.10.3</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -386,7 +386,7 @@
                     <dependency>
                         <groupId>com.pinterest.ktlint</groupId>
                         <artifactId>ktlint-cli</artifactId>
-                        <version>1.6.0</version>
+                        <version>1.7.0</version>
                     </dependency>
                     <!-- additional 3rd party ruleset(s) can be specified here -->
                 </dependencies>
