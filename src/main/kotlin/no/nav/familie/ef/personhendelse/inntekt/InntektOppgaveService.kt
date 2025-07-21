@@ -109,7 +109,7 @@ class InntektOppgaveService(
 
         if (skalOppretteOppgave) {
             kandidater.forEach {
-                opprettOppgaveForUføretrygdEndring(it, lagOppgavetekstVedEndringArbeidsavklaringspenger())
+                opprettOppgaveForArbeidsavklaringspengerEndring(it, lagOppgavetekstVedEndringArbeidsavklaringspenger())
             }
         } else {
             logger.info("Ville opprettet arbeidsavklaringspenger-oppgave for ${kandidater.size} personer som har fylt 25 år siste måned")
