@@ -65,7 +65,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     )
     @GetMapping("/opprett-oppgaver-for-arbeidsavklaringspenger-endringer")
     fun opprettOppgaverForArbeidsavklaringspengerEndringer() {
-        inntektOppgaveService.opprettOppgaverForUføretrygdsendringerAsync(true)
+        inntektOppgaveService.opprettOppgaverForArbeidsavklaringspengerEndringerAsync(true)
     }
 
     @Operation(

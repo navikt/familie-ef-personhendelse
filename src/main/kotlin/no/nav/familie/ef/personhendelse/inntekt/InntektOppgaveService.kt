@@ -34,8 +34,8 @@ class InntektOppgaveService(
     }
 
     @Async
-    fun opprettOppgaverForArbeidsavklaringspengerEndringer(skalOppretteOppgave: Boolean) {
-        opprettOppgaverForArbeidsavklaringspengerEndringer(skalOppretteOppgave)
+    fun opprettOppgaverForArbeidsavklaringspengerEndringerAsync(skalOppretteOppgave: Boolean) {
+        opprettOppgaveForPersonSomHarFyltTjueFemOgHarArbeidsavklaringspenger(skalOppretteOppgave)
     }
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
