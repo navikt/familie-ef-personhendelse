@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.time.Period
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
@@ -100,12 +99,13 @@ class InntektOppgaveService(
         val startDato = YearMonth.now().minusMonths(1).atDay(6)
         val sluttDato = LocalDate.now()
 
-        val kandidater = inntektsendringForBrukereMedArbeidsavklaringspenger.mapNotNull { endring ->
-            val person = pdlClient.hentPerson(endring.personIdent)
-            val foedselsdato = person.foedselsdato.first().foedselsdato
-            val fylte25Dato = foedselsdato?.plusYears(25)
-            if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato)) endring else null
-        }
+        val kandidater =
+            inntektsendringForBrukereMedArbeidsavklaringspenger.mapNotNull { endring ->
+                val person = pdlClient.hentPerson(endring.personIdent)
+                val foedselsdato = person.foedselsdato.first().foedselsdato
+                val fylte25Dato = foedselsdato?.plusYears(25)
+                if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato)) endring else null
+            }
 
         if (skalOppretteOppgave) {
             kandidater.forEach {
