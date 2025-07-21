@@ -103,15 +103,12 @@ class InntektOppgaveService(
             inntektsendringForBrukereMedArbeidsavklaringspenger.mapNotNull { endring ->
                 val person = pdlClient.hentPerson(endring.personIdent)
                 val foedselsdato = person.foedselsdato.first().foedselsdato
-                logger.info("Fødselsdato: " + foedselsdato.toString())
                 val fylte25Dato = foedselsdato?.plusYears(25)
-                logger.info("Fylte 25 dato: " + fylte25Dato.toString())
                 if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato)) endring else null
             }
 
         if (skalOppretteOppgave) {
             kandidater.forEach {
-                logger.info("Ville opprettet arbeidsavklaringspenger-oppgave for ${kandidater.size} personer som har fylt 25 år siste måned")
                 opprettOppgaveForArbeidsavklaringspengerEndring(it, lagOppgavetekstVedEndringArbeidsavklaringspenger())
             }
         } else {
