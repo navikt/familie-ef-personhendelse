@@ -21,5 +21,6 @@ class InntektsendringerScheduler(
         inntektOppgaveService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
         inntektOppgaveService.opprettOppgaveForUføretrygdsendringer(false)
+        inntektOppgaveService.opprettOppgaveForPersonSomHarFyltTjueFemOgHarArbeidsavklaringspenger(false)
     }
 }
