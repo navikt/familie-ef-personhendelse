@@ -103,11 +103,11 @@ class InntektOppgaveService(
             inntektsendringForBrukereMedArbeidsavklaringspenger.mapNotNull { endring ->
                 val person = pdlClient.hentPerson(endring.personIdent)
                 val foedselsdato = person.foedselsdato.first().foedselsdato
-                if( foedselsdato == null ) {
+                if (foedselsdato == null) {
                     secureLogger.error("Fant ingen fødselsdato for person ${endring.personIdent}")
                 }
                 val fylte25Dato = foedselsdato?.plusYears(25)
-                if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato)) endring else null
+                if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato.plusDays(1))) endring else null
             }
 
         if (skalOppretteOppgave) {
