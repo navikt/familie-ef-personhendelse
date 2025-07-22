@@ -49,11 +49,23 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
             "Oppprett oppgaver for uføretrygdsendringer",
         summary =
             "Oppretter oppgaver for uføretrygdsendringer for personer som har hatt endring i stønadsbeløpet i løpet av de 2 siste månedene. " +
-                "Baserer seg på inntektskontroll og krever derfor en dry-run av inntektskontroll for å hente nyeste data. Denne er i egen metode og kjøres async for å få et m2m-token mot a-inntekt",
+                "Baserer seg på inntektskontroll og krever derfor en dry-run av inntektskontroll for å hente nyeste data.",
     )
     @GetMapping("/opprett-oppgaver-for-ufoeretrygdsendringer")
     fun opprettOppgaverForUføretrygdsendringer() {
         inntektOppgaveService.opprettOppgaverForUføretrygdsendringerAsync(true)
+    }
+
+    @Operation(
+        description =
+            "Oppprett oppgaver for personer fylt 25 med arbeidsavklaringspenger",
+        summary =
+            "Oppretter oppgaver for personer som har fylt 25 år siste måned og har arbeidsavklaringspenger. " +
+                "Baserer seg på inntektskontroll og krever derfor en dry-run av inntektskontroll for å hente nyeste data.",
+    )
+    @GetMapping("/opprett-oppgaver-for-arbeidsavklaringspenger-endringer")
+    fun opprettOppgaverForArbeidsavklaringspengerEndringer() {
+        inntektOppgaveService.opprettOppgaverForArbeidsavklaringspengerEndringerAsync(true)
     }
 
     @Operation(

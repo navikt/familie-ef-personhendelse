@@ -88,6 +88,12 @@ class InntektsendringerRepository(
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
+    fun hentInntektsendringerForPersonMedArbeidsavklaringspenger(): List<InntektOgVedtakEndring> {
+        val sql =
+            "SELECT * FROM inntektsendringer WHERE eksisterende_ytelser like '%arbeidsavklaringspenger%'"
+        return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
+    }
+
     private val inntektsendringerMapper = { rs: ResultSet, _: Int ->
         InntektOgVedtakEndring(
             rs.getString("person_ident"),

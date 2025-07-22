@@ -4,6 +4,7 @@ import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -14,8 +15,9 @@ class InntektOppgaveServiceTest {
     private val arbeidsfordelingClient = mockk<ArbeidsfordelingClient>()
     private val inntektsendringerRepository = mockk<InntektsendringerRepository>()
     private val inntektsendringerService = mockk<InntektsendringerService>()
+    private val pdlClient = mockk<PdlClient>()
 
-    val inntektOppgaveService = InntektOppgaveService(oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerRepository, inntektsendringerService)
+    val inntektOppgaveService = InntektOppgaveService(oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerRepository, inntektsendringerService, pdlClient)
 
     @Test
     fun `lagOppgavetekstForInntektsendring - sjekk tusenskille på feiltubetalingsbeløp og norsk format på år-måned`() {

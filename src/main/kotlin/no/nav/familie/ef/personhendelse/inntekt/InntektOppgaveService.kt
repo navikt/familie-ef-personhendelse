@@ -4,6 +4,7 @@ import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
+import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
@@ -14,6 +15,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
@@ -24,10 +26,16 @@ class InntektOppgaveService(
     val arbeidsfordelingClient: ArbeidsfordelingClient,
     val inntektsendringerRepository: InntektsendringerRepository,
     val inntektsendringerService: InntektsendringerService,
+    val pdlClient: PdlClient,
 ) {
     @Async
     fun opprettOppgaverForUføretrygdsendringerAsync(skalOppretteOppgave: Boolean) {
         opprettOppgaveForUføretrygdsendringer(skalOppretteOppgave)
+    }
+
+    @Async
+    fun opprettOppgaverForArbeidsavklaringspengerEndringerAsync(skalOppretteOppgave: Boolean) {
+        opprettOppgaveForPersonSomHarFyltTjueFemOgHarArbeidsavklaringspenger(skalOppretteOppgave)
     }
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -80,6 +88,34 @@ class InntektOppgaveService(
             }
         } else {
             logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
+        }
+        return kandidater.size
+    }
+
+    fun opprettOppgaveForPersonSomHarFyltTjueFemOgHarArbeidsavklaringspenger(
+        skalOppretteOppgave: Boolean,
+    ): Int {
+        val inntektsendringForBrukereMedArbeidsavklaringspenger = inntektsendringerRepository.hentInntektsendringerForPersonMedArbeidsavklaringspenger()
+        val startDato = YearMonth.now().minusMonths(1).atDay(6)
+        val sluttDato = LocalDate.now()
+
+        val kandidater =
+            inntektsendringForBrukereMedArbeidsavklaringspenger.mapNotNull { endring ->
+                val person = pdlClient.hentPerson(endring.personIdent)
+                val foedselsdato = person.foedselsdato.first().foedselsdato
+                if( foedselsdato == null ) {
+                    secureLogger.error("Fant ingen fødselsdato for person ${endring.personIdent}")
+                }
+                val fylte25Dato = foedselsdato?.plusYears(25)
+                if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato)) endring else null
+            }
+
+        if (skalOppretteOppgave) {
+            kandidater.forEach {
+                opprettOppgaveForArbeidsavklaringspengerEndring(it, lagOppgavetekstVedEndringArbeidsavklaringspenger())
+            }
+        } else {
+            logger.info("Ville opprettet arbeidsavklaringspenger-oppgave for ${kandidater.size} personer som har fylt 25 år siste måned")
         }
         return kandidater.size
     }
@@ -145,9 +181,38 @@ class InntektOppgaveService(
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
+    private fun opprettOppgaveForArbeidsavklaringspengerEndring(
+        inntektOgVedtakEndring: InntektOgVedtakEndring,
+        beskrivelse: String,
+    ) {
+        val oppgaveId =
+            oppgaveClient.opprettOppgave(
+                OpprettOppgaveRequest(
+                    ident =
+                        OppgaveIdentV2(
+                            ident = inntektOgVedtakEndring.personIdent,
+                            gruppe = IdentGruppe.FOLKEREGISTERIDENT,
+                        ),
+                    saksId = null,
+                    tema = Tema.ENF,
+                    oppgavetype = Oppgavetype.VurderKonsekvensForYtelse,
+                    fristFerdigstillelse = fristFerdigstillelse(),
+                    beskrivelse = beskrivelse,
+                    enhetsnummer = "4489",
+                    behandlingstema = Behandlingstema.Overgangsstønad.value, // Gjelder-feltet i Gosys
+                    tilordnetRessurs = null,
+                    behandlesAvApplikasjon = null,
+                ),
+            )
+        secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
+        oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
+    }
+
     fun lagOppgavetekstVedNyYtelseUføretrygd(): String = "Bruker har fått utbetalt uføretrygd. Vurder samordning."
 
     fun lagOppgavetekstVedEndringUføretrygd(MånedÅr: YearMonth): String = "Uføretrygden til bruker har økt fra ${MånedÅr.norskFormat()}. Vurder om overgangsstønaden skal beregnes på nytt."
+
+    fun lagOppgavetekstVedEndringArbeidsavklaringspenger(): String = "Bruker mottar AAP og har fylt 25 år. Kontroller inntekt på grunn av økt dagsats."
 
     fun lagOppgavetekstForInntektsendring(inntektOgVedtakEndring: InntektOgVedtakEndring): String {
         val totalFeilutbetaling =
