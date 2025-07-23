@@ -23,9 +23,9 @@ class OppgaveController(
             try {
                 val oppgave = oppgaveClient.finnOppgaveMedId(it)
                 secureLogger.info(
-                    "oppgave opprettet fra livshendelse: " + oppgave.beskrivelse +
+                    "oppgave opprettet fra livshendelse: ${oppgave.beskrivelse}" +
                         ";status: ${oppgave.status};opprettetTidspunkt: ${oppgave.opprettetTidspunkt}" +
-                        ";fnr " + oppgave.identer?.firstOrNull { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT },
+                        ";fnr: ${oppgave.identer?.firstOrNull { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }}",
                 )
             } catch (e: Exception) {
                 secureLogger.info("Oppgave opprettet fra livshendelse feil:", e)

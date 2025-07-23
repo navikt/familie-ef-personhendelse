@@ -34,7 +34,7 @@ class SivilstandHandler : PersonhendelseHandler {
         }
 
         val beskrivelse =
-            personhendelse.endringstype.tilTekst() + " sivilstand av type \"${sivilstand.type.enumToReadable()}\", " +
+            "${personhendelse.endringstype.tilTekst()} sivilstand av type \"${sivilstand.type.enumToReadable()}\", " +
                 "gyldig fra og med dato: ${gyldigFraOgMed.tilNorskDatoformat()}"
         return OpprettOppgave(beskrivelse = beskrivelse)
     }
