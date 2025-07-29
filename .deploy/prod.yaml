@@ -51,7 +51,7 @@ spec:
     inbound:
       rules:
         - application: familie-ef-sak
-        - application: familie-prosessering
+       # - application: familie-prosessering
     outbound:
       rules:
         - application: familie-ef-sak
