@@ -25,7 +25,7 @@ class OpprettOppgaverForArbeidsavklaringspengerEndringerTask(
 
     override fun doTask(task: Task) {
         val personIdent = objectMapper.readValue<PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask>(task.payload).personIdent
-        logger.info("Oppretter oppgaver for arbeidsavklaringspenger endringer ${task.payload}")
+        secureLogger.info("Oppretter oppgaver for arbeidsavklaringspenger endringer ${task.payload}")
         inntektOppgaveService.opprettOppgaveForArbeidsavklaringspengerEndring(personIdent, inntektOppgaveService.lagOppgavetekstVedEndringArbeidsavklaringspenger())
     }
 
