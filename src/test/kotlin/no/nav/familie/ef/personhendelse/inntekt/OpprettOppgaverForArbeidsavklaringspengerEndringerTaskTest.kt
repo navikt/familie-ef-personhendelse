@@ -28,14 +28,14 @@ class OpprettOppgaverForArbeidsavklaringspengerEndringerTaskTest : IntegrasjonSp
 
     @Test
     fun `Sjekk at man kan opprette task for arbeidsavklaringspenger endringer og at den har riktig metadata`() {
-        val payload = """{"personIdent":"123", "måned":"6"}"""
+        val payload = """{"personIdent":"123", "årMåned":"6"}"""
         val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
         taskService.save(task)
         val taskList = taskService.findAll()
         val taskFraDB = taskList.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(3)
-        assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "måned", "callId")
+        assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "årMåned", "callId")
         opprettOppgaverForArbeidsavklaringspengerEndringerTask.doTask(task)
         verify(exactly = 1) { inntektOppgaveService.opprettOppgaveForArbeidsavklaringspengerEndring(any(), any()) }
     }

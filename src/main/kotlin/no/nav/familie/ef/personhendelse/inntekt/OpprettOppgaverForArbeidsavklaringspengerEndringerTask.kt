@@ -41,7 +41,7 @@ class OpprettOppgaverForArbeidsavklaringspengerEndringerTask(
                 properties =
                     Properties().apply {
                         this["personIdent"] = payloadObject.personIdent
-                        this["måned"] = payloadObject.måned
+                        this["årMåned"] = payloadObject.årMåned
                     },
             )
         }
@@ -50,5 +50,5 @@ class OpprettOppgaverForArbeidsavklaringspengerEndringerTask(
 
 data class PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(
     val personIdent: String,
-    val måned: String,
+    val årMåned: String,
 )
