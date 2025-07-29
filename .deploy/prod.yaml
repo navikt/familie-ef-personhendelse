@@ -40,7 +40,7 @@ spec:
       claims:
         groups:
           - id: "f9882377-e69d-4af8-b41d-3ccdfc46ef8d" # teamfamilie-ef-forvaltning
-          #- id: "87190cf3-b278-457d-8ab7-1a5c55a9edd7" # Group_... teamfamilie - gir tilgang til prosessering TODO når i prod mby
+          - id: "87190cf3-b278-457d-8ab7-1a5c55a9edd7" # Group_... teamfamilie - gir tilgang til prosessering
         extra:
           - "NAVident"
           - "azp_name"
@@ -51,7 +51,7 @@ spec:
     inbound:
       rules:
         - application: familie-ef-sak
-       # - application: familie-prosessering
+        - application: familie-prosessering
     outbound:
       rules:
         - application: familie-ef-sak
