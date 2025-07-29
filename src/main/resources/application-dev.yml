@@ -3,6 +3,8 @@ DEPLOY_ENV: dev
 rolle:
   forvalter: "59865891-62a0-4fe3-b282-2e38210d1fbb" # teamfamilie-ef-forvaltning
 
+prosessering.rolle: "928636f4-fd0d-4149-978e-a6fb68bb19de" # 0000-GA-STDAPPS 928636f4-fd0d-4149-978e-a6fb68bb19de
+
 INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 11 * * * # kl 11:00 hver dag
 
 INNTEKT_URL: https://ikomp-q2.dev-fss-pub.nais.io
