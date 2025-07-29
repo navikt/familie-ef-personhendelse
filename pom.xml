@@ -39,6 +39,7 @@
         <kontrakter.version>3.0_20250703092737_0055ff4</kontrakter.version>
         <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20250702091822_699ca50</eksterne-kontrakter.version.stonadsstatistikk.ks>
         <felles.version>3.20250616113100_41d23f2</felles.version>
+        <prosessering.version>2.20250728105838_1f618e2</prosessering.version>
         <nav.security.version>5.0.30</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.2</wiremock.version>
@@ -115,6 +116,11 @@
             <groupId>no.nav.familie.kontrakter</groupId>
             <artifactId>felles</artifactId>
             <version>${kontrakter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.familie</groupId>
+            <artifactId>prosessering-core</artifactId>
+            <version>${prosessering.version}</version>
         </dependency>
         <dependency>
             <groupId>no.nav.familie.kontrakter</groupId>

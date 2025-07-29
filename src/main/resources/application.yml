@@ -130,6 +130,17 @@ management:
 rolle:
   forvalter: "f9882377-e69d-4af8-b41d-3ccdfc46ef8d" # teamfamilie-ef-forvaltning
 
+prosessering.rolle: "87190cf3-b278-457d-8ab7-1a5c55a9edd7" # Gruppen teamfamilie
+
+prosessering:
+  continuousRunning.enabled: true
+  fixedDelayString:
+    in:
+      milliseconds: 15000
+  delete:
+    after:
+      weeks: 16
+
 DEPLOY_ENV: prod
 
 FAMILIE_INTEGRASJONER_API_URL: https://familie-integrasjoner.${DEPLOY_ENV}-fss-pub.nais.io
