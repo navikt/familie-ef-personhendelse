@@ -5,6 +5,7 @@ import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -16,8 +17,9 @@ class InntektOppgaveServiceTest {
     private val inntektsendringerRepository = mockk<InntektsendringerRepository>()
     private val inntektsendringerService = mockk<InntektsendringerService>()
     private val pdlClient = mockk<PdlClient>()
+    private val taskService = mockk<TaskService>()
 
-    val inntektOppgaveService = InntektOppgaveService(oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerRepository, inntektsendringerService, pdlClient)
+    val inntektOppgaveService = InntektOppgaveService(oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerRepository, inntektsendringerService, pdlClient, taskService)
 
     @Test
     fun `lagOppgavetekstForInntektsendring - sjekk tusenskille på feiltubetalingsbeløp og norsk format på år-måned`() {
