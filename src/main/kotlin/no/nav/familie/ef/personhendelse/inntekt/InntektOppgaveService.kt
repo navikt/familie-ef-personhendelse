@@ -105,7 +105,7 @@ class InntektOppgaveService(
                 val fylte25Dato = foedselsdato?.plusYears(25)
                 if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato.plusDays(1))) endring else null
             }
-        if (skalOppretteOppgave) {
+        if (!skalOppretteOppgave) {
             logger.info("Ville opprettet arbeidsavklaringspenger-oppgave for ${kandidater.size} personer")
         } else {
             kandidater.forEach { kandidat ->
