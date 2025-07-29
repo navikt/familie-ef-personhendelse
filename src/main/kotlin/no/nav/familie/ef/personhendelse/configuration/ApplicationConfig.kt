@@ -106,14 +106,10 @@ class ApplicationConfig {
         @Value("\${prosessering.rolle}") prosesseringRolle: String,
     ) = object : ProsesseringInfoProvider {
         override fun hentBrukernavn(): String =
-            try {
-                SpringTokenValidationContextHolder()
-                    .getTokenValidationContext()
-                    .getClaims("azuread")
-                    .getStringClaim("preferred_username")
-            } catch (e: Exception) {
-                throw e
-            }
+            SpringTokenValidationContextHolder()
+                .getTokenValidationContext()
+                .getClaims("azuread")
+                .getStringClaim("preferred_username")
 
         override fun harTilgang(): Boolean = harRolle(prosesseringRolle)
     }
