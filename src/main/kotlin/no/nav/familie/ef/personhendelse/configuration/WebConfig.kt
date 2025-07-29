@@ -11,6 +11,7 @@ class WebConfig(
 ) : WebMvcConfigurer {
     private val exludePatterns =
         listOf(
+            "/api/task/**",
             "/internal/**",
             "/swagger-resources/**",
             "/swagger-resources",
