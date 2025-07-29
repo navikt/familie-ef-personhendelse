@@ -40,6 +40,7 @@ spec:
       claims:
         groups:
           - id: "59865891-62a0-4fe3-b282-2e38210d1fbb" # teamfamilie-ef-forvaltning
+          - id: "928636f4-fd0d-4149-978e-a6fb68bb19de" # prosessering.rolle - (0000-GA-STDAPPS)
         extra:
           - "NAVident"
           - "azp_name"
