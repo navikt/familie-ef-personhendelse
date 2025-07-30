@@ -55,7 +55,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     )
     @GetMapping("/opprett-oppgaver-for-ufoeretrygdsendringer")
     fun opprettOppgaverForUføretrygdsendringer() {
-        inntektOppgaveService.finnPersonerMedEndringUføretrygToSisteMånederOgOpprettOppgaver(true)
+        inntektOppgaveService.opprettOppgaverForUføretrygdsendringerAsync(true)
     }
 
     @Operation(

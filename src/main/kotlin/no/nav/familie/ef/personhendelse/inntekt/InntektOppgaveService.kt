@@ -33,6 +33,11 @@ class InntektOppgaveService(
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
+    @Async
+    fun opprettOppgaverForUføretrygdsendringerAsync(skalOppretteOppgave: Boolean) {
+        finnPersonerMedEndringUføretrygToSisteMånederOgOpprettOppgaver(skalOppretteOppgave)
+    }
+
     fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {
         val inntektsendringer = inntektsendringerRepository.hentInntektsendringerSomSkalHaOppgave()
         if (skalOppretteOppgave) {
