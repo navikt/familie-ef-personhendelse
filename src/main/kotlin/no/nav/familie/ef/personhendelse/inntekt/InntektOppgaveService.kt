@@ -60,7 +60,6 @@ class InntektOppgaveService(
         val kandidater =
             inntektsendringForBrukereMedUføretrygd.mapNotNull { endring ->
                 val inntekt = inntektsendringerService.hentInntekt(endring.personIdent) ?: return@mapNotNull null
-                logger.info("Personident: ${endring.personIdent}, inntekt: $inntekt")
 
                 val uføretrygdForrige =
                     inntekt.inntektsmåneder
@@ -77,7 +76,6 @@ class InntektOppgaveService(
                         ?.filter { it.beskrivelse == "ufoeretrygd" }
                         ?.sumOf { it.beløp }
                         ?: 0.0
-                logger.info("Pesoniden: $${endring.personIdent}. Uføretrygd forrige måned: $uføretrygdForrige, Uføretrygd to måneder tilbake: $uføretrygdToMnd")
 
                 if (uføretrygdForrige > uføretrygdToMnd) endring else null
             }
@@ -85,9 +83,9 @@ class InntektOppgaveService(
         if (skalOppretteOppgave) {
             kandidater.forEach { kandidat ->
                 val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.of(kandidat.prosessertTid.year, kandidat.prosessertTid.monthValue).toString()))
-                val finnesTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForUføretrygdsendringerTask.TYPE)
+                val finnesTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForUføretrygdsendringerTask.TYPE) !== null
 
-                if (finnesTask == null) {
+                if (finnesTask) {
                     val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
                     taskService.save(task)
                 }
@@ -95,8 +93,6 @@ class InntektOppgaveService(
         } else {
             logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
         }
-        logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
-        logger.info("inntektsendringer $inntektsendringForBrukereMedUføretrygd")
         return kandidater.size
     }
 
@@ -120,9 +116,9 @@ class InntektOppgaveService(
         } else {
             kandidater.forEach { kandidat ->
                 val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.of(kandidat.prosessertTid.year, kandidat.prosessertTid.monthValue).toString()))
-                val finnesTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE)
+                val finnesTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) !== null
 
-                if (finnesTask == null) {
+                if (finnesTask) {
                     val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
                     taskService.save(task)
                 }
@@ -160,7 +156,7 @@ class InntektOppgaveService(
                     behandlesAvApplikasjon = null,
                 ),
             )
-        secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
+        secureLogger.info("Opprettet inntektsendring oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
@@ -187,7 +183,7 @@ class InntektOppgaveService(
                     behandlesAvApplikasjon = null,
                 ),
             )
-        secureLogger.info("Opprettet oppgave for person $personIdent med id: $oppgaveId")
+        secureLogger.info("Opprettet uføretrygdsendring oppgave for person $personIdent med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
@@ -214,7 +210,7 @@ class InntektOppgaveService(
                     behandlesAvApplikasjon = null,
                 ),
             )
-        secureLogger.info("Opprettet oppgave for person $personIdent med id: $oppgaveId")
+        secureLogger.info("Opprettet arbeidsavklaeringspenger endring oppgave for person $personIdent med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
