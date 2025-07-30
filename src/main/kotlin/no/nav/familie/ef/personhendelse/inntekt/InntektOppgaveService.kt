@@ -15,7 +15,6 @@ import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.YearMonth
@@ -31,11 +30,6 @@ class InntektOppgaveService(
     val pdlClient: PdlClient,
     val taskService: TaskService,
 ) {
-    @Async
-    fun opprettOppgaverForUføretrygdsendringerAsync(skalOppretteOppgave: Boolean) {
-        opprettOppgaveForUføretrygdsendringer(skalOppretteOppgave)
-    }
-
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
@@ -51,7 +45,7 @@ class InntektOppgaveService(
         return inntektsendringer.size
     }
 
-    fun opprettOppgaveForUføretrygdsendringer(
+    fun finnPersonerMedEndringUføretrygToSisteMånederOgOpprettOppgaver(
         skalOppretteOppgave: Boolean,
     ): Int {
         val inntektsendringForBrukereMedUføretrygd = inntektsendringerRepository.hentInntektsendringerForUføretrygdSomHarUføretrygd()
@@ -81,8 +75,14 @@ class InntektOppgaveService(
             }
 
         if (skalOppretteOppgave) {
-            kandidater.forEach {
-                opprettOppgaveForUføretrygdEndring(it, lagOppgavetekstVedEndringUføretrygd(forrigeMåned))
+            kandidater.forEach { kandidat ->
+                val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.of(kandidat.prosessertTid.year, kandidat.prosessertTid.monthValue).toString()))
+                val finnesTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForUføretrygdsendringerTask.TYPE)
+
+                if (finnesTask == null) {
+                    val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
+                    taskService.save(task)
+                }
             }
         } else {
             logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
@@ -154,8 +154,8 @@ class InntektOppgaveService(
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
-    private fun opprettOppgaveForUføretrygdEndring(
-        inntektOgVedtakEndring: InntektOgVedtakEndring,
+    fun opprettOppgaveForUføretrygdEndring(
+        personIdent: String,
         beskrivelse: String,
     ) {
         val oppgaveId =
@@ -163,7 +163,7 @@ class InntektOppgaveService(
                 OpprettOppgaveRequest(
                     ident =
                         OppgaveIdentV2(
-                            ident = inntektOgVedtakEndring.personIdent,
+                            ident = personIdent,
                             gruppe = IdentGruppe.FOLKEREGISTERIDENT,
                         ),
                     saksId = null,
@@ -177,7 +177,7 @@ class InntektOppgaveService(
                     behandlesAvApplikasjon = null,
                 ),
             )
-        secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
+        secureLogger.info("Opprettet oppgave for person $personIdent med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 

@@ -4,9 +4,6 @@ import io.swagger.v3.oas.annotations.Operation
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.InntektOppgaveService
 import no.nav.familie.ef.personhendelse.inntekt.InntektsendringerService
-import no.nav.familie.ef.personhendelse.inntekt.OpprettOppgaverForArbeidsavklaringspengerEndringerTask
-import no.nav.familie.ef.personhendelse.inntekt.PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
@@ -58,7 +55,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     )
     @GetMapping("/opprett-oppgaver-for-ufoeretrygdsendringer")
     fun opprettOppgaverForUføretrygdsendringer() {
-        inntektOppgaveService.opprettOppgaverForUføretrygdsendringerAsync(true)
+        inntektOppgaveService.finnPersonerMedEndringUføretrygToSisteMånederOgOpprettOppgaver(true)
     }
 
     @Operation(
