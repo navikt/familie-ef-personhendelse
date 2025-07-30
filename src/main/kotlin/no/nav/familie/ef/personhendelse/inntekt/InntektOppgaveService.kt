@@ -87,6 +87,8 @@ class InntektOppgaveService(
         } else {
             logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
         }
+        logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
+        logger.info("inntektsendringer $inntektsendringForBrukereMedUføretrygd")
         return kandidater.size
     }
 
