@@ -15,18 +15,18 @@ class OpprettOppgaverForUføretrygdsendringerTaskTest: IntegrasjonSpringRunnerTe
     @Autowired
     private lateinit var taskService: TaskService
 
-    private lateinit var OpprettOppgaverForUføretrygdsendringerTask: OpprettOppgaverForArbeidsavklaringspengerEndringerTask
+    private lateinit var OpprettOppgaverForUføretrygdsendringerTask: OpprettOppgaverForUføretrygdsendringerTask
 
     @BeforeEach
     fun setup() {
         OpprettOppgaverForUføretrygdsendringerTask =
-            OpprettOppgaverForArbeidsavklaringspengerEndringerTask(
+            OpprettOppgaverForUføretrygdsendringerTask(
                 inntektOppgaveService = inntektOppgaveService,
             )
     }
 
     @Test
-    fun `Sjekk at man kan opprette task for arbeidsavklaringspenger endringer og at den har riktig metadata`() {
+    fun `Sjekk at man kan opprette task for uføretrygdsendringer og at den har riktig metadata`() {
         val payload = """{"personIdent":"123", "årMåned":"6"}"""
         val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
         taskService.save(task)
@@ -36,6 +36,6 @@ class OpprettOppgaverForUføretrygdsendringerTaskTest: IntegrasjonSpringRunnerTe
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(3)
         assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "årMåned", "callId")
         OpprettOppgaverForUføretrygdsendringerTask.doTask(task)
-        verify(exactly = 1) { inntektOppgaveService.opprettOppgaveForArbeidsavklaringspengerEndring(any(), any()) }
+        verify(exactly = 1) { inntektOppgaveService.opprettOppgaveForUføretrygdEndring(any(), any()) }
     }
 }
