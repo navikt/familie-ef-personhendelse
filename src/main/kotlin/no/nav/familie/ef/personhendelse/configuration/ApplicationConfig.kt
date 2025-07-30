@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.configuration
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import no.nav.familie.ef.personhendelse.sikkerhet.SikkerhetContext.harRolle
 import no.nav.familie.http.client.RetryOAuth2HttpClient
 import no.nav.familie.http.config.RestTemplateAzure
 import no.nav.familie.kafka.KafkaErrorHandler
@@ -8,15 +9,19 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.log.NavSystemtype
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
+import no.nav.familie.prosessering.config.ProsesseringInfoProvider
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
+import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -28,6 +33,9 @@ import java.time.temporal.ChronoUnit
 
 @SpringBootConfiguration
 @ConfigurationPropertiesScan("no.nav.familie.ef.personhendelse")
+@ComponentScan(
+    "no.nav.familie.prosessering",
+)
 @EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @EnableScheduling
 @Import(
@@ -92,4 +100,17 @@ class ApplicationConfig {
                     .build(),
             ),
         )
+
+    @Bean
+    fun prosesseringInfoProvider(
+        @Value("\${prosessering.rolle}") prosesseringRolle: String,
+    ) = object : ProsesseringInfoProvider {
+        override fun hentBrukernavn(): String =
+            SpringTokenValidationContextHolder()
+                .getTokenValidationContext()
+                .getClaims("azuread")
+                .getStringClaim("preferred_username")
+
+        override fun harTilgang(): Boolean = harRolle(prosesseringRolle)
+    }
 }

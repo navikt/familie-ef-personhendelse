@@ -25,4 +25,6 @@ object SikkerhetContext {
         val rollerFraToken = hentGrupperFraToken()
         return rollerFraToken.contains(rolleConfig.forvalter)
     }
+
+    fun harRolle(rolleId: String): Boolean = hentGrupperFraToken().contains(rolleId)
 }
