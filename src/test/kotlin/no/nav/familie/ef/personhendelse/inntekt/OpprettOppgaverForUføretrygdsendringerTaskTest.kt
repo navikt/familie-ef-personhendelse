@@ -9,33 +9,33 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class OpprettOppgaverForArbeidsavklaringspengerEndringerTaskTest : IntegrasjonSpringRunnerTest() {
+class OpprettOppgaverForUføretrygdsendringerTaskTest : IntegrasjonSpringRunnerTest() {
     private val inntektOppgaveService = mockk<InntektOppgaveService>(relaxed = true)
 
     @Autowired
     private lateinit var taskService: TaskService
 
-    private lateinit var opprettOppgaverForArbeidsavklaringspengerEndringerTask: OpprettOppgaverForArbeidsavklaringspengerEndringerTask
+    private lateinit var opprettOppgaverForUføretrygdsendringerTask: OpprettOppgaverForUføretrygdsendringerTask
 
     @BeforeEach
     fun setup() {
-        opprettOppgaverForArbeidsavklaringspengerEndringerTask =
-            OpprettOppgaverForArbeidsavklaringspengerEndringerTask(
+        opprettOppgaverForUføretrygdsendringerTask =
+            OpprettOppgaverForUføretrygdsendringerTask(
                 inntektOppgaveService = inntektOppgaveService,
             )
     }
 
     @Test
-    fun `Sjekk at man kan opprette task for arbeidsavklaringspenger endringer og at den har riktig metadata`() {
+    fun `Sjekk at man kan opprette task for uføretrygdsendringer og at den har riktig metadata`() {
         val payload = """{"personIdent":"123", "årMåned":"6"}"""
-        val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
+        val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
         taskService.save(task)
         val taskList = taskService.findAll()
         val taskFraDB = taskList.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(3)
         assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "årMåned", "callId")
-        opprettOppgaverForArbeidsavklaringspengerEndringerTask.doTask(task)
-        verify(exactly = 1) { inntektOppgaveService.opprettOppgaveForArbeidsavklaringspengerEndring(any(), any()) }
+        opprettOppgaverForUføretrygdsendringerTask.doTask(task)
+        verify(exactly = 1) { inntektOppgaveService.opprettOppgaveForUføretrygdEndring(any(), any()) }
     }
 }

@@ -31,13 +31,13 @@ class InntektOppgaveService(
     val pdlClient: PdlClient,
     val taskService: TaskService,
 ) {
-    @Async
-    fun opprettOppgaverForUføretrygdsendringerAsync(skalOppretteOppgave: Boolean) {
-        opprettOppgaveForUføretrygdsendringer(skalOppretteOppgave)
-    }
-
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
+
+    @Async
+    fun opprettOppgaverForUføretrygdsendringerAsync(skalOppretteOppgave: Boolean) {
+        finnPersonerMedEndringUføretrygToSisteMånederOgOpprettOppgaver(skalOppretteOppgave)
+    }
 
     fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {
         val inntektsendringer = inntektsendringerRepository.hentInntektsendringerSomSkalHaOppgave()
@@ -51,7 +51,7 @@ class InntektOppgaveService(
         return inntektsendringer.size
     }
 
-    fun opprettOppgaveForUføretrygdsendringer(
+    fun finnPersonerMedEndringUføretrygToSisteMånederOgOpprettOppgaver(
         skalOppretteOppgave: Boolean,
     ): Int {
         val inntektsendringForBrukereMedUføretrygd = inntektsendringerRepository.hentInntektsendringerForUføretrygdSomHarUføretrygd()
@@ -81,8 +81,14 @@ class InntektOppgaveService(
             }
 
         if (skalOppretteOppgave) {
-            kandidater.forEach {
-                opprettOppgaveForUføretrygdEndring(it, lagOppgavetekstVedEndringUføretrygd(forrigeMåned))
+            kandidater.forEach { kandidat ->
+                val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.of(kandidat.prosessertTid.year, kandidat.prosessertTid.monthValue).toString()))
+                val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForUføretrygdsendringerTask.TYPE) == null
+
+                if (skalOppretteTask) {
+                    val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
+                    taskService.save(task)
+                }
             }
         } else {
             logger.info("Ville opprettet uføretrygdsendring-oppgave for ${kandidater.size} personer")
@@ -110,9 +116,9 @@ class InntektOppgaveService(
         } else {
             kandidater.forEach { kandidat ->
                 val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.of(kandidat.prosessertTid.year, kandidat.prosessertTid.monthValue).toString()))
-                val finnesTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE)
+                val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) == null
 
-                if (finnesTask == null) {
+                if (skalOppretteTask) {
                     val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
                     taskService.save(task)
                 }
@@ -150,12 +156,12 @@ class InntektOppgaveService(
                     behandlesAvApplikasjon = null,
                 ),
             )
-        secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
+        secureLogger.info("Opprettet inntektsendring oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
-    private fun opprettOppgaveForUføretrygdEndring(
-        inntektOgVedtakEndring: InntektOgVedtakEndring,
+    fun opprettOppgaveForUføretrygdEndring(
+        personIdent: String,
         beskrivelse: String,
     ) {
         val oppgaveId =
@@ -163,7 +169,7 @@ class InntektOppgaveService(
                 OpprettOppgaveRequest(
                     ident =
                         OppgaveIdentV2(
-                            ident = inntektOgVedtakEndring.personIdent,
+                            ident = personIdent,
                             gruppe = IdentGruppe.FOLKEREGISTERIDENT,
                         ),
                     saksId = null,
@@ -177,7 +183,7 @@ class InntektOppgaveService(
                     behandlesAvApplikasjon = null,
                 ),
             )
-        secureLogger.info("Opprettet oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
+        secureLogger.info("Opprettet uføretrygdsendring oppgave for person $personIdent med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
@@ -204,7 +210,7 @@ class InntektOppgaveService(
                     behandlesAvApplikasjon = null,
                 ),
             )
-        secureLogger.info("Opprettet oppgave for person $personIdent med id: $oppgaveId")
+        secureLogger.info("Opprettet arbeidsavklaeringspenger endring oppgave for person $personIdent med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
