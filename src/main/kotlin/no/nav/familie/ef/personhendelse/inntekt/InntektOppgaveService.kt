@@ -54,6 +54,7 @@ class InntektOppgaveService(
         val kandidater =
             inntektsendringForBrukereMedUføretrygd.mapNotNull { endring ->
                 val inntekt = inntektsendringerService.hentInntekt(endring.personIdent) ?: return@mapNotNull null
+                logger.info("Personident: ${endring.personIdent}, inntekt: $inntekt")
 
                 val uføretrygdForrige =
                     inntekt.inntektsmåneder
@@ -70,6 +71,7 @@ class InntektOppgaveService(
                         ?.filter { it.beskrivelse == "ufoeretrygd" }
                         ?.sumOf { it.beløp }
                         ?: 0.0
+                logger.info("Pesoniden: $${endring.personIdent}. Uføretrygd forrige måned: $uføretrygdForrige, Uføretrygd to måneder tilbake: $uføretrygdToMnd")
 
                 if (uføretrygdForrige > uføretrygdToMnd) endring else null
             }
