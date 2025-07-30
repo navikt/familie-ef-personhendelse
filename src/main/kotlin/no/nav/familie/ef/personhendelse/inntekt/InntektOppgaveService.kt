@@ -83,9 +83,9 @@ class InntektOppgaveService(
         if (skalOppretteOppgave) {
             kandidater.forEach { kandidat ->
                 val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.of(kandidat.prosessertTid.year, kandidat.prosessertTid.monthValue).toString()))
-                val finnesTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForUføretrygdsendringerTask.TYPE) !== null
+                val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForUføretrygdsendringerTask.TYPE) == null
 
-                if (finnesTask) {
+                if (skalOppretteTask) {
                     val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
                     taskService.save(task)
                 }
@@ -116,9 +116,9 @@ class InntektOppgaveService(
         } else {
             kandidater.forEach { kandidat ->
                 val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.of(kandidat.prosessertTid.year, kandidat.prosessertTid.monthValue).toString()))
-                val finnesTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) !== null
+                val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) == null
 
-                if (finnesTask) {
+                if (skalOppretteTask) {
                     val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
                     taskService.save(task)
                 }
