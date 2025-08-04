@@ -43,7 +43,13 @@ class InntektOppgaveService(
         val inntektsendringer = inntektsendringerRepository.hentInntektsendringerSomSkalHaOppgave()
         if (skalOppretteOppgave) {
             inntektsendringer.forEach {
-                opprettOppgaveForInntektsendring(it, lagOppgavetekstForInntektsendring(it))
+                val payload = objectMapper.writeValueAsString(PayloadOOpprettOppgaverForInntektsendringerTask(personIdent = it.personIdent, oppgaveTekst = lagOppgavetekstForInntektsendring(it)))
+                val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForInntektsendringerTask.TYPE) == null
+
+                if (skalOppretteTask) {
+                    val task = OpprettOppgaverForInntektsendringerTask.opprettTask(payload)
+                    taskService.save(task)
+                }
             }
         } else {
             logger.info("Ville opprettet inntektsendring-oppgave for ${inntektsendringer.size} personer")
@@ -129,12 +135,12 @@ class InntektOppgaveService(
     fun opprettOppgaverForNyeVedtakUføretrygd() {
         val nyeUføretrygdVedtak = inntektsendringerRepository.hentInntektsendringerForUføretrygd()
         nyeUføretrygdVedtak.forEach {
-            opprettOppgaveForInntektsendring(it, lagOppgavetekstVedNyYtelseUføretrygd())
+            opprettOppgaveForInntektsendring(it.personIdent, lagOppgavetekstVedNyYtelseUføretrygd())
         }
     }
 
-    private fun opprettOppgaveForInntektsendring(
-        inntektOgVedtakEndring: InntektOgVedtakEndring,
+    fun opprettOppgaveForInntektsendring(
+        personIdent: String,
         beskrivelse: String,
     ) {
         val oppgaveId =
@@ -142,7 +148,7 @@ class InntektOppgaveService(
                 OpprettOppgaveRequest(
                     ident =
                         OppgaveIdentV2(
-                            ident = inntektOgVedtakEndring.personIdent,
+                            ident = personIdent,
                             gruppe = IdentGruppe.FOLKEREGISTERIDENT,
                         ),
                     saksId = null,
@@ -150,13 +156,13 @@ class InntektOppgaveService(
                     oppgavetype = Oppgavetype.VurderInntekt,
                     fristFerdigstillelse = fristFerdigstillelse(),
                     beskrivelse = beskrivelse,
-                    enhetsnummer = arbeidsfordelingClient.hentArbeidsfordelingEnhetId(inntektOgVedtakEndring.personIdent),
+                    enhetsnummer = arbeidsfordelingClient.hentArbeidsfordelingEnhetId(personIdent),
                     behandlingstema = null, // Gjelder-feltet i Gosys
                     tilordnetRessurs = null,
                     behandlesAvApplikasjon = null,
                 ),
             )
-        secureLogger.info("Opprettet inntektsendring oppgave for person ${inntektOgVedtakEndring.personIdent} med id: $oppgaveId")
+        secureLogger.info("Opprettet inntektsendring oppgave for person $personIdent med id: $oppgaveId")
         oppgaveClient.leggOppgaveIMappe(oppgaveId, "63") // Inntektskontroll
     }
 
