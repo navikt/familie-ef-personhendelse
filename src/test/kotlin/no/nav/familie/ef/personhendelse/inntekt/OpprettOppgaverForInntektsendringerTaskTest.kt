@@ -31,7 +31,7 @@ class OpprettOppgaverForInntektsendringerTaskTest : IntegrasjonSpringRunnerTest(
         val task = OpprettOppgaverForInntektsendringerTask.opprettTask(payload)
         taskService.save(task)
         val taskList = taskService.findAll()
-        val taskFraDB = taskList.first()
+        val taskFraDB = taskList.get(taskList.size - 1)
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
         assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "callId")
