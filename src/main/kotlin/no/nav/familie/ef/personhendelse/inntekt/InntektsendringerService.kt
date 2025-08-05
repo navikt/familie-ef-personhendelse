@@ -44,7 +44,6 @@ class InntektsendringerService(
                 taskService.save(task)
             }
         }
-
     }
 
     fun beregnInntektsendringerOgLagreIDb() {
