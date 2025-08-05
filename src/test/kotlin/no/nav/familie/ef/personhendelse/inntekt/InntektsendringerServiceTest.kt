@@ -7,6 +7,7 @@ import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,8 +19,9 @@ class InntektsendringerServiceTest {
     private val sakClient = mockk<SakClient>()
     private val inntektsendringerRepository = mockk<InntektsendringerRepository>()
     private val inntektClient = mockk<InntektClient>()
+    private val taskService = mockk<TaskService>()
 
-    val inntektsendringerService = InntektsendringerService(oppgaveClient, sakClient, inntektsendringerRepository, inntektClient)
+    val inntektsendringerService = InntektsendringerService(oppgaveClient, sakClient, inntektsendringerRepository, inntektClient, taskService)
     val forventetÅrligInntekt = 420000 // 35k pr mnd i eksempel json-fil
 
     val enMndTilbake = YearMonth.now().minusMonths(1)
