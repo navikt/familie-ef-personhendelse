@@ -29,6 +29,11 @@ class InntektsendringerService(
         beregnInntektsendringerOgLagreIDb()
     }
 
+    @Async
+    fun asyncHentPersonerMedInntektsendringerOgRevurderAutomatisk() {
+        hentPersonerMedInntektsendringerOgRevurderAutomatisk()
+    }
+
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
 
