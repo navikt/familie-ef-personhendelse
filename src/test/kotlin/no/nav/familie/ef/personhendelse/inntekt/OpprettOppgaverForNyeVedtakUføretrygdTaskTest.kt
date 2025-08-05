@@ -11,18 +11,18 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.YearMonth
 
-class OpprettOppgaverForUføretrygdsendringerTaskTest : IntegrasjonSpringRunnerTest() {
+class OpprettOppgaverForNyeVedtakUføretrygdTaskTest : IntegrasjonSpringRunnerTest() {
     private val inntektOppgaveService = mockk<InntektOppgaveService>(relaxed = true)
 
     @Autowired
     private lateinit var taskService: TaskService
 
-    private lateinit var opprettOppgaverForUføretrygdsendringerTask: OpprettOppgaverForUføretrygdsendringerTask
+    private lateinit var opprettOppgaverForNyeVedtakUføretrygdTask: OpprettOppgaverForNyeVedtakUføretrygdTask
 
     @BeforeEach
     fun setup() {
-        opprettOppgaverForUføretrygdsendringerTask =
-            OpprettOppgaverForUføretrygdsendringerTask(
+        opprettOppgaverForNyeVedtakUføretrygdTask =
+            OpprettOppgaverForNyeVedtakUføretrygdTask(
                 inntektOppgaveService = inntektOppgaveService,
             )
     }
@@ -30,19 +30,19 @@ class OpprettOppgaverForUføretrygdsendringerTaskTest : IntegrasjonSpringRunnerT
     @Test
     fun `Sjekk at man kan opprette task for uføretrygdsendringer og at den har riktig metadata`() {
         val payload =
-            PayloadOpprettOppgaverForUføretrygdsendringerTask(
+            PayloadOpprettOppgaverForNyeVedtakUføretrygdTask(
                 personIdent = "123",
-                årMåned = YearMonth.of(2023, 10),
+                prosessertYearMonth = YearMonth.of(2023, 10),
             )
-
-        val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
+        val jsonPayload = objectMapper.writeValueAsString(payload)
+        val task = OpprettOppgaverForNyeVedtakUføretrygdTask.opprettTask(jsonPayload)
         taskService.save(task)
         val taskList = taskService.findAll()
         val taskFraDB = taskList.get(taskList.size - 1)
         assertThat(taskFraDB.metadata).isNotEmpty
-        assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(3)
-        assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "årMåned", "callId")
-        opprettOppgaverForUføretrygdsendringerTask.doTask(task)
-        verify(exactly = 1) { inntektOppgaveService.opprettOppgaveForUføretrygdEndring(any(), any()) }
+        assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
+        assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "callId")
+        opprettOppgaverForNyeVedtakUføretrygdTask.doTask(task)
+        verify(exactly = 1) { inntektOppgaveService.opprettOppgaveForInntektsendring(any(), any()) }
     }
 }

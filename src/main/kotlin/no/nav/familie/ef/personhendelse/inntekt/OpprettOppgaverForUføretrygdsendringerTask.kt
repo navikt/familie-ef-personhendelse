@@ -31,25 +31,22 @@ class OpprettOppgaverForUføretrygdsendringerTask(
     }
 
     companion object {
-        const val TYPE = "OpprettOppgaverForUføretrygdsendringerTask"
+        const val TYPE = "opprettOppgaverForUføretrygdsendringerTask"
 
-        fun opprettTask(payload: String): Task {
-            val payloadObject = objectMapper.readValue(payload, PayloadOpprettOppgaverForUføretrygdsendringerTask::class.java)
-
-            return Task(
+        fun opprettTask(payload: PayloadOpprettOppgaverForUføretrygdsendringerTask): Task =
+            Task(
                 type = TYPE,
-                payload = payload,
+                payload = objectMapper.writeValueAsString(payload),
                 properties =
                     Properties().apply {
-                        this["personIdent"] = payloadObject.personIdent
-                        this["årMåned"] = payloadObject.årMåned
+                        this["personIdent"] = payload.personIdent
+                        this["årMåned"] = payload.årMåned.toString()
                     },
             )
-        }
     }
 }
 
 data class PayloadOpprettOppgaverForUføretrygdsendringerTask(
     val personIdent: String,
-    val årMåned: String,
+    val årMåned: YearMonth,
 )

@@ -10,31 +10,31 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.YearMonth
 import java.util.Properties
+import kotlin.collections.set
 
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = OpprettOppgaverForInntektsendringerTask.TYPE,
+    taskStepType = OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE,
     maxAntallFeil = 1,
     settTilManuellOppfølgning = true,
-    beskrivelse = "Oppretter oppgave for arbeidsavklaringspenger endringer på person",
+    beskrivelse = "Oppretter oppgave for nye uføretrygd-vedtak på person",
 )
-class OpprettOppgaverForInntektsendringerTask(
+class OpprettOppgaverForNyeVedtakUføretrygdTask(
     private val inntektOppgaveService: InntektOppgaveService,
 ) : AsyncTaskStep {
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val (personIdent, totalFeilutbetaling, yearMonthProssesertTid) = objectMapper.readValue<PayloadOpprettOppgaverForInntektsendringerTask>(task.payload)
-        secureLogger.info("Oppretter oppgaver for inntektsendringer ${task.payload}")
-        inntektOppgaveService.opprettOppgaveForInntektsendring(personIdent, inntektOppgaveService.lagOppgavetekstForInntektsendring(totalFeilutbetaling, yearMonthProssesertTid))
+        val personIdent = objectMapper.readValue<PayloadOpprettOppgaverForNyeVedtakUføretrygdTask>(task.payload).personIdent
+        secureLogger.info("Oppretter oppgaver for nye vedtak uføretrygd for person: $personIdent")
+        inntektOppgaveService.opprettOppgaveForInntektsendring(personIdent, inntektOppgaveService.lagOppgavetekstVedNyYtelseUføretrygd())
     }
 
     companion object {
-        const val TYPE = "opprettOppgaverForInntektsendringerTask"
+        const val TYPE = "opprettOppgaverForNyeVedtakUføretrygdTask"
 
         fun opprettTask(payload: String): Task {
-            val payloadObject = objectMapper.readValue(payload, PayloadOpprettOppgaverForInntektsendringerTask::class.java)
+            val payloadObject = objectMapper.readValue(payload, PayloadOpprettOppgaverForNyeVedtakUføretrygdTask::class.java)
 
             return Task(
                 type = TYPE,
@@ -48,8 +48,7 @@ class OpprettOppgaverForInntektsendringerTask(
     }
 }
 
-data class PayloadOpprettOppgaverForInntektsendringerTask(
+data class PayloadOpprettOppgaverForNyeVedtakUføretrygdTask(
     val personIdent: String,
-    val totalFeilutbetaling: Int,
-    val yearMonthProssesertTid: YearMonth,
+    val prosessertYearMonth: YearMonth,
 )
