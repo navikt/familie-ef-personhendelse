@@ -46,6 +46,6 @@ class BeregnInntektsendringerOgLagreIDbTaskTest : IntegrasjonSpringRunnerTest() 
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
         assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "callId")
         beregnInntektsendringerOgLagreIDbTask.doTask(task)
-        verify(exactly = 1) { sakClient.revurderAutomatisk(any()) }
+        verify(exactly = 1) { inntektsendringerService.lagreInntektsendringForPerson(any(), any()) }
     }
 }
