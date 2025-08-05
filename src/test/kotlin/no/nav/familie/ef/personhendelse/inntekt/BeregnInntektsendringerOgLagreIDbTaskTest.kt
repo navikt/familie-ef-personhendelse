@@ -1,8 +1,10 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
@@ -32,6 +34,7 @@ class BeregnInntektsendringerOgLagreIDbTaskTest : IntegrasjonSpringRunnerTest() 
 
     @Test
     fun `Sjekk at man kan opprette task for uføretrygdsendringer og at den har riktig metadata`() {
+        every { sakClient.hentForventetInntektForIdenter(any()) } returns listOf(ForventetInntektForPerson("123", 10_000, 10_000, 10_000, 10_000))
         val paylooad =
             PayloadBeregnInntektsendringerOgLagreIDbTask(
                 personIdent = "123",
