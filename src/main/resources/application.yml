@@ -158,7 +158,7 @@ FAMILIE_KS_VEDTAK_TOPIC: teamfamilie.aapen-kontantstotte-vedtak-v1
 INNTEKT_URL: https://ikomp.prod-fss-pub.nais.io
 INNTEKT_SCOPE: api://prod-fss.team-inntekt.ikomp/.default
 
-INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 21 6 * * # kl 04:00 den 6. hver måned
+INNTEKTSKONTROLL_CRON_EXPRESSION: 0 0 3 6 * * # kl 04:00 den 6. hver måned
 OPPGAVERDØDSFALL_CRON_EXPRESSION: 0 0 5 * * * # kl 05:00 hver dag
 
 AZURE_APP_TENANT_ID: navq.onmicrosoft.com

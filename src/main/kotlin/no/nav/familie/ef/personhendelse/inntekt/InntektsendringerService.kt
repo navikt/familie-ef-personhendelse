@@ -3,6 +3,8 @@ package no.nav.familie.ef.personhendelse.inntekt
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
@@ -16,6 +18,7 @@ class InntektsendringerService(
     val sakClient: SakClient,
     val inntektsendringerRepository: InntektsendringerRepository,
     val inntektClient: InntektClient,
+    val taskService: TaskService,
 ) {
     private val grunnbeløp = Grunnbeløp().nyesteGrunnbeløp.grunnbeløp
     private val halvtGrunnbeløpMånedlig = (grunnbeløp / 2.toBigDecimal()) / 12.toBigDecimal()
@@ -62,31 +65,16 @@ class InntektsendringerService(
 
         logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
 
-        var counter = 0
-
-        personerMedAktivStønad.chunked(500).forEach {
-            sakClient.hentForventetInntektForIdenter(it).forEach { forventetInntektForPerson ->
-                val inntektResponse = hentInntekt(personIdent = forventetInntektForPerson.personIdent)
-
-                if (inntektResponse != null && forventetInntektForPerson.erSiste2MånederNotNull()) {
-                    lagreInntektsendringForPerson(
-                        forventetInntektForPerson = forventetInntektForPerson,
-                        inntektResponse = inntektResponse,
-                    )
-                }
-
-                counter++
-
-                if (counter % 500 == 0) {
-                    logger.info("Antall personer sjekket: $counter (av ${personerMedAktivStønad.size}")
-                }
-            }
+        personerMedAktivStønad.forEach {
+            val payload = objectMapper.writeValueAsString(PayloadBeregnInntektsendringerOgLagreIDbTask(personIdent = it, yearMonth = YearMonth.now()))
+            val task = BeregnInntektsendringerOgLagreIDbTask.opprettTask(payload)
+            taskService.save(task)
         }
 
         logger.info("Vedtak- og inntektsendringer ferdig")
     }
 
-    private fun lagreInntektsendringForPerson(
+    fun lagreInntektsendringForPerson(
         forventetInntektForPerson: ForventetInntektForPerson,
         inntektResponse: InntektResponse,
     ) {
