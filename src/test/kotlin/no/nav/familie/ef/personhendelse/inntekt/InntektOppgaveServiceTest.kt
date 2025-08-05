@@ -8,7 +8,7 @@ import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
+import java.time.YearMonth
 
 class InntektOppgaveServiceTest {
     private val oppgaveClient = mockk<OppgaveClient>()
@@ -25,20 +25,11 @@ class InntektOppgaveServiceTest {
     fun `lagOppgavetekstForInntektsendring - sjekk tusenskille på feiltubetalingsbeløp og norsk format på år-måned`() {
         val oppgavetekst =
             inntektOppgaveService.lagOppgavetekstForInntektsendring(
-                InntektOgVedtakEndring(
-                    personIdent = "1",
-                    harNyeVedtak = false,
-                    prosessertTid = LocalDateTime.of(2023, 11, 8, 5, 0),
-                    inntektsendringFireMånederTilbake = BeregningResultat(1, 1, 1),
-                    inntektsendringTreMånederTilbake = BeregningResultat(2, 2, 2),
-                    inntektsendringToMånederTilbake = BeregningResultat(3, 3, 3),
-                    inntektsendringForrigeMåned = BeregningResultat(4, 4, 40000),
-                    nyeYtelser = null,
-                    eksisterendeYtelser = null,
-                ),
+                totalFeilutbetaling = 40006,
+                yearMonthProssertTid = YearMonth.of(2023, 11),
             )
 
-        Assertions.assertThat(oppgavetekst.contains("Beregnet feilutbetaling i uttrekksperioden: 40 006 kroner "))
-        Assertions.assertThat(oppgavetekst.contains("FOM 06.2023 - TOM 10.2023"))
+        Assertions.assertThat(oppgavetekst).contains("Beregnet feilutbetaling i uttrekksperioden: 40 006")
+        Assertions.assertThat(oppgavetekst).contains("FOM 08.2023 - TOM 10.2023")
     }
 }

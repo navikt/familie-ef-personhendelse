@@ -27,7 +27,7 @@ class OpprettOppgaverForInntektsendringerTaskTest : IntegrasjonSpringRunnerTest(
 
     @Test
     fun `Sjekk at man kan opprette task for arbeidsavklaringspenger endringer og at den har riktig metadata`() {
-        val payload = """{"personIdent":"123", "oppgaveTekst":"en oppgavetekst"}"""
+        val payload = """{"personIdent":"123", "totalFeilutbetaling":"5000", "yearMonthProssesertTid":"2023-10"}"""
         val task = OpprettOppgaverForInntektsendringerTask.opprettTask(payload)
         taskService.save(task)
         val taskList = taskService.findAll()

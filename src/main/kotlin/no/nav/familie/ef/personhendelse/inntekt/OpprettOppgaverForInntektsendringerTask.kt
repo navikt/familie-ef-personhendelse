@@ -8,6 +8,7 @@ import no.nav.familie.prosessering.domene.Task
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.YearMonth
 import java.util.Properties
 
 @Service
@@ -24,17 +25,16 @@ class OpprettOppgaverForInntektsendringerTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val personIdent = objectMapper.readValue<PayloadOOpprettOppgaverForInntektsendringerTask>(task.payload).personIdent
-        val oppgaveTekst = objectMapper.readValue<PayloadOOpprettOppgaverForInntektsendringerTask>(task.payload).oppgaveTekst
+        val (personIdent, totalFeilutbetaling, yearMonthProssesertTid) = objectMapper.readValue<PayloadOpprettOppgaverForInntektsendringerTask>(task.payload)
         secureLogger.info("Oppretter oppgaver for inntektsendringer ${task.payload}")
-        inntektOppgaveService.opprettOppgaveForInntektsendring(personIdent, oppgaveTekst)
+        inntektOppgaveService.opprettOppgaveForInntektsendring(personIdent, inntektOppgaveService.lagOppgavetekstForInntektsendring(totalFeilutbetaling, yearMonthProssesertTid))
     }
 
     companion object {
         const val TYPE = "OpprettOppgaverForInntektsendringerTask"
 
         fun opprettTask(payload: String): Task {
-            val payloadObject = objectMapper.readValue(payload, PayloadOOpprettOppgaverForInntektsendringerTask::class.java)
+            val payloadObject = objectMapper.readValue(payload, PayloadOpprettOppgaverForInntektsendringerTask::class.java)
 
             return Task(
                 type = TYPE,
@@ -48,7 +48,8 @@ class OpprettOppgaverForInntektsendringerTask(
     }
 }
 
-data class PayloadOOpprettOppgaverForInntektsendringerTask(
+data class PayloadOpprettOppgaverForInntektsendringerTask(
     val personIdent: String,
-    val oppgaveTekst: String,
+    val totalFeilutbetaling: Int,
+    val yearMonthProssesertTid: YearMonth,
 )
