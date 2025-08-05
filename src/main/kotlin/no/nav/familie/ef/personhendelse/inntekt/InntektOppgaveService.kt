@@ -143,7 +143,14 @@ class InntektOppgaveService(
     fun opprettOppgaverForNyeVedtakUføretrygd() {
         val nyeUføretrygdVedtak = inntektsendringerRepository.hentInntektsendringerForUføretrygd()
         nyeUføretrygdVedtak.forEach {
-            opprettOppgaveForInntektsendring(it.personIdent, lagOppgavetekstVedNyYtelseUføretrygd())
+            val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
+            val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForNyeVedtakUføretrygdTask(personIdent = it.personIdent, yearMonthProssesertTid = yearMonthProssesertTid))
+            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE) == null
+
+            if (skalOppretteTask) {
+                val task = OpprettOppgaverForNyeVedtakUføretrygdTask.opprettTask(payload)
+                taskService.save(task)
+            }
         }
     }
 
