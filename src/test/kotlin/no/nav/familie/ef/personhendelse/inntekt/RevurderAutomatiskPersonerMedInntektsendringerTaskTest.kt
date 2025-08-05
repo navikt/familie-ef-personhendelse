@@ -32,13 +32,13 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
 
     @Test
     fun `Sjekk at man kan opprette task for uføretrygdsendringer og at den har riktig metadata`() {
-        val paylooad =
+        val payload =
             PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(
                 personIdent = "123",
                 harIngenEksisterendeYtelser = true,
                 yearMonthProssesertTid = YearMonth.of(2023, 10),
             )
-        val jsonPayload = objectMapper.writeValueAsString(paylooad)
+        val jsonPayload = objectMapper.writeValueAsString(payload)
         val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(jsonPayload)
         taskService.save(task)
         val taskList = taskService.findAll()

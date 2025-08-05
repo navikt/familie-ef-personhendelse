@@ -35,12 +35,12 @@ class BeregnInntektsendringerOgLagreIDbTaskTest : IntegrasjonSpringRunnerTest() 
     @Test
     fun `Sjekk at man kan opprette task for uføretrygdsendringer og at den har riktig metadata`() {
         every { sakClient.hentForventetInntektForIdenter(any()) } returns listOf(ForventetInntektForPerson("123", 10_000, 10_000, 10_000, 10_000))
-        val paylooad =
+        val payload =
             PayloadBeregnInntektsendringerOgLagreIDbTask(
                 personIdent = "123",
                 yearMonth = YearMonth.of(2023, 10),
             )
-        val jsonPayload = objectMapper.writeValueAsString(paylooad)
+        val jsonPayload = objectMapper.writeValueAsString(payload)
         val task = BeregnInntektsendringerOgLagreIDbTask.opprettTask(jsonPayload)
         taskService.save(task)
         val taskList = taskService.findAll()
