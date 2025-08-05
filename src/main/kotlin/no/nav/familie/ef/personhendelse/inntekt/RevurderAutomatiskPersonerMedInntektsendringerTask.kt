@@ -29,18 +29,18 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val personIdent = objectMapper.readValue<PayloadRevurderAutomatiskPersonerMedInntektsendringerTask>(task.payload).personIdent
+        val (personIdent, harIngenEksisterendeYtelser, yearMonthProssesertTid) = objectMapper.readValue<PayloadRevurderAutomatiskPersonerMedInntektsendringerTask>(task.payload)
         secureLogger.info("Reverdurer automatisk person med inntektsendringer: ${task.payload}")
-        val inntektResponse = inntektClient.hentInntekt(personIdent, YearMonth.now().minusMonths(3), YearMonth.now().minusMonths(1))
-        val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(3))
-        val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(2))
-        val totalInntektForrigeMåned = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(1))
+        val inntektResponse = inntektClient.hentInntekt(personIdent, yearMonthProssesertTid.minusMonths(3), yearMonthProssesertTid.minusMonths(1))
+        val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(3))
+        val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(2))
+        val totalInntektForrigeMåned = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(1))
 
         val harStabilInntekt = abs(totalInntektTreMånederTilbake - totalInntektToMånederTilbake) < 3000 && abs(totalInntektTreMånederTilbake - totalInntektForrigeMåned) < 3000
-        if (harStabilInntekt && task.payload.contains("true")) {
+        if (harStabilInntekt && harIngenEksisterendeYtelser) {
             sakClient.revurderAutomatisk(listOf<String>(personIdent))
         }
-        secureLogger.info("Total inntekt pr mnd uten feriepenger ${personIdent}: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: ${task.payload.contains("true")}")
+        secureLogger.info("Total inntekt pr mnd uten feriepenger ${personIdent}: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: $harIngenEksisterendeYtelser")
     }
 
 
@@ -65,5 +65,6 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
 
 data class PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(
     val personIdent: String,
-    val harIngenEksisterendeYtelser: String,
+    val harIngenEksisterendeYtelser: Boolean,
+    val yearMonthProssesertTid: YearMonth,
 )

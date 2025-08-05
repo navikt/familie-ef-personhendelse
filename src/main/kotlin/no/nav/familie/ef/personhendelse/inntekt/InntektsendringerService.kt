@@ -35,7 +35,8 @@ class InntektsendringerService(
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
         inntektsendringer.forEach {
-            val payload = objectMapper.writeValueAsString(PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(personIdent = it.personIdent, harIngenEksisterendeYtelser = it.harIngenEksisterendeYtelser().toString()))
+            val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
+            val payload = objectMapper.writeValueAsString(PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(personIdent = it.personIdent, harIngenEksisterendeYtelser = it.harIngenEksisterendeYtelser(), yearMonthProssesertTid = yearMonthProssesertTid))
             val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE) == null
 
             if (skalOppretteTask) {
