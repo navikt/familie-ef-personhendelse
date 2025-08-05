@@ -54,31 +54,19 @@ class InntektsendringerService(
 
         logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
 
-        var counter = 0
-
-        personerMedAktivStønad.chunked(500).forEach {
-            sakClient.hentForventetInntektForIdenter(it).forEach { forventetInntektForPerson ->
-                val inntektResponse = hentInntekt(personIdent = forventetInntektForPerson.personIdent)
-
-                if (inntektResponse != null && forventetInntektForPerson.erSiste2MånederNotNull()) {
-                    lagreInntektsendringForPerson(
-                        forventetInntektForPerson = forventetInntektForPerson,
-                        inntektResponse = inntektResponse,
-                    )
+        personerMedAktivStønad.chunked(200).forEach { personerMedAktivStønadList ->
+            val tasks =
+                personerMedAktivStønadList.map {
+                    val payload = PayloadBeregnInntektsendringerOgLagreIDbTask(personIdent = it, yearMonth = YearMonth.now())
+                    BeregnInntektsendringerOgLagreIDbTask.opprettTask(payload)
                 }
-
-                counter++
-
-                if (counter % 500 == 0) {
-                    logger.info("Antall personer sjekket: $counter (av ${personerMedAktivStønad.size}")
-                }
-            }
+            taskService.saveAll(tasks)
         }
 
         logger.info("Vedtak- og inntektsendringer ferdig")
     }
 
-    private fun lagreInntektsendringForPerson(
+    fun lagreInntektsendringForPerson(
         forventetInntektForPerson: ForventetInntektForPerson,
         inntektResponse: InntektResponse,
     ) {
