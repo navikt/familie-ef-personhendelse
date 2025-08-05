@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.YearMonth
 
 class OpprettOppgaverForUføretrygdsendringerTaskTest : IntegrasjonSpringRunnerTest() {
     private val inntektOppgaveService = mockk<InntektOppgaveService>(relaxed = true)
@@ -31,10 +32,10 @@ class OpprettOppgaverForUføretrygdsendringerTaskTest : IntegrasjonSpringRunnerT
         val payload =
             PayloadOpprettOppgaverForUføretrygdsendringerTask(
                 personIdent = "123",
-                årMåned = "2023-10",
+                årMåned = YearMonth.of(2023, 10),
             )
-        val jsonPayload = objectMapper.writeValueAsString(payload)
-        val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(jsonPayload)
+
+        val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
         taskService.save(task)
         val taskList = taskService.findAll()
         val taskFraDB = taskList.get(taskList.size - 1)

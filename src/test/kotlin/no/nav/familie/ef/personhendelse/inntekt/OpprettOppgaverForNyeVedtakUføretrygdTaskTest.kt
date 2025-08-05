@@ -32,7 +32,7 @@ class OpprettOppgaverForNyeVedtakUføretrygdTaskTest : IntegrasjonSpringRunnerTe
         val payload =
             PayloadOpprettOppgaverForNyeVedtakUføretrygdTask(
                 personIdent = "123",
-                yearMonthProssesertTid = YearMonth.of(2023, 10),
+                prosessertYearMonth = YearMonth.of(2023, 10),
             )
         val jsonPayload = objectMapper.writeValueAsString(payload)
         val task = OpprettOppgaverForNyeVedtakUføretrygdTask.opprettTask(jsonPayload)

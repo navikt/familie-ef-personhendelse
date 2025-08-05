@@ -31,7 +31,7 @@ class OpprettOppgaverForInntektsendringerTask(
     }
 
     companion object {
-        const val TYPE = "OpprettOppgaverForInntektsendringerTask"
+        const val TYPE = "opprettOppgaverForInntektsendringerTask"
 
         fun opprettTask(payload: String): Task {
             val payloadObject = objectMapper.readValue(payload, PayloadOpprettOppgaverForInntektsendringerTask::class.java)
