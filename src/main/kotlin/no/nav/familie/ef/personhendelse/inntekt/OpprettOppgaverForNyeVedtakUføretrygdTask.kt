@@ -10,7 +10,9 @@ import java.time.YearMonth
 import java.util.Properties
 import kotlin.collections.set
 
-class OpprettOppgaverForNyeVedtakUføretrygdTask(private val inntektOppgaveService: InntektOppgaveService,) : AsyncTaskStep {
+class OpprettOppgaverForNyeVedtakUføretrygdTask(
+    private val inntektOppgaveService: InntektOppgaveService,
+) : AsyncTaskStep {
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
