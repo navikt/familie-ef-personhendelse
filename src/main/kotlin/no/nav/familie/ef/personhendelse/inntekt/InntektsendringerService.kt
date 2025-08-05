@@ -55,7 +55,7 @@ class InntektsendringerService(
         logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
 
         personerMedAktivStønad.forEach {
-            val payload = objectMapper.writeValueAsString(PayloadBeregnInntektsendringerOgLagreIDbTask(personIdent = it, yearMonth = YearMonth.now()))
+            val payload = PayloadBeregnInntektsendringerOgLagreIDbTask(personIdent = it, yearMonth = YearMonth.now())
             val task = BeregnInntektsendringerOgLagreIDbTask.opprettTask(payload)
             taskService.save(task)
         }

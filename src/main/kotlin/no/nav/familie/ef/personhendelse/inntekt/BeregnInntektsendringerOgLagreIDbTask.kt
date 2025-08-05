@@ -28,7 +28,7 @@ class BeregnInntektsendringerOgLagreIDbTask(
 
     override fun doTask(task: Task) {
         val personIdent = objectMapper.readValue<PayloadBeregnInntektsendringerOgLagreIDbTask>(task.payload).personIdent
-        secureLogger.info("Oppretter oppgaver for arbeidsavklaringspenger endringer ${task.payload}")
+
         sakClient.hentForventetInntektForIdenter(listOf(personIdent)).forEach { forventetInntektForPerson ->
             val inntektResponse = inntektsendringerService.hentInntekt(personIdent = forventetInntektForPerson.personIdent)
 
@@ -44,18 +44,15 @@ class BeregnInntektsendringerOgLagreIDbTask(
     companion object {
         const val TYPE = "BeregnInntektsendringerOgLagreIDbTask"
 
-        fun opprettTask(payload: String): Task {
-            val payloadObject = objectMapper.readValue(payload, PayloadBeregnInntektsendringerOgLagreIDbTask::class.java)
-
-            return Task(
+        fun opprettTask(payload: PayloadBeregnInntektsendringerOgLagreIDbTask): Task =
+            Task(
                 type = TYPE,
-                payload = payload,
+                payload = objectMapper.writeValueAsString(payload),
                 properties =
                     Properties().apply {
-                        this["personIdent"] = payloadObject.personIdent
+                        this["personIdent"] = payload.personIdent
                     },
             )
-        }
     }
 }
 

@@ -40,8 +40,8 @@ class BeregnInntektsendringerOgLagreIDbTaskTest : IntegrasjonSpringRunnerTest() 
                 personIdent = "123",
                 yearMonth = YearMonth.of(2023, 10),
             )
-        val jsonPayload = objectMapper.writeValueAsString(payload)
-        val task = BeregnInntektsendringerOgLagreIDbTask.opprettTask(jsonPayload)
+
+        val task = BeregnInntektsendringerOgLagreIDbTask.opprettTask(payload)
         taskService.save(task)
         val taskList = taskService.findAll()
         val taskFraDB = taskList.get(taskList.size - 1)
