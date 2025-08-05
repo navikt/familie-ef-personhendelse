@@ -54,10 +54,13 @@ class InntektsendringerService(
 
         logger.info("Antall personer med aktiv stønad: ${personerMedAktivStønad.size}")
 
-        personerMedAktivStønad.forEach {
-            val payload = PayloadBeregnInntektsendringerOgLagreIDbTask(personIdent = it, yearMonth = YearMonth.now())
-            val task = BeregnInntektsendringerOgLagreIDbTask.opprettTask(payload)
-            taskService.save(task)
+        personerMedAktivStønad.chunked(200).forEach { personerMedAktivStønadList ->
+            val tasks =
+                personerMedAktivStønadList.map {
+                    val payload = PayloadBeregnInntektsendringerOgLagreIDbTask(personIdent = it, yearMonth = YearMonth.now())
+                    BeregnInntektsendringerOgLagreIDbTask.opprettTask(payload)
+                }
+            taskService.saveAll(tasks)
         }
 
         logger.info("Vedtak- og inntektsendringer ferdig")
