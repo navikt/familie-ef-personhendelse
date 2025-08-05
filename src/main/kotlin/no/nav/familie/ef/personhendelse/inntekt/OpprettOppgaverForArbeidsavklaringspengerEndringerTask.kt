@@ -8,6 +8,7 @@ import no.nav.familie.prosessering.domene.Task
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.YearMonth
 import java.util.Properties
 
 @Service
@@ -30,25 +31,22 @@ class OpprettOppgaverForArbeidsavklaringspengerEndringerTask(
     }
 
     companion object {
-        const val TYPE = "OpprettOppgaverForArbeidsavklaringspengerEndringerTask"
+        const val TYPE = "opprettOppgaverForArbeidsavklaringspengerEndringerTask"
 
-        fun opprettTask(payload: String): Task {
-            val payloadObject = objectMapper.readValue(payload, PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask::class.java)
-
-            return Task(
+        fun opprettTask(payload: PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask): Task =
+            Task(
                 type = TYPE,
-                payload = payload,
+                payload = objectMapper.writeValueAsString(payload),
                 properties =
                     Properties().apply {
-                        this["personIdent"] = payloadObject.personIdent
-                        this["årMåned"] = payloadObject.årMåned
+                        this["personIdent"] = payload.personIdent
+                        this["årMåned"] = payload.årMåned.toString()
                     },
             )
-        }
     }
 }
 
 data class PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(
     val personIdent: String,
-    val årMåned: String,
+    val årMåned: YearMonth,
 )

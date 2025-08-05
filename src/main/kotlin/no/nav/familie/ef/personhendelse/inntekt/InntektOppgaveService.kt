@@ -39,7 +39,7 @@ class InntektOppgaveService(
 
     @Async
     fun opprettOppgaverForUføretrygdsendringerAsync(skalOppretteOppgave: Boolean) {
-        finnPersonerMedEndringUføretrygToSisteMånederOgOpprettOppgaver(skalOppretteOppgave)
+        finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver(skalOppretteOppgave)
     }
 
     fun opprettOppgaverForInntektsendringer(skalOppretteOppgave: Boolean): Int {
@@ -65,10 +65,10 @@ class InntektOppgaveService(
         return inntektsendringer.size
     }
 
-    fun finnPersonerMedEndringUføretrygToSisteMånederOgOpprettOppgaver(
+    fun finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver(
         skalOppretteOppgave: Boolean,
     ): Int {
-        val inntektsendringForBrukereMedUføretrygd = inntektsendringerRepository.hentInntektsendringerForUføretrygdSomHarUføretrygd()
+        val inntektsendringForBrukereMedUføretrygd = inntektsendringerRepository.hentInntektsendringerForPersonerMedUføretrygd()
         val forrigeMåned = YearMonth.now().minusMonths(1)
         val toMånederTilbake = YearMonth.now().minusMonths(2)
         val kandidater =
@@ -96,8 +96,8 @@ class InntektOppgaveService(
 
         if (skalOppretteOppgave) {
             kandidater.forEach { kandidat ->
-                val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.of(kandidat.prosessertTid.year, kandidat.prosessertTid.monthValue).toString()))
-                val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForUføretrygdsendringerTask.TYPE) == null
+                val payload = PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.from(kandidat.prosessertTid))
+                val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForUføretrygdsendringerTask.TYPE) == null
 
                 if (skalOppretteTask) {
                     val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
@@ -129,8 +129,8 @@ class InntektOppgaveService(
             logger.info("Ville opprettet arbeidsavklaringspenger-oppgave for ${kandidater.size} personer")
         } else {
             kandidater.forEach { kandidat ->
-                val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.of(kandidat.prosessertTid.year, kandidat.prosessertTid.monthValue).toString()))
-                val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) == null
+                val payload = PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.from(kandidat.prosessertTid))
+                val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) == null
 
                 if (skalOppretteTask) {
                     val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
@@ -143,7 +143,14 @@ class InntektOppgaveService(
     fun opprettOppgaverForNyeVedtakUføretrygd() {
         val nyeUføretrygdVedtak = inntektsendringerRepository.hentInntektsendringerForUføretrygd()
         nyeUføretrygdVedtak.forEach {
-            opprettOppgaveForInntektsendring(it.personIdent, lagOppgavetekstVedNyYtelseUføretrygd())
+            val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
+            val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForNyeVedtakUføretrygdTask(personIdent = it.personIdent, prosessertYearMonth = yearMonthProssesertTid))
+            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE) == null
+
+            if (skalOppretteTask) {
+                val task = OpprettOppgaverForNyeVedtakUføretrygdTask.opprettTask(payload)
+                taskService.save(task)
+            }
         }
     }
 
