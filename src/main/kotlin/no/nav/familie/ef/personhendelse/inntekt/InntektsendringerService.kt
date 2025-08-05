@@ -3,6 +3,8 @@ package no.nav.familie.ef.personhendelse.inntekt
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
@@ -16,6 +18,7 @@ class InntektsendringerService(
     val sakClient: SakClient,
     val inntektsendringerRepository: InntektsendringerRepository,
     val inntektClient: InntektClient,
+    val taskService: TaskService,
 ) {
     private val grunnbeløp = Grunnbeløp().nyesteGrunnbeløp.grunnbeløp
     private val halvtGrunnbeløpMånedlig = (grunnbeløp / 2.toBigDecimal()) / 12.toBigDecimal()
@@ -29,29 +32,18 @@ class InntektsendringerService(
         beregnInntektsendringerOgLagreIDb()
     }
 
-    @Async
-    fun asyncHentPersonerMedInntektsendringerOgRevurderAutomatisk() {
-        hentPersonerMedInntektsendringerOgRevurderAutomatisk()
-    }
-
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
-
-        val identer = mutableListOf<String>()
         inntektsendringer.forEach {
-            val inntektResponse = inntektClient.hentInntekt(it.personIdent, YearMonth.now().minusMonths(3), YearMonth.now().minusMonths(1))
-            val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(3))
-            val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(2))
-            val totalInntektForrigeMåned = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(YearMonth.now().minusMonths(1))
+            val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
+            val payload = objectMapper.writeValueAsString(PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(personIdent = it.personIdent, harIngenEksisterendeYtelser = it.harIngenEksisterendeYtelser(), yearMonthProssesertTid = yearMonthProssesertTid))
+            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE) == null
 
-            val harStabilInntekt = abs(totalInntektTreMånederTilbake - totalInntektToMånederTilbake) < 3000 && abs(totalInntektTreMånederTilbake - totalInntektForrigeMåned) < 3000
-            if (harStabilInntekt && it.harIngenEksisterendeYtelser()) {
-                identer.add(it.personIdent)
+            if (skalOppretteTask) {
+                val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
+                taskService.save(task)
             }
-            secureLogger.info("Total inntekt pr mnd uten feriepenger ${it.personIdent}: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: ${it.harIngenEksisterendeYtelser()}")
         }
-
-        sakClient.revurderAutomatisk(identer)
     }
 
     fun beregnInntektsendringerOgLagreIDb() {
