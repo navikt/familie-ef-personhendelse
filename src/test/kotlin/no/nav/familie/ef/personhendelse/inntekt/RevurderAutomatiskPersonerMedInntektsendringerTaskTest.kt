@@ -4,11 +4,13 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.YearMonth
 
 class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpringRunnerTest() {
     private val sakClient = mockk<SakClient>(relaxed = true)
@@ -30,8 +32,13 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
 
     @Test
     fun `Sjekk at man kan opprette task for uføretrygdsendringer og at den har riktig metadata`() {
-        val payload = """{"personIdent":"123", "harIngenEksisterendeYtelser":"true"}"""
-        val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
+        val paylooad = PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(
+            personIdent = "123",
+            harIngenEksisterendeYtelser = true,
+            yearMonthProssesertTid = YearMonth.of(2023, 10),
+        )
+        val jsonPayload = objectMapper.writeValueAsString(paylooad)
+        val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(jsonPayload)
         taskService.save(task)
         val taskList = taskService.findAll()
         val taskFraDB = taskList.get(taskList.size - 1)
