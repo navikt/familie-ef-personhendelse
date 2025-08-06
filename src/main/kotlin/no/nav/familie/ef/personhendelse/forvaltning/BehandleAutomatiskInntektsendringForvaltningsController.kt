@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.InntektOppgaveService
 import no.nav.familie.ef.personhendelse.inntekt.InntektsendringerService
+import no.nav.familie.ef.personhendelse.inntekt.LoggInntektForPersonTask
 import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
@@ -68,6 +69,18 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     @GetMapping("/opprett-oppgaver-for-arbeidsavklaringspenger-endringer")
     fun opprettOppgaverForArbeidsavklaringspengerEndringer() {
         inntektOppgaveService.finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver(true)
+    }
+
+    @Operation(
+        description =
+            "Logger inntekt for person. Send med fnr i body.",
+        summary =
+            "Logg inntekt for person."
+    )
+    @PostMapping("/logg-inntekt-for-person")
+    fun loggInntektForPerson(@RequestBody personIdent: String) {
+        val loggInntektTask = LoggInntektForPersonTask.opprettTask(personIdent)
+        taskService.save(loggInntektTask)
     }
 
     @Operation(

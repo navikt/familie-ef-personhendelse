@@ -75,6 +75,7 @@ class InntektOppgaveService(
             inntektsendringForBrukereMedUføretrygd.mapNotNull { endring ->
                 val inntekt = inntektsendringerService.hentInntekt(endring.personIdent) ?: return@mapNotNull null
 
+                // Juli
                 val uføretrygdForrige =
                     inntekt.inntektsmåneder
                         .find { it.måned == forrigeMåned }
@@ -82,7 +83,7 @@ class InntektOppgaveService(
                         ?.filter { it.beskrivelse == "ufoeretrygd" }
                         ?.sumOf { it.beløp }
                         ?: 0.0
-
+                // Juni
                 val uføretrygdToMnd =
                     inntekt.inntektsmåneder
                         .find { it.måned == toMånederTilbake }
