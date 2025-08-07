@@ -75,10 +75,12 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
         description =
             "Logger inntekt for person. Send med fnr i body.",
         summary =
-            "Logg inntekt for person."
+            "Logg inntekt for person.",
     )
     @PostMapping("/logg-inntekt-for-person")
-    fun loggInntektForPerson(@RequestBody personIdent: String) {
+    fun loggInntektForPerson(
+        @RequestBody personIdent: String,
+    ) {
         val loggInntektTask = LoggInntektForPersonTask.opprettTask(personIdent)
         taskService.save(loggInntektTask)
     }
