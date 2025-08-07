@@ -31,7 +31,7 @@ class LoggInntektForPersonTask(
         fun opprettTask(payload: String): Task =
             Task(
                 type = TYPE,
-                payload = objectMapper.writeValueAsString(payload),
+                payload = payload,
                 properties =
                     Properties().apply {
                         this["personIdent"] = payload
