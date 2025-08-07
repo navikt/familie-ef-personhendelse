@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.InntektOppgaveService
 import no.nav.familie.ef.personhendelse.inntekt.InntektsendringerService
+import no.nav.familie.ef.personhendelse.inntekt.LoggInntektForPersonTask
+import no.nav.familie.prosessering.internal.TaskService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,6 +20,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     private val sakClient: SakClient,
     private val inntektsendringerService: InntektsendringerService,
     private val inntektOppgaveService: InntektOppgaveService,
+    private val taskService: TaskService,
 ) {
     @Operation(
         description = "Kan brukes til å opprette en automatisk behandle automatisk inntektsendring gjennom ef-sak for en person.",
@@ -66,6 +69,20 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     @GetMapping("/opprett-oppgaver-for-arbeidsavklaringspenger-endringer")
     fun opprettOppgaverForArbeidsavklaringspengerEndringer() {
         inntektOppgaveService.finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver()
+    }
+
+    @Operation(
+        description =
+            "Logger inntekt for person. Send med fnr i body.",
+        summary =
+            "Logg inntekt for person.",
+    )
+    @PostMapping("/logg-inntekt-for-person")
+    fun loggInntektForPerson(
+        @RequestBody personIdent: String,
+    ) {
+        val loggInntektTask = LoggInntektForPersonTask.opprettTask(personIdent)
+        taskService.save(loggInntektTask)
     }
 
     @Operation(
