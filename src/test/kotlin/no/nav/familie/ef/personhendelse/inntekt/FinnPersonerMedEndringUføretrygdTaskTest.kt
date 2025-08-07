@@ -74,8 +74,8 @@ class FinnPersonerMedEndringUføretrygdTaskTest : IntegrasjonSpringRunnerTest() 
     }
 
     @Test
-    fun `sjekk virkelighetsnære data`() {
-        val json: String = readResource("inntekt/InntektEtterbetalingSkalIgnoreres.json") // Inntekt 35k + etterbetaling 10k
+    fun `Sjekk uføretrygd endring hvor det finnes flere innslag av inntekt på samme måned`() {
+        val json: String = readResource("inntekt/InntektUføretrygdUtenEndring.json")
         val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
         every { inntektsendringerService.hentInntekt(any()) } returns inntektResponse
