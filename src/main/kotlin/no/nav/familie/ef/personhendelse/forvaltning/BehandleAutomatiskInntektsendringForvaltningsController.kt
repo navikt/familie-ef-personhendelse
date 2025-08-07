@@ -56,7 +56,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     )
     @GetMapping("/opprett-oppgaver-for-ufoeretrygdsendringer")
     fun opprettOppgaverForUføretrygdsendringer() {
-        inntektOppgaveService.opprettOppgaverForUføretrygdsendringerAsync(true)
+        inntektOppgaveService.finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver()
     }
 
     @Operation(
@@ -68,7 +68,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     )
     @GetMapping("/opprett-oppgaver-for-arbeidsavklaringspenger-endringer")
     fun opprettOppgaverForArbeidsavklaringspengerEndringer() {
-        inntektOppgaveService.finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver(true)
+        inntektOppgaveService.finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver()
     }
 
     @Operation(
@@ -94,7 +94,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     @GetMapping("/opprett-oppgaver-for-inntektskontroll")
     fun opprettOppgaverFraInntektskontroll() {
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
-        inntektOppgaveService.opprettOppgaverForInntektsendringer(true)
+        inntektOppgaveService.opprettOppgaverForInntektsendringer()
         inntektOppgaveService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
     }

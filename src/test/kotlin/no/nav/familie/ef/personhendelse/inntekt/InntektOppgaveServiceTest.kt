@@ -15,11 +15,10 @@ class InntektOppgaveServiceTest {
     private val sakClient = mockk<SakClient>()
     private val arbeidsfordelingClient = mockk<ArbeidsfordelingClient>()
     private val inntektsendringerRepository = mockk<InntektsendringerRepository>()
-    private val inntektsendringerService = mockk<InntektsendringerService>()
     private val pdlClient = mockk<PdlClient>()
     private val taskService = mockk<TaskService>()
 
-    val inntektOppgaveService = InntektOppgaveService(oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerRepository, inntektsendringerService, pdlClient, taskService)
+    val inntektOppgaveService = InntektOppgaveService(oppgaveClient, sakClient, arbeidsfordelingClient, inntektsendringerRepository, pdlClient, taskService)
 
     @Test
     fun `lagOppgavetekstForInntektsendring - sjekk tusenskille på feiltubetalingsbeløp og norsk format på år-måned`() {

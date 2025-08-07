@@ -17,10 +17,10 @@ class InntektsendringerScheduler(
         logger.info("Cron scheduler starter inntektskontroll")
         inntektsendringerService.beregnInntektsendringerOgLagreIDb()
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
-        inntektOppgaveService.opprettOppgaverForInntektsendringer(true)
+        inntektOppgaveService.opprettOppgaverForInntektsendringer()
         inntektOppgaveService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
-        inntektOppgaveService.finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver(false)
-        inntektOppgaveService.finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver(false)
+        inntektOppgaveService.finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver()
+        inntektOppgaveService.finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver()
     }
 }
