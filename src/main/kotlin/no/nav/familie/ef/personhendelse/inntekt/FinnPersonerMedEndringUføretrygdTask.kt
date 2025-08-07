@@ -28,9 +28,9 @@ class FinnPersonerMedEndringUføretrygdTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val (inntektsendringForBrukereMedUføretrygd, årMåned) = objectMapper.readValue<PayloadFinnPersonerMedEndringUføretrygdTask>(task.payload)
-        val forrigeMåned = årMåned.minusMonths(1)
-        val toMånederTilbake = årMåned.minusMonths(2)
+        val inntektsendringForBrukereMedUføretrygd = objectMapper.readValue<PayloadFinnPersonerMedEndringUføretrygdTask>(task.payload).inntektsendringForBrukereMedUføretrygd
+        val forrigeMåned = YearMonth.now().minusMonths(1)
+        val toMånederTilbake = YearMonth.now().minusMonths(2)
         val kandidater =
             inntektsendringForBrukereMedUføretrygd.mapNotNull { endring ->
                 val inntekt = inntektsendringerService.hentInntekt(endring.personIdent) ?: return@mapNotNull null
@@ -67,18 +67,11 @@ class FinnPersonerMedEndringUføretrygdTask(
     companion object {
         const val TYPE = "finnPersonerMedEndringUføretrygdTask"
 
-        fun opprettTask(payload: String): Task {
-            val payloadObject = objectMapper.readValue(payload, PayloadFinnPersonerMedEndringUføretrygdTask::class.java)
-
-            return Task(
+        fun opprettTask(payload: String): Task =
+            Task(
                 type = TYPE,
                 payload = payload,
-                properties =
-                    Properties().apply {
-                        this["årMåned"] = payloadObject.årMåned
-                    },
             )
-        }
     }
 }
 
