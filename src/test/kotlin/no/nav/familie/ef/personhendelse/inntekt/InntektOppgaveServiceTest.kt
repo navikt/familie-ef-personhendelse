@@ -15,7 +15,6 @@ class InntektOppgaveServiceTest {
     private val sakClient = mockk<SakClient>()
     private val arbeidsfordelingClient = mockk<ArbeidsfordelingClient>()
     private val inntektsendringerRepository = mockk<InntektsendringerRepository>()
-    private val inntektsendringerService = mockk<InntektsendringerService>()
     private val pdlClient = mockk<PdlClient>()
     private val taskService = mockk<TaskService>()
 
