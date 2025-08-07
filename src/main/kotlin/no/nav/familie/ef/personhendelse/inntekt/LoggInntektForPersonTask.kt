@@ -5,14 +5,16 @@ import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 import java.time.YearMonth
 import java.util.Properties
 
+@Service
 @TaskStepBeskrivelse(
     taskStepType = LoggInntektForPersonTask.TYPE,
     maxAntallFeil = 1,
     settTilManuellOppfølgning = true,
-    beskrivelse = "Oppretter oppgave for uføretrygsendringer på person",
+    beskrivelse = "Logger inntekt for gitt person",
 )
 class LoggInntektForPersonTask(
     private val inntektClient: InntektClient,
