@@ -6,6 +6,7 @@ import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions
@@ -244,11 +245,6 @@ class InntektsendringerServiceTest {
                     ).harEndretInntekt(),
             ).isTrue
     }
-
-    fun readResource(name: String): String =
-        this::class.java.classLoader
-            .getResource(name)!!
-            .readText(StandardCharsets.UTF_8)
 
     fun inntektsendring(
         beløp: Int = 0,

@@ -1,0 +1,163 @@
+{
+  "data": [
+    {
+      "maaned": "2025-06",
+      "opplysningspliktig": "999999999",
+      "underenhet": "999999998",
+      "norskident": "01010199999",
+      "oppsummeringstidspunkt": "2025-06-10T11:51:38.882Z",
+      "inntektListe": [
+        {
+          "type": "Loennsinntekt",
+          "beloep": 760.80,
+          "fordel": "kontantytelse",
+          "beskrivelse": "feriepenger",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": true,
+          "skatteOgAvgiftsregel": null,
+          "opptjeningsperiodeFom": "2025-06-01",
+          "opptjeningsperiodeTom": "2025-06-30",
+          "tilleggsinformasjon": null,
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        }
+      ],
+      "forskuddstrekkListe": [],
+      "avvikListe": []
+    },
+    {
+      "maaned": "2025-06",
+      "opplysningspliktig": "123456789",
+      "underenhet": "123456788",
+      "norskident": "01010199999",
+      "oppsummeringstidspunkt": "2025-06-20T21:25:48.289Z",
+      "inntektListe": [
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 249.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": null,
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": {
+            "type": "Etterbetalingsperiode"
+          },
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        },
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 4323.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": null,
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": null,
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        },
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 1214.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "ufoeretrygd",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": null,
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": {
+            "type": "AldersUfoereEtterlatteAvtalefestetOgKrigspensjon"
+          },
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        },
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 24912.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "ufoeretrygd",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": null,
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": null,
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        }
+      ],
+      "forskuddstrekkListe": [
+        {
+          "beloep": -345.0,
+          "beskrivelse": "ordinaert"
+        }
+      ],
+      "avvikListe": []
+    },
+    {
+      "maaned": "2025-07",
+      "opplysningspliktig": "123456789",
+      "underenhet": "123456789",
+      "norskident": "01010199999",
+      "oppsummeringstidspunkt": "2025-07-21T13:22:45.804Z",
+      "inntektListe": [
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 3832.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": null,
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": null,
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        },
+        {
+          "type": "YtelseFraOffentlige",
+          "beloep": 24912.0,
+          "fordel": "kontantytelse",
+          "beskrivelse": "ufoeretrygd",
+          "inngaarIGrunnlagForTrekk": true,
+          "utloeserArbeidsgiveravgift": false,
+          "skatteOgAvgiftsregel": null,
+          "opptjeningsperiodeFom": null,
+          "opptjeningsperiodeTom": null,
+          "tilleggsinformasjon": null,
+          "manuellVurdering": false,
+          "antall": null,
+          "skattemessigBosattLand": null,
+          "opptjeningsland": null
+        }
+      ],
+      "forskuddstrekkListe": [
+        {
+          "beloep": -7352.0,
+          "beskrivelse": "ordinaert"
+        }
+      ],
+      "avvikListe": []
+    }
+  ]
+}
