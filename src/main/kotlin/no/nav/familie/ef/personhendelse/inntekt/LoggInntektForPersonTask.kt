@@ -22,9 +22,10 @@ class LoggInntektForPersonTask(
     private val securelogger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
+        securelogger.info("Hent inntekt for person ${task.payload}")
         val inntekt = inntektClient.hentInntekt(personIdent = task.payload, YearMonth.now().minusMonths(12), YearMonth.now())
-        securelogger.info("InntektResponse for person ${task.payload}")
-        securelogger.info("${objectMapper.writeValueAsString(inntekt)}")
+        securelogger.info("Inntekt hentet")
+        securelogger.info("InntektResponse: ${objectMapper.writeValueAsString(inntekt)}")
     }
 
     companion object {
