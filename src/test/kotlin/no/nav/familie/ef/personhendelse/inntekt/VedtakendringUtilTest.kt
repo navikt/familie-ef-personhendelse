@@ -1,6 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -129,9 +130,4 @@ class VedtakendringUtilTest {
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }
-
-    fun readResource(name: String): String =
-        this::class.java.classLoader
-            .getResource(name)!!
-            .readText(StandardCharsets.UTF_8)
 }

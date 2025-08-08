@@ -37,19 +37,17 @@ class FinnPersonerMedEndringUføretrygdTask(
 
                 val uføretrygdForrige =
                     inntekt.inntektsmåneder
-                        .find { it.måned == forrigeMåned }
-                        ?.inntektListe
-                        ?.filter { it.beskrivelse == "ufoeretrygd" }
-                        ?.sumOf { it.beløp }
-                        ?: 0.0
+                        .filter { it.måned == forrigeMåned }
+                        .flatMap { it.inntektListe }
+                        .filter { it.beskrivelse == "ufoeretrygd" }
+                        .sumOf { it.beløp }
 
                 val uføretrygdToMnd =
                     inntekt.inntektsmåneder
-                        .find { it.måned == toMånederTilbake }
-                        ?.inntektListe
-                        ?.filter { it.beskrivelse == "ufoeretrygd" }
-                        ?.sumOf { it.beløp }
-                        ?: 0.0
+                        .filter { it.måned == toMånederTilbake }
+                        .flatMap { it.inntektListe }
+                        .filter { it.beskrivelse == "ufoeretrygd" }
+                        .sumOf { it.beløp }
 
                 if (uføretrygdForrige > uføretrygdToMnd) endring else null
             }

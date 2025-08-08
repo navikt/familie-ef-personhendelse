@@ -1,7 +1,9 @@
 package no.nav.familie.ef.personhendelse.inntekt
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
@@ -69,6 +71,38 @@ class FinnPersonerMedEndringUføretrygdTaskTest : IntegrasjonSpringRunnerTest() 
         assertThat(taskFraDBLagOppgave.metadata).isNotEmpty
         assertThat(taskFraDBLagOppgave.metadataWrapper.properties.keys.size).isEqualTo(3)
         assertThat(taskFraDBLagOppgave.metadataWrapper.properties.keys).contains("callId", "personIdent", "årMåned")
+    }
+
+    @Test
+    fun `Sjekk uføretrygd endring hvor det finnes flere innslag av inntekt på samme måned`() {
+        val json: String = readResource("inntekt/InntektUføretrygdUtenEndring.json")
+        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
+
+        every { inntektsendringerService.hentInntekt(any()) } returns inntektResponse
+
+        val inntektsendring =
+            InntektOgVedtakEndring(
+                personIdent = "12345",
+                harNyeVedtak = false,
+                prosessertTid = LocalDateTime.now(),
+                inntektsendringFireMånederTilbake = BeregningResultat(1000, 0, 0),
+                inntektsendringTreMånederTilbake = BeregningResultat(1000, 0, 0),
+                inntektsendringToMånederTilbake = BeregningResultat(1000, 0, 0),
+                inntektsendringForrigeMåned = BeregningResultat(1200, 10, 200),
+                nyeYtelser = null,
+                eksisterendeYtelser = "ufoeretrygd",
+            )
+        val payload =
+            PayloadFinnPersonerMedEndringUføretrygdTask(
+                inntektsendringForBrukereMedUføretrygd = listOf(inntektsendring),
+                årMåned = YearMonth.now(),
+            )
+        val payloadJson = objectMapper.writeValueAsString(payload)
+        val task = FinnPersonerMedEndringUføretrygdTask.opprettTask(payloadJson)
+        taskService.save(task)
+        finnPersonerMedEndringUføretrygdTask.doTask(task)
+
+        assertThat(taskService.findAll().filter { it.type == OpprettOppgaverForUføretrygdsendringerTask.TYPE }.size).isEqualTo(0)
     }
 }
 
