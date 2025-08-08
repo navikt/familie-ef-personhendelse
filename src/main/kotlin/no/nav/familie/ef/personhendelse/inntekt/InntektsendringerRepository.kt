@@ -73,7 +73,7 @@ class InntektsendringerRepository(
     }
 
     fun hentInntektsendringerForPersonerMedUføretrygd(): List<InntektOgVedtakEndring> {
-        val sql = "SELECT * FROM inntektsendringer WHERE eksisterende_ytelser like '%ufoeretrygd%'"
+        val sql = "SELECT * FROM inntektsendringer WHERE eksisterende_ytelser like '%ufoeretrygd%' AND NOT (harnyttvedtak is TRUE AND ny_ytelse_type like '%ufoeretrygd%')"
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
