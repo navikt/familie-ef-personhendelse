@@ -44,7 +44,7 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTaskTest : IntegrasjonSpring
                 foedselsdato =
                     listOf(
                         Foedselsdato(
-                            foedselsdato = LocalDate.of(2000, YearMonth.now().month, 1),
+                            foedselsdato = LocalDate.of(YearMonth.now().minusYears(25).year, YearMonth.now().month, 1),
                         ),
                     ),
             )
