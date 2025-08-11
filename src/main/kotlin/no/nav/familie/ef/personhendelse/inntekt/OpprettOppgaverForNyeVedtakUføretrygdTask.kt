@@ -1,5 +1,6 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -33,18 +34,15 @@ class OpprettOppgaverForNyeVedtakUføretrygdTask(
     companion object {
         const val TYPE = "opprettOppgaverForNyeVedtakUføretrygdTask"
 
-        fun opprettTask(payload: String): Task {
-            val payloadObject = objectMapper.readValue(payload, PayloadOpprettOppgaverForNyeVedtakUføretrygdTask::class.java)
-
-            return Task(
+        fun opprettTask(payload: PayloadOpprettOppgaverForNyeVedtakUføretrygdTask): Task =
+            Task(
                 type = TYPE,
-                payload = payload,
+                payload = objectMapper.writeValueAsString(payload),
                 properties =
                     Properties().apply {
-                        this["personIdent"] = payloadObject.personIdent
+                        this["personIdent"] = payload.personIdent
                     },
             )
-        }
     }
 }
 

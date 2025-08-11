@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.YearMonth
 
 class OpprettOppgaverForInntektsendringerTaskTest : IntegrasjonSpringRunnerTest() {
     private val inntektOppgaveService = mockk<InntektOppgaveService>(relaxed = true)
@@ -27,11 +28,11 @@ class OpprettOppgaverForInntektsendringerTaskTest : IntegrasjonSpringRunnerTest(
 
     @Test
     fun `Sjekk at man kan opprette task for arbeidsavklaringspenger endringer og at den har riktig metadata`() {
-        val payload = """{"personIdent":"123", "totalFeilutbetaling":"5000", "yearMonthProssesertTid":"2023-10"}"""
+        val payload = PayloadOpprettOppgaverForInntektsendringerTask("123", 123, YearMonth.now())
         val task = OpprettOppgaverForInntektsendringerTask.opprettTask(payload)
         taskService.save(task)
-        val taskList = taskService.findAll()
-        val taskFraDB = taskList.get(taskList.size - 1)
+        val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForInntektsendringerTask.TYPE)
+        val taskFraDB = taskListOpprettOppgaveTask.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
         assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "callId")

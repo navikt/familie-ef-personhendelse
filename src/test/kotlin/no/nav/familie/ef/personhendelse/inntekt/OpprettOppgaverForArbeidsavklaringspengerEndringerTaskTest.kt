@@ -37,8 +37,8 @@ class OpprettOppgaverForArbeidsavklaringspengerEndringerTaskTest : IntegrasjonSp
 
         val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
         taskService.save(task)
-        val taskList = taskService.findAll()
-        val taskFraDB = taskList.get(taskList.size - 1)
+        val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE)
+        val taskFraDB = taskListOpprettOppgaveTask.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(3)
         assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "årMåned", "callId")

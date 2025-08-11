@@ -41,8 +41,8 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
         val jsonPayload = objectMapper.writeValueAsString(paylooad)
         val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(jsonPayload)
         taskService.save(task)
-        val taskList = taskService.findAll()
-        val taskFraDB = taskList.get(taskList.size - 1)
+        val taskList = taskService.finnAlleTaskerMedType(RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE)
+        val taskFraDB = taskList.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
         assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "callId")

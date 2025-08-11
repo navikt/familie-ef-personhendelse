@@ -72,9 +72,9 @@ class InntektsendringerRepository(
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
-    fun hentInntektsendringerForPersonerMedUføretrygd(): List<InntektOgVedtakEndring> {
-        val sql = "SELECT * FROM inntektsendringer WHERE eksisterende_ytelser like '%ufoeretrygd%' AND NOT (harnyttvedtak is TRUE AND ny_ytelse_type like '%ufoeretrygd%')"
-        return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
+    fun hentInntektsendringerForPersonerMedUføretrygd(): List<String> {
+        val sql = "SELECT person_ident FROM inntektsendringer WHERE eksisterende_ytelser like '%ufoeretrygd%' AND NOT (harnyttvedtak is TRUE AND ny_ytelse_type like '%ufoeretrygd%')"
+        return namedParameterJdbcTemplate.query(sql, personIdentMapper)
     }
 
     fun hentKandidaterTilAutomatiskRevurdering(): List<InntektOgVedtakEndring> {
@@ -88,10 +88,14 @@ class InntektsendringerRepository(
         return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
     }
 
-    fun hentInntektsendringerForPersonMedArbeidsavklaringspenger(): List<InntektOgVedtakEndring> {
+    fun hentInntektsendringerForPersonMedArbeidsavklaringspenger(): List<String> {
         val sql =
-            "SELECT * FROM inntektsendringer WHERE eksisterende_ytelser like '%arbeidsavklaringspenger%'"
-        return namedParameterJdbcTemplate.query(sql, inntektsendringerMapper)
+            "SELECT person_ident FROM inntektsendringer WHERE eksisterende_ytelser like '%arbeidsavklaringspenger%'"
+        return namedParameterJdbcTemplate.query(sql, personIdentMapper)
+    }
+
+    private val personIdentMapper = { rs: ResultSet, _: Int ->
+        rs.getString("person_ident")
     }
 
     private val inntektsendringerMapper = { rs: ResultSet, _: Int ->
