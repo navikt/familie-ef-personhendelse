@@ -3,6 +3,10 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.FinnPersonerMedEndringUføretrygdTask
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.OpprettOppgaverForUføretrygdsendringerTask
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.PayloadFinnPersonerMedEndringUføretrygdTask
 import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
@@ -11,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.YearMonth
 

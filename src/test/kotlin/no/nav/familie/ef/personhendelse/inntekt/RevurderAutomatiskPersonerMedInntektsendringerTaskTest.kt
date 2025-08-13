@@ -4,7 +4,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.ef.personhendelse.inntekt.endring.PayloadRevurderAutomatiskPersonerMedInntektsendringerTask
+import no.nav.familie.ef.personhendelse.inntekt.endring.RevurderAutomatiskPersonerMedInntektsendringerTask
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

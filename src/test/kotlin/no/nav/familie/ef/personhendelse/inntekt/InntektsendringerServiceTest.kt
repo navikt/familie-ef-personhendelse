@@ -6,13 +6,15 @@ import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.inntekt.endring.BeregningResultat
+import no.nav.familie.ef.personhendelse.inntekt.endring.Inntektsendring
+import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
 import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.nio.charset.StandardCharsets
 import java.time.YearMonth
 
 class InntektsendringerServiceTest {

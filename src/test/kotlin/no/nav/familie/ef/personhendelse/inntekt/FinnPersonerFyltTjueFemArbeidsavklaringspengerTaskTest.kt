@@ -6,6 +6,9 @@ import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.ef.personhendelse.generated.hentperson.Foedselsdato
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.FinnPersonerFyltTjueFemArbeidsavklaringspengerTask
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.OpprettOppgaverForArbeidsavklaringspengerEndringerTask
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -59,8 +62,10 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTaskTest : IntegrasjonSpring
         val task = FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.opprettTask(payload)
         taskService.save(task)
         finnPersonerFyltTjueFemArbeidsavklaringspengerTask.doTask(task)
-        val taskListFinnPersonerTask = taskService.finnAlleTaskerMedType(FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.TYPE)
-        val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE)
+        val taskListFinnPersonerTask =
+            taskService.finnAlleTaskerMedType(FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.TYPE)
+        val taskListOpprettOppgaveTask =
+            taskService.finnAlleTaskerMedType(OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE)
         assertThat(taskListFinnPersonerTask).hasSize(1)
         assertThat(taskListOpprettOppgaveTask).hasSize(1)
         val taskFraDBFinnPerson = taskListFinnPersonerTask.first()

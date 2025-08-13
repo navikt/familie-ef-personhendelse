@@ -1,8 +1,15 @@
-package no.nav.familie.ef.personhendelse.inntekt
+package no.nav.familie.ef.personhendelse.inntekt.endring
 
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.inntekt.Grunnbeløp
+import no.nav.familie.ef.personhendelse.inntekt.InntektClient
+import no.nav.familie.ef.personhendelse.inntekt.InntektResponse
+import no.nav.familie.ef.personhendelse.inntekt.InntektsendringerRepository
+import no.nav.familie.ef.personhendelse.inntekt.Inntektsmåned
+import no.nav.familie.ef.personhendelse.inntekt.VedtakendringerUtil
+import no.nav.familie.ef.personhendelse.inntekt.beregnFeilutbetalingForMåned
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
@@ -10,7 +17,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.YearMonth
-import kotlin.math.abs
 
 @Service
 class InntektsendringerService(

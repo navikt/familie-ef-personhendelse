@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.inntekt
+package no.nav.familie.ef.personhendelse.inntekt.oppgave
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -10,43 +10,42 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.YearMonth
 import java.util.Properties
+import kotlin.collections.set
 
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = OpprettOppgaverForUføretrygdsendringerTask.TYPE,
+    taskStepType = OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE,
     maxAntallFeil = 1,
     settTilManuellOppfølgning = true,
-    beskrivelse = "Oppretter oppgave for uføretrygsendringer på person",
+    beskrivelse = "Oppretter oppgave for nye uføretrygd-vedtak på person",
 )
-class OpprettOppgaverForUføretrygdsendringerTask(
+class OpprettOppgaverForNyeVedtakUføretrygdTask(
     private val inntektOppgaveService: InntektOppgaveService,
 ) : AsyncTaskStep {
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val personIdent = objectMapper.readValue<PayloadOpprettOppgaverForUføretrygdsendringerTask>(task.payload).personIdent
-        secureLogger.info("Oppretter oppgaver for uføretrygdsendringer ${task.payload}")
-        inntektOppgaveService.opprettOppgaveForUføretrygdEndring(personIdent, inntektOppgaveService.lagOppgavetekstVedEndringUføretrygd(YearMonth.now().minusMonths(1)))
+        val personIdent = objectMapper.readValue<PayloadOpprettOppgaverForNyeVedtakUføretrygdTask>(task.payload).personIdent
+        secureLogger.info("Oppretter oppgaver for nye vedtak uføretrygd for person: $personIdent")
+        inntektOppgaveService.opprettOppgaveForInntektsendring(personIdent, inntektOppgaveService.lagOppgavetekstVedNyYtelseUføretrygd())
     }
 
     companion object {
-        const val TYPE = "opprettOppgaverForUføretrygdsendringerTask"
+        const val TYPE = "opprettOppgaverForNyeVedtakUføretrygdTask"
 
-        fun opprettTask(payload: PayloadOpprettOppgaverForUføretrygdsendringerTask): Task =
+        fun opprettTask(payload: PayloadOpprettOppgaverForNyeVedtakUføretrygdTask): Task =
             Task(
                 type = TYPE,
                 payload = objectMapper.writeValueAsString(payload),
                 properties =
                     Properties().apply {
                         this["personIdent"] = payload.personIdent
-                        this["årMåned"] = payload.årMåned.toString()
                     },
             )
     }
 }
 
-data class PayloadOpprettOppgaverForUføretrygdsendringerTask(
+data class PayloadOpprettOppgaverForNyeVedtakUføretrygdTask(
     val personIdent: String,
-    val årMåned: YearMonth,
+    val prosessertYearMonth: YearMonth,
 )
