@@ -1,5 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import no.nav.familie.ef.personhendelse.inntekt.endring.Grunnbeløp
+import no.nav.familie.ef.personhendelse.inntekt.endring.beregnFeilutbetalingForMåned
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

@@ -3,6 +3,9 @@ package no.nav.familie.ef.personhendelse.inntekt
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.InntektOppgaveService
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.OpprettOppgaverForInntektsendringerTask
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.PayloadOpprettOppgaverForInntektsendringerTask
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

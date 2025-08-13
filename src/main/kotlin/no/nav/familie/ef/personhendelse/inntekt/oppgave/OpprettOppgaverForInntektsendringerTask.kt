@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.inntekt
+package no.nav.familie.ef.personhendelse.inntekt.oppgave
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -13,40 +13,40 @@ import java.util.Properties
 
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE,
+    taskStepType = OpprettOppgaverForInntektsendringerTask.TYPE,
     maxAntallFeil = 1,
     settTilManuellOppfølgning = true,
     beskrivelse = "Oppretter oppgave for arbeidsavklaringspenger endringer på person",
 )
-class OpprettOppgaverForArbeidsavklaringspengerEndringerTask(
+class OpprettOppgaverForInntektsendringerTask(
     private val inntektOppgaveService: InntektOppgaveService,
 ) : AsyncTaskStep {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val personIdent = objectMapper.readValue<PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask>(task.payload).personIdent
-        secureLogger.info("Oppretter oppgaver for arbeidsavklaringspenger endringer ${task.payload}")
-        inntektOppgaveService.opprettOppgaveForArbeidsavklaringspengerEndring(personIdent, inntektOppgaveService.lagOppgavetekstVedEndringArbeidsavklaringspenger())
+        val (personIdent, totalFeilutbetaling, yearMonthProssesertTid) = objectMapper.readValue<PayloadOpprettOppgaverForInntektsendringerTask>(task.payload)
+        secureLogger.info("Oppretter oppgaver for inntektsendringer ${task.payload}")
+        inntektOppgaveService.opprettOppgaveForInntektsendring(personIdent, inntektOppgaveService.lagOppgavetekstForInntektsendring(totalFeilutbetaling, yearMonthProssesertTid))
     }
 
     companion object {
-        const val TYPE = "opprettOppgaverForArbeidsavklaringspengerEndringerTask"
+        const val TYPE = "opprettOppgaverForInntektsendringerTask"
 
-        fun opprettTask(payload: PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask): Task =
+        fun opprettTask(payload: PayloadOpprettOppgaverForInntektsendringerTask): Task =
             Task(
                 type = TYPE,
                 payload = objectMapper.writeValueAsString(payload),
                 properties =
                     Properties().apply {
                         this["personIdent"] = payload.personIdent
-                        this["årMåned"] = payload.årMåned.toString()
                     },
             )
     }
 }
 
-data class PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(
+data class PayloadOpprettOppgaverForInntektsendringerTask(
     val personIdent: String,
-    val årMåned: YearMonth,
+    val totalFeilutbetaling: Int,
+    val yearMonthProssesertTid: YearMonth,
 )

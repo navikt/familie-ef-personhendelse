@@ -1,5 +1,6 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import no.nav.familie.ef.personhendelse.inntekt.endring.Grunnbeløp
 import org.junit.Test
 
 class GrunnbeløpTest {

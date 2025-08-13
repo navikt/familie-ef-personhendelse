@@ -1,5 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import no.nav.familie.ef.personhendelse.inntekt.endring.BeregningResultat
+import no.nav.familie.ef.personhendelse.inntekt.endring.Inntektsendring
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.stereotype.Repository

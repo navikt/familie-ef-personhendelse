@@ -1,6 +1,7 @@
-package no.nav.familie.ef.personhendelse.inntekt
+package no.nav.familie.ef.personhendelse.inntekt.oppgave
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse

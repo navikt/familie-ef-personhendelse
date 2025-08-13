@@ -4,7 +4,7 @@ import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
-import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
+import no.nav.familie.ef.personhendelse.inntekt.oppgave.InntektOppgaveService
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions

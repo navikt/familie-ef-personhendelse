@@ -1,8 +1,8 @@
-package no.nav.familie.ef.personhendelse.inntekt
+package no.nav.familie.ef.personhendelse.inntekt.endring
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.inntekt.InntektClient
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse

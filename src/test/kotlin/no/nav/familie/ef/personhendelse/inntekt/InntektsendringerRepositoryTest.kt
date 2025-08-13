@@ -1,6 +1,8 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
+import no.nav.familie.ef.personhendelse.inntekt.endring.BeregningResultat
+import no.nav.familie.ef.personhendelse.inntekt.endring.Inntektsendring
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

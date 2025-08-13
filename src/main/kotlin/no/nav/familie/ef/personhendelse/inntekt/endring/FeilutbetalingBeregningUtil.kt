@@ -1,4 +1,4 @@
-package no.nav.familie.ef.personhendelse.inntekt
+package no.nav.familie.ef.personhendelse.inntekt.endring
 
 import java.math.BigDecimal
 import java.math.RoundingMode
