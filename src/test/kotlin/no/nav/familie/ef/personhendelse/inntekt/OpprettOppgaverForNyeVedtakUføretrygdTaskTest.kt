@@ -37,6 +37,7 @@ class OpprettOppgaverForNyeVedtakUføretrygdTaskTest : IntegrasjonSpringRunnerTe
         val task = OpprettOppgaverForNyeVedtakUføretrygdTask.opprettTask(payload)
         taskService.save(task)
         val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE)
+        assertThat (taskListOpprettOppgaveTask).hasSize(1)
         val taskFraDB = taskListOpprettOppgaveTask.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)

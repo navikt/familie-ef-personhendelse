@@ -52,6 +52,8 @@ class FinnPersonerMedEndringUføretrygdTaskTest : IntegrasjonSpringRunnerTest() 
         finnPersonerMedEndringUføretrygdTask.doTask(task)
         val taskListFinnPersonerTask = taskService.finnAlleTaskerMedType(FinnPersonerMedEndringUføretrygdTask.TYPE)
         val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForUføretrygdsendringerTask.TYPE)
+        assertThat (taskListFinnPersonerTask).hasSize(1)
+        assertThat (taskListOpprettOppgaveTask).hasSize(1)
         val taskFraDBFinnPerson = taskListFinnPersonerTask.first()
         val taskFraDBLagOppgave = taskListOpprettOppgaveTask.first()
         assertThat(taskFraDBFinnPerson.metadata).isNotEmpty

@@ -61,6 +61,8 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTaskTest : IntegrasjonSpring
         finnPersonerFyltTjueFemArbeidsavklaringspengerTask.doTask(task)
         val taskListFinnPersonerTask = taskService.finnAlleTaskerMedType(FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.TYPE)
         val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE)
+        assertThat (taskListFinnPersonerTask).hasSize(1)
+        assertThat (taskListOpprettOppgaveTask).hasSize(1)
         val taskFraDBFinnPerson = taskListFinnPersonerTask.first()
         val taskFraDBLagOppgave = taskListOpprettOppgaveTask.first()
         assertThat(taskFraDBFinnPerson.metadata).isNotEmpty

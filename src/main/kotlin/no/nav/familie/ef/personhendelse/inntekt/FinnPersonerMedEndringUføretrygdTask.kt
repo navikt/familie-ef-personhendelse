@@ -10,8 +10,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.YearMonth
-import java.util.Properties
-import kotlin.collections.set
 
 @Service
 @TaskStepBeskrivelse(
@@ -31,7 +29,7 @@ class FinnPersonerMedEndringUføretrygdTask(
         val (inntektsendringForBrukereMedUføretrygd, årMåned) = objectMapper.readValue<PayloadFinnPersonerMedEndringUføretrygdTask>(task.payload)
         val forrigeMåned = YearMonth.now().minusMonths(1)
         val toMånederTilbake = YearMonth.now().minusMonths(2)
-        val kandidater =
+        val personerMedØktUtbetalingAvUføretrygd =
             inntektsendringForBrukereMedUføretrygd.mapNotNull { personIdent ->
                 val inntekt = inntektsendringerService.hentInntekt(personIdent) ?: return@mapNotNull null
 
@@ -51,7 +49,7 @@ class FinnPersonerMedEndringUføretrygdTask(
 
                 if (uføretrygdForrige > uføretrygdToMnd) personIdent else null
             }
-        kandidater.forEach { kandidat ->
+        personerMedØktUtbetalingAvUføretrygd.forEach { kandidat ->
             val payload = PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat, årMåned = årMåned)
             val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForUføretrygdsendringerTask.TYPE) == null
 

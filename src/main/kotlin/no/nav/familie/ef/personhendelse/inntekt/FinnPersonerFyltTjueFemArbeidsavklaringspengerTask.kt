@@ -29,9 +29,9 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
     override fun doTask(task: Task) {
         val (inntektsendringForBrukereMedArbeidsavklaringspenger, årMåned) = objectMapper.readValue<PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask>(task.payload)
         val startDato = årMåned.minusMonths(1).atDay(6)
-        val sluttDato = årMåned
+        val sluttDato = årMåned.atDay(7)
 
-        val kandidater =
+        val personerFylt25Aar =
             inntektsendringForBrukereMedArbeidsavklaringspenger.mapNotNull { personIdent ->
                 val person = pdlClient.hentPerson(personIdent)
                 val foedselsdato = person.foedselsdato.first().foedselsdato
@@ -39,9 +39,9 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
                     secureLogger.error("Fant ingen fødselsdato for person $personIdent")
                 }
                 val fylte25Dato = foedselsdato?.plusYears(25)
-                if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato.atDay(7))) personIdent else null
+                if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato)) personIdent else null
             }
-        kandidater.forEach { kandidat ->
+        personerFylt25Aar.forEach { kandidat ->
             val payload = PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = kandidat, årMåned = YearMonth.from(årMåned))
             val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) == null
 

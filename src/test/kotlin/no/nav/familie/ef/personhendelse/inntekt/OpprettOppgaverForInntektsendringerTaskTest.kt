@@ -32,6 +32,7 @@ class OpprettOppgaverForInntektsendringerTaskTest : IntegrasjonSpringRunnerTest(
         val task = OpprettOppgaverForInntektsendringerTask.opprettTask(payload)
         taskService.save(task)
         val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForInntektsendringerTask.TYPE)
+        assertThat (taskListOpprettOppgaveTask).hasSize(1)
         val taskFraDB = taskListOpprettOppgaveTask.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
