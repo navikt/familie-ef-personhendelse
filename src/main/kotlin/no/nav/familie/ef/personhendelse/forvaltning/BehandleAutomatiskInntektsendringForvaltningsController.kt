@@ -97,6 +97,8 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
         inntektOppgaveService.opprettOppgaverForInntektsendringer()
         inntektOppgaveService.opprettOppgaverForNyeVedtakUføretrygd()
         inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
+        inntektOppgaveService.finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver()
+        inntektOppgaveService.finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver()
     }
 
     @Operation(
