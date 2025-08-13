@@ -40,31 +40,22 @@ class FinnPersonerMedEndringUføretrygdTaskTest : IntegrasjonSpringRunnerTest() 
                 belopToMndTilbake = 1000.0,
             )
         every { inntektsendringerService.hentInntekt(any()) } returns inntekt
-        val inntektsendring =
-            InntektOgVedtakEndring(
-                personIdent = "12345",
-                harNyeVedtak = false,
-                prosessertTid = LocalDateTime.now(),
-                inntektsendringFireMånederTilbake = BeregningResultat(1000, 0, 0),
-                inntektsendringTreMånederTilbake = BeregningResultat(1000, 0, 0),
-                inntektsendringToMånederTilbake = BeregningResultat(1000, 0, 0),
-                inntektsendringForrigeMåned = BeregningResultat(1200, 10, 200),
-                nyeYtelser = null,
-                eksisterendeYtelser = "ufoeretrygd",
-            )
+        val personIdenter = "123"
         val payload =
             PayloadFinnPersonerMedEndringUføretrygdTask(
-                inntektsendringForBrukereMedUføretrygd = listOf(inntektsendring),
+                personIdenter = listOf(personIdenter),
                 årMåned = YearMonth.now(),
             )
-        val payloadJson = objectMapper.writeValueAsString(payload)
 
-        val task = FinnPersonerMedEndringUføretrygdTask.opprettTask(payloadJson)
+        val task = FinnPersonerMedEndringUføretrygdTask.opprettTask(payload)
         taskService.save(task)
         finnPersonerMedEndringUføretrygdTask.doTask(task)
-        val taskList = taskService.findAll()
-        val taskFraDBFinnPerson = taskList.get(taskList.size - 2)
-        val taskFraDBLagOppgave = taskList.get(taskList.size - 1)
+        val taskListFinnPersonerTask = taskService.finnAlleTaskerMedType(FinnPersonerMedEndringUføretrygdTask.TYPE)
+        val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForUføretrygdsendringerTask.TYPE)
+        assertThat(taskListFinnPersonerTask).hasSize(1)
+        assertThat(taskListOpprettOppgaveTask).hasSize(1)
+        val taskFraDBFinnPerson = taskListFinnPersonerTask.first()
+        val taskFraDBLagOppgave = taskListOpprettOppgaveTask.first()
         assertThat(taskFraDBFinnPerson.metadata).isNotEmpty
         assertThat(taskFraDBFinnPerson.metadataWrapper.properties.keys.size).isEqualTo(1)
         assertThat(taskFraDBFinnPerson.metadataWrapper.properties.keys).contains("callId")
@@ -80,25 +71,13 @@ class FinnPersonerMedEndringUføretrygdTaskTest : IntegrasjonSpringRunnerTest() 
 
         every { inntektsendringerService.hentInntekt(any()) } returns inntektResponse
 
-        val inntektsendring =
-            InntektOgVedtakEndring(
-                personIdent = "12345",
-                harNyeVedtak = false,
-                prosessertTid = LocalDateTime.now(),
-                inntektsendringFireMånederTilbake = BeregningResultat(1000, 0, 0),
-                inntektsendringTreMånederTilbake = BeregningResultat(1000, 0, 0),
-                inntektsendringToMånederTilbake = BeregningResultat(1000, 0, 0),
-                inntektsendringForrigeMåned = BeregningResultat(1200, 10, 200),
-                nyeYtelser = null,
-                eksisterendeYtelser = "ufoeretrygd",
-            )
+        val personIdenter = "123"
         val payload =
             PayloadFinnPersonerMedEndringUføretrygdTask(
-                inntektsendringForBrukereMedUføretrygd = listOf(inntektsendring),
+                personIdenter = listOf(personIdenter),
                 årMåned = YearMonth.now(),
             )
-        val payloadJson = objectMapper.writeValueAsString(payload)
-        val task = FinnPersonerMedEndringUføretrygdTask.opprettTask(payloadJson)
+        val task = FinnPersonerMedEndringUføretrygdTask.opprettTask(payload)
         taskService.save(task)
         finnPersonerMedEndringUføretrygdTask.doTask(task)
 

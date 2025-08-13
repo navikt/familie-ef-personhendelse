@@ -1,13 +1,12 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
-import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -29,8 +27,8 @@ class InntektOppgaveService(
     val sakClient: SakClient,
     val arbeidsfordelingClient: ArbeidsfordelingClient,
     val inntektsendringerRepository: InntektsendringerRepository,
-    val pdlClient: PdlClient,
     val taskService: TaskService,
+    private val objectMapper: ObjectMapper,
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -43,8 +41,8 @@ class InntektOppgaveService(
                     it.inntektsendringToMånederTilbake.feilutbetaling +
                     it.inntektsendringForrigeMåned.feilutbetaling
             val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
-            val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForInntektsendringerTask(personIdent = it.personIdent, totalFeilutbetaling = totalFeilutbetaling, yearMonthProssesertTid = yearMonthProssesertTid))
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForInntektsendringerTask.TYPE) == null
+            val payload = PayloadOpprettOppgaverForInntektsendringerTask(personIdent = it.personIdent, totalFeilutbetaling = totalFeilutbetaling, yearMonthProssesertTid = yearMonthProssesertTid)
+            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForInntektsendringerTask.TYPE) == null
 
             if (skalOppretteTask) {
                 val task = OpprettOppgaverForInntektsendringerTask.opprettTask(payload)
@@ -55,8 +53,8 @@ class InntektOppgaveService(
     }
 
     fun finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver() {
-        val inntektsendringForBrukereMedUføretrygd = inntektsendringerRepository.hentInntektsendringerForPersonerMedUføretrygd()
-        val payload = objectMapper.writeValueAsString(PayloadFinnPersonerMedEndringUføretrygdTask(inntektsendringForBrukereMedUføretrygd = inntektsendringForBrukereMedUføretrygd, årMåned = YearMonth.now()))
+        val personIdenter = inntektsendringerRepository.hentInntektsendringerForPersonerMedUføretrygd()
+        val payload = PayloadFinnPersonerMedEndringUføretrygdTask(personIdenter = personIdenter, årMåned = YearMonth.now())
         val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), FinnPersonerMedEndringUføretrygdTask.TYPE) == null
 
         if (skalOppretteTask) {
@@ -66,37 +64,18 @@ class InntektOppgaveService(
     }
 
     fun finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver() {
-        val inntektsendringForBrukereMedArbeidsavklaringspenger = inntektsendringerRepository.hentInntektsendringerForPersonMedArbeidsavklaringspenger()
-        val startDato = YearMonth.now().minusMonths(1).atDay(6)
-        val sluttDato = LocalDate.now()
-
-        val kandidater =
-            inntektsendringForBrukereMedArbeidsavklaringspenger.mapNotNull { endring ->
-                val person = pdlClient.hentPerson(endring.personIdent)
-                val foedselsdato = person.foedselsdato.first().foedselsdato
-                if (foedselsdato == null) {
-                    secureLogger.error("Fant ingen fødselsdato for person ${endring.personIdent}")
-                }
-                val fylte25Dato = foedselsdato?.plusYears(25)
-                if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato.plusDays(1))) endring else null
-            }
-        kandidater.forEach { kandidat ->
-            val payload = PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.from(kandidat.prosessertTid))
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) == null
-
-            if (skalOppretteTask) {
-                val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
-                taskService.save(task)
-            }
-        }
+        val personIdenterBrukerereMedArbeidsavklaringspenger = inntektsendringerRepository.hentInntektsendringerForPersonMedArbeidsavklaringspenger()
+        val payload = PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask(personIdenterBrukereMedArbeidsavklaringspenger = personIdenterBrukerereMedArbeidsavklaringspenger, årMåned = YearMonth.now())
+        val task = FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.opprettTask(payload)
+        taskService.save(task)
     }
 
     fun opprettOppgaverForNyeVedtakUføretrygd() {
         val nyeUføretrygdVedtak = inntektsendringerRepository.hentInntektsendringerForUføretrygd()
         nyeUføretrygdVedtak.forEach {
             val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
-            val payload = objectMapper.writeValueAsString(PayloadOpprettOppgaverForNyeVedtakUføretrygdTask(personIdent = it.personIdent, prosessertYearMonth = yearMonthProssesertTid))
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(payload, OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE) == null
+            val payload = PayloadOpprettOppgaverForNyeVedtakUføretrygdTask(personIdent = it.personIdent, prosessertYearMonth = yearMonthProssesertTid)
+            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE) == null
 
             if (skalOppretteTask) {
                 val task = OpprettOppgaverForNyeVedtakUføretrygdTask.opprettTask(payload)

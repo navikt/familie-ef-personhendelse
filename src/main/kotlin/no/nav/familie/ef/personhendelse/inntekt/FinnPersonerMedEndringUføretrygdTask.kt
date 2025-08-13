@@ -10,8 +10,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.YearMonth
-import java.util.Properties
-import kotlin.collections.set
 
 @Service
 @TaskStepBeskrivelse(
@@ -28,12 +26,12 @@ class FinnPersonerMedEndringUføretrygdTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val inntektsendringForBrukereMedUføretrygd = objectMapper.readValue<PayloadFinnPersonerMedEndringUføretrygdTask>(task.payload).inntektsendringForBrukereMedUføretrygd
+        val (inntektsendringForBrukereMedUføretrygd, årMåned) = objectMapper.readValue<PayloadFinnPersonerMedEndringUføretrygdTask>(task.payload)
         val forrigeMåned = YearMonth.now().minusMonths(1)
         val toMånederTilbake = YearMonth.now().minusMonths(2)
-        val kandidater =
-            inntektsendringForBrukereMedUføretrygd.mapNotNull { endring ->
-                val inntekt = inntektsendringerService.hentInntekt(endring.personIdent) ?: return@mapNotNull null
+        val personerMedØktUtbetalingAvUføretrygd =
+            inntektsendringForBrukereMedUføretrygd.mapNotNull { personIdent ->
+                val inntekt = inntektsendringerService.hentInntekt(personIdent) ?: return@mapNotNull null
 
                 val uføretrygdForrige =
                     inntekt.inntektsmåneder
@@ -49,10 +47,10 @@ class FinnPersonerMedEndringUføretrygdTask(
                         .filter { it.beskrivelse == "ufoeretrygd" }
                         .sumOf { it.beløp }
 
-                if (uføretrygdForrige > uføretrygdToMnd) endring else null
+                if (uføretrygdForrige > uføretrygdToMnd) personIdent else null
             }
-        kandidater.forEach { kandidat ->
-            val payload = PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat.personIdent, årMåned = YearMonth.from(kandidat.prosessertTid))
+        personerMedØktUtbetalingAvUføretrygd.forEach { kandidat ->
+            val payload = PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat, årMåned = årMåned)
             val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForUføretrygdsendringerTask.TYPE) == null
 
             if (skalOppretteTask) {
@@ -65,15 +63,15 @@ class FinnPersonerMedEndringUføretrygdTask(
     companion object {
         const val TYPE = "finnPersonerMedEndringUføretrygdTask"
 
-        fun opprettTask(payload: String): Task =
+        fun opprettTask(payload: PayloadFinnPersonerMedEndringUføretrygdTask): Task =
             Task(
                 type = TYPE,
-                payload = payload,
+                payload = objectMapper.writeValueAsString(payload),
             )
     }
 }
 
 data class PayloadFinnPersonerMedEndringUføretrygdTask(
-    val inntektsendringForBrukereMedUføretrygd: List<InntektOgVedtakEndring>,
+    val personIdenter: List<String>,
     val årMåned: YearMonth,
 )

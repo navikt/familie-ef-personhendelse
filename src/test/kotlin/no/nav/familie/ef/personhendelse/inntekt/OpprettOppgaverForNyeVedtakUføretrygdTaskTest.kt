@@ -34,11 +34,11 @@ class OpprettOppgaverForNyeVedtakUføretrygdTaskTest : IntegrasjonSpringRunnerTe
                 personIdent = "123",
                 prosessertYearMonth = YearMonth.of(2023, 10),
             )
-        val jsonPayload = objectMapper.writeValueAsString(payload)
-        val task = OpprettOppgaverForNyeVedtakUføretrygdTask.opprettTask(jsonPayload)
+        val task = OpprettOppgaverForNyeVedtakUføretrygdTask.opprettTask(payload)
         taskService.save(task)
-        val taskList = taskService.findAll()
-        val taskFraDB = taskList.get(taskList.size - 1)
+        val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE)
+        assertThat(taskListOpprettOppgaveTask).hasSize(1)
+        val taskFraDB = taskListOpprettOppgaveTask.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
         assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "callId")
