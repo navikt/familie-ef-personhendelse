@@ -1,14 +1,15 @@
-package no.nav.familie.ef.personhendelse.inntekt
+package no.nav.familie.ef.personhendelse.inntekt.endring
 
 import no.nav.familie.kontrakter.felles.Månedsperiode
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.YearMonth
 
 data class GrunnbeløpVerdier(
     val periode: Månedsperiode,
     val grunnbeløp: BigDecimal,
-    val halvtGrunnbeløp: BigDecimal = grunnbeløp.divide(BigDecimal(2), 0, java.math.RoundingMode.DOWN),
+    val halvtGrunnbeløp: BigDecimal = grunnbeløp.divide(BigDecimal(2), 0, RoundingMode.DOWN),
 )
 
 class Grunnbeløp {
