@@ -41,7 +41,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
         val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
         taskService.save(task)
         val taskList = taskService.finnAlleTaskerMedType(RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE)
-        assertThat (taskList).hasSize(1)
+        assertThat(taskList).hasSize(1)
         val taskFraDB = taskList.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)

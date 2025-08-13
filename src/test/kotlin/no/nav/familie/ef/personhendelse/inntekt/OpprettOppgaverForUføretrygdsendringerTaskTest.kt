@@ -38,7 +38,7 @@ class OpprettOppgaverForUføretrygdsendringerTaskTest : IntegrasjonSpringRunnerT
         val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
         taskService.save(task)
         val taskListOpprettOppgaveTask = taskService.finnAlleTaskerMedType(OpprettOppgaverForUføretrygdsendringerTask.TYPE)
-        assertThat (taskListOpprettOppgaveTask).hasSize(1)
+        assertThat(taskListOpprettOppgaveTask).hasSize(1)
         val taskFraDB = taskListOpprettOppgaveTask.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(3)
