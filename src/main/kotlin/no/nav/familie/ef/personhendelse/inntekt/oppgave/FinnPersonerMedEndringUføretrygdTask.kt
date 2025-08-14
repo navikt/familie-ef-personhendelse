@@ -59,6 +59,7 @@ class FinnPersonerMedEndringUføretrygdTask(
                 taskService.save(task)
             }
         }
+        logger.info("Funnet ${personerMedØktUtbetalingAvUføretrygd.size} med endring av uføretrygd for siste to måneder av totalt ${inntektsendringForBrukereMedUføretrygd.size} med uføretrygd")
     }
 
     companion object {
