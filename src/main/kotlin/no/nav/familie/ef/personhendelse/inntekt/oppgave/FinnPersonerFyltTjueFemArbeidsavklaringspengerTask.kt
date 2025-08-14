@@ -50,6 +50,7 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
                 taskService.save(task)
             }
         }
+        logger.info("Funnet ${personerFylt25Aar.size} som har fylt 25 år med AAP av totalt ${inntektsendringForBrukereMedArbeidsavklaringspenger.size} med AAP")
     }
 
     companion object {
