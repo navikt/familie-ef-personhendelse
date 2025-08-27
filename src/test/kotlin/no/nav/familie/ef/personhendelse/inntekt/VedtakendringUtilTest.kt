@@ -1,36 +1,16 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektsResponseFraJsonMedEnMåned
+import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektsResponseFraToJsonsMedEnMåned
 import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
-import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
-import java.nio.charset.StandardCharsets
-import java.time.YearMonth
 
 class VedtakendringUtilTest {
-    val enMndTilbake = YearMonth.now().minusMonths(1)
-    val toMndTilbake = YearMonth.now().minusMonths(2)
-    val treMndTilbake = YearMonth.now().minusMonths(3)
-    val fireMndTilbake = YearMonth.now().minusMonths(4)
-
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {
         val json: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
-
-        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponse.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMåned.copy(måned = enMndTilbake),
-                        arbeidsinntektMåned.copy(måned = toMndTilbake),
-                        arbeidsinntektMåned.copy(måned = treMndTilbake),
-                        arbeidsinntektMåned.copy(måned = fireMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektsResponseFraJsonMedEnMåned(json)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }
@@ -38,23 +18,9 @@ class VedtakendringUtilTest {
     @Test
     fun `Bruker har lønnsinntekt frem til forrige måned`() {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponseMedLønn = objectMapper.readValue<InntektResponse>(jsonMedLønn)
-        val json: String = readResource("inntekt/InntektLoennsinntektTilOffentligYtelseEksempel.json")
-        val inntektResponseMedVedtak = objectMapper.readValue<InntektResponse>(json)
+        val jsonMedVedtak: String = readResource("inntekt/InntektLoennsinntektTilOffentligYtelseEksempel.json")
 
-        val arbeidsinntektMånedMedLønn = inntektResponseMedLønn.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-        val arbeidsinntektMedOffentligYtelse = inntektResponseMedVedtak.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponseMedLønn.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMedOffentligYtelse.copy(måned = enMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = toMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = treMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = fireMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektsResponseFraToJsonsMedEnMåned(jsonMedLønn, jsonMedVedtak)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isTrue
     }
@@ -62,23 +28,9 @@ class VedtakendringUtilTest {
     @Test
     fun `Etterbetaling av sykepenger skal ignoreres ved vedtaksendringer`() {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponseMedLønn = objectMapper.readValue<InntektResponse>(jsonMedLønn)
-        val json: String = readResource("inntekt/InntektEtterbetalingSkalIgnoreres.json")
-        val inntektResponseMedVedtak = objectMapper.readValue<InntektResponse>(json)
+        val jsonMedEtterbetaling: String = readResource("inntekt/InntektEtterbetalingSkalIgnoreres.json")
 
-        val arbeidsinntektMånedMedLønn = inntektResponseMedLønn.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-        val arbeidsinntektMedEtterbetalingAvSykepenger = inntektResponseMedVedtak.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponseMedLønn.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMedEtterbetalingAvSykepenger.copy(måned = enMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = toMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = treMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = fireMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektsResponseFraToJsonsMedEnMåned(jsonMedLønn, jsonMedEtterbetaling)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }
@@ -86,23 +38,9 @@ class VedtakendringUtilTest {
     @Test
     fun `Bruker har fått foreldrepenger i nyeste måned`() {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponseMedLønn = objectMapper.readValue<InntektResponse>(jsonMedLønn)
-        val json: String = readResource("inntekt/InntektMedForeldrepenger.json")
-        val inntektResponseMedVedtak = objectMapper.readValue<InntektResponse>(json)
+        val jsonMedVedtak: String = readResource("inntekt/InntektMedForeldrepenger.json")
 
-        val arbeidsinntektMånedMedLønn = inntektResponseMedLønn.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-        val arbeidsinntektMedForeldrepenger = inntektResponseMedVedtak.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponseMedLønn.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMedForeldrepenger.copy(måned = enMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = toMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = treMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = fireMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektsResponseFraToJsonsMedEnMåned(jsonMedLønn, jsonMedVedtak)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isTrue
     }
@@ -110,23 +48,9 @@ class VedtakendringUtilTest {
     @Test
     fun `Bruker får overgangsstønad - skal ignoreres`() {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponseMedLønn = objectMapper.readValue<InntektResponse>(jsonMedLønn)
-        val json: String = readResource("inntekt/InntektMedOvergangsstønad.json")
-        val inntektResponseMedVedtak = objectMapper.readValue<InntektResponse>(json)
+        val jsonMedVedtak: String = readResource("inntekt/InntektMedOvergangsstønad.json")
 
-        val arbeidsinntektMånedMedLønn = inntektResponseMedLønn.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-        val arbeidsinntektMedOvergangsstønad = inntektResponseMedVedtak.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponseMedLønn.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMedOvergangsstønad.copy(måned = enMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = toMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = treMndTilbake),
-                        arbeidsinntektMånedMedLønn.copy(måned = fireMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektsResponseFraToJsonsMedEnMåned(jsonMedLønn, jsonMedVedtak)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }
