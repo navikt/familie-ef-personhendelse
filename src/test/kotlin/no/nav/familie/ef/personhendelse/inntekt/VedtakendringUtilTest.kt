@@ -1,7 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektsResponseFraJsonMedEnMåned
-import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektsResponseFraToJsonsMedEnMåned
+import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektResponseForFireMånederFraToJsonsMedEnMåned
+import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektResponseFraJsonMedEnMåned
 import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -10,7 +10,7 @@ class VedtakendringUtilTest {
     @Test
     fun `Kun lønnsinntekt og ingen nye vedtak på bruker`() {
         val json: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val oppdatertInntektResponse = lagInntektsResponseFraJsonMedEnMåned(json)
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }
@@ -20,7 +20,7 @@ class VedtakendringUtilTest {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
         val jsonMedVedtak: String = readResource("inntekt/InntektLoennsinntektTilOffentligYtelseEksempel.json")
 
-        val oppdatertInntektResponse = lagInntektsResponseFraToJsonsMedEnMåned(jsonMedLønn, jsonMedVedtak)
+        val oppdatertInntektResponse = lagInntektResponseForFireMånederFraToJsonsMedEnMåned(jsonMedLønn, jsonMedVedtak)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isTrue
     }
@@ -30,7 +30,7 @@ class VedtakendringUtilTest {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
         val jsonMedEtterbetaling: String = readResource("inntekt/InntektEtterbetalingSkalIgnoreres.json")
 
-        val oppdatertInntektResponse = lagInntektsResponseFraToJsonsMedEnMåned(jsonMedLønn, jsonMedEtterbetaling)
+        val oppdatertInntektResponse = lagInntektResponseForFireMånederFraToJsonsMedEnMåned(jsonMedLønn, jsonMedEtterbetaling)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }
@@ -40,7 +40,7 @@ class VedtakendringUtilTest {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
         val jsonMedVedtak: String = readResource("inntekt/InntektMedForeldrepenger.json")
 
-        val oppdatertInntektResponse = lagInntektsResponseFraToJsonsMedEnMåned(jsonMedLønn, jsonMedVedtak)
+        val oppdatertInntektResponse = lagInntektResponseForFireMånederFraToJsonsMedEnMåned(jsonMedLønn, jsonMedVedtak)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isTrue
     }
@@ -50,7 +50,7 @@ class VedtakendringUtilTest {
         val jsonMedLønn: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
         val jsonMedVedtak: String = readResource("inntekt/InntektMedOvergangsstønad.json")
 
-        val oppdatertInntektResponse = lagInntektsResponseFraToJsonsMedEnMåned(jsonMedLønn, jsonMedVedtak)
+        val oppdatertInntektResponse = lagInntektResponseForFireMånederFraToJsonsMedEnMåned(jsonMedLønn, jsonMedVedtak)
 
         Assertions.assertThat(VedtakendringerUtil.harNyeVedtak(oppdatertInntektResponse)).isFalse
     }

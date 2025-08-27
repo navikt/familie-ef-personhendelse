@@ -9,7 +9,7 @@ import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.endring.BeregningResultat
 import no.nav.familie.ef.personhendelse.inntekt.endring.Inntektsendring
 import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
-import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektsResponseFraJsonMedEnMåned
+import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektResponseFraJsonMedEnMåned
 import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
@@ -41,7 +41,7 @@ class InntektsendringerServiceTest {
     fun `Har endret inntekt med mer enn 10 prosent i forhold til forventet inntekt`() {
         val json: String = readResource("inntekt/InntektLoennsinntektEksempel.json") // 40k
 
-        val oppdatertInntektResponse = lagInntektsResponseFraJsonMedEnMåned(json)
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         val forventetInntektTiProsentLavere = (forventetÅrligInntekt * 0.9).toInt()
         val forventetInntektNiProsentLavere = (forventetÅrligInntekt * 0.91).toInt()
@@ -74,7 +74,7 @@ class InntektsendringerServiceTest {
     fun `Utbetaling av offentlig ytelse og lønnsinntekt utgjør til sammen mer enn 10 prosent av forventet inntekt`() {
         val json: String = readResource("inntekt/InntektLoennsinntektOgOffentligYtelseEksempel.json") // 38,5k totalt
 
-        val oppdatertInntektResponse = lagInntektsResponseFraJsonMedEnMåned(json)
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         Assertions
             .assertThat(
@@ -90,7 +90,7 @@ class InntektsendringerServiceTest {
     fun `Etterbetaling skal ikke medberegnes`() {
         val json: String = readResource("inntekt/InntektEtterbetalingSkalIgnoreres.json") // Inntekt 35k + etterbetaling 10k
 
-        val oppdatertInntektResponse = lagInntektsResponseFraJsonMedEnMåned(json)
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         Assertions
             .assertThat(
@@ -131,7 +131,7 @@ class InntektsendringerServiceTest {
     fun `Har inntekt under halv G, skal returnere false selv om inntekt har økt mer enn 10 prosent`() {
         val json: String = readResource("inntekt/InntektUnderHalvG.json")
 
-        val oppdatertInntektResponse = lagInntektsResponseFraJsonMedEnMåned(json)
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         val forventetÅrligInntekt = 30000
 
@@ -149,7 +149,7 @@ class InntektsendringerServiceTest {
     fun `Ignorer utbetalinger av uførepensjon fra andre enn NAV`() {
         val json: String = readResource("inntekt/InntektUførepensjonFraAndreEnnFolketrygden.json")
 
-        val oppdatertInntektResponse = lagInntektsResponseFraJsonMedEnMåned(json)
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         val forventetInntekt = 5000
 
@@ -167,7 +167,7 @@ class InntektsendringerServiceTest {
     fun `Ferieutbetalinger skal medberegnes`() {
         val json: String = readResource("inntekt/InntektFeriepengerSkalMedberegnes.json")
 
-        val oppdatertInntektResponse = lagInntektsResponseFraJsonMedEnMåned(json)
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         Assertions
             .assertThat(

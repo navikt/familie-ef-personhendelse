@@ -14,7 +14,7 @@ class JsonFilUtil {
                 .getResource(name)!!
                 .readText(StandardCharsets.UTF_8)
 
-        fun lagInntektsResponseFraJsonMedEnMåned(json: String): InntektResponse {
+        fun lagInntektResponseFraJsonMedEnMåned(json: String): InntektResponse {
             val enMndTilbake = YearMonth.now().minusMonths(1)
             val toMndTilbake = YearMonth.now().minusMonths(2)
             val treMndTilbake = YearMonth.now().minusMonths(3)
@@ -34,7 +34,7 @@ class JsonFilUtil {
             )
         }
 
-        fun lagInntektsResponseFraToJsonsMedEnMåned(
+        fun lagInntektResponseForFireMånederFraToJsonsMedEnMåned(
             jsonForResterendeMåneder: String,
             jsonForFørsteMåned: String,
         ): InntektResponse {
