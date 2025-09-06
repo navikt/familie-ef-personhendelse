@@ -41,7 +41,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
         if (harStabilInntekt && harIngenEksisterendeYtelser) {
             sakClient.revurderAutomatisk(listOf<String>(personIdent))
         }
-        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: $harIngenEksisterendeYtelser")
+        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - uten eksisterende ytelser: $harIngenEksisterendeYtelser")
     }
 
     companion object {
