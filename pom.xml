@@ -36,17 +36,17 @@
         <graphql-kotlin-maven-plugin.version>8.8.1</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.5.1</exec-maven-plugin.version>
-        <kontrakter.version>3.0_20250828110046_0cd2211</kontrakter.version>
+        <kontrakter.version>3.0_20250902143555_da31aa4</kontrakter.version>
         <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20250826113118_c8aa66d</eksterne-kontrakter.version.stonadsstatistikk.ks>
         <felles.version>3.20250804101327_a0f5fad</felles.version>
         <nav.security.version>5.0.33</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <prosessering.version>2.20250825143618_c0302c9</prosessering.version>
-        <nav.security.version>5.0.35</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <nav.security.version>5.0.36</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.2</wiremock.version>
         <mockk-jvm.version>1.14.5</mockk-jvm.version>
         <postgres.version>1.21.3</postgres.version>
-        <springdoc.version>2.8.11</springdoc.version>
+        <springdoc.version>2.8.12</springdoc.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
     </properties>
     <dependencies>
@@ -168,7 +168,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>11.11.2</version>
+            <version>11.12.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
