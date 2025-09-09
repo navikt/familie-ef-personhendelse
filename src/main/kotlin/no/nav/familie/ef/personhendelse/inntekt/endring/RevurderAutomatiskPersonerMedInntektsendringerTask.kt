@@ -31,7 +31,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
 
     override fun doTask(task: Task) {
         val (personIdent, harIngenEksisterendeYtelser, yearMonthProssesertTid) = objectMapper.readValue<PayloadRevurderAutomatiskPersonerMedInntektsendringerTask>(task.payload)
-        secureLogger.info("Reverdurer automatisk person med inntektsendringer: ${task.payload}")
+        secureLogger.info("Revurderer automatisk person med inntektsendringer: ${task.payload}")
         val inntektResponse = inntektClient.hentInntekt(personIdent, yearMonthProssesertTid.minusMonths(3), yearMonthProssesertTid.minusMonths(1))
         val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(3))
         val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(2))
