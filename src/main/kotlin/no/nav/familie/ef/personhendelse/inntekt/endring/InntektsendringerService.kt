@@ -36,15 +36,19 @@ class InntektsendringerService(
         beregnInntektsendringerOgLagreIDb()
     }
 
-    fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
+    fun hentPersonerMedInntektsendringerOgRevurderAutomatisk(forvaltning: Boolean = false) {
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
         inntektsendringer.forEach {
             val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
             val payload = PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(personIdent = it.personIdent, harIngenEksisterendeYtelser = it.harIngenEksisterendeYtelser(), yearMonthProssesertTid = yearMonthProssesertTid)
             val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE) == null
 
-            if (skalOppretteTask) {
+            if (skalOppretteTask && !forvaltning) {
                 val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
+                taskService.save(task)
+            }
+            if (skalOppretteTask && forvaltning) {
+                val task = RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask.opprettTask(payload)
                 taskService.save(task)
             }
         }
