@@ -198,7 +198,12 @@ class InntektsendringerService(
         return BeregningResultat(endretInntektBeløp, inntektsendringProsent, feilutbetaling)
     }
 
-    fun harStabilInntektOgLoggInntekt(inntektResponse: InntektResponse, yearMonth: YearMonth, personIdent: String, harIngenEksisterendeYtelser: Boolean): Boolean {
+    fun harStabilInntektOgLoggInntekt(
+        inntektResponse: InntektResponse,
+        yearMonth: YearMonth,
+        personIdent: String,
+        harIngenEksisterendeYtelser: Boolean,
+    ): Boolean {
         val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(3))
         val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(2))
         val totalInntektForrigeMåned = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(1))

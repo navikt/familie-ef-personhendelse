@@ -25,7 +25,7 @@ import kotlin.math.abs
 class RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask(
     private val sakClient: SakClient,
     private val inntektClient: InntektClient,
-    private val inntektsendringService: InntektsendringerService
+    private val inntektsendringService: InntektsendringerService,
 ) : AsyncTaskStep {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
