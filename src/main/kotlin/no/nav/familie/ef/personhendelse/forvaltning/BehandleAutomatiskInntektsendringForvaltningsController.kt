@@ -32,7 +32,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
         @RequestBody personIdent: String,
     ) {
         val person = listOf(personIdent)
-        sakClient.revurderAutomatisk(person)
+        sakClient.revurderAutomatiskForvaltning(person)
     }
 
     @Operation(
