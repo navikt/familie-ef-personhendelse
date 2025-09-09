@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service
 import java.time.YearMonth
 import java.util.Properties
 import kotlin.collections.set
-import kotlin.math.abs
 
 @Service
 @TaskStepBeskrivelse(
@@ -25,6 +24,7 @@ import kotlin.math.abs
 class RevurderAutomatiskPersonerMedInntektsendringerTask(
     private val sakClient: SakClient,
     private val inntektClient: InntektClient,
+    private val inntektsendringService: InntektsendringerService,
 ) : AsyncTaskStep {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -33,15 +33,11 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
         val (personIdent, harIngenEksisterendeYtelser, yearMonthProssesertTid) = objectMapper.readValue<PayloadRevurderAutomatiskPersonerMedInntektsendringerTask>(task.payload)
         secureLogger.info("Reverdurer automatisk person med inntektsendringer: ${task.payload}")
         val inntektResponse = inntektClient.hentInntekt(personIdent, yearMonthProssesertTid.minusMonths(3), yearMonthProssesertTid.minusMonths(1))
-        val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(3))
-        val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(2))
-        val totalInntektForrigeMåned = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(1))
+        val harStabilInntekt = inntektsendringService.harStabilInntektOgLoggInntekt(inntektResponse, yearMonthProssesertTid, personIdent, harIngenEksisterendeYtelser)
 
-        val harStabilInntekt = abs(totalInntektTreMånederTilbake - totalInntektToMånederTilbake) < 3000 && abs(totalInntektTreMånederTilbake - totalInntektForrigeMåned) < 3000
         if (harStabilInntekt && harIngenEksisterendeYtelser) {
             sakClient.revurderAutomatisk(listOf<String>(personIdent))
         }
-        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: $harIngenEksisterendeYtelser")
     }
 
     companion object {

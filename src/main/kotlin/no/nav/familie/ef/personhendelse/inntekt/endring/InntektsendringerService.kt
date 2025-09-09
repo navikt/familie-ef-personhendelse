@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.time.YearMonth
+import kotlin.math.abs
 
 @Service
 class InntektsendringerService(
@@ -195,6 +196,18 @@ class InntektsendringerService(
 
         if (månedligForventetInntekt == 0) return BeregningResultat(endretInntektBeløp, 100, feilutbetaling) // Prioriterer personer registrert med uredusert stønad, men har samlet inntekt over 1/2 G
         return BeregningResultat(endretInntektBeløp, inntektsendringProsent, feilutbetaling)
+    }
+
+    fun harStabilInntektOgLoggInntekt(inntektResponse: InntektResponse, yearMonth: YearMonth, personIdent: String, harIngenEksisterendeYtelser: Boolean): Boolean {
+        val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(3))
+        val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(2))
+        val totalInntektForrigeMåned = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(1))
+
+        val harStabilInntekt = abs(totalInntektTreMånederTilbake - totalInntektToMånederTilbake) < 3000 && abs(totalInntektTreMånederTilbake - totalInntektForrigeMåned) < 3000
+
+        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: $harIngenEksisterendeYtelser")
+
+        return harStabilInntekt
     }
 
     // Ignorterte ytelser: Alle uføre går under annet regelverk (samordning) og skal derfor ignoreres.
