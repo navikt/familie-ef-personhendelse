@@ -9,6 +9,7 @@ import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.endring.BeregningResultat
 import no.nav.familie.ef.personhendelse.inntekt.endring.Inntektsendring
 import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
+import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektResponseFraJsonMedEnMåned
 import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
@@ -28,9 +29,6 @@ class InntektsendringerServiceTest {
     val forventetÅrligInntekt = 420000 // 35k pr mnd i eksempel json-fil
 
     val enMndTilbake = YearMonth.now().minusMonths(1)
-    val toMndTilbake = YearMonth.now().minusMonths(2)
-    val treMndTilbake = YearMonth.now().minusMonths(3)
-    val fireMndTilbake = YearMonth.now().minusMonths(4)
 
     @BeforeEach
     internal fun setUp() {
@@ -42,20 +40,8 @@ class InntektsendringerServiceTest {
     @Test
     fun `Har endret inntekt med mer enn 10 prosent i forhold til forventet inntekt`() {
         val json: String = readResource("inntekt/InntektLoennsinntektEksempel.json") // 40k
-        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val månedsInntekt = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponse.copy(
-                inntektsmåneder =
-                    listOf(
-                        månedsInntekt.copy(måned = enMndTilbake),
-                        månedsInntekt.copy(måned = toMndTilbake),
-                        månedsInntekt.copy(måned = treMndTilbake),
-                        månedsInntekt.copy(måned = fireMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         val forventetInntektTiProsentLavere = (forventetÅrligInntekt * 0.9).toInt()
         val forventetInntektNiProsentLavere = (forventetÅrligInntekt * 0.91).toInt()
@@ -87,19 +73,8 @@ class InntektsendringerServiceTest {
     @Test
     fun `Utbetaling av offentlig ytelse og lønnsinntekt utgjør til sammen mer enn 10 prosent av forventet inntekt`() {
         val json: String = readResource("inntekt/InntektLoennsinntektOgOffentligYtelseEksempel.json") // 38,5k totalt
-        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponse.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMåned.copy(måned = enMndTilbake),
-                        arbeidsinntektMåned.copy(måned = toMndTilbake),
-                        arbeidsinntektMåned.copy(måned = treMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         Assertions
             .assertThat(
@@ -114,19 +89,8 @@ class InntektsendringerServiceTest {
     @Test
     fun `Etterbetaling skal ikke medberegnes`() {
         val json: String = readResource("inntekt/InntektEtterbetalingSkalIgnoreres.json") // Inntekt 35k + etterbetaling 10k
-        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponse.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMåned.copy(måned = enMndTilbake),
-                        arbeidsinntektMåned.copy(måned = toMndTilbake),
-                        arbeidsinntektMåned.copy(måned = treMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         Assertions
             .assertThat(
@@ -166,19 +130,8 @@ class InntektsendringerServiceTest {
     @Test
     fun `Har inntekt under halv G, skal returnere false selv om inntekt har økt mer enn 10 prosent`() {
         val json: String = readResource("inntekt/InntektUnderHalvG.json")
-        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponse.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMåned.copy(måned = enMndTilbake),
-                        arbeidsinntektMåned.copy(måned = toMndTilbake),
-                        arbeidsinntektMåned.copy(måned = treMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         val forventetÅrligInntekt = 30000
 
@@ -195,19 +148,8 @@ class InntektsendringerServiceTest {
     @Test
     fun `Ignorer utbetalinger av uførepensjon fra andre enn NAV`() {
         val json: String = readResource("inntekt/InntektUførepensjonFraAndreEnnFolketrygden.json")
-        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponse.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMåned.copy(måned = enMndTilbake),
-                        arbeidsinntektMåned.copy(måned = toMndTilbake),
-                        arbeidsinntektMåned.copy(måned = treMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         val forventetInntekt = 5000
 
@@ -224,19 +166,8 @@ class InntektsendringerServiceTest {
     @Test
     fun `Ferieutbetalinger skal medberegnes`() {
         val json: String = readResource("inntekt/InntektFeriepengerSkalMedberegnes.json")
-        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
 
-        val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
-
-        val oppdatertInntektResponse =
-            inntektResponse.copy(
-                inntektsmåneder =
-                    listOf(
-                        arbeidsinntektMåned.copy(måned = enMndTilbake),
-                        arbeidsinntektMåned.copy(måned = toMndTilbake),
-                        arbeidsinntektMåned.copy(måned = treMndTilbake),
-                    ),
-            )
+        val oppdatertInntektResponse = lagInntektResponseFraJsonMedEnMåned(json)
 
         Assertions
             .assertThat(
