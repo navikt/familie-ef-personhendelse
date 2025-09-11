@@ -31,7 +31,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
 
     override fun doTask(task: Task) {
         val (personIdent, harIngenEksisterendeYtelser, yearMonthProssesertTid) = objectMapper.readValue<PayloadRevurderAutomatiskPersonerMedInntektsendringerTask>(task.payload)
-        secureLogger.info("Reverdurer automatisk person med inntektsendringer: ${task.payload}")
+        secureLogger.info("Revurderer automatisk person med inntektsendringer: ${task.payload}")
         val inntektResponse = inntektClient.hentInntekt(personIdent, yearMonthProssesertTid.minusMonths(3), yearMonthProssesertTid.minusMonths(1))
         val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(3))
         val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonthProssesertTid.minusMonths(2))
@@ -41,7 +41,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
         if (harStabilInntekt && harIngenEksisterendeYtelser) {
             sakClient.revurderAutomatisk(listOf<String>(personIdent))
         }
-        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: $harIngenEksisterendeYtelser")
+        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - uten eksisterende ytelser: $harIngenEksisterendeYtelser")
     }
 
     companion object {
