@@ -32,7 +32,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
         @RequestBody personIdent: String,
     ) {
         val person = listOf(personIdent)
-        sakClient.revurderAutomatisk(person)
+        sakClient.revurderAutomatiskForvaltning(person)
     }
 
     @Operation(
@@ -96,7 +96,7 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
         inntektOppgaveService.opprettOppgaverForInntektsendringer()
         inntektOppgaveService.opprettOppgaverForNyeVedtakUføretrygd()
-        inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
+        inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk(true)
         inntektOppgaveService.finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver()
         inntektOppgaveService.finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver()
     }
@@ -110,6 +110,6 @@ class BehandleAutomatiskInntektsendringForvaltningsController(
     )
     @GetMapping("/revurder-personer-med-inntektsendringer-automatisk")
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk() {
-        inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
+        inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk(true)
     }
 }

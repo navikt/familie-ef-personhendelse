@@ -13,15 +13,16 @@ import org.springframework.stereotype.Service
 import java.time.YearMonth
 import java.util.Properties
 import kotlin.collections.set
+import kotlin.math.abs
 
 @Service
 @TaskStepBeskrivelse(
-    taskStepType = RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE,
+    taskStepType = RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask.TYPE,
     maxAntallFeil = 1,
     settTilManuellOppfølgning = true,
     beskrivelse = "Revurder automatisk person med inntektsendringer",
 )
-class RevurderAutomatiskPersonerMedInntektsendringerTask(
+class RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask(
     private val sakClient: SakClient,
     private val inntektClient: InntektClient,
     private val inntektsendringService: InntektsendringerService,
@@ -31,17 +32,16 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
 
     override fun doTask(task: Task) {
         val (personIdent, harIngenEksisterendeYtelser, yearMonthProssesertTid) = objectMapper.readValue<PayloadRevurderAutomatiskPersonerMedInntektsendringerTask>(task.payload)
-        secureLogger.info("Revurderer automatisk person med inntektsendringer: ${task.payload}")
+        secureLogger.info("Reverdurer automatisk person med inntektsendringer: ${task.payload}")
         val inntektResponse = inntektClient.hentInntekt(personIdent, yearMonthProssesertTid.minusMonths(3), yearMonthProssesertTid.minusMonths(1))
         val harStabilInntekt = inntektsendringService.harStabilInntektOgLoggInntekt(inntektResponse, yearMonthProssesertTid, personIdent, harIngenEksisterendeYtelser)
-
         if (harStabilInntekt && harIngenEksisterendeYtelser) {
-            sakClient.revurderAutomatisk(listOf<String>(personIdent))
+            sakClient.revurderAutomatiskForvaltning(listOf<String>(personIdent))
         }
     }
 
     companion object {
-        const val TYPE = "revurderAutomatiskPersonerMedInntektsendringerTask"
+        const val TYPE = "revurderAutomatiskPersonerMedInntektsendringerForvaltningTask"
 
         fun opprettTask(payload: PayloadRevurderAutomatiskPersonerMedInntektsendringerTask): Task =
             Task(
@@ -55,7 +55,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
     }
 }
 
-data class PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(
+data class PayloadRevurderAutomatiskPersonerMedInntektsendringerForvaltningTask(
     val personIdent: String,
     val harIngenEksisterendeYtelser: Boolean,
     val yearMonthProssesertTid: YearMonth,

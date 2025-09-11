@@ -104,6 +104,14 @@ class SakClient(
                 .pathSegment("api/automatisk-revurdering")
         postForEntity<Any>(uriComponentsBuilder.build().toUri(), personIdenter)
     }
+
+    fun revurderAutomatiskForvaltning(personIdenter: List<String>) {
+        val uriComponentsBuilder =
+            UriComponentsBuilder
+                .fromUri(uri)
+                .pathSegment("api/automatisk-revurdering/forvaltning")
+        postForEntity<Any>(uriComponentsBuilder.build().toUri(), personIdenter)
+    }
 }
 
 data class ForventetInntektForPerson(

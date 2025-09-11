@@ -4,6 +4,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
 import no.nav.familie.ef.personhendelse.inntekt.endring.PayloadRevurderAutomatiskPersonerMedInntektsendringerTask
 import no.nav.familie.ef.personhendelse.inntekt.endring.RevurderAutomatiskPersonerMedInntektsendringerTask
 import no.nav.familie.prosessering.internal.TaskService
@@ -20,6 +21,9 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
     @Autowired
     private lateinit var taskService: TaskService
 
+    @Autowired
+    private lateinit var inntektsendringService: InntektsendringerService
+
     private lateinit var revurderAutomatiskPersonerMedInntektsendringerTask: RevurderAutomatiskPersonerMedInntektsendringerTask
 
     @BeforeEach
@@ -28,6 +32,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
             RevurderAutomatiskPersonerMedInntektsendringerTask(
                 sakClient = sakClient,
                 inntektClient = inntektClient,
+                inntektsendringService = inntektsendringService,
             )
     }
 
