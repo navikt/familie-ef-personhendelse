@@ -78,7 +78,6 @@ spec:
         diskAutoresize: true
         tier: db-g1-small
         cascadingDelete: false
-        name: familie-ef-personhendelse
         databases:
           - name: familie-ef-personhendelse
             envVarPrefix: DB
