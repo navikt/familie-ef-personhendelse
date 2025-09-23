@@ -8,7 +8,7 @@ metadata:
 spec:
   image: "{{ image }}"
   ingresses:
-    - https://familie-ef-personhendelse.intern.nav.no
+    - https://familie-ef-personhendelse.intern.dev.nav.no
   liveness:
     path: /internal/isAlive
     initialDelay: 30
@@ -28,38 +28,40 @@ spec:
       memory: 768Mi
     requests:
       memory: 256Mi
-      cpu: 50m
+      cpu: 20m
   secureLogs:
     enabled: true
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: prod
+      value: dev
   azure:
     application:
       enabled: true
       claims:
         groups:
-          - id: "f9882377-e69d-4af8-b41d-3ccdfc46ef8d" # teamfamilie-ef-forvaltning
-          - id: "87190cf3-b278-457d-8ab7-1a5c55a9edd7" # Group_... teamfamilie - gir tilgang til prosessering
+          - id: "59865891-62a0-4fe3-b282-2e38210d1fbb" # teamfamilie-ef-forvaltning
+          - id: "928636f4-fd0d-4149-978e-a6fb68bb19de" # prosessering.rolle - (0000-GA-STDAPPS)
         extra:
           - "NAVident"
           - "azp_name"
       replyURLs:
-        - "https://familie-ef-personhendelse.intern.nav.no/swagger-ui/oauth2-redirect.html"
+        - "https://familie-ef-personhendelse.intern.dev.nav.no/swagger-ui/oauth2-redirect.html"
       singlePageApplication: true
   accessPolicy:
     inbound:
       rules:
         - application: familie-ef-sak
         - application: familie-prosessering
+        - application: familie-prosessering-lokal
     outbound:
       rules:
         - application: familie-ef-sak
+        - application: familie-ef-sak-lokal
       external:
-        - host: kafka-schema-registry.nais.adeo.no
-        - host: pdl-api.prod-fss-pub.nais.io
-        - host: familie-integrasjoner.prod-fss-pub.nais.io
-        - host: ikomp.prod-fss-pub.nais.io
+        - host: kafka-schema-registry.nais-q.adeo.no
+        - host: pdl-api.dev-fss-pub.nais.io
+        - host: familie-integrasjoner.dev-fss-pub.nais.io
+        - host: ikomp-q2.dev-fss-pub.nais.io
   observability:
     logging:
       destinations:
@@ -69,10 +71,10 @@ spec:
       enabled: true
       runtime: java
   kafka:
-    pool: nav-prod
+    pool: nav-dev
   gcp:
     sqlInstances:
-      - type: POSTGRES_14 # IF This is changed, all data will be lost. Read on nais.io how to upgrade
+      - type: POSTGRES_14
         diskAutoresize: true
         tier: db-g1-small
         cascadingDelete: false

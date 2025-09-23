@@ -44,11 +44,11 @@ jobs:
         uses: nais/deploy/actions/deploy@961addd1e4d4211f1a7333ada5fde85f7c9aa5b7 # ratchet:nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
-          RESOURCE: .deploy/preprod.yaml
+          RESOURCE: .nais/dev.yaml
           IMAGE: ${{ needs.build.outputs.image }}
       - name: Deploy til prod-gcp
         uses: nais/deploy/actions/deploy@961addd1e4d4211f1a7333ada5fde85f7c9aa5b7 # ratchet:nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
-          RESOURCE: .deploy/prod.yaml
+          RESOURCE: .nais/prod.yaml
           IMAGE: ${{ needs.build.outputs.image }}
