@@ -80,6 +80,6 @@ spec:
         cascadingDelete: false
         name: familie-ef-personhendelse-14
         databases:
-          - name: familie-ef-personhendelse-14
+          - name: familie-ef-personhendelse
             envVarPrefix: DB
   leaderElection: true
