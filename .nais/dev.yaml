@@ -79,6 +79,6 @@ spec:
         tier: db-g1-small
         cascadingDelete: false
         databases:
-          - name: familie-ef-personhendelse
+          - name: familie-ef-personhendelse-14
             envVarPrefix: DB
   leaderElection: true
