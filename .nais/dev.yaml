@@ -75,6 +75,7 @@ spec:
   gcp:
     sqlInstances:
       - type: POSTGRES_15
+        name: familie-ef-personhendelse-replicated
         diskAutoresize: true
         tier: db-g1-small
         cascadingDelete: false
