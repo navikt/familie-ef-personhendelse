@@ -6,6 +6,7 @@ import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
 import no.nav.familie.ef.personhendelse.inntekt.endring.PayloadRevurderAutomatiskPersonerMedInntektsendringerTask
+import no.nav.familie.ef.personhendelse.inntekt.endring.PersonIdentMedYtelser
 import no.nav.familie.ef.personhendelse.inntekt.endring.RevurderAutomatiskPersonerMedInntektsendringerTask
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
@@ -38,11 +39,11 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
 
     @Test
     fun `Sjekk at man kan opprette task for uføretrygdsendringer og at den har riktig metadata`() {
+        val personIdentMedYtelser = PersonIdentMedYtelser("12345", true)
         val payload =
             PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(
-                personIdent = "123",
-                harIngenEksisterendeYtelser = true,
-                yearMonthProssesertTid = YearMonth.of(2023, 10),
+                personIdenterMedYtelser = listOf(personIdentMedYtelser),
+                årMåned = YearMonth.of(2023, 10),
             )
         val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
         taskService.save(task)
@@ -51,7 +52,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
         val taskFraDB = taskList.first()
         assertThat(taskFraDB.metadata).isNotEmpty
         assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
-        assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "callId")
+        assertThat(taskFraDB.metadataWrapper.properties.keys).contains("årMåned", "callId")
         revurderAutomatiskPersonerMedInntektsendringerTask.doTask(task)
         verify(exactly = 1) { sakClient.revurderAutomatisk(any()) }
     }

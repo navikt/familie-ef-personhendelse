@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service
 import java.time.YearMonth
 import java.util.Properties
 import kotlin.collections.set
-import kotlin.math.abs
 
 @Service
 @TaskStepBeskrivelse(
@@ -31,32 +30,48 @@ class RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val (personIdent, harIngenEksisterendeYtelser, yearMonthProssesertTid) = objectMapper.readValue<PayloadRevurderAutomatiskPersonerMedInntektsendringerTask>(task.payload)
-        secureLogger.info("Reverdurer automatisk person med inntektsendringer: ${task.payload}")
-        val inntektResponse = inntektClient.hentInntekt(personIdent, yearMonthProssesertTid.minusMonths(3), yearMonthProssesertTid.minusMonths(1))
-        val harStabilInntekt = inntektsendringService.harStabilInntektOgLoggInntekt(inntektResponse, yearMonthProssesertTid, personIdent, harIngenEksisterendeYtelser)
-        if (harStabilInntekt && harIngenEksisterendeYtelser) {
-            sakClient.revurderAutomatiskForvaltning(listOf<String>(personIdent))
+        val (personIdentMedYtelser, årMåned) = objectMapper.readValue<PayloadRevurderAutomatiskPersonerMedInntektsendringerForvaltningTask>(task.payload)
+        secureLogger.info("Revurderer automatisk person med inntektsendringer: ${task.payload}")
+        val personIdenterForRevurdering =
+            personIdentMedYtelser
+                .filter { personMedYtelse ->
+                    val inntektResponse =
+                        inntektClient.hentInntekt(
+                            personMedYtelse.personIdent,
+                            årMåned.minusMonths(3),
+                            årMåned.minusMonths(1),
+                        )
+                    val harStabilInntekt =
+                        inntektsendringService.harStabilInntektOgLoggInntekt(
+                            inntektResponse,
+                            årMåned,
+                            personMedYtelse.personIdent,
+                            personMedYtelse.harIngenEksisterendeYtelser,
+                        )
+                    harStabilInntekt && personMedYtelse.harIngenEksisterendeYtelser
+                }.map { it.personIdent }
+
+        if (personIdenterForRevurdering.isNotEmpty()) {
+            sakClient.revurderAutomatisk(personIdenterForRevurdering)
         }
     }
 
     companion object {
         const val TYPE = "revurderAutomatiskPersonerMedInntektsendringerForvaltningTask"
 
-        fun opprettTask(payload: PayloadRevurderAutomatiskPersonerMedInntektsendringerTask): Task =
+        fun opprettTask(payload: PayloadRevurderAutomatiskPersonerMedInntektsendringerForvaltningTask): Task =
             Task(
                 type = TYPE,
                 payload = objectMapper.writeValueAsString(payload),
                 properties =
                     Properties().apply {
-                        this["personIdent"] = payload.personIdent
+                        this["årMåned"] = payload.årMåned.toString()
                     },
             )
     }
 }
 
 data class PayloadRevurderAutomatiskPersonerMedInntektsendringerForvaltningTask(
-    val personIdent: String,
-    val harIngenEksisterendeYtelser: Boolean,
-    val yearMonthProssesertTid: YearMonth,
+    val personIdenterMedYtelser: List<PersonIdentMedYtelser>,
+    val årMåned: YearMonth,
 )

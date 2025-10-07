@@ -39,16 +39,41 @@ class InntektsendringerService(
 
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk(forvaltning: Boolean = false) {
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
-        inntektsendringer.forEach {
-            val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
-            val payload = PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(personIdent = it.personIdent, harIngenEksisterendeYtelser = it.harIngenEksisterendeYtelser(), yearMonthProssesertTid = yearMonthProssesertTid)
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE) == null
-
-            if (skalOppretteTask && !forvaltning) {
+        val årMåned = YearMonth.now()
+        val personIdentMedYtelser =
+            inntektsendringer.map {
+                PersonIdentMedYtelser(
+                    personIdent = it.personIdent,
+                    harIngenEksisterendeYtelser = it.harIngenEksisterendeYtelser(),
+                )
+            }
+        if (!forvaltning) {
+            val payload =
+                PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(
+                    personIdenterMedYtelser = personIdentMedYtelser,
+                    årMåned = årMåned,
+                )
+            val skalOppretteTask =
+                taskService.finnTaskMedPayloadOgType(
+                    objectMapper.writeValueAsString(payload),
+                    RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE,
+                ) == null
+            if (skalOppretteTask) {
                 val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
                 taskService.save(task)
             }
-            if (skalOppretteTask && forvaltning) {
+        } else {
+            val payload =
+                PayloadRevurderAutomatiskPersonerMedInntektsendringerForvaltningTask(
+                    personIdenterMedYtelser = personIdentMedYtelser,
+                    årMåned = årMåned,
+                )
+            val skalOppretteTask =
+                taskService.finnTaskMedPayloadOgType(
+                    objectMapper.writeValueAsString(payload),
+                    RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask.TYPE,
+                ) == null
+            if (skalOppretteTask) {
                 val task = RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask.opprettTask(payload)
                 taskService.save(task)
             }
