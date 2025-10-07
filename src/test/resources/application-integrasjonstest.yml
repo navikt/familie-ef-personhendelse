@@ -10,9 +10,17 @@ spring:
       security:
         protocol: PLAINTEXT
   datasource:
-    url: jdbc:tc:postgresql:15://localhost/testdb
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:15:///testdb
     username: test
     password: test
+    hikari:
+      maximum-pool-size: 3
+      connection-test-query: "select 1"
+      max-lifetime: 900000
+      minimum-idle: 1
+      data-source-properties:
+        sslmode: disable
   flyway:
     enabled: true
 

@@ -21,8 +21,8 @@ spec:
     enabled: true
     path: /internal/prometheus
   replicas:
-    min: 0
-    max: 0
+    min: 1
+    max: 2
   resources:
     limits:
       memory: 768Mi
@@ -72,7 +72,8 @@ spec:
     pool: nav-prod
   gcp:
     sqlInstances:
-      - type: POSTGRES_14
+      - type: POSTGRES_15
+        name: familie-ef-personhendelse-15
         diskAutoresize: true
         tier: db-g1-small
         cascadingDelete: false
