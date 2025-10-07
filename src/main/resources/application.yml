@@ -20,14 +20,18 @@ spring:
   flyway:
     enabled: true
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DB_JDBC_URL}
     hikari:
       maximum-pool-size: 5
       connection-test-query: "select 1"
       max-lifetime: 900000
       minimum-idle: 1
+      data-source-properties:
+        ssl: true
+        sslmode: ${DB_SSLMODE}
+        sslcert: ${DB_SSLCERT}
+        sslkey: ${DB_SSLKEY_PK8}
+        sslrootcert: ${DB_SSLROOTCERT}
   kafka:
     bootstrap-servers: ${KAFKA_BROKERS}
     properties:
