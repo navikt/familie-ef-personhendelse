@@ -39,20 +39,22 @@ class InntektsendringerService(
 
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk(forvaltning: Boolean = false) {
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
-        inntektsendringer.forEach {
-            val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
-            val payload = PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(personIdent = it.personIdent, harIngenEksisterendeYtelser = it.harIngenEksisterendeYtelser(), yearMonthProssesertTid = yearMonthProssesertTid)
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE) == null
+        val payload = inntektsendringer.map { it.personIdent }
 
-            if (skalOppretteTask && !forvaltning) {
-                val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
-                taskService.save(task)
+        val task =
+            if (forvaltning) {
+                RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask.opprettTask(payload)
+            } else {
+                RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
             }
-            if (skalOppretteTask && forvaltning) {
-                val task = RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask.opprettTask(payload)
-                taskService.save(task)
-            }
-        }
+
+        val skalOppretteTask =
+            taskService.finnTaskMedPayloadOgType(
+                objectMapper.writeValueAsString(payload),
+                task.type,
+            ) == null
+
+        if (skalOppretteTask) taskService.save(task)
     }
 
     fun beregnInntektsendringerOgLagreIDb() {
@@ -202,7 +204,6 @@ class InntektsendringerService(
         inntektResponse: InntektResponse,
         yearMonth: YearMonth,
         personIdent: String,
-        harIngenEksisterendeYtelser: Boolean,
     ): Boolean {
         val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(3))
         val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(2))
@@ -210,7 +211,7 @@ class InntektsendringerService(
 
         val harStabilInntekt = abs(totalInntektTreMånederTilbake - totalInntektToMånederTilbake) < 3000 && abs(totalInntektTreMånederTilbake - totalInntektForrigeMåned) < 3000
 
-        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: $harIngenEksisterendeYtelser")
+        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt ")
 
         return harStabilInntekt
     }

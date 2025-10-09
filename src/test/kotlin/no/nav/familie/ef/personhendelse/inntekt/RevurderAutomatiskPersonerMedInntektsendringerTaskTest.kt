@@ -1,12 +1,16 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.personhendelse.client.SakClient
+import no.nav.familie.ef.personhendelse.inntekt.InntektClientTest.Companion.lesRessurs
+import no.nav.familie.ef.personhendelse.inntekt.endring.Inntektsendring
 import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
-import no.nav.familie.ef.personhendelse.inntekt.endring.PayloadRevurderAutomatiskPersonerMedInntektsendringerTask
 import no.nav.familie.ef.personhendelse.inntekt.endring.RevurderAutomatiskPersonerMedInntektsendringerTask
+import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -38,20 +42,18 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
 
     @Test
     fun `Sjekk at man kan opprette task for uføretrygdsendringer og at den har riktig metadata`() {
-        val payload =
-            PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(
-                personIdent = "123",
-                harIngenEksisterendeYtelser = true,
-                yearMonthProssesertTid = YearMonth.of(2023, 10),
-            )
+        val payload = listOf("123")
         val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
+        val inntektV2ResponseJson: String = lesRessurs("inntekt/InntektGenerellResponse.json")
+        val inntektResponse = objectMapper.readValue<InntektResponse>(inntektV2ResponseJson)
+        every { inntektClient.hentInntekt(any(), any(), any()) } returns inntektResponse
         taskService.save(task)
         val taskList = taskService.finnAlleTaskerMedType(RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE)
         assertThat(taskList).hasSize(1)
         val taskFraDB = taskList.first()
         assertThat(taskFraDB.metadata).isNotEmpty
-        assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(2)
-        assertThat(taskFraDB.metadataWrapper.properties.keys).contains("personIdent", "callId")
+        assertThat(taskFraDB.metadataWrapper.properties.keys.size).isEqualTo(1)
+        assertThat(taskFraDB.metadataWrapper.properties.keys).contains("callId")
         revurderAutomatiskPersonerMedInntektsendringerTask.doTask(task)
         verify(exactly = 1) { sakClient.revurderAutomatisk(any()) }
     }

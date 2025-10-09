@@ -30,33 +30,39 @@ class RevurderAutomatiskPersonerMedInntektsendringerTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val (personIdent, harIngenEksisterendeYtelser, yearMonthProssesertTid) = objectMapper.readValue<PayloadRevurderAutomatiskPersonerMedInntektsendringerTask>(task.payload)
+        val personIdenter = objectMapper.readValue<List<String>>(task.payload)
         secureLogger.info("Revurderer automatisk person med inntektsendringer: ${task.payload}")
-        val inntektResponse = inntektClient.hentInntekt(personIdent, yearMonthProssesertTid.minusMonths(3), yearMonthProssesertTid.minusMonths(1))
-        val harStabilInntekt = inntektsendringService.harStabilInntektOgLoggInntekt(inntektResponse, yearMonthProssesertTid, personIdent, harIngenEksisterendeYtelser)
+        val personIdenterForRevurdering =
+            personIdenter
+                .filter { personIdent ->
+                    val inntektResponse =
+                        inntektClient.hentInntekt(
+                            personIdent,
+                            YearMonth.now().minusMonths(3),
+                            YearMonth.now().minusMonths(1),
+                        )
+                    val harStabilInntekt =
+                        inntektsendringService.harStabilInntektOgLoggInntekt(
+                            inntektResponse,
+                            YearMonth.now(),
+                            personIdent,
+                        )
+                    val harIkkeAndreNavYtelser = inntektResponse.harIkkeAndreNavYtelser(YearMonth.now().minusMonths(3))
+                    harStabilInntekt && harIkkeAndreNavYtelser
+                }
 
-        if (harStabilInntekt && harIngenEksisterendeYtelser) {
-            sakClient.revurderAutomatisk(listOf<String>(personIdent))
+        if (personIdenterForRevurdering.isNotEmpty()) {
+            sakClient.revurderAutomatisk(personIdenterForRevurdering)
         }
     }
 
     companion object {
         const val TYPE = "revurderAutomatiskPersonerMedInntektsendringerTask"
 
-        fun opprettTask(payload: PayloadRevurderAutomatiskPersonerMedInntektsendringerTask): Task =
+        fun opprettTask(payload: List<String>): Task =
             Task(
                 type = TYPE,
                 payload = objectMapper.writeValueAsString(payload),
-                properties =
-                    Properties().apply {
-                        this["personIdent"] = payload.personIdent
-                    },
             )
     }
 }
-
-data class PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(
-    val personIdent: String,
-    val harIngenEksisterendeYtelser: Boolean,
-    val yearMonthProssesertTid: YearMonth,
-)
