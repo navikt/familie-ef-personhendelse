@@ -39,45 +39,22 @@ class InntektsendringerService(
 
     fun hentPersonerMedInntektsendringerOgRevurderAutomatisk(forvaltning: Boolean = false) {
         val inntektsendringer = inntektsendringerRepository.hentKandidaterTilAutomatiskRevurdering()
-        val årMåned = YearMonth.now()
-        val personIdentMedYtelser =
-            inntektsendringer.map {
-                PersonIdentMedYtelser(
-                    personIdent = it.personIdent,
-                    harIngenEksisterendeYtelser = it.harIngenEksisterendeYtelser(),
-                )
+        val payload = inntektsendringer.map { it.personIdent }
+
+        val task =
+            if (forvaltning) {
+                RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask.opprettTask(payload)
+            } else {
+                RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
             }
-        if (!forvaltning) {
-            val payload =
-                PayloadRevurderAutomatiskPersonerMedInntektsendringerTask(
-                    personIdenterMedYtelser = personIdentMedYtelser,
-                    årMåned = årMåned,
-                )
-            val skalOppretteTask =
-                taskService.finnTaskMedPayloadOgType(
-                    objectMapper.writeValueAsString(payload),
-                    RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE,
-                ) == null
-            if (skalOppretteTask) {
-                val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
-                taskService.save(task)
-            }
-        } else {
-            val payload =
-                PayloadRevurderAutomatiskPersonerMedInntektsendringerForvaltningTask(
-                    personIdenterMedYtelser = personIdentMedYtelser,
-                    årMåned = årMåned,
-                )
-            val skalOppretteTask =
-                taskService.finnTaskMedPayloadOgType(
-                    objectMapper.writeValueAsString(payload),
-                    RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask.TYPE,
-                ) == null
-            if (skalOppretteTask) {
-                val task = RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask.opprettTask(payload)
-                taskService.save(task)
-            }
-        }
+
+        val skalOppretteTask =
+            taskService.finnTaskMedPayloadOgType(
+                objectMapper.writeValueAsString(payload),
+                task.type,
+            ) == null
+
+        if (skalOppretteTask) taskService.save(task)
     }
 
     fun beregnInntektsendringerOgLagreIDb() {
@@ -227,7 +204,6 @@ class InntektsendringerService(
         inntektResponse: InntektResponse,
         yearMonth: YearMonth,
         personIdent: String,
-        harIngenEksisterendeYtelser: Boolean,
     ): Boolean {
         val totalInntektTreMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(3))
         val totalInntektToMånederTilbake = inntektResponse.totalInntektForÅrMånedUtenFeriepenger(yearMonth.minusMonths(2))
@@ -235,7 +211,7 @@ class InntektsendringerService(
 
         val harStabilInntekt = abs(totalInntektTreMånederTilbake - totalInntektToMånederTilbake) < 3000 && abs(totalInntektTreMånederTilbake - totalInntektForrigeMåned) < 3000
 
-        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt - eksisterende ytelser: $harIngenEksisterendeYtelser")
+        secureLogger.info("Total inntekt pr mnd uten feriepenger $personIdent: $totalInntektTreMånederTilbake, $totalInntektToMånederTilbake, $totalInntektForrigeMåned. Har stabil inntekt: $harStabilInntekt ")
 
         return harStabilInntekt
     }

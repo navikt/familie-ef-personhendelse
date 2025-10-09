@@ -24,6 +24,8 @@ data class InntektResponse(
             .filter { it.beskrivelse != "overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere" && it.beskrivelse != "barnepensjon" && !it.beskrivelse.contains("ferie", true) }
             .sumOf { it.beløp }
             .toInt()
+
+    fun harIkkeAndreNavYtelser(fraogMedÅr: YearMonth): Boolean = inntektsmånederFraOgMedÅrMåned(fraogMedÅr).none { it.inntektListe.any { it.type == InntektType.YTELSE_FRA_OFFENTLIGE && !it.beskrivelse.equals("overgangsstoenadTilEnsligMorEllerFarSomBegynteAaLoepe1April2014EllerSenere") } }
 }
 
 data class Inntektsmåned(
