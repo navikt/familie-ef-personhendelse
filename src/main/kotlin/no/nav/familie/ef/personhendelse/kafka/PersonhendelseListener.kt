@@ -65,6 +65,7 @@ class PersonhendelseListener(
     }
 
     /*
+    // listen()-metoden må implementere interfacet ConsumerSeekAware for at dette skal virke
     override fun onPartitionsAssigned(
         assignments: MutableMap<org.apache.kafka.common.TopicPartition, Long>,
         callback: ConsumerSeekAware.ConsumerSeekCallback
