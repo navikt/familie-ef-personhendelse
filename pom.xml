@@ -30,13 +30,13 @@
         <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
         <kotlin.version>2.2.20</kotlin.version>
-        <kafka-avro-serializer.version>8.0.2</kafka-avro-serializer.version>
-        <avro.version>1.12.0</avro.version>
+        <kafka-avro-serializer.version>8.1.0</kafka-avro-serializer.version>
+        <avro.version>1.12.1</avro.version>
         <graphql-kotlin-spring-client.version>8.8.1</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>8.8.1</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.6.1</exec-maven-plugin.version>
-        <kontrakter.version>3.0_20251010090545_ece0054</kontrakter.version>
+        <kontrakter.version>3.0_20251015155646_d4c9445</kontrakter.version>
         <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20250929124738_f28327d</eksterne-kontrakter.version.stonadsstatistikk.ks>
         <felles.version>3.20251016094046_66c869d</felles.version>
         <nav.security.version>5.0.33</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
