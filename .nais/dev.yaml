@@ -74,7 +74,8 @@ spec:
     pool: nav-dev
   gcp:
     sqlInstances:
-      - type: POSTGRES_15
+      - type: POSTGRES_17
+        name: familie-ef-personhendelse-17
         diskAutoresize: true
         tier: db-g1-small
         cascadingDelete: false
