@@ -26,12 +26,6 @@ spring:
       connection-test-query: "select 1"
       max-lifetime: 900000
       minimum-idle: 1
-      data-source-properties:
-        ssl: true
-        sslmode: ${DB_SSLMODE}
-        sslcert: ${DB_SSLCERT}
-        sslkey: ${DB_SSLKEY_PK8}
-        sslrootcert: ${DB_SSLROOTCERT}
   kafka:
     bootstrap-servers: ${KAFKA_BROKERS}
     properties:
