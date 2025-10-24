@@ -21,7 +21,6 @@ class InntektsendringerScheduler(
         // Send med alle som har 10% eller mer i inntektsendring 3 mnd på rad
         inntektOppgaveService.opprettOppgaverForInntektsendringer()
         inntektOppgaveService.opprettOppgaverForNyeVedtakUføretrygd()
-        inntektsendringerService.hentPersonerMedInntektsendringerOgRevurderAutomatisk()
         inntektOppgaveService.finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver()
         inntektOppgaveService.finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver()
     }
