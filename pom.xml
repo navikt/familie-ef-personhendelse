@@ -36,11 +36,11 @@
         <graphql-kotlin-maven-plugin.version>8.8.1</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
-        <kontrakter.version>3.0_20251106145307_0419786</kontrakter.version>
-        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20251027085135_48de1e7</eksterne-kontrakter.version.stonadsstatistikk.ks>
+        <kontrakter.version>3.0_20251112142340_c5baa9c</kontrakter.version>
+        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20251111094125_cdf5bf2</eksterne-kontrakter.version.stonadsstatistikk.ks>
         <felles.version>3.20251105152539_b03ed80</felles.version>
         <nav.security.version>5.0.33</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
-        <prosessering.version>2.20251103090009_f7d38c7</prosessering.version>
+        <prosessering.version>2.20251110093725_10552cd</prosessering.version>
         <nav.security.version>5.0.39</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.2</wiremock.version>
@@ -399,7 +399,7 @@
                     <dependency>
                         <groupId>com.pinterest.ktlint</groupId>
                         <artifactId>ktlint-cli</artifactId>
-                        <version>1.7.1</version>
+                        <version>1.8.0</version>
                     </dependency>
                     <!-- additional 3rd party ruleset(s) can be specified here -->
                 </dependencies>

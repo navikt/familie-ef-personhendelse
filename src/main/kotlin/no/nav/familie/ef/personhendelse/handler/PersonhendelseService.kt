@@ -77,21 +77,27 @@ class PersonhendelseService(
         val oppgaveInformasjon = handler.lagOppgaveInformasjon(personhendelse)
         logHendelse(personhendelse, oppgaveInformasjon, personIdent)
         when (oppgaveInformasjon) {
-            is IkkeOpprettOppgave -> return
-            is OpprettOppgave ->
+            is IkkeOpprettOppgave -> {
+                return
+            }
+
+            is OpprettOppgave -> {
                 opprettOppgave(
                     UUID.fromString(personhendelse.hendelseId),
                     personhendelse.endringstype,
                     oppgaveInformasjon.beskrivelse,
                     personIdent,
                 )
-            is UtsettOppgave ->
+            }
+
+            is UtsettOppgave -> {
                 utsattOppgaveService.lagreUtsattOppgave(
                     personhendelse,
                     handlers[personhendelse.opplysningstype]?.type ?: error("Kunne ikke finne personopplysningstype"),
                     personIdent,
                     oppgaveInformasjon.beskrivelse,
                 )
+            }
         }
     }
 
@@ -158,22 +164,29 @@ class PersonhendelseService(
         if (oppgave.erÅpen()) {
             val nyOppgave =
                 when (personhendelse.endringstype) {
-                    Endringstype.ANNULLERT ->
+                    Endringstype.ANNULLERT -> {
                         oppdater(
                             oppgave,
                             opphørtEllerAnnullertBeskrivelse(),
                             StatusEnum.FEILREGISTRERT,
                         )
+                    }
 
-                    Endringstype.OPPHOERT ->
+                    Endringstype.OPPHOERT -> {
                         oppdater(
                             oppgave,
                             opphørtEllerAnnullertBeskrivelse(),
                             StatusEnum.FERDIGSTILT,
                         )
+                    }
 
-                    Endringstype.KORRIGERT -> oppdater(oppgave, korrigertBeskrivelse(), oppgave.status)
-                    else -> error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
+                    Endringstype.KORRIGERT -> {
+                        oppdater(oppgave, korrigertBeskrivelse(), oppgave.status)
+                    }
+
+                    else -> {
+                        error("Feil endringstype ved annullering eller korrigering : ${personhendelse.endringstype}")
+                    }
                 }
             logger.info("Oppgave oppdatert med oppgaveId=$nyOppgave for endringstype : ${personhendelse.endringstype.name}")
         } else {
