@@ -39,7 +39,6 @@
         <kontrakter.version>3.0_20251112142340_c5baa9c</kontrakter.version>
         <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20251111094125_cdf5bf2</eksterne-kontrakter.version.stonadsstatistikk.ks>
         <felles.version>3.20251105152539_b03ed80</felles.version>
-        <nav.security.version>5.0.33</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <prosessering.version>2.20251117095517_cc54714</prosessering.version>
         <nav.security.version>6.0.0</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
@@ -63,8 +62,16 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-kafka</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

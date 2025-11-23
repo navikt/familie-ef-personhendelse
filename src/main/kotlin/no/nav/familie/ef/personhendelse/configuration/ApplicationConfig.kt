@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
-import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.boot.restclient.RestTemplateBuilder
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -50,22 +50,18 @@ class ApplicationConfig {
     fun kotlinModule(): KotlinModule = KotlinModule.Builder().build()
 
     @Bean
-    fun logFilter(): FilterRegistrationBean<LogFilter> {
-        logger.info("Registering LogFilter filter")
-        val filterRegistration = FilterRegistrationBean<LogFilter>()
-        filterRegistration.filter = LogFilter(systemtype = NavSystemtype.NAV_INTEGRASJON)
-        filterRegistration.order = 1
-        return filterRegistration
-    }
+    fun logFilter(): FilterRegistrationBean<LogFilter> =
+        FilterRegistrationBean(LogFilter(systemtype = NavSystemtype.NAV_INTEGRASJON)).apply {
+            logger.info("Registering LogFilter filter")
+            order = 1
+        }
 
     @Bean
-    fun requestTimeFilter(): FilterRegistrationBean<RequestTimeFilter> {
-        logger.info("Registering RequestTimeFilter filter")
-        val filterRegistration = FilterRegistrationBean<RequestTimeFilter>()
-        filterRegistration.filter = RequestTimeFilter()
-        filterRegistration.order = 2
-        return filterRegistration
-    }
+    fun requestTimeFilter(): FilterRegistrationBean<RequestTimeFilter> =
+        FilterRegistrationBean(RequestTimeFilter()).apply {
+            logger.info("Registering RequestTimeFilter filter")
+            order = 2
+        }
 
     @Bean
     @Primary
@@ -79,8 +75,8 @@ class ApplicationConfig {
     fun restTemplateBuilder(): RestTemplateBuilder {
         val jackson2HttpMessageConverter = MappingJackson2HttpMessageConverter(objectMapper)
         return RestTemplateBuilder()
-            .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-            .setReadTimeout(Duration.of(30, ChronoUnit.SECONDS))
+            .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+            .readTimeout(Duration.of(30, ChronoUnit.SECONDS))
             .messageConverters(listOf(jackson2HttpMessageConverter) + RestTemplate().messageConverters)
     }
 
@@ -95,8 +91,8 @@ class ApplicationConfig {
         RetryOAuth2HttpClient(
             RestClient.create(
                 RestTemplateBuilder()
-                    .setConnectTimeout(Duration.of(2, ChronoUnit.SECONDS))
-                    .setReadTimeout(Duration.of(4, ChronoUnit.SECONDS))
+                    .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+                    .readTimeout(Duration.of(4, ChronoUnit.SECONDS))
                     .build(),
             ),
         )
