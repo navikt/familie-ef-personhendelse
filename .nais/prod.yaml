@@ -55,6 +55,8 @@ spec:
     outbound:
       rules:
         - application: familie-ef-sak
+        - application: logging
+          namespace: nais-system
       external:
         - host: kafka-schema-registry.nais.adeo.no
         - host: pdl-api.prod-fss-pub.nais.io
