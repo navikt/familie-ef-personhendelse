@@ -4,7 +4,11 @@ no.nav.security.jwt:
     accepted_audience: aud-localhost
 spring:
   kafka:
-    enabled: false
+    bootstrap-servers: localhost:9092
+    properties:
+      schema.registry.url: http://localhost:8081
+      security:
+        protocol: PLAINTEXT
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     url: jdbc:tc:postgresql:15:///testdb

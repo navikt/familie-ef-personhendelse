@@ -24,7 +24,7 @@ class KafkaConfig {
     ): ConcurrentKafkaListenerContainerFactory<Long, Personhendelse> =
         ConcurrentKafkaListenerContainerFactory<Long, Personhendelse>().apply {
             containerProperties.ackMode = AckMode.MANUAL_IMMEDIATE
-            val props = fellesProperties(properties.consumer.buildProperties())
+            val props = fellesProperties(properties.buildConsumerProperties())
             props[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = true
             props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroDeserializer::class.java
             val consumerFactory = DefaultKafkaConsumerFactory<Long, Personhendelse>(props)
@@ -40,7 +40,7 @@ class KafkaConfig {
     ): ConcurrentKafkaListenerContainerFactory<String, String> =
         ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             containerProperties.ackMode = AckMode.MANUAL_IMMEDIATE
-            val props = fellesProperties(properties.consumer.buildProperties())
+            val props = fellesProperties(properties.buildConsumerProperties())
             props[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = false
             props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
 

@@ -35,14 +35,12 @@ spring:
       security:
         protocol: SSL
       ssl:
-        keystore:
-          type: PKCS12
-          location: ${KAFKA_KEYSTORE_PATH}
-          password: ${KAFKA_CREDSTORE_PASSWORD}
-        truststore:
-          type: PKCS12
-          location: ${KAFKA_TRUSTSTORE_PATH}
-          password: ${KAFKA_CREDSTORE_PASSWORD}
+        key-store-type: PKCS12
+        key-store-location: ${KAFKA_KEYSTORE_PATH}
+        key-store-password: ${KAFKA_CREDSTORE_PASSWORD}
+        trust-store-type: PKCS12
+        trust-store-location: ${KAFKA_TRUSTSTORE_PATH}
+        trust-store-password: ${KAFKA_CREDSTORE_PASSWORD}
 
 no.nav.security.jwt:
   issuer:
