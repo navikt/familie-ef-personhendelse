@@ -4,7 +4,7 @@ no.nav.security.jwt:
     accepted_audience: aud-localhost
 spring:
   kafka:
-    bootstrap-servers: http://localhost:9092
+    bootstrap-servers: localhost:9092
     properties:
       schema.registry.url: http://localhost:8081
       security:
