@@ -53,6 +53,8 @@ spec:
         - application: familie-ef-sak
         - application: familie-prosessering
         - application: familie-prosessering-lokal
+        - application: etterlatte-prosessering
+          namespace: etterlatte
     outbound:
       rules:
         - application: familie-ef-sak
