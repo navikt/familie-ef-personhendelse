@@ -6,6 +6,8 @@ spring:
     name: familie-ef-personhendelse
   main:
     allow-bean-definition-overriding: true
+  jpa:
+    defer-datasource-initialization: true
   kafka:
     client-id: familie-ef-personhendelse
     bootstrap-servers: http://localhost:9092
@@ -13,11 +15,14 @@ spring:
       schema.registry.url: http://localhost:8081
       security.protocol: PLAINTEXT
   datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     url: jdbc:tc:postgresql:15://localhost/testdb
     username: test
     password: test
   flyway:
     enabled: true
+    baseline-on-migrate: true
+    loggers: true
 
 
 rolle:
@@ -38,3 +43,6 @@ AUTHORIZATION_URL: https://login.microsoftonline.com/navno.onmicrosoft.com/oauth
 AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/v2.0/token
 PERSONHENDELSE_SCOPE: test
 
+
+kafka:
+  enabled: false

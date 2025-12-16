@@ -8,6 +8,7 @@ import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
 import org.springframework.kafka.support.Acknowledgment
@@ -19,6 +20,7 @@ import java.util.UUID
  * Leesah: Livet er en strøm av hendelser
  */
 @Component
+@ConditionalOnProperty(name = ["kafka.enabled"], havingValue = "true", matchIfMissing = true)
 class PersonhendelseListener(
     @Value("\${SPRING_PROFILES_ACTIVE}")
     private val env: String,

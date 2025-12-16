@@ -4,7 +4,8 @@ no.nav.security.jwt:
     accepted_audience: aud-localhost
 spring:
   kafka:
-    bootstrap-servers: http://localhost:9092
+    client-id: familie-ef-personhendelse
+    bootstrap-servers: localhost:9092
     properties:
       schema.registry.url: http://localhost:8081
       security:
@@ -24,9 +25,12 @@ spring:
 
 AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth/v2.0/token
-SPRING_PROFILES_ACTIVE: local
+SPRING_PROFILES_ACTIVE: integrasjonstest
 
 INNTEKT_URL: https://ikomp-q2.dev-fss-pub.nais.io
 INNTEKT_SCOPE: api://dev-fss.team-inntekt.ikomp-q2/.default
 
 PERSONHENDELSE_SCOPE: test
+
+kafka:
+  enabled: false

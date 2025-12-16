@@ -5,12 +5,14 @@ import no.nav.familie.eksterne.kontrakter.VedtakDVH
 import no.nav.familie.kontrakter.felles.objectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnProperty(name = ["kafka.enabled"], havingValue = "true", matchIfMissing = true)
 class KontantstøtteVedtakListener(
     val kontantstøtteVedtakService: KontantstøtteVedtakService,
 ) : ConsumerSeekAware {
@@ -25,6 +27,7 @@ class KontantstøtteVedtakListener(
         topics = ["\${FAMILIE_KS_VEDTAK_TOPIC}"],
         containerFactory = "kafkaKontantstøtteVedtakListenerContainerFactory",
     )
+    @ConditionalOnProperty(name = ["kafka.enabled"], havingValue = "true", matchIfMissing = true)
     fun listen(
         consumerRecord: ConsumerRecord<String, String>,
         ack: Acknowledgment,
