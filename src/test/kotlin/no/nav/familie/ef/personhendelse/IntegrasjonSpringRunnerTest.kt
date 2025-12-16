@@ -19,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [ApplicationLocal::class, FlywayTestConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = [ApplicationLocal::class, FlywayTestConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["kafka.enabled=false"])
 @EnableMockOAuth2Server
 @ActiveProfiles("integrasjonstest")
 abstract class IntegrasjonSpringRunnerTest {

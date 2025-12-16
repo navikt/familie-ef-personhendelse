@@ -6,6 +6,7 @@ import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.kafka.autoconfigure.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -16,6 +17,7 @@ import org.springframework.kafka.listener.ContainerProperties.AckMode
 
 @EnableKafka
 @Configuration
+@ConditionalOnProperty(prefix = "kafka", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 class KafkaConfig {
     @Bean
     fun kafkaAivenPersonhendelseListenerContainerFactory(
