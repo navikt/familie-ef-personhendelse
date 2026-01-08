@@ -74,8 +74,9 @@ class ApplicationConfig {
     @Primary
     fun restTemplateBuilder(): RestTemplateBuilder {
         val jackson2HttpMessageConverter = MappingJackson2HttpMessageConverter(objectMapper)
-        // TODO Set connect og read timeout
         return RestTemplateBuilder()
+            .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
+            .readTimeout(Duration.of(30, ChronoUnit.SECONDS))
             .messageConverters(listOf(jackson2HttpMessageConverter) + RestTemplate().messageConverters)
     }
 
