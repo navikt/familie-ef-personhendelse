@@ -3,6 +3,7 @@ package no.nav.familie.ef.personhendelse
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.github.tomakehurst.wiremock.WireMockServer
+import no.nav.familie.ef.personhendelse.config.FlywayTestConfig
 import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
@@ -16,7 +17,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [ApplicationLocal::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = [ApplicationLocal::class, FlywayTestConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["kafka.enabled=false"])
 @EnableMockOAuth2Server
 @ActiveProfiles("integrasjonstest")
 abstract class IntegrasjonSpringRunnerTest {

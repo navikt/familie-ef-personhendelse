@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.7</version>
+        <version>4.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.familie.ef</groupId>
@@ -38,15 +38,14 @@
         <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
         <kontrakter.version>3.0_20251112142340_c5baa9c</kontrakter.version>
         <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20251111094125_cdf5bf2</eksterne-kontrakter.version.stonadsstatistikk.ks>
-        <felles.version>3.20251105152539_b03ed80</felles.version>
-        <nav.security.version>5.0.33</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
-        <prosessering.version>2.20251110093725_10552cd</prosessering.version>
-        <nav.security.version>5.0.39</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <felles.version>4.20251125150711_2fff585</felles.version> <!-- Trenger ny versjon av felles med Spring Boot 4 -->
+        <prosessering.version>2.20251117095517_cc54714</prosessering.version>
+        <nav.security.version>6.0.0</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.2</wiremock.version>
         <mockk-jvm.version>1.14.6</mockk-jvm.version>
         <postgres.version>1.21.3</postgres.version>
-        <springdoc.version>2.8.14</springdoc.version>
+        <springdoc.version>3.0.0</springdoc.version>
         <logstash.version>8.1</logstash.version>
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
     </properties>
@@ -64,8 +63,21 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient</artifactId>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
