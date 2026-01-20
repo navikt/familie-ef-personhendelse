@@ -29,8 +29,6 @@ spec:
     requests:
       memory: 256Mi
       cpu: 20m
-  secureLogs:
-    enabled: true
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
