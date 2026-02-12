@@ -50,14 +50,14 @@ data class Inntekt(
     val inngårIGrunnlagForTrekk: Boolean,
     @JsonProperty("utloeserArbeidsgiveravgift")
     val utløserArbeidsgiveravgift: Boolean,
-    val skatteOgAvgiftsregel: String?,
-    val opptjeningsperiodeFom: LocalDate?,
-    val opptjeningsperiodeTom: LocalDate?,
-    val tilleggsinformasjon: Tilleggsinformasjon?,
-    val manuellVurdering: Boolean,
-    val antall: Int?,
-    val skattemessigBosattLand: String?,
-    val opptjeningsland: String?,
+    val skatteOgAvgiftsregel: String? = null,
+    val opptjeningsperiodeFom: LocalDate? = null,
+    val opptjeningsperiodeTom: LocalDate? = null,
+    val tilleggsinformasjon: Tilleggsinformasjon? = null,
+    val manuellVurdering: Boolean = false,
+    val antall: Int? = null,
+    val skattemessigBosattLand: String? = null,
+    val opptjeningsland: String? = null,
 )
 
 data class Forskuddstrekk(

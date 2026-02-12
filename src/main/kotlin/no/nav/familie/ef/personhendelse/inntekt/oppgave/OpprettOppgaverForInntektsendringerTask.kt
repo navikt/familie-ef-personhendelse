@@ -1,13 +1,14 @@
 package no.nav.familie.ef.personhendelse.inntekt.oppgave
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import tools.jackson.module.kotlin.readValue
 import java.time.YearMonth
 import java.util.Properties
 
@@ -25,7 +26,7 @@ class OpprettOppgaverForInntektsendringerTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val (personIdent, totalFeilutbetaling, yearMonthProssesertTid) = objectMapper.readValue<PayloadOpprettOppgaverForInntektsendringerTask>(task.payload)
+        val (personIdent, totalFeilutbetaling, yearMonthProssesertTid) = jsonMapper.readValue<PayloadOpprettOppgaverForInntektsendringerTask>(task.payload)
         secureLogger.info("Oppretter oppgaver for inntektsendringer ${task.payload}")
         inntektOppgaveService.opprettOppgaveForInntektsendring(personIdent, inntektOppgaveService.lagOppgavetekstForInntektsendring(totalFeilutbetaling, yearMonthProssesertTid))
     }
@@ -36,7 +37,7 @@ class OpprettOppgaverForInntektsendringerTask(
         fun opprettTask(payload: PayloadOpprettOppgaverForInntektsendringerTask): Task =
             Task(
                 type = TYPE,
-                payload = objectMapper.writeValueAsString(payload),
+                payload = jsonMapper.writeValueAsString(payload),
                 properties =
                     Properties().apply {
                         this["personIdent"] = payload.personIdent

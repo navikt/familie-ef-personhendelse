@@ -2,7 +2,7 @@ package no.nav.familie.ef.personhendelse.kontantstøtte.vedtak
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.eksterne.kontrakter.VedtakDVH
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -10,6 +10,7 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.listener.ConsumerSeekAware
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.stereotype.Component
+import tools.jackson.module.kotlin.readValue
 
 @Component
 @ConditionalOnProperty(name = ["kafka.enabled"], havingValue = "true", matchIfMissing = true)
@@ -32,7 +33,7 @@ class KontantstøtteVedtakListener(
         consumerRecord: ConsumerRecord<String, String>,
         ack: Acknowledgment,
     ) {
-        val vedtakhendelse = objectMapper.readValue<VedtakDVH>(consumerRecord.value())
+        val vedtakhendelse = jsonMapper.readValue<VedtakDVH>(consumerRecord.value())
         try {
             logger.info("Leser vedtak for kontantstøtte med behandlingId: ${vedtakhendelse.behandlingsId}")
             if (erAlleredeHåndtert(vedtakhendelse)) {
@@ -46,7 +47,7 @@ class KontantstøtteVedtakListener(
             securelogger.error(
                 "Feil ved håndtering av vedtakhendelse med behandlingsId ${vedtakhendelse.behandlingsId} med ytelse " +
                     "kontantstøtte : ${e.message} hendelse={}",
-                objectMapper.writeValueAsString(vedtakhendelse),
+                jsonMapper.writeValueAsString(vedtakhendelse),
                 e,
             )
             throw e

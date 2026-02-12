@@ -8,7 +8,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
@@ -51,7 +51,7 @@ internal class SakClientTest {
     fun `Finnes behandling i ef-sak for person og returner true`() {
         wiremockServerItem.stubFor(
             post(urlMatching("/api/ekstern/behandling/har-loepende-stoenad"))
-                .withRequestBody(equalToJson(objectMapper.writeValueAsString(personidenter)))
+                .withRequestBody(equalToJson(jsonMapper.writeValueAsString(personidenter)))
                 .willReturn(
                     aResponse()
                         .withHeader("Content-Type", "application/json")

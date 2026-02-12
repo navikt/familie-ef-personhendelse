@@ -2,7 +2,6 @@ package no.nav.familie.ef.personhendelse.kafka
 
 import no.nav.familie.ef.personhendelse.handler.PersonhendelseService
 import no.nav.familie.ef.personhendelse.util.identerUtenAktørId
-import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.person.pdl.leesah.Personhendelse
 import org.slf4j.LoggerFactory
@@ -57,8 +56,8 @@ class PersonhendelseListener(
             logger.error("Feil ved håndtering av personhendelse med hendelseId: ${personhendelse.hendelseId}")
             securelogger.error(
                 "Feil ved håndtering av personhendelse med hendelseId ${personhendelse.hendelseId}: ${e.message}" +
-                    " hendelse={}",
-                objectMapper.writeValueAsString(personhendelse),
+                    " hendelse=hendelseId=${personhendelse.hendelseId}, personidenter=${personhendelse.personidenter}, " +
+                    "opplysningstype=${personhendelse.opplysningstype}, endringstype=${personhendelse.endringstype}",
             )
             throw e
         } finally {

@@ -8,7 +8,7 @@ import no.nav.familie.ef.personhendelse.inntekt.InntektResponse
 import no.nav.familie.ef.personhendelse.inntekt.InntektsendringerRepository
 import no.nav.familie.ef.personhendelse.inntekt.Inntektsmåned
 import no.nav.familie.ef.personhendelse.inntekt.VedtakendringerUtil
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -50,7 +50,7 @@ class InntektsendringerService(
 
         val skalOppretteTask =
             taskService.finnTaskMedPayloadOgType(
-                objectMapper.writeValueAsString(payload),
+                jsonMapper.writeValueAsString(payload),
                 task.type,
             ) == null
 

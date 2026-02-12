@@ -1,8 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt.oppgave
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -10,6 +9,7 @@ import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import tools.jackson.module.kotlin.readValue
 import java.time.YearMonth
 
 @Service
@@ -27,7 +27,7 @@ class FinnPersonerMedEndringUføretrygdTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val (inntektsendringForBrukereMedUføretrygd, årMåned) = objectMapper.readValue<PayloadFinnPersonerMedEndringUføretrygdTask>(task.payload)
+        val (inntektsendringForBrukereMedUføretrygd, årMåned) = jsonMapper.readValue<PayloadFinnPersonerMedEndringUføretrygdTask>(task.payload)
         val forrigeMåned = YearMonth.now().minusMonths(1)
         val toMånederTilbake = YearMonth.now().minusMonths(2)
         val personerMedØktUtbetalingAvUføretrygd =
@@ -52,7 +52,7 @@ class FinnPersonerMedEndringUføretrygdTask(
             }
         personerMedØktUtbetalingAvUføretrygd.forEach { kandidat ->
             val payload = PayloadOpprettOppgaverForUføretrygdsendringerTask(personIdent = kandidat, årMåned = årMåned)
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForUføretrygdsendringerTask.TYPE) == null
+            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(jsonMapper.writeValueAsString(payload), OpprettOppgaverForUføretrygdsendringerTask.TYPE) == null
 
             if (skalOppretteTask) {
                 val task = OpprettOppgaverForUføretrygdsendringerTask.opprettTask(payload)
@@ -68,7 +68,7 @@ class FinnPersonerMedEndringUføretrygdTask(
         fun opprettTask(payload: PayloadFinnPersonerMedEndringUføretrygdTask): Task =
             Task(
                 type = TYPE,
-                payload = objectMapper.writeValueAsString(payload),
+                payload = jsonMapper.writeValueAsString(payload),
             )
     }
 }

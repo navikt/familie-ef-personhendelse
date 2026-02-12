@@ -1,15 +1,15 @@
 package no.nav.familie.ef.personhendelse.inntekt.endring
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.InntektClient
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import tools.jackson.module.kotlin.readValue
 import java.time.YearMonth
 
 @Service
@@ -28,7 +28,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val personIdenter = objectMapper.readValue<List<String>>(task.payload)
+        val personIdenter = jsonMapper.readValue<List<String>>(task.payload)
         secureLogger.info("Revurderer automatisk person med inntektsendringer: ${task.payload}")
         val personIdenterForRevurdering =
             personIdenter
@@ -60,7 +60,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerForvaltningTask(
         fun opprettTask(payload: List<String>): Task =
             Task(
                 type = TYPE,
-                payload = objectMapper.writeValueAsString(payload),
+                payload = jsonMapper.writeValueAsString(payload),
             )
     }
 }

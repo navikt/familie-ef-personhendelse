@@ -1,6 +1,6 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -25,7 +25,7 @@ class LoggInntektForPersonTask(
         securelogger.info("Hent inntekt for person ${task.payload}")
         val inntekt = inntektClient.hentInntekt(personIdent = task.payload, YearMonth.now().minusMonths(12), YearMonth.now())
         securelogger.info("Inntekt hentet")
-        securelogger.info("InntektResponse: ${objectMapper.writeValueAsString(inntekt)}")
+        securelogger.info("InntektResponse: ${jsonMapper.writeValueAsString(inntekt)}")
     }
 
     companion object {

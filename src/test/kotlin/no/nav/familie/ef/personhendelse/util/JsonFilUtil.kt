@@ -2,8 +2,9 @@ package no.nav.familie.ef.personhendelse.util
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.personhendelse.inntekt.InntektResponse
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.assertj.core.api.Assertions
+import tools.jackson.module.kotlin.readValue
 import java.nio.charset.StandardCharsets
 import java.time.YearMonth
 
@@ -20,7 +21,7 @@ class JsonFilUtil {
             val treMndTilbake = YearMonth.now().minusMonths(3)
             val fireMndTilbake = YearMonth.now().minusMonths(4)
 
-            val inntektResponse = objectMapper.readValue<InntektResponse>(json)
+            val inntektResponse = jsonMapper.readValue<InntektResponse>(json)
             val månedsInntekt = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 
             return inntektResponse.copy(
@@ -43,8 +44,8 @@ class JsonFilUtil {
             val treMndTilbake = YearMonth.now().minusMonths(3)
             val fireMndTilbake = YearMonth.now().minusMonths(4)
 
-            val inntektResponseResterendeMåneder = objectMapper.readValue<InntektResponse>(jsonForResterendeMåneder)
-            val inntektResponseFørsteMåned = objectMapper.readValue<InntektResponse>(jsonForFørsteMåned)
+            val inntektResponseResterendeMåneder = jsonMapper.readValue<InntektResponse>(jsonForResterendeMåneder)
+            val inntektResponseFørsteMåned = jsonMapper.readValue<InntektResponse>(jsonForFørsteMåned)
 
             val arbeidsinntektResterendeMåneder = inntektResponseResterendeMåneder.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
             val arbeidsinntektFørsteMåned = inntektResponseFørsteMåned.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")

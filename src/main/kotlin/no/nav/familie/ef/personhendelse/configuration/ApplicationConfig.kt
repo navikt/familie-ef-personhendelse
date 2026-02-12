@@ -2,14 +2,14 @@ package no.nav.familie.ef.personhendelse.configuration
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.ef.personhendelse.sikkerhet.SikkerhetContext.harRolle
-import no.nav.familie.http.client.RetryOAuth2HttpClient
-import no.nav.familie.http.config.RestTemplateAzure
 import no.nav.familie.kafka.KafkaErrorHandler
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.log.NavSystemtype
 import no.nav.familie.log.filter.LogFilter
 import no.nav.familie.log.filter.RequestTimeFilter
 import no.nav.familie.prosessering.config.ProsesseringInfoProvider
+import no.nav.familie.restklient.client.RetryOAuth2HttpClient
+import no.nav.familie.restklient.config.RestTemplateAzure
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
@@ -24,7 +24,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
+import org.springframework.resilience.annotation.EnableResilientMethods
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestTemplate
@@ -43,6 +44,7 @@ import java.time.temporal.ChronoUnit
     KafkaErrorHandler::class,
 )
 @EnableOAuth2Client(cacheEnabled = true)
+@EnableResilientMethods
 class ApplicationConfig {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -63,21 +65,17 @@ class ApplicationConfig {
             order = 2
         }
 
-    @Bean
-    @Primary
-    fun objectMapper() = objectMapper
-
     /**
      * Overskrever felles sin som bruker proxy, som ikke skal brukes på gcp
      */
     @Bean
     @Primary
     fun restTemplateBuilder(): RestTemplateBuilder {
-        val jackson2HttpMessageConverter = MappingJackson2HttpMessageConverter(objectMapper)
+        val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(jsonMapper)
         return RestTemplateBuilder()
             .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
             .readTimeout(Duration.of(30, ChronoUnit.SECONDS))
-            .messageConverters(listOf(jackson2HttpMessageConverter) + RestTemplate().messageConverters)
+            .additionalMessageConverters(listOf(jacksonJsonHttpMessageConverter) + RestTemplate().messageConverters)
     }
 
     /**

@@ -1,10 +1,11 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import tools.jackson.module.kotlin.readValue
 import java.nio.charset.StandardCharsets
 import java.time.YearMonth
 
@@ -14,7 +15,7 @@ class InntektClientTest {
         @Test
         fun `parser generell inntekt response med riktig data struktur`() {
             val inntektV2ResponseJson: String = lesRessurs("inntekt/InntektGenerellResponse.json")
-            val inntektResponse = objectMapper.readValue<InntektResponse>(inntektV2ResponseJson)
+            val inntektResponse = jsonMapper.readValue<InntektResponse>(inntektV2ResponseJson)
 
             val forventetMåned = YearMonth.of(2020, 3)
             val forventetInntektType: InntektType = InntektType.LØNNSINNTEKT
@@ -26,7 +27,7 @@ class InntektClientTest {
         @Test
         fun `parser inntektv2 response med forskjellige inntekt typer`() {
             val inntektV2ResponseJson: String = lesRessurs("inntekt/InntektFlereInntektTyper.json")
-            val inntektResponse = objectMapper.readValue<InntektResponse>(inntektV2ResponseJson)
+            val inntektResponse = jsonMapper.readValue<InntektResponse>(inntektV2ResponseJson)
 
             val forventeteInntektTyper =
                 listOf(
