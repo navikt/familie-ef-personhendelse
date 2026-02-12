@@ -85,18 +85,15 @@ class ApplicationConfig {
      */
     @Primary
     @Bean
-    fun oAuth2HttpClient(): OAuth2HttpClient {
-        val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(jsonMapper)
+    fun oAuth2HttpClient(): OAuth2HttpClient =
         return RetryOAuth2HttpClient(
             RestClient.create(
                 RestTemplateBuilder()
                     .connectTimeout(Duration.of(2, ChronoUnit.SECONDS))
                     .readTimeout(Duration.of(4, ChronoUnit.SECONDS))
-                    .additionalMessageConverters(listOf(jacksonJsonHttpMessageConverter) + RestTemplate().messageConverters)
                     .build(),
             ),
         )
-    }
 
     @Bean
     fun prosesseringInfoProvider(
