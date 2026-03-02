@@ -10,7 +10,7 @@ import no.nav.familie.eksterne.kontrakter.BehandlingÅrsak
 import no.nav.familie.eksterne.kontrakter.Kategori
 import no.nav.familie.eksterne.kontrakter.PersonDVH
 import no.nav.familie.eksterne.kontrakter.VedtakDVH
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,7 +36,7 @@ class KontantstøtteVedtakListenerTest {
             vilkårResultater = listOf(),
         )
 
-    val vedtakDvhAsJson = objectMapper.writeValueAsString(vedtakDvh)
+    val vedtakDvhAsJson = jsonMapper.writeValueAsString(vedtakDvh)
     val ack = mockk<Acknowledgment>()
 
     @BeforeEach

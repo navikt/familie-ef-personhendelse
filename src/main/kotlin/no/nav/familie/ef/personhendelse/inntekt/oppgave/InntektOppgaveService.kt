@@ -1,6 +1,5 @@
 package no.nav.familie.ef.personhendelse.inntekt.oppgave
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.familie.ef.personhendelse.client.ArbeidsfordelingClient
 import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.SakClient
@@ -8,6 +7,7 @@ import no.nav.familie.ef.personhendelse.client.fristFerdigstillelse
 import no.nav.familie.ef.personhendelse.inntekt.InntektsendringerRepository
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
@@ -29,7 +29,6 @@ class InntektOppgaveService(
     val arbeidsfordelingClient: ArbeidsfordelingClient,
     val inntektsendringerRepository: InntektsendringerRepository,
     val taskService: TaskService,
-    private val objectMapper: ObjectMapper,
 ) {
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
@@ -43,7 +42,7 @@ class InntektOppgaveService(
                     it.inntektsendringForrigeMåned.feilutbetaling
             val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
             val payload = PayloadOpprettOppgaverForInntektsendringerTask(personIdent = it.personIdent, totalFeilutbetaling = totalFeilutbetaling, yearMonthProssesertTid = yearMonthProssesertTid)
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForInntektsendringerTask.TYPE) == null
+            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(jsonMapper.writeValueAsString(payload), OpprettOppgaverForInntektsendringerTask.TYPE) == null
 
             if (skalOppretteTask) {
                 val task = OpprettOppgaverForInntektsendringerTask.opprettTask(payload)
@@ -56,7 +55,7 @@ class InntektOppgaveService(
     fun finnPersonerMedEndringUføretrygdToSisteMånederOgOpprettOppgaver() {
         val personIdenter = inntektsendringerRepository.hentInntektsendringerForPersonerMedUføretrygd()
         val payload = PayloadFinnPersonerMedEndringUføretrygdTask(personIdenter = personIdenter, årMåned = YearMonth.now())
-        val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), FinnPersonerMedEndringUføretrygdTask.TYPE) == null
+        val skalOppretteTask = taskService.finnTaskMedPayloadOgType(jsonMapper.writeValueAsString(payload), FinnPersonerMedEndringUføretrygdTask.TYPE) == null
 
         if (skalOppretteTask) {
             val task = FinnPersonerMedEndringUføretrygdTask.opprettTask(payload)
@@ -76,7 +75,7 @@ class InntektOppgaveService(
         nyeUføretrygdVedtak.forEach {
             val yearMonthProssesertTid = YearMonth.from(it.prosessertTid)
             val payload = PayloadOpprettOppgaverForNyeVedtakUføretrygdTask(personIdent = it.personIdent, prosessertYearMonth = yearMonthProssesertTid)
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE) == null
+            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(jsonMapper.writeValueAsString(payload), OpprettOppgaverForNyeVedtakUføretrygdTask.TYPE) == null
 
             if (skalOppretteTask) {
                 val task = OpprettOppgaverForNyeVedtakUføretrygdTask.opprettTask(payload)

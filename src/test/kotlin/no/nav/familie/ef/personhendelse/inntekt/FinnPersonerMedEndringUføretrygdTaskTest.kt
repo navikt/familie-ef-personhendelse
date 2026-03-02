@@ -8,12 +8,13 @@ import no.nav.familie.ef.personhendelse.inntekt.oppgave.FinnPersonerMedEndringUf
 import no.nav.familie.ef.personhendelse.inntekt.oppgave.OpprettOppgaverForUføretrygdsendringerTask
 import no.nav.familie.ef.personhendelse.inntekt.oppgave.PayloadFinnPersonerMedEndringUføretrygdTask
 import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import tools.jackson.module.kotlin.readValue
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.YearMonth
@@ -70,7 +71,7 @@ class FinnPersonerMedEndringUføretrygdTaskTest : IntegrasjonSpringRunnerTest() 
     @Test
     fun `Sjekk uføretrygd endring hvor det finnes flere innslag av inntekt på samme måned`() {
         val json: String = readResource("inntekt/InntektUføretrygdUtenEndring.json")
-        val inntektResponse = objectMapper.readValue<InntektResponse>(json)
+        val inntektResponse = jsonMapper.readValue<InntektResponse>(json)
 
         every { inntektsendringerService.hentInntekt(any()) } returns inntektResponse
 

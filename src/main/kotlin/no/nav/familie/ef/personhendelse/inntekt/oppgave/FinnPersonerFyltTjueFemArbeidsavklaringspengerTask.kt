@@ -1,8 +1,7 @@
 package no.nav.familie.ef.personhendelse.inntekt.oppgave
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.personhendelse.client.pdl.PdlClient
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
@@ -10,6 +9,7 @@ import no.nav.familie.prosessering.internal.TaskService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import tools.jackson.module.kotlin.readValue
 import java.time.YearMonth
 
 @Service
@@ -27,7 +27,7 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val (inntektsendringForBrukereMedArbeidsavklaringspenger, årMåned) = objectMapper.readValue<PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask>(task.payload)
+        val (inntektsendringForBrukereMedArbeidsavklaringspenger, årMåned) = jsonMapper.readValue<PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask>(task.payload)
         val startDato = årMåned.minusMonths(1).atDay(6)
         val sluttDato = årMåned.atDay(7)
 
@@ -43,7 +43,7 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
             }
         personerFylt25Aar.forEach { kandidat ->
             val payload = PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = kandidat, årMåned = YearMonth.from(årMåned))
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(objectMapper.writeValueAsString(payload), OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) == null
+            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(jsonMapper.writeValueAsString(payload), OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) == null
 
             if (skalOppretteTask) {
                 val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
@@ -59,7 +59,7 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
         fun opprettTask(payload: PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask): Task =
             Task(
                 type = TYPE,
-                payload = objectMapper.writeValueAsString(payload),
+                payload = jsonMapper.writeValueAsString(payload),
             )
     }
 }

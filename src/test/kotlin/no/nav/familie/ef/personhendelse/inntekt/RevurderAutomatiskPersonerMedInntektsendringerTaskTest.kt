@@ -1,22 +1,20 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ef.personhendelse.IntegrasjonSpringRunnerTest
 import no.nav.familie.ef.personhendelse.client.SakClient
 import no.nav.familie.ef.personhendelse.inntekt.InntektClientTest.Companion.lesRessurs
-import no.nav.familie.ef.personhendelse.inntekt.endring.Inntektsendring
 import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
 import no.nav.familie.ef.personhendelse.inntekt.endring.RevurderAutomatiskPersonerMedInntektsendringerTask
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.YearMonth
+import tools.jackson.module.kotlin.readValue
 
 class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpringRunnerTest() {
     private val sakClient = mockk<SakClient>(relaxed = true)
@@ -45,7 +43,7 @@ class RevurderAutomatiskPersonerMedInntektsendringerTaskTest : IntegrasjonSpring
         val payload = listOf("123")
         val task = RevurderAutomatiskPersonerMedInntektsendringerTask.opprettTask(payload)
         val inntektV2ResponseJson: String = lesRessurs("inntekt/InntektGenerellResponse.json")
-        val inntektResponse = objectMapper.readValue<InntektResponse>(inntektV2ResponseJson)
+        val inntektResponse = jsonMapper.readValue<InntektResponse>(inntektV2ResponseJson)
         every { inntektClient.hentInntekt(any(), any(), any()) } returns inntektResponse
         taskService.save(task)
         val taskList = taskService.finnAlleTaskerMedType(RevurderAutomatiskPersonerMedInntektsendringerTask.TYPE)

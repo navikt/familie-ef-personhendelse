@@ -4,8 +4,8 @@ import no.nav.familie.ef.personhendelse.generated.HentIdenter
 import no.nav.familie.ef.personhendelse.generated.HentPerson
 import no.nav.familie.ef.personhendelse.generated.hentidenter.IdentInformasjon
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
-import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.restklient.client.AbstractRestClient
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value

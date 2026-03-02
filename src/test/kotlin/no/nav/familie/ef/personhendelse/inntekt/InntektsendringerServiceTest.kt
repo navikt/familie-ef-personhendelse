@@ -11,11 +11,12 @@ import no.nav.familie.ef.personhendelse.inntekt.endring.Inntektsendring
 import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
 import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.lagInntektResponseFraJsonMedEnMåned
 import no.nav.familie.ef.personhendelse.util.JsonFilUtil.Companion.readResource
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import tools.jackson.module.kotlin.readValue
 import java.time.YearMonth
 
 class InntektsendringerServiceTest {
@@ -105,7 +106,7 @@ class InntektsendringerServiceTest {
     @Test
     fun `Har for høy forventet inntekt, skal returnere false`() {
         val json: String = readResource("inntekt/InntektLoennsinntektEksempel.json")
-        val inntektResponse = objectMapper.readValue<InntektResponse>(json) // 40k pr mnd
+        val inntektResponse = jsonMapper.readValue<InntektResponse>(json) // 40k pr mnd
 
         val arbeidsinntektMåned = inntektResponse.inntektsmåneder.firstOrNull() ?: Assertions.fail("Inntekt mangler")
 

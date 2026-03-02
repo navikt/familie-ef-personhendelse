@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.familie.ef.personhendelse.generated.enums.Sivilstandstype
-import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.kontrakter.felles.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
@@ -57,7 +57,7 @@ class PdlClientTest {
         wiremockServerItem.stubFor(
             WireMock
                 .post(WireMock.urlMatching("/graphql"))
-                .withRequestBody(equalToJson(objectMapper.writeValueAsString(pdlPersonRequest)))
+                .withRequestBody(equalToJson(jsonMapper.writeValueAsString(pdlPersonRequest)))
                 .willReturn(
                     WireMock
                         .aResponse()
