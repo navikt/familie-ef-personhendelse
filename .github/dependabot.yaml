@@ -35,3 +35,8 @@ updates:
       default-days: 4
       exclude:
         - "no.nav.familie*"
+    groups:
+      github-actions:
+        patterns:
+          - "actions/*"
+          - "nais/*"
