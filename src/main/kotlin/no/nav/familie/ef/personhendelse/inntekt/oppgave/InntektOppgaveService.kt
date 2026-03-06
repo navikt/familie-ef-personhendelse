@@ -65,9 +65,25 @@ class InntektOppgaveService(
 
     fun finnPersonerSomHarFyltTjueFemOgHarArbeidsavklaringspengerOgOpprettOppgaver() {
         val personIdenterBrukerereMedArbeidsavklaringspenger = inntektsendringerRepository.hentInntektsendringerForPersonMedArbeidsavklaringspenger()
-        val payload = PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask(personIdenterBrukereMedArbeidsavklaringspenger = personIdenterBrukerereMedArbeidsavklaringspenger, årMåned = YearMonth.now())
-        val task = FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.opprettTask(payload)
-        taskService.save(task)
+        val årMåned = YearMonth.now()
+
+        personIdenterBrukerereMedArbeidsavklaringspenger.forEach { personIdent ->
+            val payload =
+                PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
+                    personIdent = personIdent,
+                    årMåned = årMåned,
+                )
+            val skalOppretteTask =
+                taskService.finnTaskMedPayloadOgType(
+                    jsonMapper.writeValueAsString(payload),
+                    FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.TYPE,
+                ) == null
+
+            if (skalOppretteTask) {
+                val task = FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.opprettTask(payload)
+                taskService.save(task)
+            }
+        }
     }
 
     fun opprettOppgaverForNyeVedtakUføretrygd() {

@@ -52,10 +52,10 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTaskTest : IntegrasjonSpring
                     ),
             )
         every { pdlClient.hentPerson(any()) } returns person
-        val personIdenter = "123"
+        val personIdent = "123"
         val payload =
             PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
-                personIdenterBrukereMedArbeidsavklaringspenger = listOf(personIdenter),
+                personIdent = personIdent,
                 årMåned = YearMonth.now(),
             )
 
@@ -76,5 +76,69 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTaskTest : IntegrasjonSpring
         assertThat(taskFraDBLagOppgave.metadata).isNotEmpty
         assertThat(taskFraDBLagOppgave.metadataWrapper.properties.keys.size).isEqualTo(3)
         assertThat(taskFraDBLagOppgave.metadataWrapper.properties.keys).contains("callId", "personIdent", "årMåned")
+    }
+
+    @Test
+    fun `Sjekk at man ikke oppretter oppgave dersom person ikke har fylt 25`() {
+        val person =
+            Person(
+                forelderBarnRelasjon = emptyList(),
+                statsborgerskap = emptyList(),
+                sivilstand = emptyList(),
+                adressebeskyttelse = emptyList(),
+                bostedsadresse = emptyList(),
+                doedsfall = emptyList(),
+                foedselsdato =
+                    listOf(
+                        Foedselsdato(
+                            foedselsdato = LocalDate.of(YearMonth.now().minusYears(24).year, YearMonth.now().month, 1),
+                        ),
+                    ),
+            )
+        every { pdlClient.hentPerson(any()) } returns person
+        val personIdent = "456"
+        val payload =
+            PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
+                personIdent = personIdent,
+                årMåned = YearMonth.now(),
+            )
+
+        val task = FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.opprettTask(payload)
+        taskService.save(task)
+        finnPersonerFyltTjueFemArbeidsavklaringspengerTask.doTask(task)
+        val taskListOpprettOppgaveTask =
+            taskService.finnAlleTaskerMedType(OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE)
+        assertThat(taskListOpprettOppgaveTask).isEmpty()
+    }
+
+    @Test
+    fun `Sjekk at man ikke oppretter oppgave dersom person mangler fødselsdato`() {
+        val person =
+            Person(
+                forelderBarnRelasjon = emptyList(),
+                statsborgerskap = emptyList(),
+                sivilstand = emptyList(),
+                adressebeskyttelse = emptyList(),
+                bostedsadresse = emptyList(),
+                doedsfall = emptyList(),
+                foedselsdato =
+                    listOf(
+                        Foedselsdato(foedselsdato = null),
+                    ),
+            )
+        every { pdlClient.hentPerson(any()) } returns person
+        val personIdent = "789"
+        val payload =
+            PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
+                personIdent = personIdent,
+                årMåned = YearMonth.now(),
+            )
+
+        val task = FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.opprettTask(payload)
+        taskService.save(task)
+        finnPersonerFyltTjueFemArbeidsavklaringspengerTask.doTask(task)
+        val taskListOpprettOppgaveTask =
+            taskService.finnAlleTaskerMedType(OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE)
+        assertThat(taskListOpprettOppgaveTask).isEmpty()
     }
 }
