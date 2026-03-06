@@ -17,40 +17,40 @@ import java.time.YearMonth
     taskStepType = FinnPersonerFyltTjueFemArbeidsavklaringspengerTask.TYPE,
     maxAntallFeil = 1,
     settTilManuellOppfølgning = true,
-    beskrivelse = "Finner personer med som mottar arbeidsavklaringspenger og har fylt 25 den siste måneden.",
+    beskrivelse = "Sjekker om person som mottar arbeidsavklaringspenger har fylt 25 den siste måneden.",
 )
 class FinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
     private val pdlClient: PdlClient,
     private val taskService: TaskService,
 ) : AsyncTaskStep {
-    val logger: Logger = LoggerFactory.getLogger(this::class.java)
     val secureLogger: Logger = LoggerFactory.getLogger("secureLogger")
 
     override fun doTask(task: Task) {
-        val (inntektsendringForBrukereMedArbeidsavklaringspenger, årMåned) = jsonMapper.readValue<PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask>(task.payload)
+        val (personIdent, årMåned) = jsonMapper.readValue<PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask>(task.payload)
         val startDato = årMåned.minusMonths(1).atDay(6)
         val sluttDato = årMåned.atDay(7)
 
-        val personerFylt25Aar =
-            inntektsendringForBrukereMedArbeidsavklaringspenger.mapNotNull { personIdent ->
-                val person = pdlClient.hentPerson(personIdent)
-                val foedselsdato = person.foedselsdato.first().foedselsdato
-                if (foedselsdato == null) {
-                    secureLogger.error("Fant ingen fødselsdato for person $personIdent")
-                }
-                val fylte25Dato = foedselsdato?.plusYears(25)
-                if (fylte25Dato?.isAfter(startDato) == true && fylte25Dato.isBefore(sluttDato)) personIdent else null
-            }
-        personerFylt25Aar.forEach { kandidat ->
-            val payload = PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = kandidat, årMåned = YearMonth.from(årMåned))
-            val skalOppretteTask = taskService.finnTaskMedPayloadOgType(jsonMapper.writeValueAsString(payload), OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE) == null
+        val person = pdlClient.hentPerson(personIdent)
+        val foedselsdato = person.foedselsdato.first().foedselsdato
+        if (foedselsdato == null) {
+            secureLogger.error("Fant ingen fødselsdato for person $personIdent")
+            return
+        }
+
+        val fylte25Dato = foedselsdato.plusYears(25)
+        if (fylte25Dato.isAfter(startDato) && fylte25Dato.isBefore(sluttDato)) {
+            val payload = PayloadOpprettOppgaverForArbeidsavklaringspengerEndringerTask(personIdent = personIdent, årMåned = årMåned)
+            val skalOppretteTask =
+                taskService.finnTaskMedPayloadOgType(
+                    jsonMapper.writeValueAsString(payload),
+                    OpprettOppgaverForArbeidsavklaringspengerEndringerTask.TYPE,
+                ) == null
 
             if (skalOppretteTask) {
-                val task = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
-                taskService.save(task)
+                val oppgaveTask = OpprettOppgaverForArbeidsavklaringspengerEndringerTask.opprettTask(payload)
+                taskService.save(oppgaveTask)
             }
         }
-        logger.info("Funnet ${personerFylt25Aar.size} som har fylt 25 år med AAP av totalt ${inntektsendringForBrukereMedArbeidsavklaringspenger.size} med AAP")
     }
 
     companion object {
@@ -65,6 +65,6 @@ class FinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
 }
 
 data class PayloadFinnPersonerFyltTjueFemArbeidsavklaringspengerTask(
-    val personIdenterBrukereMedArbeidsavklaringspenger: List<String>,
+    val personIdent: String,
     val årMåned: YearMonth,
 )
