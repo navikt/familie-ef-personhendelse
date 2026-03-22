@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>no.nav.familie.ef</groupId>
@@ -29,18 +29,18 @@
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
-        <kotlin.version>2.3.10</kotlin.version>
+        <kotlin.version>2.3.20</kotlin.version>
         <kafka-avro-serializer.version>8.2.0</kafka-avro-serializer.version>
         <avro.version>1.12.1</avro.version>
         <graphql-kotlin-spring-client.version>9.0.0</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>9.0.0</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
-        <kontrakter.version>4.0_20260204122732_558ee1d</kontrakter.version>
-        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20251111094125_cdf5bf2</eksterne-kontrakter.version.stonadsstatistikk.ks>
-        <felles.version>4.20260205114838_3a4c3dc</felles.version> <!-- Trenger ny versjon av felles med Spring Boot 4 -->
-        <prosessering.version>2.20251117095517_cc54714</prosessering.version>
-        <nav.security.version>6.0.3</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
+        <kontrakter.version>4.0_20260316070955_5ff27c3</kontrakter.version>
+        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20260309094311_c41dbc7</eksterne-kontrakter.version.stonadsstatistikk.ks>
+        <felles.version>4.20260315040337_2316c82</felles.version> <!-- Trenger ny versjon av felles med Spring Boot 4 -->
+        <prosessering.version>2.20260306133947_d473c40</prosessering.version>
+        <nav.security.version>6.0.4</nav.security.version> <!-- Denne burde være samme versjon som i felles -->
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>2.35.2</wiremock.version>
         <mockk-jvm.version>1.14.9</mockk-jvm.version>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-restclient</artifactId>
-            <version>4.0.3</version>
+            <version>4.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
