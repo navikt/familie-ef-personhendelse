@@ -107,7 +107,10 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
 
 springdoc:
+  api-docs:
+    enabled: true
   swagger-ui:
+    enabled: true
     oauth:
       use-pkce-with-authorization-code-grant: true
       client-id: ${AZURE_APP_CLIENT_ID}
