@@ -152,6 +152,11 @@
             <version>${prosessering.version}</version>
         </dependency>
         <dependency>
+            <groupId>no.nav.familie</groupId>
+            <artifactId>prosessering-web-nav-token-support</artifactId>
+            <version>${prosessering.version}</version>
+        </dependency>
+        <dependency>
             <groupId>no.nav.familie.kontrakter</groupId>
             <artifactId>enslig-forsorger</artifactId>
             <version>${kontrakter.version}</version>
