@@ -4,14 +4,12 @@ import no.nav.familie.ef.personhendelse.client.OppgaveClient
 import no.nav.familie.ef.personhendelse.client.pdl.secureLogger
 import no.nav.familie.ef.personhendelse.personhendelsemapping.PersonhendelseRepository
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping(path = ["/api/oppgave"])
-@ProtectedWithClaims(issuer = "azuread")
 class OppgaveController(
     val oppgaveClient: OppgaveClient,
     val personhendelseRepository: PersonhendelseRepository,

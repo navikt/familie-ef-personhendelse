@@ -1,23 +1,16 @@
 package no.nav.familie.ef.personhendelse.sikkerhet
 
 import no.nav.familie.ef.personhendelse.configuration.RolleConfig
-import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 
 object SikkerhetContext {
     fun hentGrupperFraToken(): Set<String> =
         Result
             .runCatching {
-                SpringTokenValidationContextHolder().getTokenValidationContext()
-            }.fold(
-                onSuccess = { tokenValidationContext ->
-                    @Suppress("UNCHECKED_CAST")
-                    val groups = tokenValidationContext.getClaims("azuread").get("groups") as List<String>?
-                    groups?.toSet() ?: emptySet()
-                },
-                onFailure = {
-                    emptySet()
-                },
-            )
+                val authentication = SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken
+                authentication?.token?.getClaimAsStringList("groups")?.toSet() ?: emptySet()
+            }.getOrDefault(emptySet())
 
     fun harTilgangTilGittRolle(
         rolleConfig: RolleConfig,

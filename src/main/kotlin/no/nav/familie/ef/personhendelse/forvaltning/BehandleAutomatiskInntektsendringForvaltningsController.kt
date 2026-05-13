@@ -6,7 +6,6 @@ import no.nav.familie.ef.personhendelse.inntekt.LoggInntektForPersonTask
 import no.nav.familie.ef.personhendelse.inntekt.endring.InntektsendringerService
 import no.nav.familie.ef.personhendelse.inntekt.oppgave.InntektOppgaveService
 import no.nav.familie.prosessering.internal.TaskService
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/revurdering/forvaltning/inntektsendring")
-@ProtectedWithClaims(issuer = "azuread")
 class BehandleAutomatiskInntektsendringForvaltningsController(
     private val sakClient: SakClient,
     private val inntektsendringerService: InntektsendringerService,
