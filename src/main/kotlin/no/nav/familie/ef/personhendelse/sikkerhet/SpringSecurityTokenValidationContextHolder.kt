@@ -8,9 +8,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component
 
 /**
- * Bridge that implements the nav-token-support TokenValidationContextHolder interface
- * backed by Spring Security's SecurityContextHolder. Required for familie-felles:rest-klient
- * which uses OIDCUtil → TokenValidationContextHolder for logging/propagation.
+ * Bro-implementasjon av nav-token-support sitt TokenValidationContextHolder-grensesnitt
+ * som er støttet av Spring Security sin SecurityContextHolder. Påkrevd for familie-felles:rest-klient
+ * som bruker OIDCUtil → TokenValidationContextHolder for logging/videreføring av token.
+ *
+ * TODO: Kan fjernes når familie-felles oppdateres til å bruke Spring Security direkte.
  */
 @Component
 class SpringSecurityTokenValidationContextHolder : TokenValidationContextHolder {
@@ -22,6 +24,6 @@ class SpringSecurityTokenValidationContextHolder : TokenValidationContextHolder 
     }
 
     override fun setTokenValidationContext(tokenValidationContext: TokenValidationContext?) {
-        // no-op: context is managed by Spring Security
+        // no-op: kontekst håndteres av Spring Security
     }
 }
