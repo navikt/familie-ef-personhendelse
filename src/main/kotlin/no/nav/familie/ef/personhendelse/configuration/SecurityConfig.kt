@@ -32,7 +32,7 @@ class SecurityConfig(
                     .requestMatchers("/api/task/**", "/api/v2/task/**")
                     .hasRole("PROSESSERING")
                     .anyRequest()
-                    .hasAnyRole("FORVALTER")
+                    .hasAnyRole("FORVALTER", "PROSESSERING", "APPLICATION")
             }.oauth2ResourceServer { it.jwt { jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter) } }
         return http.build()
     }
