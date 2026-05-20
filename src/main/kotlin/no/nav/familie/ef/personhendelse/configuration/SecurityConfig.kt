@@ -29,8 +29,10 @@ class SecurityConfig(
                         "/swagger-ui.html",
                         "/v3/api-docs/**",
                     ).permitAll()
+                    .requestMatchers("/api/task/**", "/api/v2/task/**")
+                    .hasRole("PROSESSERING")
                     .anyRequest()
-                    .authenticated()
+                    .hasAnyRole("FORVALTER")
             }.oauth2ResourceServer { it.jwt { jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter) } }
         return http.build()
     }
