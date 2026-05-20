@@ -1,7 +1,9 @@
 package no.nav.familie.ef.personhendelse.configuration
 
+import no.nav.familie.ef.personhendelse.sikkerhet.AzureJwtAuthenticationConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -9,7 +11,10 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+@EnableMethodSecurity
+class SecurityConfig(
+    private val jwtAuthenticationConverter: AzureJwtAuthenticationConverter,
+) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -26,7 +31,7 @@ class SecurityConfig {
                     ).permitAll()
                     .anyRequest()
                     .authenticated()
-            }.oauth2ResourceServer { it.jwt {} }
+            }.oauth2ResourceServer { it.jwt { jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter) } }
         return http.build()
     }
 }
