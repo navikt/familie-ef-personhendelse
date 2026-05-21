@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class FeilutbetalingBeregningUtilTest {
     @Test
     fun `beregn feilutbetaling - max feilutbetaling`() {
-        val feilutbetaling = beregnFeilutbetalingForMåned(0, 60_000)
+        val feilutbetaling = beregnFeilutbetalingForMåned(0, 70_000)
         val maxOvergangsstønadPrMnd = Grunnbeløp().nyesteGrunnbeløp.grunnbeløp.toInt() * 2.25 / 12
 
         Assertions.assertEquals(maxOvergangsstønadPrMnd.toInt(), feilutbetaling)

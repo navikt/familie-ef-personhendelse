@@ -22,7 +22,7 @@ class Grunnbeløp {
                 grunnbeløp = 136_549.toBigDecimal(),
             ),
             GrunnbeløpVerdier(
-                periode = Månedsperiode(YearMonth.parse("2025-05"), YearMonth.from(LocalDate.MAX)),
+                periode = Månedsperiode(YearMonth.parse("2025-05"), YearMonth.parse("2026-04")),
                 grunnbeløp = 130_160.toBigDecimal(),
             ),
             GrunnbeløpVerdier(
