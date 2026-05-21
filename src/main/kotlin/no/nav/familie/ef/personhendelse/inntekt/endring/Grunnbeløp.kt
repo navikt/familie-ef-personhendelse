@@ -18,6 +18,10 @@ class Grunnbeløp {
     val grunnbeløpsperioder: List<GrunnbeløpVerdier> =
         listOf(
             GrunnbeløpVerdier(
+                periode = Månedsperiode(YearMonth.parse("2026-05"), YearMonth.from(LocalDate.MAX)),
+                grunnbeløp = 136_549.toBigDecimal(),
+            ),
+            GrunnbeløpVerdier(
                 periode = Månedsperiode(YearMonth.parse("2025-05"), YearMonth.from(LocalDate.MAX)),
                 grunnbeløp = 130_160.toBigDecimal(),
             ),
