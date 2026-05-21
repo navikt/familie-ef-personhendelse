@@ -1,7 +1,6 @@
 package no.nav.familie.ef.personhendelse.configuration
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import no.nav.familie.ef.personhendelse.sikkerhet.Rolle
 import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.log.NavSystemtype
@@ -13,6 +12,7 @@ import no.nav.familie.restklient.config.RestTemplateAzure
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.restclient.RestTemplateBuilder
@@ -94,23 +94,22 @@ class ApplicationConfig {
         )
 
     @Bean
-    fun prosesseringInfoProvider() =
-        object : ProsesseringInfoProvider {
-            override fun hentBrukernavn(): String {
-                val authentication = SecurityContextHolder.getContext().authentication
-                if (authentication is JwtAuthenticationToken) {
-                    return authentication.token.getClaimAsString("preferred_username")
-                        ?: error("preferred_username claim mangler i token")
-                }
-                error("Finner ikke brukernavn i security context")
+    fun prosesseringInfoProvider(
+        @Value("\${prosessering.rolle}") prosesseringRolle: String,
+    ) = object : ProsesseringInfoProvider {
+        override fun hentBrukernavn(): String {
+            val authentication = SecurityContextHolder.getContext().authentication
+            if (authentication is JwtAuthenticationToken) {
+                return authentication.token.getClaimAsString("preferred_username")
+                    ?: error("preferred_username claim mangler i token")
             }
-
-            override fun harTilgang(): Boolean =
-                SecurityContextHolder
-                    .getContext()
-                    .authentication
-                    ?.authorities
-                    ?.any { it.authority == Rolle.PROSESSERING.authority() }
-                    ?: false
+            error("Finner ikke brukernavn i security context")
         }
+
+        override fun harTilgang(): Boolean {
+            val authentication = SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken
+            val grupper = authentication?.token?.getClaimAsStringList("groups")?.toSet() ?: emptySet()
+            return grupper.contains(prosesseringRolle)
+        }
+    }
 }
