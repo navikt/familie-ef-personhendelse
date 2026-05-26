@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component
 @Component
 class AzureJwtAuthenticationConverter(
     @Value("\${rolle.forvalter}") private val forvalterGroupId: String,
-    @Value("\${prosessering.rolle}") private val prosesseringGroupId: String,
 ) : Converter<Jwt, AbstractAuthenticationToken> {
     override fun convert(jwt: Jwt): AbstractAuthenticationToken {
         val groups = jwt.getClaimAsStringList("groups") ?: emptyList()
@@ -20,7 +19,6 @@ class AzureJwtAuthenticationConverter(
         val roller =
             buildSet {
                 if (groups.contains(forvalterGroupId)) add(Rolle.FORVALTER)
-                if (groups.contains(prosesseringGroupId)) add(Rolle.PROSESSERING)
                 if (roles.contains(ACCESS_AS_APPLICATION_ROLE)) add(Rolle.APPLICATION)
             }
 
