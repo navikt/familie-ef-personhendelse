@@ -1,7 +1,6 @@
 package no.nav.familie.ef.personhendelse.configuration
 
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import no.nav.familie.ef.personhendelse.sikkerhet.SikkerhetContext.harRolle
 import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.log.NavSystemtype
@@ -12,8 +11,6 @@ import no.nav.familie.restklient.client.RetryOAuth2HttpClient
 import no.nav.familie.restklient.config.RestTemplateAzure
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
-import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
-import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringBootConfiguration
@@ -27,6 +24,8 @@ import org.springframework.context.annotation.Primary
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.resilience.annotation.EnableResilientMethods
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestTemplate
 import java.time.Duration
@@ -37,7 +36,6 @@ import java.time.temporal.ChronoUnit
 @ComponentScan(
     "no.nav.familie.prosessering",
 )
-@EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @EnableScheduling
 @Import(
     RestTemplateAzure::class,
@@ -99,12 +97,19 @@ class ApplicationConfig {
     fun prosesseringInfoProvider(
         @Value("\${prosessering.rolle}") prosesseringRolle: String,
     ) = object : ProsesseringInfoProvider {
-        override fun hentBrukernavn(): String =
-            SpringTokenValidationContextHolder()
-                .getTokenValidationContext()
-                .getClaims("azuread")
-                .getStringClaim("preferred_username")
+        override fun hentBrukernavn(): String {
+            val authentication = SecurityContextHolder.getContext().authentication
+            if (authentication is JwtAuthenticationToken) {
+                return authentication.token.getClaimAsString("preferred_username")
+                    ?: error("preferred_username claim mangler i token")
+            }
+            error("Finner ikke brukernavn i security context")
+        }
 
-        override fun harTilgang(): Boolean = harRolle(prosesseringRolle)
+        override fun harTilgang(): Boolean {
+            val authentication = SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken
+            val grupper = authentication?.token?.getClaimAsStringList("groups")?.toSet() ?: emptySet()
+            return grupper.contains(prosesseringRolle)
+        }
     }
 }

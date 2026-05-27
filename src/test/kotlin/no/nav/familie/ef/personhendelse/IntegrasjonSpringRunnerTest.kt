@@ -4,7 +4,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
 import com.github.tomakehurst.wiremock.WireMockServer
 import no.nav.familie.ef.personhendelse.config.FlywayTestConfig
-import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
+import no.nav.familie.ef.personhendelse.config.MockOAuth2ServerConfig
+import no.nav.familie.ef.personhendelse.util.MockOAuth2ServerInitializer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,11 +15,12 @@ import org.springframework.context.ApplicationContext
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [ApplicationLocal::class, FlywayTestConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["kafka.enabled=false"])
-@EnableMockOAuth2Server
+@SpringBootTest(classes = [ApplicationLocal::class, FlywayTestConfig::class, MockOAuth2ServerConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = ["kafka.enabled=false"])
+@ContextConfiguration(initializers = [MockOAuth2ServerInitializer::class])
 @ActiveProfiles("integrasjonstest")
 abstract class IntegrasjonSpringRunnerTest {
     protected val listAppender = initLoggingEventListAppender()

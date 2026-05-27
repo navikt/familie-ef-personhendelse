@@ -115,6 +115,7 @@
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-tools</artifactId>
             <version>${avro.version}</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.avro</groupId>
@@ -123,6 +124,14 @@
                 <exclusion>
                     <groupId>org.apache.avro</groupId>
                     <artifactId>trevni-avro</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.reload4j</groupId>
+                    <artifactId>reload4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-reload4j</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -153,8 +162,12 @@
         </dependency>
         <dependency>
             <groupId>no.nav.familie</groupId>
-            <artifactId>prosessering-web-nav-token-support</artifactId>
+            <artifactId>prosessering-web-spring-security</artifactId>
             <version>${prosessering.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.familie.kontrakter</groupId>
@@ -226,8 +239,8 @@
         </dependency>
         <dependency>
             <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-spring-test</artifactId>
-            <version>${nav.security.version}</version>
+            <artifactId>mock-oauth2-server</artifactId>
+            <version>3.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -263,6 +276,15 @@
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <finalName>${project.artifactId}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>org.apache.avro:avro-tools</classpathDependencyExclude>
+                    </classpathDependencyExcludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>com.expediagroup</groupId>
                 <artifactId>graphql-kotlin-maven-plugin</artifactId>
@@ -370,6 +392,12 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>${start-class}</mainClass>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.apache.avro</groupId>
+                            <artifactId>avro-tools</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
