@@ -47,6 +47,9 @@
         <postgres.version>1.21.4</postgres.version>
         <springdoc.version>3.0.3</springdoc.version>
         <logstash.version>9.0</logstash.version>
+        <!-- Critical/High vulnerabilities -->
+        <netty.version>4.2.13.Final</netty.version> <!-- CVE-2026-42581 -->
+        <postgresql.version>42.7.11</postgresql.version> <!-- CVE-2026-42198 -->
         <start-class>no.nav.familie.ef.personhendelse.Application</start-class>
     </properties>
     <dependencies>
