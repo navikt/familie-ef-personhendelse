@@ -156,6 +156,11 @@
             <version>${kontrakter.version}</version>
         </dependency>
         <dependency>
+            <groupId>no.nav.familie.felles</groupId>
+            <artifactId>sikkerhet-spring-security</artifactId>
+            <version>${felles.version}</version>
+        </dependency>
+        <dependency>
             <groupId>no.nav.familie</groupId>
             <artifactId>prosessering-core</artifactId>
             <version>${prosessering.version}</version>

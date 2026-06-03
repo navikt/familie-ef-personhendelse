@@ -9,6 +9,7 @@ import no.nav.familie.log.filter.RequestTimeFilter
 import no.nav.familie.prosessering.config.ProsesseringInfoProvider
 import no.nav.familie.restklient.client.RetryOAuth2HttpClient
 import no.nav.familie.restklient.config.RestTemplateAzure
+import no.nav.familie.sikkerhet.context.FamilieFellesSpringSecurityKonfigurasjon
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import org.slf4j.LoggerFactory
@@ -40,6 +41,7 @@ import java.time.temporal.ChronoUnit
 @Import(
     RestTemplateAzure::class,
     KafkaErrorHandler::class,
+    FamilieFellesSpringSecurityKonfigurasjon::class,
 )
 @EnableOAuth2Client(cacheEnabled = true)
 @EnableResilientMethods
