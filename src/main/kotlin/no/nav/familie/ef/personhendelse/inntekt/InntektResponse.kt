@@ -31,12 +31,19 @@ data class InntektResponse(
 data class Inntektsmåned(
     @JsonProperty("maaned")
     val måned: YearMonth,
+    @JsonProperty("opplysningspliktig")
     val opplysningspliktig: String,
+    @JsonProperty("underenhet")
     val underenhet: String,
+    @JsonProperty("norskident")
     val norskident: String,
+    @JsonProperty("oppsummeringstidspunkt")
     val oppsummeringstidspunkt: OffsetDateTime,
+    @JsonProperty("inntektListe")
     val inntektListe: List<Inntekt> = emptyList(),
+    @JsonProperty("forskuddstrekkListe")
     val forskuddstrekkListe: List<Forskuddstrekk> = emptyList(),
+    @JsonProperty("avvikListe")
     val avvikListe: List<Avvik> = emptyList(),
 )
 

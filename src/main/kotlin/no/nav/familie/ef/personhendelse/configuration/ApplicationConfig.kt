@@ -1,6 +1,5 @@
 package no.nav.familie.ef.personhendelse.configuration
 
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.familie.kafka.KafkaErrorHandler
 import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.log.NavSystemtype
@@ -29,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestTemplate
+import tools.jackson.module.kotlin.KotlinModule
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 

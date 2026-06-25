@@ -1,6 +1,5 @@
 package no.nav.familie.ef.personhendelse.inntekt.oppgave
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
