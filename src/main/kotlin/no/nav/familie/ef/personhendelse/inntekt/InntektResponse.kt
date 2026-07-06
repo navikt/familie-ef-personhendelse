@@ -48,22 +48,33 @@ data class Inntektsmåned(
 )
 
 data class Inntekt(
+    @JsonProperty("type")
     val type: InntektType,
     @JsonProperty("beloep")
     val beløp: Double,
+    @JsonProperty("fordel")
     val fordel: String,
+    @JsonProperty("beskrivelse")
     val beskrivelse: String,
     @JsonProperty("inngaarIGrunnlagForTrekk")
     val inngårIGrunnlagForTrekk: Boolean,
     @JsonProperty("utloeserArbeidsgiveravgift")
     val utløserArbeidsgiveravgift: Boolean,
+    @JsonProperty("skatteOgAvgiftsregel")
     val skatteOgAvgiftsregel: String? = null,
+    @JsonProperty("opptjeningsperiodeFom")
     val opptjeningsperiodeFom: LocalDate? = null,
+    @JsonProperty("opptjeningsperiodeTom")
     val opptjeningsperiodeTom: LocalDate? = null,
+    @JsonProperty("tilleggsinformasjon")
     val tilleggsinformasjon: Tilleggsinformasjon? = null,
+    @JsonProperty("manuellVurdering")
     val manuellVurdering: Boolean = false,
+    @JsonProperty("antall")
     val antall: Int? = null,
+    @JsonProperty("skattemessigBosattLand")
     val skattemessigBosattLand: String? = null,
+    @JsonProperty("opptjeningsland")
     val opptjeningsland: String? = null,
 )
 
