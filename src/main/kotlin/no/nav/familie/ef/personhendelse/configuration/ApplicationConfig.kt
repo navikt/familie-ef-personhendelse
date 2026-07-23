@@ -24,7 +24,7 @@ import tools.jackson.module.kotlin.KotlinModule
 @ConfigurationPropertiesScan("no.nav.familie.ef.personhendelse")
 @ComponentScan(
     "no.nav.familie.prosessering",
-    "no.nav.familie.felles.tokenklient",
+    "no.nav.familie.felles.tokenklient.entraid",
 )
 @EnableScheduling
 @Import(
