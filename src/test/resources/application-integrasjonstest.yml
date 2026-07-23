@@ -20,7 +20,8 @@ spring:
     enabled: true
 
 AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
-AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth/v2.0/token
+NAIS_TOKEN_ENDPOINT: http://localhost/token
+NAIS_TOKEN_EXCHANGE_ENDPOINT: http://localhost/token/exchange
 SPRING_PROFILES_ACTIVE: integrasjonstest
 
 INNTEKT_URL: https://ikomp-q2.dev-fss-pub.nais.io

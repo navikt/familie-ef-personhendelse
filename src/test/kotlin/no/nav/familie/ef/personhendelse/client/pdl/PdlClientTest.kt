@@ -11,15 +11,15 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.boot.restclient.RestTemplateBuilder
-import org.springframework.web.client.RestOperations
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
+import org.springframework.web.client.RestClient
 import java.net.URI
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class PdlClientTest {
     companion object {
-        private val restOperations: RestOperations = RestTemplateBuilder().build()
+        private val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(jsonMapper)
         lateinit var pdlClient: PdlClient
         lateinit var wiremockServerItem: WireMockServer
 
@@ -30,7 +30,13 @@ class PdlClientTest {
         fun initClass() {
             wiremockServerItem = WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort())
             wiremockServerItem.start()
-            pdlClient = PdlClient(restOperations, URI.create(wiremockServerItem.baseUrl() + "/graphql"))
+            val restClient =
+                RestClient
+                    .builder()
+                    .messageConverters { it.add(0, jacksonJsonHttpMessageConverter) }
+                    .baseUrl(wiremockServerItem.baseUrl())
+                    .build()
+            pdlClient = PdlClient(restClient, URI.create(wiremockServerItem.baseUrl() + "/graphql"))
         }
 
         @AfterAll

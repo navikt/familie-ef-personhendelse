@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import no.nav.familie.kontrakter.felles.Behandlingstema
 import no.nav.familie.kontrakter.felles.Tema
+import no.nav.familie.kontrakter.felles.jsonMapper
 import no.nav.familie.kontrakter.felles.oppgave.IdentGruppe
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
@@ -16,14 +17,14 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.boot.restclient.RestTemplateBuilder
-import org.springframework.web.client.RestOperations
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
+import org.springframework.web.client.RestClient
 import java.io.IOException
 import java.net.URI
 
 class OppgaveClientTest {
     companion object {
-        private val restOperations: RestOperations = RestTemplateBuilder().build()
+        private val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(jsonMapper)
         lateinit var oppgaveClient: OppgaveClient
         lateinit var wiremockServerItem: WireMockServer
 
@@ -34,7 +35,13 @@ class OppgaveClientTest {
         fun initClass() {
             wiremockServerItem = WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort())
             wiremockServerItem.start()
-            oppgaveClient = OppgaveClient(URI.create(wiremockServerItem.baseUrl()).toString(), restOperations)
+            val restClient =
+                RestClient
+                    .builder()
+                    .messageConverters { it.add(0, jacksonJsonHttpMessageConverter) }
+                    .baseUrl(wiremockServerItem.baseUrl())
+                    .build()
+            oppgaveClient = OppgaveClient(URI.create(wiremockServerItem.baseUrl()).toString(), restClient)
         }
 
         @AfterAll
