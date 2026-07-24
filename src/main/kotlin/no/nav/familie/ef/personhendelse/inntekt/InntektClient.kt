@@ -1,12 +1,11 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import no.nav.familie.restklient.client.AbstractRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.YearMonth
@@ -14,8 +13,8 @@ import java.time.YearMonth
 @Component
 class InntektClient(
     @Value("\${INNTEKT_URL}") private val uri: URI,
-    @Qualifier("azure") restOperations: RestOperations,
-) : AbstractRestClient(restOperations, "inntekt") {
+    @Qualifier("inntektRestClient") private val restClient: RestClient,
+) {
     private val inntektV2Uri =
         UriComponentsBuilder
             .fromUri(uri)
@@ -35,17 +34,14 @@ class InntektClient(
                 månedTom = månedTom,
             )
 
-        val headers =
-            HttpHeaders().apply {
-                contentType = MediaType.APPLICATION_JSON
-                accept = listOf(MediaType.APPLICATION_JSON)
-            }
-
-        return postForEntity(
-            uri = inntektV2Uri,
-            payload = payload,
-            httpHeaders = headers,
-        )
+        return restClient
+            .post()
+            .uri(inntektV2Uri)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .body(payload)
+            .retrieve()
+            .body<InntektResponse>()!!
     }
 }
 

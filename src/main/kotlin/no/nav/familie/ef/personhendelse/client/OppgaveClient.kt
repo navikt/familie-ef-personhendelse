@@ -11,12 +11,13 @@ import no.nav.familie.kontrakter.felles.oppgave.OppgaveIdentV2
 import no.nav.familie.kontrakter.felles.oppgave.OppgaveResponse
 import no.nav.familie.kontrakter.felles.oppgave.Oppgavetype
 import no.nav.familie.kontrakter.felles.oppgave.OpprettOppgaveRequest
-import no.nav.familie.restklient.client.AbstractRestClient
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.DayOfWeek
@@ -27,27 +28,30 @@ import java.time.Month
 @Component
 class OppgaveClient(
     @Value("\${FAMILIE_INTEGRASJONER_API_URL}") private val integrasjonUrl: String,
-    @Qualifier("azure") restOperations: RestOperations,
-) : AbstractRestClient(restOperations, "familie.integrasjoner") {
+    @Qualifier("integrasjonerRestClient") private val restClient: RestClient,
+) {
     val oppgaveUrl = "$integrasjonUrl/api/oppgave"
 
     fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest): Long {
         val opprettOppgaveUri = URI.create("$oppgaveUrl/opprett")
         val response =
-            postForEntity<Ressurs<OppgaveResponse>>(
-                opprettOppgaveUri,
-                opprettOppgaveRequest,
-                HttpHeaders().medContentTypeJsonUTF8(),
-            )
+            restClient
+                .post()
+                .uri(opprettOppgaveUri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(opprettOppgaveRequest)
+                .retrieve()
+                .body<Ressurs<OppgaveResponse>>()!!
         return response.getDataOrThrow().oppgaveId
     }
 
     fun finnOppgaveMedId(oppgaveId: Long): Oppgave {
         val response =
-            getForEntity<Ressurs<Oppgave>>(
-                URI.create("$oppgaveUrl/$oppgaveId"),
-                HttpHeaders().medContentTypeJsonUTF8(),
-            )
+            restClient
+                .get()
+                .uri(URI.create("$oppgaveUrl/$oppgaveId"))
+                .retrieve()
+                .body<Ressurs<Oppgave>>()!!
         return response.getDataOrThrow()
     }
 
@@ -84,30 +88,38 @@ class OppgaveClient(
         enhetsnummer: String,
         limit: Int = 1000,
     ): FinnMappeResponseDto {
+        val uri =
+            UriComponentsBuilder
+                .fromUri(URI.create("$oppgaveUrl/mappe/sok"))
+                .queryParam("enhetsnr", enhetsnummer)
+                .queryParam("limit", limit)
+                .build()
+                .toUri()
         val response =
-            getForEntity<Ressurs<FinnMappeResponseDto>>(
-                UriComponentsBuilder
-                    .fromUri(URI.create("$oppgaveUrl/mappe/sok"))
-                    .queryParam("enhetsnr", enhetsnummer)
-                    .queryParam("limit", limit)
-                    .build()
-                    .toUri(),
-            )
+            restClient
+                .get()
+                .uri(uri)
+                .retrieve()
+                .body<Ressurs<FinnMappeResponseDto>>()!!
         return response.getDataOrThrow()
     }
 
     fun oppdaterOppgave(oppgave: Oppgave): Long {
         val response =
-            patchForEntity<Ressurs<OppgaveResponse>>(
-                URI.create(oppgaveUrl.plus("/${oppgave.id!!}/oppdater")),
-                oppgave,
-                HttpHeaders().medContentTypeJsonUTF8(),
-            )
+            restClient
+                .patch()
+                .uri(URI.create(oppgaveUrl.plus("/${oppgave.id!!}/oppdater")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(oppgave)
+                .retrieve()
+                .body<Ressurs<OppgaveResponse>>()!!
         return response.getDataOrThrow().oppgaveId
     }
 
     companion object {
         private const val EF_ENHETNUMMER = "4489"
+        private val log = LoggerFactory.getLogger(OppgaveClient::class.java)
+        private val secureLogger = LoggerFactory.getLogger("secureLogger")
     }
 }
 
@@ -142,12 +154,6 @@ fun lagVurderKonsekvensoppgaveForBarnetilsyn(
     tilordnetRessurs = null,
     behandlesAvApplikasjon = null,
 )
-
-fun HttpHeaders.medContentTypeJsonUTF8(): HttpHeaders {
-    this.add("Content-Type", "application/json;charset=UTF-8")
-    this.acceptCharset = listOf(Charsets.UTF_8)
-    return this
-}
 
 fun fristFerdigstillelse(daysToAdd: Long = 0): LocalDate {
     var date = LocalDateTime.now().plusDays(daysToAdd)

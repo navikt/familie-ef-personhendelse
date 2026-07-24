@@ -4,27 +4,34 @@ import no.nav.familie.kontrakter.ef.personhendelse.NyeBarnDto
 import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
-import no.nav.familie.restklient.client.AbstractRestClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.LocalDate
 
 @Component
 class SakClient(
-    @Qualifier("azure") restOperations: RestOperations,
+    @Qualifier("efSakRestClient")
+    private val restClient: RestClient,
     @Value("\${EF_SAK_URL}")
     private val uri: URI,
-) : AbstractRestClient(restOperations, "familie.ef-sak") {
+) {
     fun harLøpendeStønad(personidenter: Set<String>): Boolean {
         val uriComponentsBuilder =
             UriComponentsBuilder
                 .fromUri(uri)
                 .pathSegment("api/ekstern/behandling/har-loepende-stoenad")
-        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), personidenter)
+        val response =
+            restClient
+                .post()
+                .uri(uriComponentsBuilder.build().toUri())
+                .body(personidenter)
+                .retrieve()
+                .body<Ressurs<Boolean>>()!!
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
 
@@ -33,7 +40,13 @@ class SakClient(
             UriComponentsBuilder
                 .fromUri(uri)
                 .pathSegment("api/ekstern/behandling/har-loepende-barnetilsyn")
-        val response = postForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri(), PersonIdent(personident))
+        val response =
+            restClient
+                .post()
+                .uri(uriComponentsBuilder.build().toUri())
+                .body(PersonIdent(personident))
+                .retrieve()
+                .body<Ressurs<Boolean>>()!!
         return response.data ?: error("Kall mot ef-sak feilet. Status=${response.status} - ${response.melding}")
     }
 
@@ -43,7 +56,12 @@ class SakClient(
                 .fromUri(uri)
                 .pathSegment("api/vedtak/eksternid/$eksternId/inntekt")
                 .queryParam("dato", LocalDate.now())
-        val response = getForEntity<Ressurs<Int?>>(uriComponentsBuilder.build().toUri())
+        val response =
+            restClient
+                .get()
+                .uri(uriComponentsBuilder.build().toUri())
+                .retrieve()
+                .body<Ressurs<Int?>>()!!
         return response.data
     }
 
@@ -53,7 +71,12 @@ class SakClient(
                 .fromUri(uri)
                 .pathSegment("api/vedtak/eksternid/$eksternId/harAktivtVedtak")
                 .queryParam("dato", LocalDate.now())
-        val response = getForEntity<Ressurs<Boolean>>(uriComponentsBuilder.build().toUri())
+        val response =
+            restClient
+                .get()
+                .uri(uriComponentsBuilder.build().toUri())
+                .retrieve()
+                .body<Ressurs<Boolean>>()!!
         return response.data ?: throw Exception("Feil ved kall, mottok NULL: harAktivtVedtak skal alltid returnere en verdi")
     }
 
@@ -62,7 +85,12 @@ class SakClient(
             UriComponentsBuilder
                 .fromUri(uri)
                 .pathSegment("api/vedtak/gjeldendeIverksatteBehandlingerMedInntekt")
-        val response = getForEntity<Ressurs<Map<String, Int?>>>(uriComponentsBuilder.build().toUri())
+        val response =
+            restClient
+                .get()
+                .uri(uriComponentsBuilder.build().toUri())
+                .retrieve()
+                .body<Ressurs<Map<String, Int?>>>()!!
         return response.data
             ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
     }
@@ -73,7 +101,12 @@ class SakClient(
                 .fromUri(uri)
                 .pathSegment("api/vedtak/personerMedAktivStonadIkkeManueltRevurdertSisteMaaneder")
                 .queryParam("antallMaaneder", antallMåneder)
-        val response = getForEntity<Ressurs<List<String>>>(uriComponentsBuilder.build().toUri())
+        val response =
+            restClient
+                .get()
+                .uri(uriComponentsBuilder.build().toUri())
+                .retrieve()
+                .body<Ressurs<List<String>>>()!!
         return response.data
             ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
     }
@@ -83,7 +116,13 @@ class SakClient(
             UriComponentsBuilder
                 .fromUri(uri)
                 .pathSegment("api/vedtak/gjeldendeIverksatteBehandlingerMedInntekt")
-        val response = postForEntity<Ressurs<List<ForventetInntektForPerson>>>(uriComponentsBuilder.build().toUri(), personidenter)
+        val response =
+            restClient
+                .post()
+                .uri(uriComponentsBuilder.build().toUri())
+                .body(personidenter)
+                .retrieve()
+                .body<Ressurs<List<ForventetInntektForPerson>>>()!!
         return response.data
             ?: throw Exception("Feil ved kall mot ef-sak ved henting av forventet inntekt for personer med aktiv stønad")
     }
@@ -93,7 +132,13 @@ class SakClient(
             UriComponentsBuilder
                 .fromUri(uri)
                 .pathSegment("api/behandling/barn/nye-eller-tidligere-fodte-barn")
-        val response = postForEntity<Ressurs<NyeBarnDto>>(uriComponentsBuilder.build().toUri(), personIdent)
+        val response =
+            restClient
+                .post()
+                .uri(uriComponentsBuilder.build().toUri())
+                .body(personIdent)
+                .retrieve()
+                .body<Ressurs<NyeBarnDto>>()!!
         return response.getDataOrThrow()
     }
 
@@ -102,7 +147,12 @@ class SakClient(
             UriComponentsBuilder
                 .fromUri(uri)
                 .pathSegment("api/automatisk-revurdering")
-        postForEntity<Any>(uriComponentsBuilder.build().toUri(), personIdenter)
+        restClient
+            .post()
+            .uri(uriComponentsBuilder.build().toUri())
+            .body(personIdenter)
+            .retrieve()
+            .toBodilessEntity()
     }
 
     fun revurderAutomatiskForvaltning(personIdenter: List<String>) {
@@ -110,7 +160,12 @@ class SakClient(
             UriComponentsBuilder
                 .fromUri(uri)
                 .pathSegment("api/automatisk-revurdering/forvaltning")
-        postForEntity<Any>(uriComponentsBuilder.build().toUri(), personIdenter)
+        restClient
+            .post()
+            .uri(uriComponentsBuilder.build().toUri())
+            .body(personIdenter)
+            .retrieve()
+            .toBodilessEntity()
     }
 }
 

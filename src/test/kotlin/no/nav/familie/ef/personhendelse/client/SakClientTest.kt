@@ -14,14 +14,14 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.boot.restclient.RestTemplateBuilder
-import org.springframework.web.client.RestOperations
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
+import org.springframework.web.client.RestClient
 import java.net.URI
 import java.time.LocalDate
 
 internal class SakClientTest {
     companion object {
-        private val restOperations: RestOperations = RestTemplateBuilder().build()
+        private val jacksonJsonHttpMessageConverter = JacksonJsonHttpMessageConverter(jsonMapper)
         lateinit var sakClient: SakClient
         lateinit var wiremockServerItem: WireMockServer
 
@@ -32,7 +32,13 @@ internal class SakClientTest {
         fun initClass() {
             wiremockServerItem = WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort())
             wiremockServerItem.start()
-            sakClient = SakClient(restOperations, URI.create(wiremockServerItem.baseUrl()))
+            val restClient =
+                RestClient
+                    .builder()
+                    .messageConverters { it.add(0, jacksonJsonHttpMessageConverter) }
+                    .baseUrl(wiremockServerItem.baseUrl())
+                    .build()
+            sakClient = SakClient(restClient, URI.create(wiremockServerItem.baseUrl()))
         }
 
         @AfterAll

@@ -5,22 +5,23 @@ import no.nav.familie.ef.personhendelse.generated.HentPerson
 import no.nav.familie.ef.personhendelse.generated.hentidenter.IdentInformasjon
 import no.nav.familie.ef.personhendelse.generated.hentperson.Person
 import no.nav.familie.kontrakter.felles.Tema
-import no.nav.familie.restklient.client.AbstractRestClient
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
-import org.springframework.web.client.RestOperations
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
 class PdlClient(
-    @Qualifier("azure") restOperations: RestOperations,
+    @Qualifier("pdlRestClient")
+    private val restClient: RestClient,
     @Value("\${PDL_URL}")
     val url: URI,
-) : AbstractRestClient(restOperations, "pdl") {
+) {
     val pdlUri: URI = UriComponentsBuilder.fromUri(url).build().toUri()
 
     val hentPersonQuery = javaClass.getResource("/pdl/queries/hentPerson.graphql").readText().graphqlCompatible()
@@ -33,7 +34,14 @@ class PdlClient(
                 query = hentPersonQuery,
             )
 
-        val pdlResponse: PdlResponse<HentPerson.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
+        val pdlResponse: PdlResponse<HentPerson.Result> =
+            restClient
+                .post()
+                .uri(pdlUri)
+                .headers { it.addAll(httpHeadersPdl()) }
+                .body(pdlPersonRequest)
+                .retrieve()
+                .body()!!
         return feilsjekkOgReturnerData(fnr, pdlResponse) { it.hentPerson }
     }
 
@@ -44,7 +52,14 @@ class PdlClient(
                 query = hentIdenter,
             )
 
-        val pdlResponse: PdlResponse<HentIdenter.Result> = postForEntity(pdlUri, pdlPersonRequest, httpHeadersPdl())
+        val pdlResponse: PdlResponse<HentIdenter.Result> =
+            restClient
+                .post()
+                .uri(pdlUri)
+                .headers { it.addAll(httpHeadersPdl()) }
+                .body(pdlPersonRequest)
+                .retrieve()
+                .body()!!
         return feilsjekkOgReturnerData(personIdent, pdlResponse) { it.hentIdenter }.identer.map(IdentInformasjon::ident).toSet()
     }
 }
