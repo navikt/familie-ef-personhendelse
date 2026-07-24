@@ -27,7 +27,7 @@ spec:
     limits:
       memory: 768Mi
     requests:
-      memory: 256Mi
+      memory: 768Mi
       cpu: 20m
   env:
     - name: SPRING_PROFILES_ACTIVE
