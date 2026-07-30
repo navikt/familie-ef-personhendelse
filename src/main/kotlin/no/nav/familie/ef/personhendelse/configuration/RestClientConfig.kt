@@ -5,11 +5,12 @@ import no.nav.familie.kontrakter.felles.jsonMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.springframework.http.client.JdkClientHttpRequestFactory
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.client.RestClient
+import java.net.http.HttpClient
 import java.time.Duration
 
 @Configuration
@@ -22,9 +23,16 @@ class RestClientConfig(
         connectTimeout: Duration = Duration.ofSeconds(2),
         readTimeout: Duration = Duration.ofSeconds(30),
     ): RestClient {
+        // SimpleClientHttpRequestFactory bruker java.net.HttpURLConnection, som ikke støtter HTTP PATCH
+        // (kaster "Invalid HTTP method: PATCH"). JdkClientHttpRequestFactory bruker java.net.http.HttpClient,
+        // som støtter PATCH nativt.
         val requestFactory =
-            SimpleClientHttpRequestFactory().apply {
-                setConnectTimeout(connectTimeout)
+            JdkClientHttpRequestFactory(
+                HttpClient
+                    .newBuilder()
+                    .connectTimeout(connectTimeout)
+                    .build(),
+            ).apply {
                 setReadTimeout(readTimeout)
             }
         return mutate()
