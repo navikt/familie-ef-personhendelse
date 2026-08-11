@@ -1,6 +1,5 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.kontrakter.felles.jsonMapper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Nested
