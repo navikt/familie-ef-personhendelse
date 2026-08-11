@@ -1,6 +1,5 @@
 package no.nav.familie.ef.personhendelse.inntekt
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.familie.ef.personhendelse.client.ForventetInntektForPerson

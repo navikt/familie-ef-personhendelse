@@ -1,6 +1,5 @@
 package no.nav.familie.ef.personhendelse.util
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.ef.personhendelse.inntekt.InntektResponse
 import no.nav.familie.kontrakter.felles.jsonMapper
 import org.assertj.core.api.Assertions
