@@ -23,13 +23,11 @@ class RestClientConfig(
         connectTimeout: Duration = Duration.ofSeconds(2),
         readTimeout: Duration = Duration.ofSeconds(30),
     ): RestClient {
-        // SimpleClientHttpRequestFactory bruker java.net.HttpURLConnection, som ikke støtter HTTP PATCH
-        // (kaster "Invalid HTTP method: PATCH"). JdkClientHttpRequestFactory bruker java.net.http.HttpClient,
-        // som støtter PATCH nativt.
         val requestFactory =
             JdkClientHttpRequestFactory(
                 HttpClient
                     .newBuilder()
+                    .version(HttpClient.Version.HTTP_1_1)
                     .connectTimeout(connectTimeout)
                     .build(),
             ).apply {
@@ -37,8 +35,11 @@ class RestClientConfig(
             }
         return mutate()
             .requestFactory(requestFactory)
-            .messageConverters { it.add(0, JacksonJsonHttpMessageConverter(jsonMapper)) }
-            .build()
+            .configureMessageConverters { converters ->
+                converters
+                    .registerDefaults()
+                    .withJsonConverter(JacksonJsonHttpMessageConverter(jsonMapper))
+            }.build()
     }
 
     @Bean("integrasjonerRestClient")
