@@ -32,6 +32,8 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
+    - name: JDK_JAVA_OPTIONS
+      value: "-XX:MaxRAMPercentage=75 -Dorg.apache.avro.SERIALIZABLE_PACKAGES=no.nav.person.pdl.leesah,no.nav.person.identhendelse.v1.common"
   azure:
     application:
       enabled: true

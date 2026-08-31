@@ -31,7 +31,7 @@
         <java.version>21</java.version>
         <kotlin.version>2.4.10</kotlin.version>
         <kafka-avro-serializer.version>8.3.1</kafka-avro-serializer.version>
-        <avro.version>1.12.1</avro.version>
+        <avro.version>1.12.2</avro.version>
         <graphql-kotlin-spring-client.version>10.2.1</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>10.2.1</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
@@ -280,6 +280,11 @@
                     <classpathDependencyExcludes>
                         <classpathDependencyExclude>org.apache.avro:avro-tools</classpathDependencyExclude>
                     </classpathDependencyExcludes>
+                    <!-- Avro 1.12.x sin ClassSecurityValidator stoler ikke på noen pakker som standard.
+                         Uten denne feiler PersonhendelseAvroSerialiseringTest (og evt. andre avro-tester)
+                         med "SecurityException: Forbidden ... This class is not trusted". Tilsvarende
+                         property settes for kjørende app via JDK_JAVA_OPTIONS i .nais/dev.yaml og .nais/prod.yaml. -->
+                    <argLine>-Dorg.apache.avro.SERIALIZABLE_PACKAGES=no.nav.person.pdl.leesah,no.nav.person.identhendelse.v1.common</argLine>
                 </configuration>
             </plugin>
             <plugin>
