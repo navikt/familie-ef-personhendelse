@@ -30,7 +30,7 @@
         <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
         <kotlin.version>2.4.20</kotlin.version>
-        <kafka-avro-serializer.version>8.3.1</kafka-avro-serializer.version>
+        <kafka-avro-serializer.version>8.3.2</kafka-avro-serializer.version>
         <avro.version>1.12.2</avro.version>
         <graphql-kotlin-spring-client.version>10.2.2</graphql-kotlin-spring-client.version>
         <graphql-kotlin-maven-plugin.version>10.2.2</graphql-kotlin-maven-plugin.version>
