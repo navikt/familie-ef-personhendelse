@@ -29,16 +29,16 @@
         <sha1/>
         <changelist>-SNAPSHOT</changelist>
         <java.version>21</java.version>
-        <kotlin.version>2.4.20</kotlin.version>
+        <kotlin.version>2.4.21</kotlin.version>
         <kafka-avro-serializer.version>8.3.2</kafka-avro-serializer.version>
         <avro.version>1.12.2</avro.version>
-        <graphql-kotlin-spring-client.version>10.2.2</graphql-kotlin-spring-client.version>
-        <graphql-kotlin-maven-plugin.version>10.2.2</graphql-kotlin-maven-plugin.version>
+        <graphql-kotlin-spring-client.version>11.0.0</graphql-kotlin-spring-client.version>
+        <graphql-kotlin-maven-plugin.version>11.0.0</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.6.4</exec-maven-plugin.version>
-        <kontrakter.version>4.0_20261002154824_b2c190a</kontrakter.version>
-        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20260918153401_c082792</eksterne-kontrakter.version.stonadsstatistikk.ks>
-        <felles.version>4.20261007140752_857f456</felles.version>
+        <kontrakter.version>4.0_20261023114950_9ae0359</kontrakter.version>
+        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20261023114954_0543fb5</eksterne-kontrakter.version.stonadsstatistikk.ks>
+        <felles.version>4.20261014144209_63578dc</felles.version>
         <prosessering.version>2.20260817115650_f13f507</prosessering.version>
         <okhttp3.version>4.9.1</okhttp3.version> <!-- overskrever spring sin versjon, blir brukt av mock-oauth2-server -->
         <wiremock.version>3.0.1</wiremock.version>
@@ -236,7 +236,7 @@
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>mock-oauth2-server</artifactId>
-            <version>6.0.4</version>
+            <version>6.1.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
