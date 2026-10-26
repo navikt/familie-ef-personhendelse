@@ -16,7 +16,7 @@ spring:
       security.protocol: PLAINTEXT
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: jdbc:tc:postgresql:15://localhost/testdb
+    url: jdbc:tc:postgresql:18://localhost/testdb
     username: test
     password: test
   flyway:
