@@ -19,7 +19,7 @@ query($ident: ID!, $bostedHistorikk: Boolean = true, $statsborgerskapHistorikk: 
             bekreftelsesdato
             relatertVedSivilstand
         },
-        adressebeskyttelse {
+        adressebeskyttelse(historikk: false) {
             gradering
         },
         bostedsadresse(historikk: true) {
