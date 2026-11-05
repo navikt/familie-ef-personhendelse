@@ -21,8 +21,9 @@ spec:
     enabled: true
     path: /internal/prometheus
   replicas:
-    min: 1
-    max: 2
+    # Midlertidig stopp for databaseoppgradering. Gjenopprett min: 1 og max: 2 etter oppgraderingen.
+    min: 0
+    max: 0
   resources:
     limits:
       memory: 704Mi
