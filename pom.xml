@@ -36,8 +36,8 @@
         <graphql-kotlin-maven-plugin.version>11.0.0</graphql-kotlin-maven-plugin.version>
         <graphql-kotlin.version>3.5.0</graphql-kotlin.version>
         <exec-maven-plugin.version>3.7.0</exec-maven-plugin.version>
-        <kontrakter.version>4.0_20261108214032_20eed0c</kontrakter.version>
-        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20261109090840_bb41ccf</eksterne-kontrakter.version.stonadsstatistikk.ks>
+        <kontrakter.version>4.0_20261120100915_9bfc3c0</kontrakter.version>
+        <eksterne-kontrakter.version.stonadsstatistikk.ks>2.0_20261117082713_c4832c6</eksterne-kontrakter.version.stonadsstatistikk.ks>
         <felles.version>4.20261026180911_c3ff6d9</felles.version>
         <prosessering.version>2.20261102130928_50eba5f</prosessering.version>
         <wiremock.version>3.0.1</wiremock.version>
@@ -231,7 +231,7 @@
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>mock-oauth2-server</artifactId>
-            <version>6.1.5</version>
+            <version>7.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
